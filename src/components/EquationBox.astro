@@ -1,0 +1,19 @@
+---
+interface Props {
+  id: string;
+  number: string;
+  label?: string;
+}
+
+const { id, number, label } = Astro.props;
+---
+
+<div class="eq-card not-content" id={id}>
+  <div class="eq-card__body">
+    <slot />
+  </div>
+  <div class="eq-card__meta">
+    <span class="eq-card__num">({number})</span>
+    {label && <span class="eq-card__label">{label}</span>}
+  </div>
+</div>

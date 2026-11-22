@@ -1,0 +1,233 @@
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+import starlightSiteGraph from 'starlight-site-graph';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+
+export default defineConfig({
+  site: 'https://armin-ma.github.io',
+  base: '/thermo1-notes',
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
+  },
+  integrations: [
+    starlight({
+      title: 'جزوه هوشمند ترمودینامیک ۱',
+      defaultLocale: 'root',
+      locales: {
+        root: {
+          label: 'فارسی',
+          lang: 'fa',
+          dir: 'rtl',
+        },
+      },
+      customCss: [
+        '@fontsource-variable/vazirmatn',
+        'katex/dist/katex.min.css',
+        './src/styles/custom.css',
+      ],
+      components: {
+        Head: './src/components/Head.astro',
+        PageSidebar: './src/components/PageSidebar.astro',
+      },
+      plugins: [
+        starlightSiteGraph({
+          overridePageSidebar: false,
+          graphConfig: {
+            depth: 1,
+            depthDirection: 'both',
+            enableClick: 'click',
+            scale: 0.92,
+            renderArrows: true,
+            renderLabels: true,
+            tagRenderMode: 'same',
+            tagStyles: {
+              'نقشه-راه': { shape: 'polygon', shapePoints: 6, shapeSize: 13, shapeColor: 'nodeColor8' },
+              'درسنامه': { shape: 'circle', shapeSize: 11, shapeColor: 'nodeColor7' },
+              'تمارین': { shape: 'square', shapeSize: 10, shapeColor: 'nodeColor2' },
+              'جداول-سنجل': { shape: 'triangle', shapeSize: 12, shapeColor: 'nodeColor6' },
+            },
+            actions: ['fullscreen', 'depth', 'reset-zoom', 'render-arrows', 'settings'],
+            labelFontSize: 11,
+            labelOffset: 12,
+            labelHoverScale: 1.2,
+            labelOpacityScale: 2.2,
+            labelMutedOpacity: 0.85,
+            labelAdjacentOpacity: 1,
+            repelForce: 950,
+            linkDistance: 120,
+            colliderPadding: 45,
+            centerForce: 0.03,
+            nodeDefaultStyle: {
+              shape: 'circle',
+              nodeScale: 1.22,
+            },
+            nodeCurrentStyle: {
+              shape: 'star',
+              shapePoints: 6,
+              nodeScale: 1.7,
+            },
+          },
+          sitemapConfig: {
+            includeExternalLinks: false,
+            pageTitles: {
+              '/': 'خانه',
+              'chapters/ch1-systems-state/': 'فصل ۱: سیستم و حالت',
+              'chapters/ch1-pressure-temperature/': 'فصل ۱: فشار و دما',
+              'chapters/ch2-energy-forms/': 'فصل ۲: اشکال انرژی',
+              'chapters/ch2-heat-work-efficiency/': 'فصل ۲: کار، گرما و بازده',
+              'chapters/ch3-pure-substances-diagrams/': 'فصل ۳: مواد خالص',
+              'chapters/ch3-ideal-real-gas/': 'فصل ۳: گازها و تراکم‌پذیری',
+              'chapters/ch4-boundary-work-polytropic/': 'فصل ۴: کار مرزی و فنر',
+              'chapters/ch4-first-law-closed/': 'فصل ۴: قانون اول بسته',
+              'chapters/ch5-steady-flow-devices/': 'فصل ۵: جریان پایا',
+              'chapters/ch5-unsteady-flow/': 'فصل ۵: جریان ناپایا',
+              'chapters/ch6-second-law-cycles/': 'فصل ۶: قانون دوم و چرخه‌ها',
+              'chapters/ch6-reversibility-carnot/': 'فصل ۶: کارنو و برگشت‌پذیری',
+              'chapters/ch7-entropy-diagrams/': 'فصل ۷: آنتروپی و T-s',
+              'chapters/ch7-tds-ideal-gas-work/': 'فصل ۷: روابط Tds و کار پایا',
+              'chapters/ch7-entropy-balance-efficiency/': 'فصل ۷: تراز آنتروپی و بازده',
+              'chapters/ch8-exergy-reversible-work/': 'فصل ۸: اگزرژی و کار مفید',
+              'chapters/ch8-exergy-balance-efficiency/': 'فصل ۸: تراز و تخریب اگزرژی',
+              'tools/steam-tables/': 'روش جداول و درونیابی',
+              'exercises/': 'بانک تمارین',
+              'exercises/ch1/': 'تمارین فصل ۱',
+              'exercises/ch2/': 'تمارین فصل ۲',
+              'exercises/ch3/': 'تمارین فصل ۳',
+              'exercises/ch4/': 'تمارین فصل ۴',
+              'exercises/ch5/': 'تمارین فصل ۵',
+              'exercises/ch6/': 'تمارین فصل ۶',
+              'exercises/ch7/': 'تمارین فصل ۷',
+              'exercises/ch8/': 'تمارین فصل ۸',
+            },
+          },
+        }),
+      ],
+      sidebar: [
+        {
+          label: 'خانه و نقشه راه',
+          collapsed: false,
+          items: [
+            { label: 'نمای کلی جزوه', link: '/' },
+            { label: 'نقشه راه ۸ فصل و ۷ آزمون', link: '/#نقشه-راه-تفصیلی-فصلها-و-آزمونها' },
+          ],
+        },
+        {
+          label: 'فصل‌های درس (۱ تا ۸)',
+          collapsed: true,
+          items: [
+            {
+              label: 'فصل ۱: مفاهیم و تعاریف',
+              collapsed: true,
+              items: [
+                { label: '۱-۱ سیستم، خواص و حالت', link: '/chapters/ch1-systems-state/' },
+                { label: '۱-۲ فشار، مانومتر و دما', link: '/chapters/ch1-pressure-temperature/' },
+                { label: 'تمارین فصل ۱ (۸ مسئله)', link: '/exercises/ch1/', badge: { text: 'تمرین', variant: 'default' } },
+              ],
+            },
+            {
+              label: 'فصل ۲: انرژی، کار و حرارت',
+              collapsed: true,
+              items: [
+                { label: '۲-۱ اشکال انرژی و واحدها', link: '/chapters/ch2-energy-forms/' },
+                { label: '۲-۲ کار، حرارت و بازده', link: '/chapters/ch2-heat-work-efficiency/' },
+                { label: 'تمارین فصل ۲ (۱۲ مسئله)', link: '/exercises/ch2/', badge: { text: 'تمرین', variant: 'default' } },
+              ],
+            },
+            {
+              label: 'فصل ۳: خواص مواد خالص',
+              collapsed: true,
+              items: [
+                { label: '۳-۱ تغییر فاز و نمودارها', link: '/chapters/ch3-pure-substances-diagrams/' },
+                { label: '۳-۲ جداول، گاز ایده‌آل و حقیقی', link: '/chapters/ch3-ideal-real-gas/' },
+                { label: 'تمارین فصل ۳ (۱۰ مسئله)', link: '/exercises/ch3/', badge: { text: 'تمرین', variant: 'default' } },
+              ],
+            },
+            {
+              label: 'فصل ۴: سیستم‌های بسته',
+              collapsed: true,
+              items: [
+                { label: '۴-۱ کار مرزی، پلی‌تروپیک و فنر', link: '/chapters/ch4-boundary-work-polytropic/' },
+                { label: '۴-۲ قانون اول و گرمای ویژه', link: '/chapters/ch4-first-law-closed/' },
+                { label: 'تمارین فصل ۴ (۱۳ مسئله)', link: '/exercises/ch4/', badge: { text: 'تمرین', variant: 'default' } },
+              ],
+            },
+            {
+              label: 'فصل ۵: احجام کنترل (باز)',
+              collapsed: true,
+              items: [
+                { label: '۵-۱ بقای جرم و وسایل پایا', link: '/chapters/ch5-steady-flow-devices/' },
+                { label: '۵-۲ فرآیندهای جریان ناپایا', link: '/chapters/ch5-unsteady-flow/' },
+                { label: 'تمارین فصل ۵ (۱۰ مسئله)', link: '/exercises/ch5/', badge: { text: 'تمرین', variant: 'default' } },
+              ],
+            },
+            {
+              label: 'فصل ۶: قانون دوم ترمودینامیک',
+              collapsed: true,
+              items: [
+                { label: '۶-۱ موتور گرمایی، یخچال و بیان‌ها', link: '/chapters/ch6-second-law-cycles/' },
+                { label: '۶-۲ برگشت‌پذیری و چرخه کارنو', link: '/chapters/ch6-reversibility-carnot/' },
+                { label: 'تمارین فصل ۶ (۸ مسئله)', link: '/exercises/ch6/', badge: { text: 'تمرین', variant: 'default' } },
+              ],
+            },
+            {
+              label: 'فصل ۷: آنتروپی',
+              collapsed: true,
+              items: [
+                { label: '۷-۱ کلازیوس، افزایش آنتروپی و T-s', link: '/chapters/ch7-entropy-diagrams/' },
+                { label: '۷-۲ روابط گیبس، گاز ایده‌آل و کار پایا', link: '/chapters/ch7-tds-ideal-gas-work/' },
+                { label: '۷-۳ بازده ایزنتروپیک و تراز آنتروپی', link: '/chapters/ch7-entropy-balance-efficiency/' },
+                { label: 'تمارین فصل ۷ (۱۴ مسئله)', link: '/exercises/ch7/', badge: { text: 'تمرین', variant: 'default' } },
+              ],
+            },
+            {
+              label: 'فصل ۸: اگزرژی',
+              collapsed: true,
+              items: [
+                { label: '۸-۱ حالت مرده و کار برگشت‌پذیر', link: '/chapters/ch8-exergy-reversible-work/' },
+                { label: '۸-۲ تراز اگزرژی و تخریب گوی-استودولا', link: '/chapters/ch8-exergy-balance-efficiency/' },
+                { label: 'تمارین فصل ۸ (۱۱ مسئله)', link: '/exercises/ch8/', badge: { text: 'تمرین', variant: 'default' } },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'روش‌شناسی و جداول امتحان',
+          collapsed: true,
+          items: [
+            { label: 'الگوریتم خواندن جداول سنجل', link: '/tools/steam-tables/' },
+            { label: 'درونیابی ۱بعدی، معکوس و ۲بعدی', link: '/tools/steam-tables/#۳-در-چه-موقعیتهایی-نوع-درونیابی-فرق-میکند' },
+            { label: 'مثال‌های گام‌به‌گام جدول A-4 و A-6', link: '/tools/steam-tables/#۴-مثالهای-حلشده-گامبهگام-با-اعداد-واقعی-جدول-سنجل' },
+          ],
+        },
+        {
+          label: 'بانک جامع تمارین (۸۶ مسئله)',
+          collapsed: true,
+          items: [
+            { label: 'فهرست کل تمارین و نقشه ۷ آزمون', link: '/exercises/' },
+            { label: 'تمارین فصل ۱ (۸ مسئله)', link: '/exercises/ch1/' },
+            { label: 'تمارین فصل ۲ (۱۲ مسئله)', link: '/exercises/ch2/' },
+            { label: 'تمارین فصل ۳ (۱۰ مسئله)', link: '/exercises/ch3/' },
+            { label: 'تمارین فصل ۴ (۱۳ مسئله)', link: '/exercises/ch4/' },
+            { label: 'تمارین فصل ۵ (۱۰ مسئله)', link: '/exercises/ch5/' },
+            { label: 'تمارین فصل ۶ (۸ مسئله)', link: '/exercises/ch6/' },
+            { label: 'تمارین فصل ۷ (۱۴ مسئله)', link: '/exercises/ch7/' },
+            { label: 'تمارین فصل ۸ (۱۱ مسئله)', link: '/exercises/ch8/' },
+          ],
+        },
+      ],
+    }),
+  ],
+  devToolbar: { enabled: false },
+  vite: {
+    define: {
+      'process.platform': '"browser"',
+      'process.env': '{}',
+      'process.versions': '{}',
+    },
+    optimizeDeps: {
+      exclude: ['node_modules/pixi-stats'],
+    },
+  },
+});

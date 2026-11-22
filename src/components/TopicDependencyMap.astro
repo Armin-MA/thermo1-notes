@@ -1,0 +1,74 @@
+---
+interface LinkItem {
+  label: string;
+  href?: string;
+  note?: string;
+}
+
+interface Props {
+  prerequisites: LinkItem[];
+  unlocks: LinkItem[];
+}
+
+const { prerequisites = [], unlocks = [] } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const withBase = (href?: string) => {
+  if (!href || !href.startsWith('/')) return href;
+  if (base && (href === base || href.startsWith(base + '/'))) return href;
+  return `${base}${href}`;
+};
+---
+
+<details class="dep-accordion not-content" aria-label="نقشه پیش‌نیازها و مباحث وابسته">
+  <summary class="dep-accordion__summary">
+    <span class="dep-accordion__title">
+      <span>🧭</span>
+      <strong>پیش‌نیازها و مباحث وابسته</strong>
+    </span>
+    <span class="dep-accordion__counts">
+      <span class="dep-count-pill">📥 پیش‌نیاز: {prerequisites.length}</span>
+      <span class="dep-count-pill">📤 مباحث بعدی: {unlocks.length}</span>
+      <span class="dep-accordion__chevron" aria-hidden="true">▾</span>
+    </span>
+  </summary>
+
+  <div class="dep-map">
+    <div class="dep-card dep-card--pre">
+      <div class="dep-card__head">
+        <span class="dep-card__icon">📥</span>
+        <strong>پیش‌نیازهای این مبحث</strong>
+      </div>
+      {prerequisites.length > 0 ? (
+        <ul class="dep-card__list">
+          {prerequisites.map((item) => (
+            <li>
+              {item.href ? <a href={withBase(item.href)}>{item.label}</a> : <span>{item.label}</span>}
+              {item.note && <span class="dep-card__note"> — {item.note}</span>}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="dep-card__empty">پیش‌نیاز خاصی ندارد (نقطه شروع).</p>
+      )}
+    </div>
+
+    <div class="dep-card dep-card--next">
+      <div class="dep-card__head">
+        <span class="dep-card__icon">📤</span>
+        <strong>این مبحث پیش‌نیازِ چه مباحثی است؟</strong>
+      </div>
+      {unlocks.length > 0 ? (
+        <ul class="dep-card__list">
+          {unlocks.map((item) => (
+            <li>
+              {item.href ? <a href={withBase(item.href)}>{item.label}</a> : <span>{item.label}</span>}
+              {item.note && <span class="dep-card__note"> — {item.note}</span>}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="dep-card__empty">مبحث پایانی این مسیر.</p>
+      )}
+    </div>
+  </div>
+</details>

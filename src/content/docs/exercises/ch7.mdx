@@ -1,0 +1,662 @@
+---
+title: تمارین منتخب فصل ۷ (آنتروپی — ۱۴ مسئله رسمی)
+description: حل تشریحی و گام‌به‌گام تمام ۱۴ تمرین منتخب فصل هفتم کتاب سنجل ویرایش هشتم (۷-۱۰ تا ۷-۲۱۵) با ارجاعات دقیق به جداول SI و تله‌های امتحانی دکتر صفاری.
+tags:
+  - تمارین
+  - فصل-۷
+  - آزمون-۶
+  - آنتروپی
+sitemap:
+  pageTitle: تمارین فصل ۷
+---
+
+import ExerciseCard from '../../../components/ExerciseCard.astro';
+import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+
+<TopicDependencyMap
+  prerequisites={[
+    { label: '۷-۱ کلازیوس، افزایش آنتروپی و T-s', href: '/chapters/ch7-entropy-diagrams/', note: 'نامساوی کلازیوس، اصل افزایش آنتروپی و نمودارهای فازی' },
+    { label: '۷-۲ روابط Tds و کار پایا', href: '/chapters/ch7-tds-ideal-gas-work/', note: 'محاسبه تغییر آنتروپی مایعات، جامدات و گاز ایده‌آل (A-17)' },
+    { label: '۷-۳ بازده ایزنتروپیک و تراز آنتروپی', href: '/chapters/ch7-entropy-balance-efficiency/', note: 'بازده توربین/پمپ و موازنه آنتروپی با مرز گسترش‌یافته' },
+  ]}
+  unlocks={[
+    { label: 'فصل ۸ و تمارین اگزرژی', href: '/exercises/ch8/', note: 'محاسبه X_dest = T0 · S_gen با تکیه بر S_gen فصل ۷' },
+    { label: 'آزمون ششم کلاسی (۳ نمره)', href: '/#بارمبندی-و-نقشه-دسترسی-سریع-۷-آزمون', note: 'تسلط کامل بر ۱۴ تمرین منتخب اسلاید ۷۴' },
+  ]}
+/>
+
+تمامی **۱۴ مسئله** زیر از اسلاید پایانی جزوهٔ <span dir="ltr">Thermo I-V9-7</span> استخراج شده و تک‌تک اعداد، جداول و پاسخ‌های نهایی آن‌ها با **پاسخ‌نامهٔ رسمی استادان سنجل ویرایش هشتم** راستی‌آزمایی شده است.
+
+---
+
+<ExerciseCard
+  id="prob-7-10"
+  number="7-10C"
+  title="تغییر آنتروپی گاز هلیم در فرآیند هم‌دمای برگشت‌پذیر"
+  tables="Ideal Gas"
+  tags={['مفهومی', 'گاز ایده‌آل']}
+>
+  <Fragment slot="statement">
+
+    یک دستگاه سیلندر-پیستون حاوی گاز هلیم است. طی یک فرآیند **هم‌دما و برگشت‌پذیر**، آنتروپی هلیم (هرگز / گاهی اوقات / همواره) افزایش می‌یابد؟
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>پاسخ رسمی: گاهی اوقات (<span dir="ltr">Sometimes</span>).</strong></p>
+    <p>برای گاز ایده‌آل در فرآیند هم‌دما ($T_2 = T_1$)، سهم دما در تغییر آنتروپی صفر است و تغییر آنتروپی به نسبت حجم یا فشار بستگی دارد:</p>
+
+$$
+s_2 - s_1 = c_v \ln \frac{T_2}{T_1} + R \ln \frac{v_2}{v_1} = R \ln \frac{v_2}{v_1} = -R \ln \frac{P_2}{P_1}
+$$
+
+    <ul>
+      <li>اگر فرآیند <strong>انبساط هم‌دما</strong> باشد ($v_2 \gt  v_1$، دریافت حرارت از بیرون)، آنتروپی افزایش می‌یابد ($\Delta s \gt  0$).</li>
+      <li>اگر فرآیند <strong>تراکم هم‌دما</strong> باشد ($v_2 \lt  v_1$، دفع حرارت به بیرون)، آنتروپی کاهش می‌یابد ($\Delta s \lt  0$).</li>
+    </ul>
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> بسیاری به اشتباه فکر می‌کنند «هم‌دما و برگشت‌پذیر» یعنی $\Delta s = 0$! در حالی که فقط فرآیند <em>آدیاباتیک و برگشت‌پذیر</em> ایزنتروپیک است؛ در فرآیند هم‌دما انتقال حرارت وجود دارد و آنتروپی سیستم بسته می‌تواند کم یا زیاد شود.
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-30"
+  number="7-30"
+  title="تغییر آنتروپی مخلوط آب و بخار در مخزن صلب با گرم‌کن الکتریکی"
+  tables="Tables A-4..A-6"
+  tags={['ماده خالص', 'هم‌حجم']}
+>
+  <Fragment slot="statement">
+
+    مخزن صلب و کاملاً عایقی حاوی $3\text{ kg}$ مخلوط مایع و بخار اشباع آب در فشار $200\text{ kPa}$ است. در ابتدا سه‌چهارم جرم در فاز مایع قرار دارد ($x_1 = 0.25$). یک گرم‌کن الکتریکی درون مخزن روشن می‌شود تا زمانی که تمام مایع درون مخزن تبخیر شود. تغییر آنتروپی بخار آب را در طی این فرآیند تعیین کنید. *(پاسخ کتاب: $11.1\text{ kJ/K}$)*
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>گام ۱ — حالت اولیه (جدول <span dir="ltr">A-5</span> در $P_1 = 200\text{ kPa}$ با $x_1 = 1 - 0.75 = 0.25$):</strong></p>
+
+$$
+v_1 = v_f + x_1 v_{fg} = 0.001061 + 0.25(0.88578 - 0.001061) = 0.22224\text{ m}^3/\text{kg}
+$$
+
+$$
+s_1 = s_f + x_1 s_{fg} = 1.5302 + 0.25(5.5968) = 2.9294\text{ kJ/kg}\cdot\text{K}
+$$
+
+    <p><strong>گام ۲ — حالت نهایی:</strong> چون مخزن صلب است، حجم مخصوص ثابت می‌ماند ($v_2 = v_1 = 0.22224\text{ m}^3/\text{kg}$) و در پایان تمام مایع بخار شده است ($x_2 = 1$، بخار اشباع). با مراجعه به جدول <span dir="ltr">A-5</span> و درونیابی در ستون $v_g = 0.22224\text{ m}^3/\text{kg}$:</p>
+
+$$
+s_2 = s_g|_{v_g = 0.22224} = 6.6335\text{ kJ/kg}\cdot\text{K}
+$$
+
+    <p><strong>گام ۳ — تغییر آنتروپی بخار:</strong></p>
+
+$$
+\Delta S = m(s_2 - s_1) = (3\text{ kg})(6.6335 - 2.9294)\text{ kJ/kg}\cdot\text{K} = 11.1\text{ kJ/K}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> فشار مخزن صلب ثابت نیست! پس نباید $s_2 = s_g$ را در فشار $200\text{ kPa}$ بخوانید؛ باید فشار جدیدی را بیابید که در آن $v_g = v_1 = 0.22224\text{ m}^3/\text{kg}$ باشد.
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-40"
+  number="7-40"
+  title="گرما و کار در فرآیند هم‌دمای مبرد R-134a در سیستم بسته"
+  tables="Tables A-11, A-13"
+  tags={['مبرد R-134a', 'هم‌دما']}
+>
+  <Fragment slot="statement">
+
+    مبرد <span dir="ltr">R-134a</span> در فشار $320\text{ kPa}$ و دمای $40^\circ\text{C}$ در یک سیستم بسته طی یک فرآیند هم‌دمای شبه‌تعادلی تا کیفیت $45\%$ متراکم می‌شود. کار و انتقال حرارت مورد نیاز بر واحد جرم را بیابید. *(پاسخ کتاب: $40.6\text{ kJ/kg}$، $130\text{ kJ/kg}$)*
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>گام ۱ — خواص حالت ۱ (<span dir="ltr">Table A-13</span>، فوق‌گرم در $320\text{ kPa}, 40^\circ\text{C}$):</strong></p>
+
+$$
+u_1 = 261.62\text{ kJ/kg}, \qquad s_1 = 1.0452\text{ kJ/kg}\cdot\text{K}
+$$
+
+    <p><strong>گام ۲ — خواص حالت ۲ (<span dir="ltr">Table A-11</span>، مخلوط در $T_2 = 40^\circ\text{C}$ و $x_2 = 0.45$):</strong></p>
+
+$$
+u_2 = u_f + x_2 u_{fg} = 107.39 + 0.45(143.61) = 172.02\text{ kJ/kg}
+$$
+
+$$
+s_2 = s_f + x_2 s_{fg} = 0.39493 + 0.45(0.52059) = 0.62920\text{ kJ/kg}\cdot\text{K}
+$$
+
+    <p><strong>گام ۳ — انتقال حرارت و کار (با $T = 40 + 273 = 313\text{ K}$):</strong></p>
+
+$$
+q_{\text{in}} = T_0(s_2 - s_1) = (313\text{ K})(0.62920 - 1.0452)\text{ kJ/kg}\cdot\text{K} = -130.2\text{ kJ/kg} \implies q_{\text{out}} = 130.2\text{ kJ/kg}
+$$
+
+$$
+w_{\text{in}} = q_{\text{out}} + (u_2 - u_1) = 130.2 + (172.02 - 261.62) = 40.6\text{ kJ/kg}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> در فرآیند هم‌دما اگر از $q = T\Delta s$ استفاده می‌کنید، حتماً دمای $T$ را به کلوین ($313\text{ K}$) تبدیل کنید و علامت منفی $q_{\text{in}}$ را درست به معنای «دفع گرما از سیستم» در موازنهٔ انرژی جایگذاری کنید.
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-41"
+  number="7-41"
+  title="تغییر آنتروپی سیستم و کل در سرد شدن بخار آب داخل مخزن صلب"
+  tables="Table A-4"
+  tags={['ماده خالص', 'اصل افزایش آنتروپی']}
+>
+  <Fragment slot="statement">
+
+    مخزن صلبی حاوی $5\text{ kg}$ بخار آب اشباع در دمای $100^\circ\text{C}$ است. بخار تا دمای محیط یعنی $25^\circ\text{C}$ سرد می‌شود. (ب) تغییر آنتروپی بخار آب، و (ج) تغییر آنتروپی کل (سیستم و محیط) را بر حسب $\text{kJ/K}$ بیابید.
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>گام ۱ — حالت‌های ۱ و ۲ از جدول <span dir="ltr">A-4</span>:</strong></p>
+    <ul>
+      <li>حالت ۱ ($T_1 = 100^\circ\text{C}, x_1 = 1$): $v_1 = v_g = 1.6720\text{ m}^3/\text{kg}$، $u_1 = 2506.0\text{ kJ/kg}$، $s_1 = 7.3542\text{ kJ/kg}\cdot\text{K}$.</li>
+      <li>حالت ۲ ($T_2 = 25^\circ\text{C}, v_2 = v_1 = 1.6720$): با یافتن کیفیت $x_2 = 0.03856$ به‌دست می‌آید $u_2 = 193.67\text{ kJ/kg}$ و $s_2 = 0.6830\text{ kJ/kg}\cdot\text{K}$.</li>
+    </ul>
+
+    <p><strong>(ب) تغییر آنتروپی بخار آب:</strong></p>
+
+$$
+\Delta S_w = m(s_2 - s_1) = (5\text{ kg})(0.6830 - 7.3542)\text{ kJ/kg}\cdot\text{K} = -33.36\text{ kJ/K}
+$$
+
+    <p><strong>(ج) تغییر آنتروپی کل (آنتروپی تولیدی):</strong> از قانون اول در مخزن صلب ($W = 0$)، گرمای دفع‌شده به محیط برابر است با:</p>
+
+$$
+Q_{\text{out}} = m(u_1 - u_2) = (5)(2506.0 - 193.67) = 11{,}562\text{ kJ}
+$$
+
+$$
+S_{\text{gen}} = \Delta S_w + \frac{Q_{\text{out}}}{T_{\text{surr}}} = -33.36 + \frac{11{,}562\text{ kJ}}{298\text{ K}} = +5.44\text{ kJ/K}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> تغییر آنتروپی سیستم منفی ($-33.36\text{ kJ/K}$) است اما این نقض قانون دوم نیست؛ آنتروپی محیط به اندازهٔ $+38.80\text{ kJ/K}$ افزایش یافته و مجموع آن یعنی $S_{\text{gen}} = +5.44\text{ kJ/K} \gt  0$ مثبت است.
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-60"
+  number="7-60"
+  title="تعادل حرارتی قطعه مس داغ و آب درون تانک عایق"
+  tables="Table A-3"
+  tags={['مایع و جامد', 'گرمای ویژه ثابت']}
+>
+  <Fragment slot="statement">
+
+    یک بلوک مسی $50\text{ kg}$ با دمای اولیه $140^\circ\text{C}$ درون تانک عایقی شامل $90\text{ L}$ آب در دمای $10^\circ\text{C}$ انداخته می‌شود. دمای تعادل نهایی و تغییر آنتروپی کل فرآیند را بیابید.
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>خواص (<span dir="ltr">Table A-3</span>):</strong> برای آب $\rho = 997\text{ kg/m}^3$ و $c_p = 4.18\text{ kJ/kg}\cdot^\circ\text{C}$؛ برای مس $c_p = 0.386\text{ kJ/kg}\cdot^\circ\text{C}$. جرم آب $m_w = 997 \times 0.090 = 89.73\text{ kg}$.</p>
+    <p><strong>گام ۱ — دمای تعادل از موازنهٔ انرژی ($\Delta U_{\text{Cu}} + \Delta U_w = 0$):</strong></p>
+
+$$
+(50)(0.386)(T_2 - 140) + (89.73)(4.18)(T_2 - 10) = 0 \implies T_2 = 16.4^\circ\text{C} = 289.4\text{ K}
+$$
+
+    <p><strong>گام ۲ — تغییر آنتروپی اجزا و کل:</strong></p>
+
+$$
+\Delta S_{\text{copper}} = (50)(0.386)\ln\left(\frac{289.4\text{ K}}{413\text{ K}}\right) = -6.864\text{ kJ/K}
+$$
+
+$$
+\Delta S_{\text{water}} = (89.73)(4.18)\ln\left(\frac{289.4\text{ K}}{283\text{ K}}\right) = +8.388\text{ kJ/K}
+$$
+
+$$
+\Delta S_{\text{total}} = S_{\text{gen}} = -6.864 + 8.388 = +1.52\text{ kJ/K}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> در قانون اول چون اختلاف دما $(T_2 - T_1)$ داریم، سلسیوس و کلوین فرقی نمی‌کنند؛ اما در فرمول آنتروپی $\ln(T_2/T_1)$ <strong>حتماً باید دماها به کلوین</strong> تبدیل شوند!
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-80"
+  number="7-80"
+  title="نرخ تغییر آنتروپی هوا در کمپرسور با جدول A-17"
+  tables="Tables A-1, A-17"
+  tags={['گاز ایده‌آل', 'روش دقیق']}
+>
+  <Fragment slot="statement">
+
+    هوا با دبی جرمی $1.6\text{ kg/min}$ در یک کمپرسور $5\text{ kW}$ به‌صورت پایا از $100\text{ kPa}$ و $17^\circ\text{C}$ به $600\text{ kPa}$ و $167^\circ\text{C}$ متراکم می‌شود و ضمن آن مقداری حرارت به محیط $17^\circ\text{C}$ داده می‌شود. نرخ تغییر آنتروپی هوا را در این فرآیند محاسبه کنید. *(پاسخ کتاب: $-0.0025\text{ kW/K}$)*
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>گام ۱ — خواندن $s^\circ$ از جدول <span dir="ltr">A-17</span>:</strong></p>
+    <ul>
+      <li>ورودی ($T_1 = 17 + 273 = 290\text{ K}$): $s_1^\circ = 1.66802\text{ kJ/kg}\cdot\text{K}$</li>
+      <li>خروجی ($T_2 = 167 + 273 = 440\text{ K}$): $s_2^\circ = 2.0887\text{ kJ/kg}\cdot\text{K}$</li>
+    </ul>
+
+    <p><strong>گام ۲ — نرخ تغییر آنتروپی جریان هوا (با $R = 0.287\text{ kJ/kg}\cdot\text{K}$ و $\dot{m} = 1.6/60\text{ kg/s}$):</strong></p>
+
+$$
+\Delta \dot{S}_{\text{sys}} = \dot{m}\left(s_2^\circ - s_1^\circ - R\ln\frac{P_2}{P_1}\right) = \left(\frac{1.6}{60}\text{ kg/s}\right)\left[(2.0887 - 1.66802) - 0.287\ln\left(\frac{600}{100}\right)\right] = -0.00250\text{ kW/K}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> ۱) علامت منفی کتاب در برخی اسکن‌های چاپی به اشتباه به‌صورت `20.0025` تایپ شده، در حالی که پاسخ واقعی $-0.0025\text{ kW/K}$ است. ۲) هرگز جملهٔ $-R\ln(P_2/P_1)$ را در جدول <span dir="ltr">A-17</span> فراموش نکنید و دبی را از <span dir="ltr">kg/min</span> به <span dir="ltr">kg/s</span> تقسیم بر ۶۰ کنید.
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-97"
+  number="7-97"
+  title="تعادل حرارتی ظرف آب داغ با هوای یک اتاق درزگیری‌شده"
+  tables="Tables A-2, A-3"
+  tags={['گاز ایده‌آل', 'مخلوط آب و هوا']}
+>
+  <Fragment slot="statement">
+
+    ظرفی پر از $45\text{ kg}$ آب مایع در دمای $95^\circ\text{C}$ در اتاق کاملاً درزگیری‌شده و عایقی به حجم $90\text{ m}^3$ با دمای اولیه $12^\circ\text{C}$ (فشار سطح دریا $101.3\text{ kPa}$) قرار می‌گیرد تا تعادل حرارتی برقرار شود. با گرمای ویژه ثابت بیابید: (الف) دمای تعادل نهایی، (ب) حرارت منتقل‌شده بین آب و هوا، و (ج) آنتروپی تولیدی کل.
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>(الف) جرم هوا و دمای تعادل:</strong> از <span dir="ltr">Table A-2</span> داریم $c_{v,\text{air}} = 0.718, c_{p,\text{air}} = 1.005, R = 0.287\text{ kJ/kg}\cdot\text{K}$ و برای آب $c_w = 4.18\text{ kJ/kg}\cdot\text{K}$.</p>
+
+$$
+m_a = \frac{P_1 V}{R T_1} = \frac{(101.3)(90)}{(0.287)(12 + 273)} = 111.5\text{ kg}
+$$
+
+$$
+m_w c_w (T_2 - 95) + m_a c_v (T_2 - 12) = 0 \implies (45)(4.18)(T_2 - 95) + (111.5)(0.718)(T_2 - 12) = 0 \implies T_2 = 70.2^\circ\text{C}
+$$
+
+    <p><strong>(ب) مقدار حرارت منتقل‌شده به هوا:</strong></p>
+
+$$
+Q = m_a c_v (T_2 - T_1) = (111.5)(0.718)(70.2 - 12) = 4660\text{ kJ}
+$$
+
+    <p><strong>(ج) آنتروپی تولیدی کل:</strong> ابتدا فشار نهایی هوا را از حجم ثابت اتاق می‌یابیم: $P_2 = \frac{m_a R T_2}{V} = \frac{(111.5)(0.287)(343.2)}{90} = 122\text{ kPa}$.</p>
+
+$$
+\Delta S_w = (45)(4.18)\ln\left(\frac{70.2 + 273}{95 + 273}\right) = -13.11\text{ kJ/K}
+$$
+
+$$
+\Delta S_a = (111.5)\left[1.005\ln\left(\frac{343.2}{285}\right) - 0.287\ln\left(\frac{122}{101.3}\right)\right] = +14.88\text{ kJ/K}
+$$
+
+$$
+S_{\text{gen}} = \Delta S_{\text{total}} = -13.11 + 14.88 = 1.77\text{ kJ/K}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> اگر برای $\Delta S_a$ از فرمول $c_p\ln(T_2/T_1) - R\ln(P_2/P_1)$ استفاده می‌کنید، حتماً باید $P_2$ جدید را حساب کنید (یا مستقیم از فرمول هم‌حجم $c_v\ln(T_2/T_1) + R\ln(v_2/v_1)$ که جملهٔ حجمش صفر است بروید).
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-106"
+  number="7-106"
+  title="بیشینه فشار خروجی پمپ آب با توان ورودی مشخص"
+  tables="Incompressible Flow"
+  tags={['کار پایا', 'پمپ']}
+>
+  <Fragment slot="statement">
+
+    آب مایع با فشار $100\text{ kPa}$ و دبی جرمی $5\text{ kg/s}$ وارد یک پمپ $16\text{ kW}$ می‌شود. بیشینهٔ فشاری که آب می‌تواند در خروجی پمپ داشته باشد چقدر است؟ ($v = 0.001\text{ m}^3/\text{kg}$ و تغییرات انرژی جنبشی و پتانسیل ناچیز است). *(پاسخ کتاب: $3300\text{ kPa}$)*
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p>بیشینه فشار خروجی متناظر با حالت ایده‌آل و برگشت‌پذیر پمپ است:</p>
+
+$$
+\dot{W}_{\text{in,rev}} = \dot{m} \int_1^2 v\,dP = \dot{m} v (P_2 - P_1)
+$$
+
+$$
+16\text{ kJ/s} = (5\text{ kg/s})(0.001\text{ m}^3/\text{kg})(P_2 - 100\text{ kPa})\left(\frac{1\text{ kJ}}{1\text{ kPa}\cdot\text{m}^3}\right) \implies P_2 = 3300\text{ kPa}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> تبدیل واحد $1\text{ kPa}\cdot\text{m}^3 = 1\text{ kJ}$ در این رابطه حیاتی است؛ چون توان بر حسب $\text{kW} = \text{kJ/s}$ داده شده، فشار مستقیماً بر حسب $\text{kPa}$ به‌دست می‌آید (مراقب باشید $100\text{ kPa}$ اولیه را فراموش نکنید، یعنی $P_2 = \Delta P + P_1$).
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-120"
+  number="7-120"
+  title="دمای خروجی و توان توربین بخار آدیاباتیک با بازده ایزنتروپیک ۹۰٪"
+  tables="Tables A-5, A-6"
+  tags={['بازده ایزنتروپیک', 'توربین']}
+>
+  <Fragment slot="statement">
+
+    بخار آب با دبی $3\text{ kg/s}$ در فشار $8\text{ MPa}$ و دمای $500^\circ\text{C}$ وارد یک توربین آدیاباتیک با بازده ایزنتروپیک $0.90$ شده و در فشار $30\text{ kPa}$ خارج می‌شود. (الف) دمای خروجی توربین و (ب) توان خروجی واقعی را بیابید. *(پاسخ کتاب: الف $69.1^\circ\text{C}$، ب $3054\text{ kW}$)*
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>(الف) یافتن حالت خروجی واقعی $2a$:</strong></p>
+    <ul>
+      <li>ورودی (<span dir="ltr">Table A-6</span> در $8\text{ MPa}, 500^\circ\text{C}$): $h_1 = 3399.5\text{ kJ/kg}$ و $s_1 = 6.7266\text{ kJ/kg}\cdot\text{K}$.</li>
+      <li>حالت ایزنتروپیک ($P_{2s} = 30\text{ kPa}$ و $s_{2s} = s_1 = 6.7266$ در <span dir="ltr">Table A-5</span>):</li>
+    </ul>
+
+$$
+x_{2s} = \frac{s_{2s} - s_f}{s_{fg}} = \frac{6.7266 - 0.9441}{6.8234} = 0.8475
+$$
+
+$$
+h_{2s} = h_f + x_{2s} h_{fg} = 289.27 + 0.8475(2335.3) = 2268.3\text{ kJ/kg}
+$$
+
+    <p>اکنون از تعریف بازده ایزنتروپیک توربین، آنتالپی خروجی واقعی را می‌یابیم:</p>
+
+$$
+\eta_T = \frac{h_1 - h_{2a}}{h_1 - h_{2s}} \implies 0.90 = \frac{3399.5 - h_{2a}}{3399.5 - 2268.3} \implies h_{2a} = 2381.4\text{ kJ/kg}
+$$
+
+    <p>چون در فشار $30\text{ kPa}$ مقدار $h_{2a} = 2381.4$ همچنان کمتر از $h_g = 2624.6\text{ kJ/kg}$ است، خروجی واقعی هنوز در ناحیهٔ <strong>مخلوط اشباع</strong> قرار دارد؛ بنابراین دمای خروجی دقیقاً دمای اشباع در $30\text{ kPa}$ است:</p>
+
+$$
+T_{2a} = T_{\text{sat}@30\text{ kPa}} = 69.09^\circ\text{C} \approx 69.1^\circ\text{C}
+$$
+
+    <p><strong>(ب) توان خروجی واقعی توربین:</strong></p>
+
+$$
+\dot{W}_{a,\text{out}} = \dot{m}(h_1 - h_{2a}) = (3\text{ kg/s})(3399.5 - 2381.4)\text{ kJ/kg} = 3054\text{ kW}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> همواره پس از محاسبهٔ $h_{2a}$ چک کنید که آیا از $h_g$ در $P_2$ کمتر است یا بیشتر! اگر کمتر باشد (مثل همین مسئله)، دما برابر $T_{\text{sat}@P_2}$ ثابت می‌ماند و کیفیت افزایش می‌یابد؛ اگر بیشتر شود، به ناحیهٔ فوق‌گرم می‌روید.
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-144"
+  number="7-144"
+  title="صرفه‌جویی انرژی، هزینه و کاهش تولید آنتروپی در پاستوریزاسیون شیر"
+  tables="Table A-3"
+  tags={['مبدل حرارتی', 'کاهش آنتروپی']}
+>
+  <Fragment slot="statement">
+
+    در یک کارخانه لبنیات، شیر با دبی $12\text{ L/s}$ به‌طور پیوسته ($24$ ساعت در روز و $365$ روز سال) از $4^\circ\text{C}$ تا $72^\circ\text{C}$ در بویلری با بازده $82\%$ پاستوریزه شده و سپس با آب سرد $18^\circ\text{C}$ خنک می‌شود. کارخانه برای صرفه‌جویی، یک بازیاب (<span dir="ltr">Regenerator</span>) با اثرگذاری $82\%$ نصب می‌کند. با قیمت گاز طبیعی $1.30\text{ USD/therm}$ ($1\text{ therm} = 105{,}500\text{ kJ}$)، صرفه‌جویی سالانه انرژی/پول و کاهش سالانه تولید آنتروپی را بیابید.
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>خواص شیر (<span dir="ltr">Table A-3</span>):</strong> $\rho_{\text{milk}} \approx 1\text{ kg/L} \implies \dot{m} = 12\text{ kg/s}$ و $c_{p,\text{milk}} = 3.79\text{ kJ/kg}\cdot^\circ\text{C}$.</p>
+    <p><strong>گام ۱ — نرخ حرارت گرمایش فعلی و صرفه‌جویی‌شده:</strong></p>
+
+$$
+\dot{Q}_{\text{current}} = \dot{m} c_p (T_2 - T_1) = (12)(3.79)(72 - 4) = 3093\text{ kJ/s}
+$$
+
+$$
+\dot{Q}_{\text{saved}} = \varepsilon \, \dot{Q}_{\text{current}} = 0.82(3093) = 2536\text{ kJ/s}
+$$
+
+    <p><strong>گام ۲ — صرفه‌جویی سالانه سوخت و هزینه (با $\eta_{\text{boiler}} = 0.82$ و $8760\text{ h/yr}$):</strong></p>
+
+$$
+\text{Fuel Saved} = \frac{2536\text{ kJ/s}}{0.82} \times \frac{1\text{ therm}}{105{,}500\text{ kJ}} = 0.02931\text{ therm/s} = 924{,}450\text{ therms/yr}
+$$
+
+$$
+\text{Money Saved} = (924{,}450\text{ therm/yr})(1.30\text{ USD/therm}) = 1{,}201{,}800\text{ USD/yr}
+$$
+
+    <p><strong>گام ۳ — کاهش سالانهٔ تولید آنتروپی:</strong> صرف‌نظر از جریان سوخت، کاهش انتقال حرارت به آب خنک‌کنِ $18^\circ\text{C}$ ($291\text{ K}$) نرخ تولید آنتروپی را به اندازهٔ زیر کاهش می‌دهد:</p>
+
+$$
+\dot{S}_{\text{gen,reduction}} = \frac{\dot{Q}_{\text{saved}}}{T_{\text{surr}}} = \frac{2536\text{ kJ/s}}{(18 + 273)\text{ K}} = 8.715\text{ kW/K}
+$$
+
+$$
+\Delta S_{\text{gen,reduction}} = (8.715\text{ kJ/s}\cdot\text{K})(8760 \times 3600\text{ s/yr}) = 2.75 \times 10^8\text{ kJ/K per year}
+$$
+
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-147"
+  number="7-147"
+  title="نرخ انتقال حرارت و تولید آنتروپی در آنیلینگ ساچمه‌های فولادی"
+  tables="Incompressible Solid"
+  tags={['تراز آنتروپی', 'مرز گسترش‌یافته']}
+>
+  <Fragment slot="statement">
+
+    ساچمه‌های فولاد کربنی ($\rho = 7833\text{ kg/m}^3$ و $c_p = 0.465\text{ kJ/kg}\cdot^\circ\text{C}$) به قطر $8\text{ mm}$ ابتدا تا $900^\circ\text{C}$ گرم شده و سپس به‌آرامی تا $100^\circ\text{C}$ در هوای محیط $35^\circ\text{C}$ خنک می‌شوند. اگر در هر ساعت $2500$ ساچمه عملیات شوند، (الف) نرخ انتقال حرارت از ساچمه‌ها به هوا و (ب) نرخ تولید آنتروپی را بیابید. *(پاسخ کتاب: الف $542\text{ W}$، ب $0.986\text{ W/K}$)*
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>(الف) جرم یک ساچمه و نرخ انتقال حرارت:</strong></p>
+
+$$
+m = \rho \frac{\pi D^3}{6} = (7833)\frac{\pi (0.008)^3}{6} = 0.00210\text{ kg}
+$$
+
+$$
+Q_{\text{out,ball}} = m c_p (T_1 - T_2) = (0.00210)(0.465)(900 - 100) = 0.781\text{ kJ/ball}
+$$
+
+$$
+\dot{Q}_{\text{out}} = (2500\text{ balls/h})(0.781\text{ kJ/ball}) = 1953\text{ kJ/h} = 542\text{ W}
+$$
+
+    <p><strong>(ب) نرخ تولید آنتروپی (با مرز گسترش‌یافته تا دمای محیط $T_b = 35^\circ\text{C} = 308\text{ K}$):</strong></p>
+
+$$
+\Delta S_{\text{ball}} = m c \ln\frac{T_2}{T_1} = (0.00210)(0.465)\ln\left(\frac{100 + 273}{900 + 273}\right) = -0.00112\text{ kJ/K}
+$$
+
+$$
+S_{\text{gen,ball}} = \frac{Q_{\text{out,ball}}}{T_b} + \Delta S_{\text{ball}} = \frac{0.781}{308} - 0.00112 = 0.00142\text{ kJ/K per ball}
+$$
+
+$$
+\dot{S}_{\text{gen}} = (2500\text{ balls/h})(0.00142\text{ kJ/K}) = 3.55\text{ kJ/h}\cdot\text{K} = 0.986\text{ W/K}
+$$
+
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-175"
+  number="7-175"
+  title="سیلندر دو محفظه‌ای نیتروژن و هلیم با پیستون عایق و بی‌اصطکاک"
+  tables="Table A-2"
+  tags={['گاز ایده‌آل', 'سیستم مرکب']}
+>
+  <Fragment slot="statement">
+
+    یک سیلندر افقی عایق توسط یک پیستون عایق و بدون اصطکاک به دو محفظه تقسیم شده است. یک طرف شامل $0.2\text{ m}^3$ نیتروژن و طرف دیگر شامل $0.1\text{ kg}$ هلیم، هر دو در $20^\circ\text{C}$ و $95\text{ kPa}$ است. از یک مخزن حرارتی $500^\circ\text{C}$ به سمت نیتروژن حرارت داده می‌شود تا فشار هلیم به $120\text{ kPa}$ برسد. بیابید: (الف) دمای نهایی هلیم، (ب) حجم نهایی نیتروژن، (ج) حرارت داده‌شده به نیتروژن و (د) آنتروپی تولیدی.
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>خواص (<span dir="ltr">Table A-2</span>):</strong> برای $N_2$: $R=0.2968, c_v=0.743, c_p=1.039\text{ kJ/kg}\cdot\text{K}$؛ برای $He$: $R=2.0769, c_v=3.1156, k=1.667$.</p>
+    <p><strong>(الف) هلیم فرآیند تراکم ایزنتروپیک (برگشت‌پذیر و عایق) طی می‌کند:</strong></p>
+
+$$
+T_{\text{He},2} = T_1 \left(\frac{P_2}{P_1}\right)^{(k-1)/k} = (293\text{ K})\left(\frac{120}{95}\right)^{0.667/1.667} = 321.7\text{ K}
+$$
+
+    <p><strong>(ب) حجم نهایی نیتروژن (با ثابت ماندن حجم کل سیلندر و تعادل فشار $P_{N_2,2} = P_{\text{He},2} = 120\text{ kPa}$):</strong></p>
+
+$$
+V_{\text{He},1} = \frac{m_{\text{He}} R T_1}{P_1} = \frac{(0.1)(2.0769)(293)}{95} = 0.6406\text{ m}^3, \qquad V_{\text{He},2} = \frac{(0.1)(2.0769)(321.7)}{120} = 0.5568\text{ m}^3
+$$
+
+$$
+V_{N_2,2} = V_{N_2,1} + (V_{\text{He},1} - V_{\text{He},2}) = 0.2 + (0.6406 - 0.5568) = 0.2838\text{ m}^3
+$$
+
+    <p><strong>(ج) جرم و دمای نهایی $N_2$ و حرارت ورودی:</strong></p>
+
+$$
+m_{N_2} = \frac{(95)(0.2)}{(0.2968)(293)} = 0.2185\text{ kg}, \qquad T_{N_2,2} = \frac{(120)(0.2838)}{(0.2185)(0.2968)} = 525.1\text{ K}
+$$
+
+$$
+Q_{\text{in}} = \Delta U_{N_2} + \Delta U_{\text{He}} = (0.2185)(0.743)(525.1 - 293) + (0.1)(3.1156)(321.7 - 293) = 46.6\text{ kJ}
+$$
+
+    <p><strong>(د) آنتروپی تولیدی ($\Delta S_{\text{He}} = 0$):</strong></p>
+
+$$
+S_{\text{gen}} = \Delta S_{N_2} - \frac{Q_{\text{in}}}{T_R} = (0.2185)\left[1.039\ln\left(\frac{525.1}{293}\right) - 0.2968\ln\left(\frac{120}{95}\right)\right] - \frac{46.6\text{ kJ}}{773\text{ K}} = 0.057\text{ kJ/K}
+$$
+
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-199"
+  number="7-199"
+  title="اتصال دو مخزن صلب بخار با شیر (جریان ناپایا و ایزنتروپیک در مخزن A)"
+  tables="Tables A-5, A-6"
+  tags={['جریان ناپایا', 'دو مخزن']}
+>
+  <Fragment slot="statement">
+
+    دو مخزن صلب با یک شیر به هم متصل‌اند. مخزن A عایق است و حاوی $0.3\text{ m}^3$ بخار آب در $400\text{ kPa}$ و کیفیت $60\%$ است. مخزن B عایق نیست و حاوی $2\text{ kg}$ بخار آب در $200\text{ kPa}$ و $250^\circ\text{C}$ است. شیر باز می‌شود تا فشار مخزن A به $200\text{ kPa}$ برسد؛ ضمن آنکه $300\text{ kJ}$ گرما از مخزن B به محیط $17^\circ\text{C}$ منتقل می‌شود. با فرض فرآیند برگشت‌پذیر و آدیاباتیک برای بخار باقی‌مانده در A، (الف) دمای نهایی هر مخزن و (ب) آنتروپی تولیدی را بیابید. *(پاسخ کتاب: الف $120.2^\circ\text{C}$ و $116.1^\circ\text{C}$، ب $0.498\text{ kJ/K}$)*
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>(الف) مخزن A (حالت ۱ و ۲، فرآیند ایزنتروپیک برای جرم باقی‌مانده در A):</strong></p>
+    <ul>
+      <li>در $P_{A,1} = 400\text{ kPa}, x_{A,1} = 0.6$ (<span dir="ltr">Table A-5</span>): $v_{A,1} = 0.27788\text{ m}^3/\text{kg}$، $u_{A,1} = 1773.6\text{ kJ/kg}$، $s_{A,1} = 4.8479\text{ kJ/kg}\cdot\text{K}$. جرم اولیه: $m_{A,1} = 0.3 / 0.27788 = 1.080\text{ kg}$.</li>
+      <li>در $P_{A,2} = 200\text{ kPa}$ و $s_{A,2} = s_{A,1} = 4.8479$: مخلوط اشباع است با $T_{A,2} = T_{\text{sat}@200\text{ kPa}} = 120.2^\circ\text{C}$، کیفیت $x_{A,2} = 0.5928$، $v_{A,2} = 0.52552\text{ m}^3/\text{kg}$ و $u_{A,2} = 1704.7\text{ kJ/kg}$. جرم باقی‌مانده: $m_{A,2} = 0.3 / 0.52552 = 0.5709\text{ kg}$.</li>
+    </ul>
+
+    <p><strong>مخزن B:</strong> در حالت ۱ (<span dir="ltr">Table A-6</span>، $200\text{ kPa}, 250^\circ\text{C}$): $v_{B,1} = 1.1989\text{ m}^3/\text{kg}$، $u_{B,1} = 2731.4\text{ kJ/kg}$، $s_{B,1} = 7.7100\text{ kJ/kg}\cdot\text{K}$. جرم منتقل‌شده از A به B برابر $1.080 - 0.5709 = 0.5091\text{ kg}$ است؛ پس $m_{B,2} = 2.509\text{ kg}$ و $v_{B,2} = \frac{2(1.1989)}{2.509} = 0.9558\text{ m}^3/\text{kg}$.</p>
+    <p>از موازنهٔ انرژی کل مجموعهٔ بستهٔ $(A + B)$:</p>
+
+$$
+-Q_{\text{out}} = (m_{A,2}u_{A,2} - m_{A,1}u_{A,1}) + (m_{B,2}u_{B,2} - m_{B,1}u_{B,1})
+$$
+
+$$
+-300 = [(0.5709)(1704.7) - (1.080)(1773.6)] + [(2.509)u_{B,2} - 2(2731.4)] \implies u_{B,2} = 2433.3\text{ kJ/kg}
+$$
+
+    <p>از جداول بخار در $v_{B,2} = 0.9558$ و $u_{B,2} = 2433.3$: $T_{B,2} = 116.1^\circ\text{C}$ و $s_{B,2} = 6.9156\text{ kJ/kg}\cdot\text{K}$.</p>
+
+    <p><strong>(ب) آنتروپی تولیدی کل (با مرز گسترش‌یافته تا $T_{\text{surr}} = 290\text{ K}$):</strong></p>
+
+$$
+S_{\text{gen}} = \Delta S_A + \Delta S_B + \frac{Q_{\text{out}}}{T_{\text{surr}}} = 0 + [(2.509)(6.9156) - 2(7.7100)] + \frac{300}{290} = 0.498\text{ kJ/K}
+$$
+
+
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-7-215"
+  number="7-215"
+  title="پر شدن سیلندر-پیستون عایق با هوای خط تغذیه"
+  tables="Table A-2"
+  tags={['جریان ناپایا', 'سیلندر-پیستون']}
+>
+  <Fragment slot="statement">
+
+    یک سیلندر-پیستون عایق $0.40\text{ m}^3$ در ابتدا حاوی $1.3\text{ kg}$ هوا در دمای $30^\circ\text{C}$ است و پیستون آزادانه حرکت می‌کند. هوا از خط تغذیه با فشار $500\text{ kPa}$ و دمای $70^\circ\text{C}$ وارد سیلندر می‌شود تا حجم ۵۰٪ افزایش یابد. با گرمای ویژه ثابت دمای اتاق بیابید: (الف) دمای نهایی، (ب) جرم واردشده، (ج) کار انجام‌شده و (د) آنتروپی تولیدی.
+
+  </Fragment>
+  <Fragment slot="solution">
+
+    <p><strong>فشار ثابت سیلندر و کار مرزی (بخش ج):</strong></p>
+
+$$
+P_1 = \frac{m_1 R T_1}{V_1} = \frac{(1.3)(0.287)(303)}{0.40} = 282.6\text{ kPa} = P_2
+$$
+
+$$
+W_{b,\text{out}} = P_1 (V_2 - V_1) = (282.6\text{ kPa})(1.5 \times 0.40 - 0.40)\text{ m}^3 = 56.52\text{ kJ}
+$$
+
+    <p><strong>(الف و ب) دمای نهایی و جرم واردشده:</strong> از قانون گاز ایده‌آل $m_2 = \frac{(282.6)(0.60)}{0.287\,T_2} = \frac{590.8}{T_2}$ و $m_i = m_2 - 1.3$. با موازنهٔ انرژی ناپایا ($m_i h_i - W_{b,\text{out}} = m_2 u_2 - m_1 u_1$):</p>
+
+$$
+\left(\frac{590.8}{T_2} - 1.3\right)(1.005)(343) - 56.52 = \left(\frac{590.8}{T_2}\right)(0.718)T_2 - (1.3)(0.718)(303) \implies T_2 = 315.3\text{ K}
+$$
+
+$$
+m_2 = \frac{590.8}{315.3} = 1.874\text{ kg}, \qquad m_i = 1.874 - 1.3 = 0.5742\text{ kg}
+$$
+
+    <p><strong>(د) آنتروپی تولیدی ($S_{\text{gen}} = m_2 s_2 - m_1 s_1 - m_i s_i = m_2(s_2 - s_i) - m_1(s_1 - s_i)$):</strong></p>
+
+$$
+S_{\text{gen}} = (1.874)\left[1.005\ln\frac{315.3}{343} - 0.287\ln\frac{282.6}{500}\right] - (1.3)\left[1.005\ln\frac{303}{343} - 0.287\ln\frac{282.6}{500}\right] = 0.09714\text{ kJ/K}
+$$
+
+    <div class="jh-trap not-content">
+
+      <strong>تلهٔ امتحانی:</strong> در فرآیندهای پرشدن سیلندر-پیستون فشار ثابت، نباید کل جرم ورودی را با $c_v$ یا $c_p$ یکسان بنویسید؛ جرم ورودی از خط تغذیه با <strong>آنتالپی ($c_p T_i$)</strong> وارد می‌شود در حالی که جرم داخل سیلندر تغییر <strong>انرژی داخلی ($c_v T$)</strong> دارد!
+
+    </div>
+
+  </Fragment>
+</ExerciseCard>

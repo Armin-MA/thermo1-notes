@@ -1,0 +1,106 @@
+---
+// شبیه‌ساز مفهومی مانومتر و فشار هیدرواستاتیک (فصل ۱)
+---
+
+<div class="jh-widget not-content" id="manometer-widget">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">شبیه‌ساز تعادل فشار در مانومتر و خلأ</span>
+    <span class="jh-widget__sub">رابطهٔ <span dir="ltr">P_abs = P_atm + rho·g·h</span> با انتخاب سیال مانومتر و جهت ستون</span>
+  </div>
+
+  <div class="jh-widget__btns" id="mano-presets">
+    <button type="button" class="jh-widget__btn is-active" data-rho="13600" data-h="0.40" data-mode="gage">جیوه (۱-۵۰ سنجل)</button>
+    <button type="button" class="jh-widget__btn" data-rho="1000" data-h="0.65" data-mode="gage">ستون آب</button>
+    <button type="button" class="jh-widget__btn" data-rho="13600" data-h="0.30" data-mode="vac">حالت خلأ (P_gas &lt; P_atm)</button>
+  </div>
+
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl">
+      <span>اختلاف ارتفاع <span dir="ltr">h</span> (m): <strong id="mano-h-lbl" dir="ltr">0.40</strong></span>
+      <input id="mano-h" type="range" min="0.05" max="1.00" step="0.05" value="0.40" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>فشار جو <span dir="ltr">P_atm</span> (kPa): <strong id="mano-atm-lbl" dir="ltr">100</strong></span>
+      <input id="mano-atm" type="range" min="85" max="105" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__canvas">
+    <svg viewBox="0 0 420 150" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تعادل فشار مانومتر">
+      <rect x="28" y="34" width="66" height="62" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+      <text x="61" y="68" text-anchor="middle" fill="currentColor" font-size="12" font-weight="700">Gas (P₁)</text>
+      <path d="M 94 65 L 145 65 L 145 122 L 235 122 L 235 28" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+      <path id="mano-col" d="M 145 92 L 145 122 L 235 122 L 235 55" fill="none" stroke="#0284c7" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="255" y1="55" x2="255" y2="92" stroke="#d97706" stroke-width="2" />
+      <text id="mano-svg-h" x="264" y="77" fill="#d97706" font-size="11.5" font-weight="700">h = 0.40 m</text>
+      <text x="235" y="18" text-anchor="middle" fill="currentColor" font-size="11">P_atm ↓</text>
+    </svg>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">فشار ستون سیال (<span dir="ltr">ΔP</span>)</span>
+      <span class="jh-metric__val" id="mano-dp">+53.37 kPa</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">فشار مطلق مخزن (<span dir="ltr">P_abs</span>)</span>
+      <span class="jh-metric__val" id="mano-pabs">153.37 kPa</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">نوع فشارسنجی</span>
+      <span class="jh-metric__val" id="mano-type" style="direction:rtl;text-align:right">پیمانه‌ای (مثبت)</span>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('manometer-widget');
+  if (!root) return;
+  let rho = 13600;
+  let mode = 'gage';
+  const hEl = root.querySelector('#mano-h');
+  const atmEl = root.querySelector('#mano-atm');
+  const hLbl = root.querySelector('#mano-h-lbl');
+  const atmLbl = root.querySelector('#mano-atm-lbl');
+  const dpEl = root.querySelector('#mano-dp');
+  const pabsEl = root.querySelector('#mano-pabs');
+  const typeEl = root.querySelector('#mano-type');
+  const svgH = root.querySelector('#mano-svg-h');
+  const col = root.querySelector('#mano-col');
+
+  function update() {
+    const h = parseFloat(hEl.value);
+    const patm = parseFloat(atmEl.value);
+    hLbl.textContent = h.toFixed(2);
+    atmLbl.textContent = patm.toFixed(0);
+    const dpKpa = (rho * 9.81 * h) / 1000;
+    const signedDp = mode === 'vac' ? -dpKpa : dpKpa;
+    const pabs = Math.max(0, patm + signedDp);
+    dpEl.textContent = `${signedDp >= 0 ? '+' : ''}${signedDp.toFixed(2)} kPa`;
+    pabsEl.textContent = `${pabs.toFixed(2)} kPa`;
+    typeEl.textContent = mode === 'vac' ? 'فشار خلأ (زیر جو)' : 'فشار پیمانه‌ای (بالای جو)';
+    svgH.textContent = `h = ${h.toFixed(2)} m`;
+    const offset = Math.round(h * 38);
+    if (mode === 'vac') {
+      col.setAttribute('d', `M 145 ${92 - offset} L 145 122 L 235 122 L 235 92`);
+    } else {
+      col.setAttribute('d', `M 145 92 L 145 122 L 235 122 L 235 ${92 - offset}`);
+    }
+  }
+
+  root.querySelectorAll('#mano-presets button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#mano-presets button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      rho = parseFloat(btn.getAttribute('data-rho') || '13600');
+      mode = btn.getAttribute('data-mode') || 'gage';
+      hEl.value = btn.getAttribute('data-h') || '0.40';
+      update();
+    });
+  });
+  hEl.addEventListener('input', update);
+  atmEl.addEventListener('input', update);
+  update();
+})();
+</script>

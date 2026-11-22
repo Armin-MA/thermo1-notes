@@ -1,0 +1,198 @@
+---
+title: ۴-۲ قانون اول برای سیستم بسته، گرمای ویژه و ۳ روش گاز ایده‌آل
+description: موازنه انرژی سیستم بسته، تله انبساط آزاد گاز ایده‌آل در برابر بخار آب، تله فشار ثابت و آنتالپی، روابط مایر، سه روش محاسبه تغییر انرژی داخلی گاز ایده‌آل و مواد تراکم‌ناپذیر.
+tags:
+  - درسنامه
+  - فصل-۴
+  - قانون-اول
+  - گرمای-ویژه
+  - روابط-مایر
+sitemap:
+  pageTitle: "فصل ۴: قانون اول بسته"
+---
+
+import EquationBox from '../../../components/EquationBox.astro';
+import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+
+<TopicDependencyMap
+  prerequisites={[
+    { label: '۴-۱ کار مرزی، پلی‌تروپیک و فنر', href: '/chapters/ch4-boundary-work-polytropic/', note: 'محاسبه W_b برای جایگذاری در قانون اول' },
+    { label: '۳-۱ و ۳-۲ خواص آب، مبرد و گاز ایده‌آل', href: '/chapters/ch3-ideal-real-gas/', note: 'استخراج u و h از جداول یا Pv = RT' },
+  ]}
+  unlocks={[
+    { label: '۵-۱ و ۵-۲ تحلیل انرژی احجام کنترل', href: '/chapters/ch5-steady-flow-devices/', note: 'تعمیم قانون اول به سیستم‌های باز با اضافه شدن کار جریان Pv' },
+    { label: '۶-۱ موتورهای گرمایی و چرخه‌ها', href: '/chapters/ch6-second-law-cycles/', note: 'کاربرد رابطه چرخه Q_net = W_net' },
+    { label: '۷-۲ روابط گیبس و تغییر آنتروپی', href: '/chapters/ch7-tds-ideal-gas-work/', note: 'استفاده مجدد از سه روش گرمای ویژه c_v(T) و c_p(T)' },
+    { label: 'تمارین فصل ۴ سنجل', href: '/exercises/ch4/', note: 'تمام ۱۳ تمرین قانون اول بسته مثل ۴-۲۹، ۴-۳۴، ۴-۴۱، ۴-۵۴ و ۴-۱۳۱' },
+  ]}
+/>
+
+پس از آنکه یاد گرفتیم چگونه کار مرزی را روی نمودار <span dir="ltr">P-V</span> محاسبه کنیم، اکنون تمام انتقال‌های انرژی (گرما، کار الکتریکی، کار محور و کار مرزی) را در یک معادلهٔ جامع به نام **قانون اول ترمودینامیک (پایستگی انرژی)** برای سیستم‌های بسته جمع می‌کنیم.
+
+---
+
+## ۱. تراز انرژی سیستم بسته (<span dir="ltr">Q - W = ΔE</span>)
+
+انرژی نه خلق می‌شود و نه از بین می‌رود، بلکه تنها تغییر شکل می‌دهد. برای یک سیستم بسته (که جرم از مرز آن عبور نمی‌کند):
+
+<EquationBox id="eq-4-5" number="۴-۵" label="قانون اول ترمودینامیک برای سیستم بسته (فرم کل، نرخ و ویژه)">
+
+$$
+E_{\text{in}} - E_{\text{out}} = \Delta E_{\text{system}} \quad \Longrightarrow \quad Q - W = \Delta U + \Delta KE + \Delta PE
+$$
+
+$$
+\dot{Q} - \dot{W} = \frac{dE_{\text{system}}}{dt}, \qquad q - w = \Delta u + \Delta ke + \Delta pe, \qquad \delta Q - \delta W = dE
+$$
+
+</EquationBox>
+
+در حالت‌های ساکن (که در اکثر مسائل فصل ۴ برقرار است)، $\Delta KE = 0$ و $\Delta PE = 0$ است؛ بنابراین معادله به صورت سادهٔ $Q_{\text{net,in}} - W_{\text{net,out}} = \Delta U = m(u_2 - u_1)$ در می‌آید. همیشه برای پرهیز از اشتباه علامت، فرم فیزیکی **«ورودی منهای خروجی = تغییر انرژی سیستم»** را بنویسید:
+
+$$
+(Q_{\text{in}} + W_{\text{in}}) - (Q_{\text{out}} + W_{\text{out}}) = U_2 - U_1
+$$
+
+### تلهٔ بسیار مهم ۱: مقایسهٔ انبساط آزاد در گاز ایده‌آل و بخار آب
+فرض کنید یک مخزن صلب و عایق به دو قسمت تقسیم شده؛ یک سمت پر و سمت دیگر **خلأ** است و جداره برداشته می‌شود. چون مخزن صلب است (<span dir="ltr">W = 0</span>) و عایق است (<span dir="ltr">Q = 0</span>)، از قانون اول داریم:
+
+$$
+\Delta U = 0 \quad \Longrightarrow \quad u_2 = u_1
+$$
+
+<div class="jh-trap not-content">
+  <strong>⚠️ مقایسهٔ طلایی امتحانی (انبساط آزاد گاز ایده‌آل در برابر آب/مبرد):</strong>
+  <ul style="margin:0.4rem 0 0;padding-inline-start:1.25rem">
+    <li><strong>اگر سیال گاز ایده‌آل باشد (آزمایش ژول — <a href="/thermo1-notes/exercises/ch4/#prob-4-62">تمرین ۴-۶۲</a>):</strong> چون انرژی داخلی گاز ایده‌آل فقط تابع دما است (<span dir="ltr">u = u(T)</span>)، تساوی <span dir="ltr">u_2 = u_1</span> مستقیماً نتیجه می‌دهد <strong><span dir="ltr">T_2 = T_1</span></strong>!</li>
+    <li><strong>اگر سیال آب یا مبرد باشد (<a href="/thermo1-notes/exercises/ch4/#prob-4-41">تمرین ۴-۴۱</a>):</strong> <span dir="ltr">u = u(T, v)</span> تابع هر دو خاصیت است! پس با اینکه <span dir="ltr">u_2 = u_1</span> است، دمای آب ثابت نمی‌ماند ($\Delta T \ne 0$)؛ برای مثال در تمرین ۴-۴۱ آب مایع متراکم <span dir="ltr">60 °C</span> با انبساط آزاد به <span dir="ltr">10 kPa</span> تبخیر جزئی پیدا کرده و دمایش تا <span dir="ltr">45.81 °C</span> پایین می‌آید!</li>
+  </ul>
+</div>
+
+### تلهٔ بسیار مهم ۲: فرآیند فشار ثابت شبه‌تعادلی و ظهور آنتالپی (<span dir="ltr">ΔH</span>)
+اگر یک سیستم بسته (مثل سیلندر-پیستون بدون اصطکاک) در **فشار ثابت** تغییر حجم دهد و هم‌زمان کارهای دیگری مثل کار الکتریکی یا پره هم‌زن ($W_{\text{other}}$) داشته باشد، کار کل را به دو بخش تقسیم می‌کنیم: $W = W_{\text{other}} + W_b$. از آنجا که در فشار ثابت <span dir="ltr">W_b = P_0(V_2 - V_1) = P_2 V_2 - P_1 V_1</span> است:
+
+<EquationBox id="eq-4-6" number="۴-۶" label="قانون اول در فرآیند هم‌فشار شبه‌تعادلی سیستم بسته">
+
+$$
+Q - W_{\text{other}} - P_0(V_2 - V_1) = U_2 - U_1 \quad \Longrightarrow \quad Q - W_{\text{other}} = (U_2 + P_2 V_2) - (U_1 + P_1 V_1) = H_2 - H_1 = \Delta H
+$$
+
+</EquationBox>
+
+این نتیجه (اسلاید ۱۲-۱۳ جزوه و [تمرین ۴-۳۴](/thermo1-notes/exercises/ch4/#prob-4-34)) فوق‌العاده کاربردی است: **کار مرزی فشار ثابت به‌طور خودکار درون $\Delta H$ جذب شده است!** بنابراین اگر در فرآیند فشار ثابت از $\Delta H$ استفاده کردید، **دیگر نباید <span dir="ltr">W_b</span> را دوباره در معادلهٔ انرژی بنویسید** (دوباره‌شماری تلهٔ بسیار رایج امتحانی است!).
+
+---
+
+## ۲. گرمای ویژه (<span dir="ltr">c_v, c_p</span>) و روابط مایر برای گاز ایده‌آل
+
+گرمای ویژه یعنی انرژی لازم برای افزایش دمای واحد جرم یک ماده به اندازهٔ یک درجه. تعریف ترمودینامیکی دقیق آن بر حسب مشتقات جزئی خواص چنین است:
+
+<EquationBox id="eq-4-7" number="۴-۷" label="تعریف ترمودینامیکی گرمای ویژه در حجم ثابت و فشار ثابت">
+
+$$
+c_v = \left( \frac{\partial u}{\partial T} \right)_v, \qquad c_p = \left( \frac{\partial h}{\partial T} \right)_p \quad [\text{kJ/kg}\cdot\text{K}]
+$$
+
+</EquationBox>
+
+نکتهٔ مهم این است که <span dir="ltr">c_v</span> و <span dir="ltr">c_p</span> **خودشان خاصیت ماده هستند** و به مسیر فرآیند ربطی ندارند! برای **گاز ایده‌آل**، ژول نشان داد که انرژی داخلی فقط تابع دماست (<span dir="ltr">u = u(T)</span>) و در نتیجه آنتالپی نیز فقط تابع دما خواهد بود (<span dir="ltr">h = u(T) + RT = h(T)</span>). پس برای گاز ایده‌آل مشتقات جزئی به مشتقات کامل تبدیل می‌شوند:
+
+$$
+du = c_v(T) \, dT, \qquad dh = c_p(T) \, dT
+$$
+
+با دیفرانسیل‌گیری از <span dir="ltr">h = u + RT</span> نسبت به <span dir="ltr">T</span>، **رابطهٔ مایر (Mayer Relation)** و نسبت گرماهای ویژه (<span dir="ltr">k</span>) به‌دست می‌آیند:
+
+<EquationBox id="eq-4-8" number="۴-۸" label="روابط مایر و نسبت گرماهای ویژه برای گاز ایده‌آل">
+
+$$
+c_p - c_v = R, \qquad \bar{c}_p - \bar{c}_v = R_u
+$$
+
+$$
+k = \frac{c_p}{c_v}, \qquad c_p = \frac{k R}{k - 1}, \qquad c_v = \frac{R}{k - 1}
+$$
+
+</EquationBox>
+
+به خاطر داشته باشید که برای گازهای تک‌اتمی (مثل <span dir="ltr">He, Ar</span>) مقدار <span dir="ltr">k = 1.667</span> و برای گازهای دواتمی در دمای اتاق (مثل هوا، <span dir="ltr">N2, O2</span>) مقدار $k \approx 1.4$ است و با افزایش پیچیدگی مولکول یا افزایش دما، گرمای ویژه افزایش می‌یابد.
+
+---
+
+## ۳. سه روش محاسبهٔ <span dir="ltr">Δu</span> و <span dir="ltr">Δh</span> برای گاز ایده‌آل
+
+برای محاسبهٔ تغییرات انرژی داخلی یا آنتالپی گاز ایده‌آل بین <span dir="ltr">T_1</span> و <span dir="ltr">T_2</span> دقیقاً سه روش وجود دارد (مثال اسلاید ۲۳-۲۴ جزوه برای گرم کردن هوا از <span dir="ltr">300 K</span> تا <span dir="ltr">600 K</span> و [تمرین ۴-۵۴](/thermo1-notes/exercises/ch4/#prob-4-54)):
+
+1. **روش اول — جداول گاز ایده‌آل (`Table A-17` برای هوا و `A-18..A-25` برای سایر گازها):** دقیق‌ترین و سریع‌ترین روش! مقادیر <span dir="ltr">u</span> و <span dir="ltr">h</span> مستقیماً بر حسب دما از جدول خوانده می‌شوند:
+   $\Delta u = u_2 - u_1 = 434.78 - 214.07 = 220.71 \text{ kJ/kg}$.
+2. **روش دوم — انتگرال‌گیری از چندجمله‌ای گرمای ویژه (`Table A-2c`):** جدول `A-2c` ضرایب $\bar{c}_p(T) = a + bT + cT^2 + dT^3$ را بر واحد مول می‌دهد. برای به‌دست آوردن $\Delta \bar{u}$، حتماً ابتدا **$\bar{c}_v(T) = \bar{c}_p(T) - R_u$** را بنویسید، انتگرال بگیرید و در پایان بر جرم مولی <span dir="ltr">M</span> تقسیم کنید (برای هوا $\Delta u = 6447 / 28.97 = 222.5 \text{ kJ/kg}$).
+3. **روش سوم — گرمای ویژهٔ ثابت در دمای میانگین (`Table A-2b`) یا دمای اتاق (`Table A-2a`):** در بازه‌های دمایی کوچک، تغییر گرمای ویژه با دما تقریباً خطی است؛ پس از $c_{v,\text{avg}}$ در دمای $T_{\text{avg}} = (T_1 + T_2)/2$ استفاده می‌کنیم:
+
+<EquationBox id="eq-4-9" number="۴-۹" label="محاسبه تقریبی تغییرات انرژی و آنتالپی با گرمای ویژه میانگین">
+
+$$
+\Delta u \approx c_{v,\text{avg}} (T_2 - T_1), \qquad \Delta h \approx c_{p,\text{avg}} (T_2 - T_1)
+$$
+
+</EquationBox>
+
+*(در مثال هوا، در $T_{\text{avg}} = 450 \text{ K}$ داریم $c_{v,\text{avg}} = 0.733 \text{ kJ/kg\cdot K}$ که $\Delta u = 220 \text{ kJ/kg}$ می‌دهد و بسیار نزدیک به مقدار دقیق <span dir="ltr">220.71</span> است.)*
+
+---
+
+## ۴. جامدات و مایعات تراکم‌ناپذیر (`Table A-3`)
+
+برای **جامدات و مایعات** که چگالی آن‌ها با تغییر فشار عملاً ثابت است (**مادهٔ تراکم‌ناپذیر**، $v = \text{const}$)، ثابت می‌شود که هر دو گرمای ویژه با هم برابرند و تنها تابع دما هستند:
+
+<EquationBox id="eq-4-10" number="۴-۱۰" label="تغییر انرژی داخلی و آنتالپی مواد تراکم‌ناپذیر">
+
+$$
+c_p = c_v = c(T) \quad \Longrightarrow \quad \Delta u = \int_{1}^{2} c(T)\,dT \approx c_{\text{avg}} (T_2 - T_1)
+$$
+
+$$
+\Delta h = \Delta u + v \, \Delta P \approx c_{\text{avg}} (T_2 - T_1) + v (P_2 - P_1)
+$$
+
+</EquationBox>
+
+* **برای جامدات** (مثل گوی‌های برنجی در [تمرین ۴-۸۸](/thermo1-notes/exercises/ch4/#prob-4-88)): ترم $v \Delta P$ ناچیز است و بنابراین $\Delta h \approx \Delta u \approx c \Delta T$.
+* **برای مایعات** دو تحول مهندسی بسیار متداول است (اسلاید ۲۸ جزوه):
+  * **تحول فشار ثابت (مانند هیترها):** $\Delta P = 0 \implies \Delta h = c_{\text{avg}} \Delta T$.
+  * **تحول دما ثابت (مانند پمپ‌های آب):** $\Delta T = 0 \implies \Delta h = v \Delta P \ne 0$! (پس برای پمپ ایده‌آل دماثابت هرگز ننویسید $\Delta h = 0$!)
+
+---
+
+## ۵. سیستم بسته تحت یک چرخهٔ ترمودینامیکی
+
+در یک **چرخه (Cycle)**، سیستم پس از طی چندین فرآیند دقیقاً به حالت اولیهٔ خود باز می‌گردد؛ بنابراین تغییر تمام خواص (توابع حالت) در یک چرخهٔ کامل برابر صفر است: $\Delta E_{\text{cycle}} = 0$. از قانون اول نتیجه می‌شود:
+
+<EquationBox id="eq-4-11" number="۴-۱۱" label="قانون اول برای یک چرخه بسته">
+
+$$
+Q_{\text{net,in}} - W_{\text{net,out}} = \Delta E_{\text{cycle}} = 0 \quad \Longrightarrow \quad Q_{\text{net,in}} = W_{\text{net,out}}
+$$
+
+</EquationBox>
+
+یعنی در یک چرخهٔ کامل، **کار خالص خروجی دقیقاً برابر گرمای خالص ورودی** است (پایهٔ تحلیل موتورهای گرمایی در فصل ۶).
+
+---
+
+## 📝 تمرین‌های این فصل
+
+تمامی ۱۳ تمرین منتخب دکتر صفاری از فصل چهارم کتاب سنجل (ویرایش هشتم) به‌همراه حل تشریحی کامل، رسم ذهنی/هندسی نمودارهای <span dir="ltr">P-V</span> و نکات دست‌نویس حل‌تمرین (TA) در صفحهٔ [بانک تمارین فصل ۴](/thermo1-notes/exercises/ch4/) قرار دارند:
+
+* [تمرین ۴-۶](/thermo1-notes/exercises/ch4/#prob-4-6): کار تراکم بخار آب در سیلندر-پیستون دارای استپر
+* [تمرین ۴-۱۰](/thermo1-notes/exercises/ch4/#prob-4-10): محاسبهٔ کار تراکم خطی <span dir="ltr">P = aV + b</span> از روش هندسی و انتگرال
+* [تمرین ۴-۲۱](/thermo1-notes/exercises/ch4/#prob-4-21): انبساط مخلوط اشباع آب در سیلندر-پیستون فنردار
+* [تمرین ۴-۲۴](/thermo1-notes/exercises/ch4/#prob-4-24): فرآیند دومرحله‌ای تبخیر آب و فشرده‌سازی فنر خطی
+* [تمرین ۴-۲۹](/thermo1-notes/exercises/ch4/#prob-4-29): گرمایش مخزن صلب مبرد <span dir="ltr">R-134a</span>
+* [تمرین ۴-۳۴](/thermo1-notes/exercises/ch4/#prob-4-34): تلهٔ فشار ثابت با گرم‌کن برقی و هم‌زن پره‌ای ($W_e + W_pw = \Delta H$)
+* [تمرین ۴-۴۱](/thermo1-notes/exercises/ch4/#prob-4-41): انبساط آزاد آب مایع متراکم به محفظهٔ خلأ و افت دما
+* [تمرین ۴-۵۴](/thermo1-notes/exercises/ch4/#prob-4-54): محاسبهٔ $\Delta u$ هیدروژن با سه روش جدول <span dir="ltr">A-2c</span>، <span dir="ltr">A-2b</span> و <span dir="ltr">A-2a</span>
+* [تمرین ۴-۶۲](/thermo1-notes/exercises/ch4/#prob-4-62): انبساط آزاد گاز ایده‌آل به محفظهٔ خلأ (<span dir="ltr">T_2 = T_1</span>)
+* [تمرین ۴-۷۶](/thermo1-notes/exercises/ch4/#prob-4-76): گرمایش هوا در سیلندر-پیستون روی استپر تا فشار شناوری و انبساط هم‌فشار
+* [تمرین ۴-۸۸](/thermo1-notes/exercises/ch4/#prob-4-88): نرخ دفع حرارت در کوئنچ کردن گوی‌های برنجی درون حمام آب
+* [تمرین ۴-۱۲۱](/thermo1-notes/exercises/ch4/#prob-4-121): گرمایش شبانهٔ خانهٔ خورشیدی با مخازن آب و هیتر برقی پشتیبان
+* [تمرین ۴-۱۳۱](/thermo1-notes/exercises/ch4/#prob-4-131): اتصال دو مخزن صلب آب با باز شدن شیر و تعادل حرارتی با محیط <span dir="ltr">25 °C</span>

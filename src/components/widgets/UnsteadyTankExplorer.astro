@@ -1,0 +1,85 @@
+---
+// مقایسه‌گر پرکردن مخزن صلب عایق در برابر سیلندر متحرک هم‌فشار (فصل ۵ - اسلاید ۳۵)
+---
+
+<div class="jh-widget not-content" id="unsteady-tank-widget">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">شبیه‌ساز پر کردن ناپایا: مخزن صلب در برابر سیلندر متحرک</span>
+    <span class="jh-widget__sub">مقایسه دمای نهایی گاز ایده‌آل (<span dir="ltr">T_line = 300 K</span>) هنگام پر شدن مخزن خالی اولیه</span>
+  </div>
+
+  <div class="jh-widget__btns" id="ut-cases">
+    <button type="button" class="jh-widget__btn is-active" data-mode="rigid">مخزن صلب عایق (<span dir="ltr">W_b = 0</span>)</button>
+    <button type="button" class="jh-widget__btn" data-mode="piston">سیلندر با پیستون آزاد هم‌فشار</button>
+  </div>
+
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl">
+      <span>دمای خط تغذیه <span dir="ltr">T_in</span> (K): <strong id="ut-tin-lbl" dir="ltr">300</strong></span>
+      <input id="ut-tin" type="range" min="250" max="600" step="10" value="300" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>نسبت گرمای ویژه <span dir="ltr">k = c_p/c_v</span>: <strong id="ut-k-lbl" dir="ltr">1.40</strong></span>
+      <input id="ut-k" type="range" min="1.15" max="1.67" step="0.01" value="1.40" />
+    </label>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">رابطه قانون اول جریان یکنواخت</span>
+      <span class="jh-metric__val" id="ut-eq">u₂ = h_in</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">دمای نهایی داخل سیستم (<span dir="ltr">T₂</span>)</span>
+      <span class="jh-metric__val" id="ut-t2">420.0 K</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">تفسیر فیزیکی</span>
+      <span class="jh-metric__val" id="ut-note" style="direction:rtl;text-align:right">افزایش k برابری دما به‌دلیل کار جریان</span>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('unsteady-tank-widget');
+  if (!root) return;
+  let mode = 'rigid';
+  const tinEl = root.querySelector('#ut-tin');
+  const kEl = root.querySelector('#ut-k');
+  const tinLbl = root.querySelector('#ut-tin-lbl');
+  const kLbl = root.querySelector('#ut-k-lbl');
+  const eqEl = root.querySelector('#ut-eq');
+  const t2El = root.querySelector('#ut-t2');
+  const noteEl = root.querySelector('#ut-note');
+
+  function update() {
+    const tin = parseFloat(tinEl.value);
+    const k = parseFloat(kEl.value);
+    tinLbl.textContent = tin.toFixed(0);
+    kLbl.textContent = k.toFixed(2);
+    if (mode === 'rigid') {
+      const t2 = k * tin;
+      eqEl.textContent = 'u₂ = h_in  ⇒  T₂ = k · T_in';
+      t2El.textContent = `${t2.toFixed(1)} K`;
+      noteEl.textContent = `کل انرژی جریان (h_in = u_in + Pv) به انرژی درونی u₂ تبدیل شد (${k.toFixed(2)}× داغ‌تر!).`;
+    } else {
+      eqEl.textContent = 'u₂ + P₂v₂ = h_in  ⇒  h₂ = h_in';
+      t2El.textContent = `${tin.toFixed(1)} K`;
+      noteEl.textContent = 'بخش Pv دقیقاً صرف کار مرزی عقب‌راندن پیستون شد؛ پس دما برابر T_in ماند.';
+    }
+  }
+
+  root.querySelectorAll('#ut-cases button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#ut-cases button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      mode = btn.getAttribute('data-mode') || 'rigid';
+      update();
+    });
+  });
+  tinEl.addEventListener('input', update);
+  kEl.addEventListener('input', update);
+  update();
+})();
+</script>

@@ -1,0 +1,88 @@
+---
+// نمودار تعاملی فرآیند پلی‌تروپیک P-v (فصل ۴) با ظاهر آرام دانشگاهی
+---
+
+<div class="jh-widget not-content" id="pv-explorer">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">نمودار تعاملی <span dir="ltr">P-v</span> و کار مرزی پلی‌تروپیک</span>
+    <span class="jh-widget__sub">تغییر سطح زیر منحنی (<span dir="ltr">W_b = ∫ P dV</span>) با تغییر شاخص <span dir="ltr">n</span></span>
+  </div>
+
+  <div class="jh-widget__btns" id="pv-presets">
+    <button type="button" class="jh-widget__btn" data-n="0">هم‌فشار (n = 0)</button>
+    <button type="button" class="jh-widget__btn" data-n="1">هم‌دما (n = 1)</button>
+    <button type="button" class="jh-widget__btn is-active" data-n="1.4">آدیاباتیک هوا (n = 1.4)</button>
+    <button type="button" class="jh-widget__btn" data-n="1.8">تراکم/انبساط تند (n = 1.8)</button>
+  </div>
+
+  <label class="jh-widget__ctrl" style="margin-bottom:0.7rem">
+    <span>شاخص فرآیند (<span dir="ltr">n</span>): <strong id="pv-n-label" dir="ltr">1.40</strong></span>
+    <input id="pv-n" type="range" min="0" max="2" step="0.1" value="1.4" />
+  </label>
+
+  <div class="jh-widget__canvas">
+    <svg id="pv-svg" viewBox="0 0 460 210" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تعاملی P-v">
+      <line x1="50" y1="18" x2="50" y2="178" stroke="currentColor" stroke-opacity="0.45" stroke-width="2" />
+      <line x1="50" y1="178" x2="430" y2="178" stroke="currentColor" stroke-opacity="0.45" stroke-width="2" />
+      <text x="28" y="26" fill="currentColor" font-size="13" font-weight="700">P</text>
+      <text x="434" y="182" fill="currentColor" font-size="13" font-weight="700">v</text>
+      <path id="pv-area" d="" fill="#0284c7" fill-opacity="0.18" />
+      <path id="pv-curve" d="" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round" />
+      <circle cx="95" cy="44" r="5" fill="#d97706" />
+      <circle id="pv-dot2" cx="385" cy="145" r="5" fill="#059669" />
+      <text id="pv-work-text" x="235" y="156" text-anchor="middle" fill="currentColor" font-size="13" font-weight="700"></text>
+    </svg>
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('pv-explorer');
+  if (!root) return;
+  const slider = root.querySelector('#pv-n');
+  const label = root.querySelector('#pv-n-label');
+  const area = root.querySelector('#pv-area');
+  const curve = root.querySelector('#pv-curve');
+  const dot2 = root.querySelector('#pv-dot2');
+  const workText = root.querySelector('#pv-work-text');
+
+  function renderPV(nVal) {
+    const n = Number(nVal);
+    label.textContent = n.toFixed(2);
+    const v1 = 1.0, v2 = 3.2, p1 = 300;
+    const pts = [];
+    for (let i = 0; i <= 40; i++) {
+      const v = v1 + (v2 - v1) * (i / 40);
+      const p = p1 * Math.pow(v1 / v, n);
+      const x = 95 + ((v - v1) / (v2 - v1)) * 290;
+      const y = 178 - (p / 340) * 140;
+      pts.push([x, y]);
+    }
+    const curveD = pts.map((pt, idx) => `${idx === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' ');
+    const last = pts[pts.length - 1];
+    curve.setAttribute('d', curveD);
+    area.setAttribute('d', `${curveD} L ${last[0].toFixed(1)} 178 L ${pts[0][0].toFixed(1)} 178 Z`);
+    dot2.setAttribute('cx', last[0].toFixed(1));
+    dot2.setAttribute('cy', last[1].toFixed(1));
+
+    const work = Math.abs(n - 1) < 0.02
+      ? p1 * v1 * Math.log(v2 / v1)
+      : (p1 * Math.pow(v1 / v2, n) * v2 - p1 * v1) / (1 - n);
+    workText.textContent = `w_b ≈ ${work.toFixed(1)} kJ/kg`;
+  }
+
+  slider.addEventListener('input', (e) => renderPV(e.target.value));
+  root.querySelectorAll('#pv-presets button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#pv-presets button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const val = btn.getAttribute('data-n');
+      if (val !== null) {
+        slider.value = val;
+        renderPV(val);
+      }
+    });
+  });
+  renderPV(1.4);
+})();
+</script>

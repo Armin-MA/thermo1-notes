@@ -1,0 +1,76 @@
+---
+// آزمایشگر اگزرژی، کار محیط و بازده قانون دوم (فصل ۸)
+---
+
+<div class="jh-widget not-content" id="exergy-widget">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">تجزیهٔ کار برگشت‌پذیر و تخریب اگزرژی <span dir="ltr" style="display:inline-block">(X_dest = T₀ · S_gen)</span></span>
+    <span class="jh-widget__sub">مقایسهٔ <span dir="ltr">W_u</span>، کار محیط <span dir="ltr">W_surr</span> و تلفات برگشت‌ناپذیری در حالت مردهٔ <span dir="ltr">T₀</span></span>
+  </div>
+
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl">
+      <span>کار برگشت‌پذیر کل <span dir="ltr">W_rev,out</span> (kJ): <strong id="ex-wrev-lbl" dir="ltr">120</strong></span>
+      <input id="ex-wrev" type="range" min="40" max="200" step="5" value="120" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>تولید آنتروپی <span dir="ltr">S_gen</span> (kJ/K): <strong id="ex-sgen-lbl" dir="ltr">0.12</strong></span>
+      <input id="ex-sgen" type="range" min="0" max="0.35" step="0.01" value="0.12" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>دمای محیط <span dir="ltr">T₀</span> (K): <strong id="ex-t0-lbl" dir="ltr">298</strong></span>
+      <input id="ex-t0" type="range" min="260" max="320" step="2" value="298" />
+    </label>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">تخریب اگزرژی (<span dir="ltr">X_dest = I</span>)</span>
+      <span class="jh-metric__val" id="ex-xdest">35.8 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">کار مفید واقعی (<span dir="ltr">W_u,out</span>)</span>
+      <span class="jh-metric__val" id="ex-wu">84.2 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">بازده قانون دوم (<span dir="ltr">η_II = W_u/W_rev</span>)</span>
+      <span class="jh-metric__val" id="ex-eta2">70.2%</span>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('exergy-widget');
+  if (!root) return;
+  const wrevEl = root.querySelector('#ex-wrev');
+  const sgenEl = root.querySelector('#ex-sgen');
+  const t0El = root.querySelector('#ex-t0');
+  const wrevLbl = root.querySelector('#ex-wrev-lbl');
+  const sgenLbl = root.querySelector('#ex-sgen-lbl');
+  const t0Lbl = root.querySelector('#ex-t0-lbl');
+  const xdestEl = root.querySelector('#ex-xdest');
+  const wuEl = root.querySelector('#ex-wu');
+  const eta2El = root.querySelector('#ex-eta2');
+
+  function update() {
+    const wrev = parseFloat(wrevEl.value);
+    const sgen = parseFloat(sgenEl.value);
+    const t0 = parseFloat(t0El.value);
+    wrevLbl.textContent = wrev.toFixed(0);
+    sgenLbl.textContent = sgen.toFixed(2);
+    t0Lbl.textContent = t0.toFixed(0);
+    const xdest = Math.min(wrev, t0 * sgen);
+    const wu = Math.max(0, wrev - xdest);
+    const eta2 = (wu / wrev) * 100;
+    xdestEl.textContent = `${xdest.toFixed(1)} kJ`;
+    wuEl.textContent = `${wu.toFixed(1)} kJ`;
+    eta2El.textContent = `${eta2.toFixed(1)}%`;
+  }
+
+  wrevEl.addEventListener('input', update);
+  sgenEl.addEventListener('input', update);
+  t0El.addEventListener('input', update);
+  update();
+})();
+</script>

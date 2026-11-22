@@ -1,0 +1,74 @@
+---
+// کاوشگر چرخه کارنو و بازده ایزنتروپیک روی نمودار T-s (فصول ۶ و ۷)
+---
+
+<div class="jh-widget not-content" id="carnot-ts-widget">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر چرخه کارنو و مقایسهٔ حساسیت به <span dir="ltr">T_L</span> و <span dir="ltr">T_H</span></span>
+    <span class="jh-widget__sub">بررسی <span dir="ltr">η_th,rev = 1 - T_L / T_H</span> و <span dir="ltr">COP_HP = COP_R + 1</span></span>
+  </div>
+
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl">
+      <span>دمای منبع گرم <span dir="ltr">T_H</span> (K): <strong id="ct-th-lbl" dir="ltr">800</strong></span>
+      <input id="ct-th" type="range" min="400" max="1500" step="20" value="800" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>دمای منبع سرد <span dir="ltr">T_L</span> (K): <strong id="ct-tl-lbl" dir="ltr">300</strong></span>
+      <input id="ct-tl" type="range" min="200" max="380" step="10" value="300" />
+    </label>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">حداکثر بازده موتور (<span dir="ltr">η_Carnot</span>)</span>
+      <span class="jh-metric__val" id="ct-eta">62.5%</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">ضریب عملکرد یخچال (<span dir="ltr">COP_R,max</span>)</span>
+      <span class="jh-metric__val" id="ct-copr">0.60</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">پمپ حرارتی (<span dir="ltr">COP_HP = COP_R+1</span>)</span>
+      <span class="jh-metric__val" id="ct-cophp">1.60</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">دمای بهینه بین دو کارنو</span>
+      <span class="jh-metric__val" id="ct-tmid">T_eq = √(T_H·T_L) = 489.9 K</span>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('carnot-ts-widget');
+  if (!root) return;
+  const thEl = root.querySelector('#ct-th');
+  const tlEl = root.querySelector('#ct-tl');
+  const thLbl = root.querySelector('#ct-th-lbl');
+  const tlLbl = root.querySelector('#ct-tl-lbl');
+  const etaEl = root.querySelector('#ct-eta');
+  const coprEl = root.querySelector('#ct-copr');
+  const cophpEl = root.querySelector('#ct-cophp');
+  const tmidEl = root.querySelector('#ct-tmid');
+
+  function update() {
+    const th = parseFloat(thEl.value);
+    const tl = Math.min(parseFloat(tlEl.value), th - 20);
+    thLbl.textContent = th.toFixed(0);
+    tlLbl.textContent = tl.toFixed(0);
+    const eta = (1 - tl / th) * 100;
+    const copR = tl / (th - tl);
+    const copHP = th / (th - tl);
+    const tEqEta = Math.sqrt(th * tl);
+    etaEl.textContent = `${eta.toFixed(1)}%`;
+    coprEl.textContent = copR.toFixed(2);
+    cophpEl.textContent = copHP.toFixed(2);
+    tmidEl.textContent = `√(T_H·T_L) = ${tEqEta.toFixed(1)} K`;
+  }
+
+  thEl.addEventListener('input', update);
+  tlEl.addEventListener('input', update);
+  update();
+})();
+</script>

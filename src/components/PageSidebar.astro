@@ -1,0 +1,60 @@
+---
+import Default from '@astrojs/starlight/components/PageSidebar.astro';
+import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
+---
+
+<div class="right-sidebar-panel slsg-graph-panel">
+  <div class="sl-container">
+    <details class="slsg-graph-accordion" open id="jh-graph-accordion">
+      <summary class="slsg-graph-accordion__summary">
+        <span class="slsg-graph-accordion__title">{Astro.locals.t('starlight-site-graph.graph')}</span>
+        <span class="slsg-graph-accordion__chevron" aria-hidden="true">▾</span>
+      </summary>
+      <div class="slsg-graph-accordion__body">
+        <PageGraph showGraph={true} />
+        <div class="slsg-graph-legend not-content" aria-label="راهنمای رنگ و شکل گره‌های گراف">
+          <span class="lg-item"><i class="lg-dot lg-dot--current">★</i> فعلی</span>
+          <span class="lg-item"><i class="lg-dot lg-dot--lesson">●</i> درسنامه</span>
+          <span class="lg-item"><i class="lg-dot lg-dot--ex">■</i> تمارین</span>
+          <span class="lg-item"><i class="lg-dot lg-dot--tool">▲</i> جداول</span>
+        </div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<Default>
+  <slot />
+</Default>
+
+<PageBacklinks class="right-sidebar-panel slsg-backlinks-panel">
+  <h2 slot="title">{Astro.locals.t('starlight-site-graph.backlinks')}</h2>
+</PageBacklinks>
+
+<script is:inline>
+(() => {
+  const acc = document.getElementById('jh-graph-accordion');
+  if (!acc) return;
+  const isMobile = window.matchMedia('(max-width: 71.99rem)').matches;
+  const saved = sessionStorage.getItem('jh-graph-open');
+  if (saved !== null) {
+    acc.open = saved === 'true';
+  } else if (isMobile) {
+    // در موبایل به‌صورت پیش‌فرض بسته بماند تا اسکرول صفحه طولانی و انگشت‌گیر نشود
+    acc.open = false;
+  }
+
+  acc.addEventListener('toggle', () => {
+    sessionStorage.setItem('jh-graph-open', String(acc.open));
+    if (acc.open) {
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event('resize'));
+        const g = acc.querySelector('graph-component');
+        if (g && g.simulator && typeof g.simulator.resetZoom === 'function') {
+          try { g.simulator.resetZoom(); } catch {}
+        }
+      });
+    }
+  });
+})();
+</script>

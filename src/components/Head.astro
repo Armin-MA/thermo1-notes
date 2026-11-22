@@ -1,0 +1,226 @@
+---
+import Default from '@astrojs/starlight/components/Head.astro';
+---
+
+<Default />
+
+<script is:inline>
+  window.process = window.process || { env: {}, platform: 'browser', versions: {} };
+  (() => {
+    const cache = new Map();
+    let popover = null;
+    let hideTimer = null;
+    let showTimer = null;
+    let activeLink = null;
+
+    const isTouchLike = () =>
+      window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+    function isElementVisibleInViewport(el) {
+      const r = el.getBoundingClientRect();
+      return r.top >= 48 && r.bottom <= window.innerHeight - 16;
+    }
+
+    function ensurePopover() {
+      if (popover) return popover;
+      popover = document.createElement('div');
+      popover.id = 'jh-hover-popover';
+      popover.setAttribute('role', 'dialog');
+      popover.setAttribute('aria-label', 'پیش‌نمایش سریع');
+      popover.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+      popover.addEventListener('mouseleave', scheduleHide);
+      document.body.appendChild(popover);
+      return popover;
+    }
+
+    function hidePopover() {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+      if (popover) {
+        popover.classList.remove('is-visible');
+        activeLink = null;
+      }
+    }
+
+    function scheduleHide() {
+      clearTimeout(showTimer);
+      if (isTouchLike()) return;
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(hidePopover, 180);
+    }
+
+    function positionPopover(anchorEl) {
+      const box = ensurePopover();
+      const rect = anchorEl.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const width = Math.min(440, vw - 24);
+      let left = Math.min(Math.max(12, rect.left), vw - width - 12);
+      let top = rect.bottom + 8;
+      if (top + 250 > vh && rect.top > 250) {
+        top = Math.max(12, rect.top - 230);
+      }
+      box.style.left = `${left}px`;
+      box.style.top = `${top}px`;
+    }
+
+    async function loadPreview(href) {
+      const url = new URL(href, window.location.href);
+      if (url.origin !== window.location.origin) return null;
+
+      // پیش‌نمایش معادله در همین صفحه (فقط وقتی خودش در قاب دید فعلی نباشد)
+      if (url.pathname === window.location.pathname && url.hash) {
+        const target = document.getElementById(url.hash.slice(1));
+        if (!target || isElementVisibleInViewport(target)) return null;
+        return {
+          badge: target.classList.contains('eq-card') ? '📐 پیش‌نمایش معادله' : '📌 پیش‌نمایش بخش',
+          html: target.outerHTML,
+          actionLabel: 'پرش به معادله ↓',
+          href: url.href,
+        };
+      }
+
+      // پیش‌نمایش از صفحه دیگر (مفهوم یا معادله در فصل دیگر)
+      const pageKey = url.pathname;
+      let doc = cache.get(pageKey);
+      if (!doc) {
+        const res = await fetch(pageKey);
+        if (!res.ok) return null;
+        const text = await res.text();
+        doc = new DOMParser().parseFromString(text, 'text/html');
+        cache.set(pageKey, doc);
+      }
+
+      if (url.hash) {
+        const target = doc.getElementById(url.hash.slice(1));
+        if (target) {
+          return {
+            badge: '📐 پیش‌نمایش (از صفحه دیگر)',
+            html: target.outerHTML,
+            actionLabel: 'باز کردن در صفحه ↗',
+            href: url.href,
+          };
+        }
+      }
+
+      const title = doc.querySelector('h1#_top, main h1')?.textContent?.trim() || 'پیش‌نمایش صفحه';
+      const firstPara = doc.querySelector('.sl-markdown-content > p')?.innerHTML || '';
+      if (!firstPara) return null;
+      return {
+        badge: `🔗 ${title}`,
+        html: `<p style="margin:0">${firstPara}</p>`,
+        actionLabel: 'باز کردن صفحه ↗',
+        href: url.href,
+      };
+    }
+
+    async function showPopoverFor(anchorEl, href, showActions) {
+      clearTimeout(hideTimer);
+      activeLink = anchorEl;
+      try {
+        const preview = await loadPreview(href);
+        if (!preview || activeLink !== anchorEl) return;
+        const box = ensurePopover();
+        const actionsHtml = showActions
+          ? `<div class="jh-popover-actions">
+               <a class="jh-popover-go" href="${preview.href}">${preview.actionLabel}</a>
+               <button type="button" class="jh-popover-close" aria-label="بستن پیش‌نمایش">بستن ×</button>
+             </div>`
+          : '';
+        box.innerHTML = `<div class="jh-popover-head"><span class="jh-popover-badge">${preview.badge}</span></div>${preview.html}${actionsHtml}`;
+        const closeBtn = box.querySelector('.jh-popover-close');
+        if (closeBtn) closeBtn.addEventListener('click', hidePopover);
+        const goBtn = box.querySelector('.jh-popover-go');
+        if (goBtn) goBtn.addEventListener('click', hidePopover);
+        positionPopover(anchorEl);
+        box.classList.add('is-visible');
+      } catch (_) {}
+    }
+
+    function bindHoverPopovers() {
+      const touchMode = isTouchLike();
+      // فقط ارجاع‌های درون متن اصلی (پاراگراف‌ها، تله‌ها و حل مسائل)؛
+      // منوها، فهرست‌ها، کارت‌های نقشه راه، آکاردئون پیش‌نیازها و خود شماره معادله شلوغ نمی‌شوند
+      const links = document.querySelectorAll(
+        '.sl-markdown-content > p a[href], .sl-markdown-content .jh-trap a[href], .sl-markdown-content .jh-prob-solution__body p a[href]'
+      );
+      links.forEach((link) => {
+        if (link.dataset.jhBound) return;
+        if (link.closest('.eq-card, .dep-accordion, .roadmap-grid, .sl-link-card, h1, h2, h3, h4')) return;
+        const href = link.getAttribute('href') || '';
+        if (!href || href.startsWith('http') || href.startsWith('mailto:')) return;
+        if (href.startsWith('#') && !href.startsWith('#eq-')) return;
+        if (link.classList.contains('jh-popover-go')) return;
+
+        link.dataset.jhBound = '1';
+        link.dataset.popover = '1';
+
+        // دسکتاپ: تاخیر آرام ۳۴۰ میلی‌ثانیه‌ای برای جلوگیری از شلوغی هنگام حرکت عادی ماوس
+        link.addEventListener('mouseenter', () => {
+          if (isTouchLike()) return;
+          clearTimeout(showTimer);
+          clearTimeout(hideTimer);
+          showTimer = setTimeout(() => {
+            showPopoverFor(link, href, false);
+          }, 340);
+        });
+        link.addEventListener('mouseleave', scheduleHide);
+
+        // موبایل/لمسی:
+        const isEqRef = href.includes('#eq-');
+        if (isEqRef) {
+          link.addEventListener('click', (e) => {
+            if (!isTouchLike()) return;
+            // اگر معادله همین الان در صفحه دیده می‌شود، پاپ‌آپ تکراری باز نشود
+            const url = new URL(href, window.location.href);
+            if (url.pathname === window.location.pathname && url.hash) {
+              const t = document.getElementById(url.hash.slice(1));
+              if (t && isElementVisibleInViewport(t)) return;
+            }
+            e.preventDefault();
+            if (popover?.classList.contains('is-visible') && activeLink === link) {
+              hidePopover();
+            } else {
+              showPopoverFor(link, href, true);
+            }
+          });
+        } else if (touchMode) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'jh-touch-peek-btn';
+          btn.textContent = '👁';
+          btn.title = 'پیش‌نمایش سریع بدون خروج از صفحه';
+          btn.setAttribute('aria-label', 'پیش‌نمایش سریع بدون خروج از صفحه');
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (popover?.classList.contains('is-visible') && activeLink === btn) {
+              hidePopover();
+            } else {
+              showPopoverFor(btn, href, true);
+            }
+          });
+          link.insertAdjacentElement('afterend', btn);
+        }
+      });
+
+      if (!window.__jhPopoverOutsideBound) {
+        window.__jhPopoverOutsideBound = true;
+        document.addEventListener('click', (e) => {
+          if (!popover || !popover.classList.contains('is-visible')) return;
+          const t = e.target;
+          if (popover.contains(t)) return;
+          if (activeLink && (activeLink === t || activeLink.contains(t))) return;
+          hidePopover();
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bindHoverPopovers);
+    } else {
+      bindHoverPopovers();
+    }
+    document.addEventListener('astro:page-load', bindHoverPopovers);
+  })();
+</script>

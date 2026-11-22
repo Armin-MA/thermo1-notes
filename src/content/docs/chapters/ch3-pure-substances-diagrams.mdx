@@ -1,0 +1,217 @@
+---
+title: ۳-۱ ماده خالص، تغییر فاز و نمودارهای فازی
+description: تعریف دقیق ماده خالص، فرآیند تغییر فاز در فشار ثابت، نمودارهای T-v، P-v، P-T و سطح P-v-T، رفتار فوق‌بحرانی، کیفیت بخار و تقریب مایع متراکم.
+tags:
+  - درسنامه
+  - فصل-۳
+  - ماده-خالص
+  - تغییر-فاز
+  - نمودار-فازی
+sitemap:
+  pageTitle: "فصل ۳: مواد خالص"
+---
+
+import EquationBox from '../../../components/EquationBox.astro';
+import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+
+<TopicDependencyMap
+  prerequisites={[
+    { label: 'فصل ۱: سیستم، خواص و اصل موضوعه حالت', href: '/chapters/ch1-systems-state/', note: 'تعریف حالت ترمودینامیکی با دو خاصیت مستقل شدتی' },
+    { label: 'فصل ۱: فشار مطلق و دما', href: '/chapters/ch1-pressure-temperature/', note: 'تبدیل دما به کلوین و فشار به کیلوپاسکال مطلق' },
+  ]}
+  unlocks={[
+    { label: '۳-۲ جداول، گاز ایده‌آل و ضریب تراکم‌پذیری', href: '/chapters/ch3-ideal-real-gas/', note: 'استخراج خواص از جداول اشباع، سوپرهیت و متراکم' },
+    { label: 'روش‌شناسی جداول امتحان', href: '/tools/steam-tables/', note: 'الگوریتم تشخیص ناحیه فازی و درونیابی خطی' },
+    { label: 'فصل ۴: کار مرزی و قانون اول سیستم بسته', href: '/chapters/ch4-boundary-work-polytropic/', note: 'رسم مسیر فرآیند روی نمودارهای P-v و T-v' },
+    { label: 'تمارین فصل ۳ سنجل', href: '/exercises/ch3/', note: 'مسائل تغییر فاز و نمودارخوانی مثل ۳-۲، ۳-۶، ۳-۲۸ و ۳-۴۳' },
+  ]}
+/>
+
+تا اینجای درس با مفاهیم انرژی، کار و فشار آشنا شدیم؛ اما در مهندسی مکانیک، برای محاسبهٔ کار توربین یا حرارت دیگ بخار، باید رفتار واقعی سیال عامل (مثل آب و مبرد <span dir="ltr">R-134a</span>) را دقیق بشناسیم. نقطهٔ شروع، شناخت **مادهٔ خالص** و **نقشهٔ فازی** آن است.
+
+---
+
+## ۱. مادهٔ خالص (Pure Substance) چیست؟
+
+ماده‌ای که دارای **ترکیب شیمیایی ثابت و یکنواخت (همگن)** در سرتاسر خود باشد، **مادهٔ خالص** نامیده می‌شود. نکتهٔ کلیدی این تعریف در دو شرط پنهان است:
+
+1. لزومی ندارد مادهٔ خالص فقط از یک عنصر شیمیایی تشکیل شده باشد؛ مخلوط چند گاز (مثل **هوای خشک** در دمای اتاق) تا زمانی که همگن است و ترکیب شیمیایی آن تغییر نمی‌کند، یک مادهٔ خالص محسوب می‌شود.
+2. مادهٔ خالص می‌تواند در **بیش از یک فاز** (مثلاً مخلوط آب مایع و بخار آب یا آب و یخ) هم‌زمان حضور داشته باشد، به شرط آنکه **ترکیب شیمیایی هر دو فاز یکسان** باشد.
+
+<div class="jh-trap not-content">
+  <strong>⚠️ تلهٔ کلاسیک امتحانی دکتر صفاری (مخلوط هوای مایع و هوای گازی):</strong>
+  <p style="margin:0.35rem 0 0">
+    آیا مخلوط <strong>هوای مایع و هوای گازی</strong> یک مادهٔ خالص است؟ <strong>خیر!</strong> چون نیتروژن و اکسیژن دمای جوش متفاوتی دارند (<span dir="ltr">77 K</span> در برابر <span dir="ltr">90 K</span> در فشار اتمسفر)، در فرآیند میعان یا تقطیر، درصد اکسیژن در فاز مایع بیشتر از فاز گاز می‌شود. بنابراین ترکیب شیمیایی فاز مایع با فاز بخار یکسان نیست و مخلوط هوای مایع + گاز <strong>مادهٔ خالص نیست</strong>! اما مخلوط آب مایع + بخار آب کاملاً مادهٔ خالص است.
+  </p>
+</div>
+
+هر ماده ممکن است بسته به فشار و دما در حالت‌های جامد، مایع یا گاز و حتی چند **فاز** مختلف ظاهر شود (مثلاً یخ در فشارهای بالا دارای هفت فاز بلوری مختلف، آهن جامد سه فاز، کربن جامد دو فاز و هلیم مایع دو فاز دارد). در ترمودینامیک کلاسیک، تغییر فازها را بدون ورود به جزئیات ساختار بلوری، در سطح ماکروسکوپیک مطالعه می‌کنیم.
+
+---
+
+## ۲. فرآیند تغییر فاز در فشار ثابت (مثال آب در <span dir="ltr">1 atm</span>)
+
+فرض کنید آب را درون یک سیلندر-پیستون بدون اصطکاک (که فشار ثابت <span dir="ltr">101.325 kPa</span> یا <span dir="ltr">1 atm</span> را بر سیال اعمال می‌کند) از دمای <span dir="ltr">20 °C</span> به‌آرامی گرم کنیم. آب طی این فرآیند از ۵ وضعیت متمایز عبور می‌کند:
+
+1. **مایع مادون سرد یا متراکم (Subcooled / Compressed Liquid):** در دمای <span dir="ltr">20 °C</span> و فشار <span dir="ltr">1 atm</span>، آب هنوز آمادهٔ بخار شدن نیست (<span dir="ltr">T &lt; T_sat</span>).
+2. **مایع اشباع (Saturated Liquid):** در دمای <span dir="ltr">100 °C</span> (در فشار <span dir="ltr">1 atm</span>)، آب دقیقاً در آستانهٔ تبخیر قرار دارد؛ کوچک‌ترین گرمای اضافه باعث تشکیل اولین حباب بخار می‌شود. خواص این حالت با اندیس <span dir="ltr">f</span> نمایش داده می‌شوند.
+3. **مخلوط مایع و بخار اشباع (Saturated Liquid-Vapor Mixture):** حین تبخیر، با وجود ادامهٔ حرارت‌دهی، **دما و فشار هر دو ثابت** (<span dir="ltr">100 °C</span> و <span dir="ltr">1 atm</span>) باقی می‌مانند؛ تمام گرمای ورودی صرف غلبه بر نیروهای بین‌مولکولی و شکستن پیوندهای فاز مایع (**گرمای نهان تبخیر** <span dir="ltr">h_fg</span>) می‌شود.
+4. **بخار اشباع (Saturated Vapor):** زمانی که آخرین قطرهٔ مایع تبخیر شود، بخاری داریم که دقیقاً در آستانهٔ میعان است. کوچک‌ترین حرارت‌گیری باعث تشکیل اولین قطرهٔ مایع می‌شود. خواص این حالت با اندیس <span dir="ltr">g</span> نشان داده می‌شوند.
+5. **بخار مافوق گرم یا داغ (Superheated Vapor):** ادامهٔ حرارت‌دهی (مثلاً تا <span dir="ltr">300 °C</span>) دوباره باعث افزایش دما و حجم مخصوص می‌شود. بخاری که در شرف میعان نباشد (<span dir="ltr">T &gt; T_sat</span>) بخار فوق‌گرم است (موضوع [تمرین ۳-۲](/thermo1-notes/exercises/ch3/#prob-3-2)).
+
+<EquationBox id="eq-3-1" number="۳-۱" label="وابستگی دما و فشار اشباع">
+
+$$
+T_{\text{sat}} = f(P_{\text{sat}}) \quad \Longleftrightarrow \quad P_{\text{sat}} = g(T_{\text{sat}})
+$$
+
+</EquationBox>
+
+در یک فشار معین، دمایی که در آن ماده شروع به جوشیدن می‌کند **دمای اشباع (<span dir="ltr">T_sat</span>)** و در یک دمای معین، فشاری که در آن ماده می‌جوشد **فشار اشباع (<span dir="ltr">P_sat</span>)** است. نکتهٔ بسیار کاربردی این است که در آزمایشگاه و صنایع غذایی یا تبریدی، با کاهش فشار محیط (مثلاً پمپ خلأ)، می‌توان آب را حتی در دمای اتاق به جوش آورد (**سرمایش خلأ و انجماد تبریدی**)، و برعکس، با گذاشتن درب سنگین روی قابلمه یا دیگ زودپز، فشار بالا رفته و دمای جوش از <span dir="ltr">100 °C</span> فراتر می‌رود (موضوع [تمرین ۳-۴۶](/thermo1-notes/exercises/ch3/#prob-3-46)).
+
+---
+
+## ۳. نمودارهای خواص: <span dir="ltr">T-v</span>، <span dir="ltr">P-v</span>، <span dir="ltr">P-T</span> و سطح <span dir="ltr">P-v-T</span>
+
+برای تحلیل سریع فرآیندها، وضعیت‌های ماده را روی نمودارهای دوتایی و سه‌تایی نمایش می‌دهیم:
+
+<div class="not-content" style="margin:1.2rem 0;padding:1rem;border-radius:14px;border:1px solid var(--sl-color-gray-5);background:var(--sl-color-bg-sidebar);">
+  <svg viewBox="0 0 760 250" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودارهای فازی T-v و P-v و P-T">
+    {/* Panel 1: T-v */}
+    <g transform="translate(15,15)">
+      <line x1="30" y1="195" x2="220" y2="195" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+      <line x1="30" y1="15" x2="30" y2="195" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+      <text x="16" y="22" fill="currentColor" font-size="13" font-weight="700">T</text>
+      <text x="216" y="210" fill="currentColor" font-size="13" font-weight="700">v</text>
+      <path d="M 52 185 Q 88 55 122 55 Q 158 55 198 185" fill="none" stroke="#0284c7" stroke-width="2.5" />
+      <circle cx="122" cy="55" r="4.5" fill="#dc2626" />
+      <text x="128" y="48" fill="#dc2626" font-size="10.5" font-weight="700">CP</text>
+      {/* P=const line */}
+      <path d="M 45 145 L 70 112 L 166 112 L 200 68" fill="none" stroke="#059669" stroke-width="2" />
+      <text x="172" y="64" fill="#059669" font-size="10" font-weight="700">P = const</text>
+      {/* Supercritical P > Pcr */}
+      <path d="M 40 95 Q 115 35 192 22" fill="none" stroke="#d97706" stroke-width="1.8" stroke-dasharray="4 3" />
+      <text x="148" y="22" fill="#d97706" font-size="9.5" font-weight="700">P &gt; Pcr</text>
+      <text x="120" y="220" text-anchor="middle" fill="currentColor" font-size="11.5" font-weight="700">T-v Diagram</text>
+    </g>
+
+    {/* Panel 2: P-v */}
+    <g transform="translate(270,15)">
+      <line x1="30" y1="195" x2="220" y2="195" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+      <line x1="30" y1="15" x2="30" y2="195" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+      <text x="14" y="22" fill="currentColor" font-size="13" font-weight="700">P</text>
+      <text x="216" y="210" fill="currentColor" font-size="13" font-weight="700">v</text>
+      <path d="M 55 185 Q 88 58 122 58 Q 158 58 202 185" fill="none" stroke="#0284c7" stroke-width="2.5" />
+      <circle cx="122" cy="58" r="4.5" fill="#dc2626" />
+      <text x="128" y="51" fill="#dc2626" font-size="10.5" font-weight="700">CP</text>
+      {/* T=const line */}
+      <path d="M 52 52 L 66 112 L 166 112 L 204 168" fill="none" stroke="#7c3aed" stroke-width="2" />
+      <text x="165" y="103" fill="#7c3aed" font-size="10" font-weight="700">T = const</text>
+      <text x="120" y="220" text-anchor="middle" fill="currentColor" font-size="11.5" font-weight="700">P-v Diagram</text>
+    </g>
+
+    {/* Panel 3: P-T (Water anomaly!) */}
+    <g transform="translate(525,15)">
+      <line x1="30" y1="195" x2="215" y2="195" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+      <line x1="30" y1="15" x2="30" y2="195" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+      <text x="14" y="22" fill="currentColor" font-size="13" font-weight="700">P</text>
+      <text x="211" y="210" fill="currentColor" font-size="13" font-weight="700">T</text>
+      {/* Sublimation */}
+      <path d="M 45 182 Q 72 162 96 130" fill="none" stroke="#0284c7" stroke-width="2.2" />
+      {/* Vaporization */}
+      <path d="M 96 130 Q 138 95 166 55" fill="none" stroke="#0284c7" stroke-width="2.2" />
+      {/* Melting normal (positive slope) */}
+      <path d="M 96 130 L 116 32" fill="none" stroke="#64748b" stroke-width="1.8" stroke-dasharray="4 3" />
+      {/* Melting water (negative slope!) */}
+      <path d="M 96 130 L 76 32" fill="none" stroke="#dc2626" stroke-width="2.3" />
+      <circle cx="96" cy="130" r="4" fill="#059669" />
+      <text x="103" y="136" fill="#059669" font-size="10" font-weight="700">TP</text>
+      <circle cx="166" cy="55" r="4.5" fill="#dc2626" />
+      <text x="172" y="50" fill="#dc2626" font-size="10" font-weight="700">CP</text>
+      <text x="48" y="55" fill="#dc2626" font-size="9.5" font-weight="700">Water (expands)</text>
+      <text x="118" y="34" fill="#64748b" font-size="9">Normal</text>
+      <text x="120" y="220" text-anchor="middle" fill="currentColor" font-size="11.5" font-weight="700">P-T Phase Diagram</text>
+    </g>
+  </svg>
+</div>
+
+### الف) نقطهٔ بحرانی (Critical Point) در برابر نقطهٔ سه‌گانه (Triple Point)
+* **نقطهٔ بحرانی (<span dir="ltr">CP</span>):** قلهٔ گنبد اشباع که در آن حالت‌های **مایع اشباع** و **بخار اشباع** بر هم منطبق و یکسان می‌شوند (<span dir="ltr">v_f = v_g</span> و <span dir="ltr">h_fg = 0</span>). برای آب: <span dir="ltr">T_cr = 373.95 °C = 647.1 K</span>، <span dir="ltr">P_cr = 22.06 MPa</span> و <span dir="ltr">v_cr = 0.003106 m³/kg</span>.
+* **نقطهٔ سه‌گانه (<span dir="ltr">TP</span>):** نقطه‌ای روی نمودار <span dir="ltr">P-T</span> (و یک خط روی نمودارهای <span dir="ltr">T-v</span> و <span dir="ltr">P-v</span>) که در آن هر سه فاز جامد، مایع و بخار یک مادهٔ خالص هم‌زمان در تعادل هم‌زیستی دارند. برای آب: <span dir="ltr">T_tp = 0.01 °C</span> و <span dir="ltr">P_tp = 0.6117 kPa</span> (موضوع [تمرین ۳-۶](/thermo1-notes/exercises/ch3/#prob-3-6)).
+
+### ب) رفتار فوق‌بحرانی (<span dir="ltr">P &gt; P_cr</span>)
+در فشارهای بالاتر از فشار بحرانی، دیگر خط افقی تبخیری وجود ندارد و تبدیل حالت از چگالی بالا (شبیه مایع) به چگالی پایین (شبیه گاز) به‌صورت **پیوسته و بدون تشکیل حباب** رخ می‌دهد؛ به این سیال **سیال فوق‌بحرانی** می‌گویند (در نیروگاه‌های فوق‌بحرانی مدرن از این ویژگی برای حذف دیگ بخار متعارف و افزایش راندمان استفاده می‌شود).
+
+### پ) شیب منفی خط ذوب آب در نمودار <span dir="ltr">P-T</span>
+بیشتر مواد هنگام انجماد منقبض می‌شوند، بنابراین خط مرز جامد-مایع در نمودار <span dir="ltr">P-T</span> دارای **شیب مثبت** است. اما **آب** (و چند مادهٔ معدود دیگر مثل بیسموت) هنگام یخ زدن منبسط می‌شود (<span dir="ltr">v_solid &gt; v_liquid</span>)؛ در نتیجه، خط ذوب آب دارای **شیب منفی** است. پیامد فیزیکی معروف این موضوع آن است که با افزایش فشار روی یخ (مثلاً زیر تیغهٔ اسکیت روی یخ)، دمای ذوب کاهش می‌یابد و یخ در دمای زیر صفر ذوب می‌شود.
+
+### ت) سطح سه‌بعدی <span dir="ltr">P-v-T</span>
+برای یک مادهٔ تراکم‌پذیر ساده، چون حالت با دو خاصیت مستقل تعیین می‌شود، روابط بین <span dir="ltr">P</span>، <span dir="ltr">v</span> و <span dir="ltr">T</span> تشکیل یک سطح فضایی می‌دهند. نمودارهای <span dir="ltr">T-v</span>، <span dir="ltr">P-v</span> و <span dir="ltr">P-T</span> در واقع **تصویرهای دو‌بعدی** این سطح سه‌بعدی بر صفحات مختصات هستند. در این سطح، ناحیهٔ دوفازی به‌صورت استوانه‌ای موازی محور <span dir="ltr">v</span> دیده می‌شود که روی صفحهٔ <span dir="ltr">P-T</span> به یک **خط** (منحنی اشباع) تصویر می‌شود؛ همین دلیل هندسی نشان می‌دهد که در ناحیهٔ دوفازی، <span dir="ltr">P</span> و <span dir="ltr">T</span> مستقل نیستند.
+
+---
+
+## ۴. آنتالپی، جداول اشباع و کیفیت بخار (<span dir="ltr">x</span>)
+
+چون در تحلیل سیستم‌های فشار ثابت و جریان‌های باز، ترکیب <span dir="ltr">U + PV</span> بارها ظاهر می‌شود، یک خاصیت ترکیبی بسیار مهم به نام **آنتالپی (Enthalpy)** تعریف می‌کنیم:
+
+<EquationBox id="eq-3-2" number="۳-۲" label="تعریف آنتالپی کل و ویژه">
+
+$$
+H = U + PV \quad [\text{kJ}], \qquad h = u + Pv \quad [\text{kJ/kg}]
+$$
+
+</EquationBox>
+
+همچنین در فصل‌های بعد با خاصیت **آنتروپی** (<span dir="ltr">S</span> بر حسب <span dir="ltr">kJ/K</span> و <span dir="ltr">s</span> بر حسب <span dir="ltr">kJ/kg·K</span>) سر و کار خواهیم داشت. در جداول اشباع سنجل (`Table A-4` بر حسب دما و `Table A-5` بر حسب فشار برای آب؛ `A-11` و `A-12` برای مبرد <span dir="ltr">R-134a</span>)، اختلاف بین بخار اشباع و مایع اشباع را با اندیس <span dir="ltr">fg</span> نمایش می‌دهند:
+
+$$
+y_{fg} = y_g - y_f \qquad (y \in \{v, u, h, s\})
+$$
+
+### کیفیت بخار (Quality) در مخلوط دوفازی
+در ناحیهٔ مخلوط اشباع، تنها دما یا فشار برای تعیین حالت کافی نیست و باید **کیفیت (<span dir="ltr">x</span>)** را بدانیم. کیفیت، نسبت **جرم بخار** به **کل جرم مخلوط** است:
+
+<EquationBox id="eq-3-3" number="۳-۳" label="تعریف کیفیت و خواص میانگین مخلوط اشباع">
+
+$$
+x = \frac{m_g}{m_t} = \frac{m_g}{m_f + m_g} \quad (0 \le x \le 1)
+$$
+
+$$
+y_{\text{avg}} = y_f + x \, y_{fg} = (1 - x) y_f + x \, y_g \quad \Longrightarrow \quad x = \frac{y_{\text{avg}} - y_f}{y_{fg}}
+$$
+
+</EquationBox>
+
+که در آن <span dir="ltr">y</span> می‌تواند هر یک از خواص شدتی ویژهٔ <span dir="ltr">v</span>، <span dir="ltr">u</span>، <span dir="ltr">h</span> یا <span dir="ltr">s</span> باشد.
+
+<div class="jh-trap not-content">
+  <strong>⚠️ تلهٔ بسیار مهم امتحانی (نسبت حجمی در برابر نسبت جرمی):</strong>
+  <p style="margin:0.35rem 0 0">
+    کیفیت <span dir="ltr">x</span> منحصراً <strong>نسبت جرمی</strong> است، نه حجمی! اگر در صورت مسئله بگویند «یک‌سوم حجم مخزن را مایع و دوسوم را بخار اشغال کرده» (مانند <a href="/thermo1-notes/exercises/ch3/#prob-3-28">تمرین ۳-۲۸</a>)، کیفیت برابر <span dir="ltr">2/3</span> <strong>نیست</strong>! باید ابتدا از روی <span dir="ltr">m_f = V_f / v_f</span> و <span dir="ltr">m_g = V_g / v_g</span> جرم هر فاز را بیابید و سپس <span dir="ltr">x = m_g / (m_f + m_g)</span> را حساب کنید. چون <span dir="ltr">v_f ≪ v_g</span> است، معمولاً حجم کمی از مایع جرم بسیار بزرگی دارد!
+  </p>
+</div>
+
+---
+
+## ۵. بخار فوق‌گرم و تقریب مایع متراکم
+
+### الف) بخار مافوق گرم (`Table A-6` برای آب، `Table A-13` برای <span dir="ltr">R-134a</span>)
+در این ناحیه سیال تک‌فاز است و <span dir="ltr">P</span> و <span dir="ltr">T</span> کاملاً مستقل هستند. هرگاه <span dir="ltr">T &gt; T_sat@P</span> یا <span dir="ltr">P &lt; P_sat@T</span> یا <span dir="ltr">v &gt; v_g</span> باشد، در ناحیهٔ فوق‌گرم قرار داریم و در صورت نبود سطر دقیق در جدول، باید **درونیابی خطی** انجام دهیم (مثل مثال اسلاید ۲۴ جزوه برای آب در <span dir="ltr">P = 0.5 MPa</span> و <span dir="ltr">T = 215 °C</span> که با درونیابی بین <span dir="ltr">200 °C</span> و <span dir="ltr">240 °C</span> مقدار <span dir="ltr">h = 2887.09 kJ/kg</span> به‌دست می‌آید). برای جزئیات گام‌به‌گام جدول‌خوانی و ترفند ماشین‌حساب، به صفحهٔ [الگوریتم جداول سنجل و درونیابی](/thermo1-notes/tools/steam-tables/) مراجعه کنید.
+
+### ب) مایع مادون سرد / متراکم (`Table A-7` و تقریب مایع اشباع)
+جداول مایع متراکم بسیار کمیاب‌اند (در سنجل فقط `Table A-7` برای آب از فشار <span dir="ltr">5 MPa</span> به بالا وجود دارد و برای <span dir="ltr">R-134a</span> اصلاً جدول مایع متراکم نداریم). خوشبختانه خواص مایع متراکم **وابستگی بسیار ناچیزی به فشار** دارد و عمدتاً تابع دما است؛ لذا در نبود جدول یا برای فشارهای زیر <span dir="ltr">5 MPa</span> از تقریب بسیار دقیق زیر استفاده می‌کنیم:
+
+<EquationBox id="eq-3-4" number="۳-۴" label="تقریب خواص مایع متراکم از روی مایع اشباع در همان دما">
+
+$$
+v \approx v_{f@T}, \qquad u \approx u_{f@T}, \qquad s \approx s_{f@T}
+$$
+
+$$
+h \approx h_{f@T} + v_{f@T} \left( P - P_{\text{sat}@T} \right)
+$$
+
+</EquationBox>
+
+برای مثال (اسلاید ۲۶ جزوه)، انرژی داخلی آب در <span dir="ltr">P = 5 MPa</span> و <span dir="ltr">T = 80 °C</span> از جدول `A-7` برابر <span dir="ltr">u = 333.82 kJ/kg</span> و با تقریب مایع اشباع از `A-4` برابر <span dir="ltr">u_f@80°C = 334.97 kJ/kg</span> است که تنها **<span dir="ltr">0.34%</span>** خطا دارد! با این حال برای **آنتالپی <span dir="ltr">h</span>** در فشارهای بالا (مثل پمپ‌ها)، ترم <span dir="ltr">v_f(P - P_sat)</span> را اضافه می‌کنیم تا اثر کار فشرده‌سازی پمپ نادیده گرفته نشود (مراقب واحدها باشید: اگر <span dir="ltr">P</span> بر حسب <span dir="ltr">kPa</span> و <span dir="ltr">v_f</span> بر حسب <span dir="ltr">m³/kg</span> باشد، حاصل مستقیماً <span dir="ltr">kJ/kg</span> می‌شود).

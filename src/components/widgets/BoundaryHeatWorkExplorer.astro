@@ -1,0 +1,86 @@
+---
+// آزمایشگر مفهومی مرز سیستم: گرماست یا کار؟ (برگرفته از اسلایدهای ۱۳ و ۱۴ فصل دوم)
+---
+
+<div class="jh-widget not-content" id="boundary-hw-widget">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر انتخاب مرز: این انتقال انرژی گرماست یا کار؟</span>
+    <span class="jh-widget__sub">مثال‌های کلاسیک اسلایدهای ۱۳ و ۱۴ دکتر صفاری</span>
+  </div>
+
+  <div class="jh-widget__btns" id="bhw-cases">
+    <button type="button" class="jh-widget__btn is-active" data-case="heater-room">۱) بخاری برقی (مرز: کل اتاق عایق)</button>
+    <button type="button" class="jh-widget__btn" data-case="heater-air">۲) بخاری برقی (مرز: فقط هوای اتاق)</button>
+    <button type="button" class="jh-widget__btn" data-case="candle">۳) شمع روشن در اتاق صلب و عایق</button>
+    <button type="button" class="jh-widget__btn" data-case="paddle">۴) هم‌زن پره‌ای درون آب عایق</button>
+  </div>
+
+  <div class="jh-widget__metrics" id="bhw-result">
+    <div class="jh-metric">
+      <span class="jh-metric__label">نوع انرژی عبوری از مرز</span>
+      <span class="jh-metric__val" id="bhw-type" style="direction:rtl;text-align:right">کار الکتریکی (W_e)</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">انتقال حرارت (Q)</span>
+      <span class="jh-metric__val" id="bhw-q">Q = 0</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">تغییر انرژی سیستم (ΔU)</span>
+      <span class="jh-metric__val" id="bhw-du">ΔU &gt; 0</span>
+    </div>
+  </div>
+
+  <p id="bhw-explain" style="margin:0.75rem 0 0;font-size:0.87rem;color:var(--sl-color-gray-2);line-height:1.7">
+    وقتی مرز کل اتاق عایق + المنت را در بر می‌گیرد، تنها انرژی عبوری از مرز، جریان الکترون‌های سیم برق است (اختلاف دما عامل عبور از مرز نیست)؛ پس <strong>کار الکتریکی وارد سیستم شده</strong> و <span dir="ltr">Q = 0</span> است.
+  </p>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('boundary-hw-widget');
+  if (!root) return;
+  const CASES = {
+    'heater-room': {
+      type: 'کار الکتریکی (W_e,in)',
+      q: 'Q = 0 (مرز عایق)',
+      du: 'ΔU = +W_e > 0',
+      explain: 'وقتی مرز کل اتاق عایق + المنت را در بر می‌گیرد، تنها انرژی عبوری از مرز، جریان الکترون‌های سیم برق است (نه اختلاف دمای دو سوی مرز)؛ پس کار الکتریکی وارد سیستم شده و Q = 0 است.',
+    },
+    'heater-air': {
+      type: 'انتقال حرارت (Q_in)',
+      q: 'Q_in > 0',
+      du: 'ΔU_air = +Q_in > 0',
+      explain: 'اگر المنت را بیرون سیستم بگذاریم و مرز را دور هوای اتاق بکشیم، انرژی از سطح داغ المنت به هوای سردتر به‌خاطر اختلاف دما عبور می‌کند؛ پس همان پدیده این‌بار «گرما» محسوب می‌شود!',
+    },
+    candle: {
+      type: 'هیچ‌کدام (سیستم بستهٔ ایزوله)',
+      q: 'Q = 0',
+      du: 'ΔU = 0 (کل اتاق)',
+      explain: 'طبق مثال اسلاید ۱۳: مرز صلب و عایق است، بنابراین Q = 0 و W = 0 و طبق قانون اول ΔU = 0 می‌ماند! دمای اتاق بالا می‌رود اما صرفاً انرژی شیمیایی موم به انرژی محسوس تبدیل شده است.',
+    },
+    paddle: {
+      type: 'کار شفت / پره‌ای (W_sh,in)',
+      q: 'Q = 0',
+      du: 'ΔU = +W_sh > 0',
+      explain: 'چرخش محور مکانیکی از مرز می‌گذرد، پس عبور انرژی به شکل «کار» است؛ درون سیستم به‌دلیل اصطکاک داخلی و آشفتگی، دمای آب بالا می‌رود اما انتقال حرارت از مرز نداشته‌ایم.',
+    },
+  };
+  const typeEl = root.querySelector('#bhw-type');
+  const qEl = root.querySelector('#bhw-q');
+  const duEl = root.querySelector('#bhw-du');
+  const expEl = root.querySelector('#bhw-explain');
+
+  root.querySelectorAll('#bhw-cases button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#bhw-cases button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const d = CASES[btn.getAttribute('data-case')];
+      if (!d) return;
+      typeEl.textContent = d.type;
+      qEl.textContent = d.q;
+      duEl.textContent = d.du;
+      expEl.textContent = d.explain;
+    });
+  });
+})();
+</script>

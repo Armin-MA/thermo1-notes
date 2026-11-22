@@ -1,0 +1,49 @@
+---
+interface Props {
+  id: string;
+  number: string;
+  title: string;
+  tables?: string;
+  source?: string;
+  tags?: string[];
+  open?: boolean;
+}
+
+const {
+  id,
+  number,
+  title,
+  tables = '',
+  source = 'پاسخنامه رسمی سنجل ویرایش ۸',
+  tags = [],
+  open = false,
+} = Astro.props;
+---
+
+<article class="jh-prob-card not-content" id={id}>
+  <header class="jh-prob-card__head">
+    <div class="jh-prob-card__title-wrap">
+      <span class="jh-prob-num" dir="ltr">{number}</span>
+      <h3 class="jh-prob-title">{title}</h3>
+    </div>
+    <div class="jh-prob-badges">
+      {tables && <span class="jh-badge jh-badge--table" dir="ltr">{tables}</span>}
+      <span class="jh-badge jh-badge--source">{source}</span>
+      {tags.map((tag) => <span class="jh-badge jh-badge--tag">{tag}</span>)}
+    </div>
+  </header>
+
+  <div class="jh-prob-statement">
+    <slot name="statement" />
+  </div>
+
+  <details class="jh-prob-solution" open={open}>
+    <summary class="jh-prob-solution__summary">
+      <span>نمایش حل تشریحی مرحله‌به‌مرحله و تلهٔ امتحانی</span>
+      <span class="jh-prob-solution__arrow" aria-hidden="true">▾</span>
+    </summary>
+    <div class="jh-prob-solution__body sl-markdown-content">
+      <slot name="solution" />
+    </div>
+  </details>
+</article>

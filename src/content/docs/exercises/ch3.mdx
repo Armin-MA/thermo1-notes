@@ -1,0 +1,407 @@
+---
+title: تمارین منتخب فصل ۳ (۱۰ مسئله سنجل ویرایش ۸)
+description: حل تشریحی کامل تمام ۱۰ تمرین منتخب دکتر صفاری از فصل سوم کتاب سنجل (۳-۲ تا ۳-۱۲۲) همراه با جدول‌خوانی، تطابق با جزوه دست‌نویس و تله‌های امتحانی.
+tags:
+  - فصل-۳
+  - تمارین
+  - جداول-سنجل
+  - ضریب-Z
+sitemap:
+  pageTitle: "تمارین فصل ۳"
+---
+
+import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExerciseCard from '../../../components/ExerciseCard.astro';
+
+<TopicDependencyMap
+  prerequisites={[
+    { label: '۳-۱ ماده خالص و نمودارهای فازی', href: '/chapters/ch3-pure-substances-diagrams/', note: 'کیفیت بخار، نقطه بحرانی/سه‌گانه و تقریب مایع متراکم' },
+    { label: '۳-۲ جداول، گاز ایده‌آل و ضریب Z', href: '/chapters/ch3-ideal-real-gas/', note: 'معادله Pv = RT و نمودار تراکم‌پذیری A-15' },
+    { label: 'الگوریتم جداول سنجل', href: '/tools/steam-tables/', note: 'تشخیص سریع ناحیه و درونیابی خطی' },
+  ]}
+  unlocks={[
+    { label: 'فصل ۴: کار مرزی و قانون اول بسته', href: '/chapters/ch4-boundary-work-polytropic/', note: 'استفاده از حالات استخراج‌شده در محاسبه کار و انرژی' },
+    { label: 'تمارین فصل ۴ سنجل', href: '/exercises/ch4/', note: 'گام بعدی: تحلیل کار استپر، فنر و موازنه انرژی بسته' },
+  ]}
+/>
+
+تمامی **۱۰ تمرین منتخب فصل سوم** (مباحث آزمون ۲) مطابق پاسخ‌نامهٔ رسمی کتاب **سنجل ویرایش هشتم** و یادداشت‌های دست‌نویس حل‌تمرین (TA) در این صفحه آورده شده است.
+
+---
+
+<ExerciseCard
+  id="prob-3-2"
+  number="۳-۲"
+  title="تفاوت بخار اشباع و بخار فوق‌گرم"
+  tables="مفهومی"
+  tags={['ماده خالص', 'تغییر فاز']}
+>
+  <Fragment slot="statement">
+    تفاوت بین **بخار اشباع** (Saturated vapor) و **بخار فوق‌گرم / مافوق گرم** (Superheated vapor) چیست؟
+  </Fragment>
+  <Fragment slot="solution">
+    بخاری که دقیقاً **در شرف میعان شدن** قرار دارد (یعنی با کمترین گرماگیری اولین قطرهٔ مایع در آن تشکیل می‌شود و دارای کیفیت $x = 1$ و دمای $T = T_{\text{sat}@P}$ است)، **بخار اشباع** نامیده می‌شود. در غیر این صورت، اگر بخار در دمایی بالاتر از دمای اشباع متناظر با فشارش قرار داشته باشد ($T > T_{\text{sat}@P}$ یا به بیان دیگر در شرف میعان نباشد)، به آن **بخار فوق‌گرم** گفته می‌شود.
+
+    <div class="jh-trap not-content">
+      <strong>💡 نکتهٔ تکمیلی امتحان:</strong> در ناحیهٔ بخار اشباع دانستن تنها یکی از دو خاصیت $P$ یا $T$ (به‌همراه $x=1$) کافی است، اما در ناحیهٔ بخار فوق‌گرم حتماً به دو خاصیت مستقل (مثلاً $P$ و $T$) نیاز دارید.
+    </div>
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-6"
+  number="۳-۶"
+  title="تفاوت نقطهٔ بحرانی و نقطهٔ سه‌گانه"
+  tables="مفهومی"
+  tags={['نمودار فازی', 'نقطه بحرانی']}
+>
+  <Fragment slot="statement">
+    تفاوت بین **نقطهٔ بحرانی** (Critical point) و **نقطهٔ سه‌گانه** (Triple point) چیست؟
+  </Fragment>
+  <Fragment slot="solution">
+    در **نقطهٔ بحرانی**، حالت‌های **مایع اشباع** و **بخار اشباع** بر هم منطبق و یکسان می‌شوند ($v_f = v_g$ و گرمای نهان تبخیر صفر می‌شود، $h_{fg} = 0$). اما در **نقطهٔ سه‌گانه**، هر سه فاز **جامد، مایع و بخار** یک مادهٔ خالص هم‌زمان در حال تعادل با یکدیگر هم‌زیستی دارند (برای آب در $T_{\text{tp}} = 0.01\ ^\circ\text{C}$ و $P_{\text{tp}} = 0.6117\text{ kPa}$).
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-20"
+  number="۳-۲۰"
+  title="تکمیل جدول خواص آب (H2O)"
+  tables="Tables A-4, A-5, A-6, A-7"
+  tags={['جدول‌خوانی', 'درونیابی']}
+>
+  <Fragment slot="statement">
+    جدول زیر را برای آب ($\text{H}_2\text{O}$) تکمیل کنید:
+
+    | $T\ (^\circ\text{C})$ | $P\ (\text{kPa})$ | $u\ (\text{kJ/kg})$ | توصیف فاز |
+    | :---: | :---: | :---: | :--- |
+    | — | $400$ | $1450$ | — |
+    | $220$ | — | — | بخار اشباع |
+    | $190$ | $2500$ | — | — |
+    | — | $4000$ | $3040$ | — |
+  </Fragment>
+  <Fragment slot="solution">
+    گام‌به‌گام برای هر سطر جدول را بررسی می‌کنیم:
+
+    1. **سطر اول ($P = 400\text{ kPa}$ و $u = 1450\text{ kJ/kg}$):**
+       به جدول `A-5` در فشار $400\text{ kPa}$ مراجعه می‌کنیم: $u_f = 604.22\text{ kJ/kg}$ و $u_g = 2553.1\text{ kJ/kg}$. چون $u_f < u < u_g$ است، سیال در ناحیهٔ **مخلوط اشباع (Saturated mixture)** قرار دارد؛ پس $T = T_{\text{sat}@400\text{ kPa}} = 143.61\ ^\circ\text{C}$.
+    2. **سطر دوم ($T = 220\ ^\circ\text{C}$ و بخار اشباع):**
+       از جدول `A-4` در دمای $220\ ^\circ\text{C}$ مستقیماً فشار اشباع و انرژی داخلی بخار اشباع را می‌خوانیم:
+       $P = P_{\text{sat}@220^\circ\text{C}} = 2319.6\text{ kPa}$ و $u = u_g = 2601.3\text{ kJ/kg}$.
+    3. **سطر سوم ($T = 190\ ^\circ\text{C}$ و $P = 2500\text{ kPa}$):**
+       از جدول `A-4` در $190\ ^\circ\text{C}$ داریم $P_{\text{sat}} = 1255.2\text{ kPa}$. چون $P = 2500\text{ kPa} > P_{\text{sat}}$ است، آب در ناحیهٔ **مایع متراکم (Compressed liquid)** است. مقدار رسمی پاسخ‌نامهٔ سنجل ویرایش ۸ برابر **$u = 805.15\text{ kJ/kg}$** است.
+       *(نکتهٔ تطابق با دست‌نویس: در جدول `A-7` فشار از $5\text{ MPa}$ شروع می‌شود؛ با استفاده از تقریب مایع اشباع `A-4` در $190\ ^\circ\text{C}$ مقدار $u \approx u_{f@190^\circ\text{C}} = 806.00\text{ kJ/kg}$ به‌دست می‌آید و حل‌تمرین (TA) نیز در برگهٔ دست‌نویس خود ارجاع `A-4` و عدد تقریبی نزدیک به $805.68\text{ kJ/kg}$ را نوشته‌اند.)*
+    4. **سطر چهارم ($P = 4000\text{ kPa} = 4\text{ MPa}$ و $u = 3040\text{ kJ/kg}$):**
+       در `A-5` در فشار $4\text{ MPa}$ مقدار $u_g = 2601.7\text{ kJ/kg}$ است؛ چون $u > u_g$ است، در ناحیهٔ **بخار فوق‌گرم (Superheated vapor)** هستیم. با مراجعه به جدول `A-6` در فشار $4\text{ MPa}$ و درونیابی خطی برای $u = 3040\text{ kJ/kg}$ (بین $450\ ^\circ\text{C}$ و $500\ ^\circ\text{C}$) به‌دست می‌آید: $T = 466.21\ ^\circ\text{C}$.
+
+    **جدول تکمیل‌شدهٔ نهایی:**
+
+    | $T\ (^\circ\text{C})$ | $P\ (\text{kPa})$ | $u\ (\text{kJ/kg})$ | توصیف فاز |
+    | :---: | :---: | :---: | :--- |
+    | **$143.61$** | $400$ | $1450$ | **مخلوط اشباع (Saturated mixture)** |
+    | $220$ | **$2319.6$** | **$2601.3$** | بخار اشباع (Saturated vapor) |
+    | $190$ | $2500$ | **$805.15$** | **مایع متراکم (Compressed liquid)** |
+    | **$466.21$** | $4000$ | $3040$ | **بخار فوق‌گرم (Superheated vapor)** |
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-26"
+  number="۳-۲۶"
+  title="تکمیل جدول خواص مبرد R-134a"
+  tables="Tables A-11, A-12, A-13"
+  tags={['مبرد R-134a', 'جدول‌خوانی']}
+>
+  <Fragment slot="statement">
+    جدول زیر را برای مبرد $\text{R-134a}$ تکمیل کنید:
+
+    | $T\ (^\circ\text{C})$ | $P\ (\text{kPa})$ | $v\ (\text{m}^3/\text{kg})$ | توصیف فاز |
+    | :---: | :---: | :---: | :--- |
+    | $-4$ | $320$ | — | — |
+    | $10$ | — | $0.0065$ | — |
+    | — | $850$ | — | بخار اشباع |
+    | $90$ | $600$ | — | — |
+  </Fragment>
+  <Fragment slot="solution">
+    1. **سطر اول ($T = -4\ ^\circ\text{C}$ و $P = 320\text{ kPa}$):**
+       از جدول `A-11` در $-4\ ^\circ\text{C}$ فشار اشباع کمتر از $320\text{ kPa}$ است ($P > P_{\text{sat}}$)، پس مبرد **مایع متراکم (Compressed liquid)** است. چون مبرد `R-134a` جدول مایع متراکم ندارد، از تقریب مایع اشباع در همان دما استفاده می‌کنیم: $v \approx v_{f@-4^\circ\text{C}} = 0.000764\text{ m}^3/\text{kg}$.
+    2. **سطر دوم ($T = 10\ ^\circ\text{C}$ و $v = 0.0065\text{ m}^3/\text{kg}$):**
+       از جدول `A-11` در $10\ ^\circ\text{C}$ چون $v_f < v < v_g$ است، در ناحیهٔ **مخلوط اشباع (Saturated mixture)** هستیم و $P = P_{\text{sat}@10^\circ\text{C}} = 414.89\text{ kPa}$.
+    3. **سطر سوم ($P = 850\text{ kPa}$ و بخار اشباع):**
+       از جدول `A-12` در فشار $850\text{ kPa}$ می‌خوانیم: $T = T_{\text{sat}} = 33.45\ ^\circ\text{C}$ و $v = v_g = 0.02409\text{ m}^3/\text{kg}$.
+    4. **سطر چهارم ($T = 90\ ^\circ\text{C}$ و $P = 600\text{ kPa} = 0.60\text{ MPa}$):**
+       در جدول `A-13` در فشار $0.60\text{ MPa}$ دمای اشباع $21.55\ ^\circ\text{C}$ است؛ پس مبرد **بخار فوق‌گرم (Superheated vapor)** است و دقیقاً در ردیف $90\ ^\circ\text{C}$ داریم: $v = 0.046318 \approx 0.04632\text{ m}^3/\text{kg}$.
+
+    <div class="jh-trap not-content">
+      <strong>🔍 نکتهٔ تطابق کتاب درسی، دست‌نویس و پاسخ‌نامهٔ سنجل:</strong>
+      <p style="margin:0.35rem 0 0">
+        در پاسخ‌نامهٔ چاپی سنجل ویرایش ۸، در ستون دمای سطر چهارم سهواً عدد <span dir="ltr">60 °C</span> چاپ شده در حالی که مقدار حجم مخصوص <span dir="ltr">0.04632 m³/kg</span> دقیقاً مربوط به دمای <strong><span dir="ltr">90 °C</span></strong> مندرج در متن کتاب درسی و جدول `A-13` است (مقدار واقعی در <span dir="ltr">60 °C</span> برابر <span dir="ltr">0.041389 m³/kg</span> است). حل‌تمرین (TA) در دست‌نویس خود به‌درستی دمای <span dir="ltr">90 °C</span> و <span dir="ltr">v = 0.04632</span> را نوشته‌اند.
+      </p>
+    </div>
+
+    **جدول تکمیل‌شدهٔ نهایی:**
+
+    | $T\ (^\circ\text{C})$ | $P\ (\text{kPa})$ | $v\ (\text{m}^3/\text{kg})$ | توصیف فاز |
+    | :---: | :---: | :---: | :--- |
+    | $-4$ | $320$ | **$0.000764$** | **مایع متراکم (Compressed liquid)** |
+    | $10$ | **$414.89$** | $0.0065$ | **مخلوط اشباع (Saturated mixture)** |
+    | **$33.45$** | $850$ | **$0.02409$** | بخار اشباع (Saturated vapor) |
+    | $90$ | $600$ | **$0.04632$** | **بخار فوق‌گرم (Superheated vapor)** |
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-28"
+  number="۳-۲۸"
+  title="مخزن صلب بخار و محاسبه کیفیت از نسبت حجمی"
+  tables="Table A-4"
+  tags={['کیفیت بخار', 'تله نسبت حجمی']}
+>
+  <Fragment slot="statement">
+    یک مخزن صلب به حجم $1.8\text{ m}^3$ حاوی بخار آب در دمای $220\ ^\circ\text{C}$ است. یک‌سوم حجم مخزن را فاز مایع و بقیهٔ آن را فاز بخار تشکیل داده است. الف) فشار بخار، ب) کیفیت مخلوط اشباع و پ) چگالی مخلوط را تعیین کنید.
+  </Fragment>
+  <Fragment slot="solution">
+    از جدول `A-4` در دمای $T = 220\ ^\circ\text{C}$ داریم: $v_f = 0.001190\text{ m}^3/\text{kg}$ و $v_g = 0.08609\text{ m}^3/\text{kg}$.
+
+    **الف) فشار مخزن:** چون دو فاز مایع و بخار هم‌زمان در تعادل هستند، مخلوط اشباع داریم و فشار برابر فشار اشباع در دمای داده‌شده است:
+
+    $$
+    P = P_{\text{sat}@220^\circ\text{C}} = 2320\text{ kPa} \quad (2319.6\text{ kPa})
+    $$
+
+    **ب) جرم کل و کیفیت:** حجم هر فاز را بر حجم مخصوص متناظرش تقسیم می‌کنیم:
+
+    $$
+    m_f = \frac{V_f}{v_f} = \frac{\frac{1}{3}(1.8\text{ m}^3)}{0.001190\text{ m}^3/\text{kg}} = 504.2\text{ kg}
+    $$
+
+    $$
+    m_g = \frac{V_g}{v_g} = \frac{\frac{2}{3}(1.8\text{ m}^3)}{0.08609\text{ m}^3/\text{kg}} = 13.94\text{ kg}
+    $$
+
+    $$
+    m_t = m_f + m_g = 504.2 + 13.94 = 518.1\text{ kg} \quad \Longrightarrow \quad x = \frac{m_g}{m_t} = \frac{13.94}{518.1} = 0.0269
+    $$
+
+    **پ) چگالی مخلوط:** ابتدا حجم مخصوص میانگین و سپس چگالی را می‌یابیم:
+
+    $$
+    v = v_f + x (v_g - v_f) = 0.001190 + (0.0269)(0.08609 - 0.001190) = 0.003474\text{ m}^3/\text{kg}
+    $$
+
+    $$
+    \rho = \frac{1}{v} = \frac{1}{0.003474} = 287.8\text{ kg/m}^3
+    $$
+
+    <div class="jh-trap not-content">
+      <strong>⚠️ تلهٔ امتحانی:</strong> کیفیت هیچ‌گاه برابر کسر حجمی ($2/3$) نیست! با وجود اینکه دو‌سوم حجم مخزن بخار است، چون مایع بسیار متراکم‌تر از بخار است، کیفیت جرمی تنها $2.69\%$ است. *(همچنین توجه کنید که در متن چاپی پاسخ‌نامه و دست‌نویس، در نوشتن جایگذاری $v$ عبارت $-0.001190$ داخل پرانتز از قلم افتاده ولی عدد نهایی $0.003474$ دقیقاً با درنظرگرفتن $v_g - v_f$ محاسبه شده است.)*
+    </div>
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-43"
+  number="۳-۴۳"
+  title="سرد شدن آب در سیلندر-پیستون دارای استپر و رسم نمودار T-v"
+  tables="Tables A-5, A-6"
+  tags={['استپر', 'نمودار T-v', 'انرژی داخلی']}
+>
+  <Fragment slot="statement">
+    آب در حالت اولیه با فشار $200\text{ kPa}$ و دمای $300\ ^\circ\text{C}$ درون یک سیلندر-پیستون مجهز به تکیه‌گاه (Stops) قرار دارد. آب در فشار ثابت سرد می‌شود تا زمانی که به حالت بخار اشباع برسد و پیستون روی تکیه‌گاه‌ها بنشیند. سپس سرد شدن ادامه می‌یابد تا فشار به $100\text{ kPa}$ برسد. فرآیند را روی نمودار $T-v$ نسبت به خطوط اشباع رسم کنید و تغییر کلی انرژی داخلی به ازای واحد جرم آب را بیابید.
+  </Fragment>
+  <Fragment slot="solution">
+    **تحلیل سه‌مرحله‌ای حالت‌ها:**
+    * **حالت ۱ ($P_1 = 200\text{ kPa}$ و $T_1 = 300\ ^\circ\text{C}$):** بخار فوق‌گرم است. از جدول `A-6`:
+
+    $$
+    u_1 = 2808.8\text{ kJ/kg}
+    $$
+
+    * **حالت ۲ (بخار اشباع در $P_2 = 200\text{ kPa}$ و $x_2 = 1$):** در این نقطه پیستون به تکیه‌گاه‌ها می‌رسد. از جدول `A-5`:
+
+    $$
+    v_2 = v_{g@200\text{ kPa}} = 0.8858\text{ m}^3/\text{kg}, \qquad T_2 = 120.21\ ^\circ\text{C}
+    $$
+
+    * **حالت ۳ ($P_3 = 100\text{ kPa}$ و $v_3 = v_2 = 0.8858\text{ m}^3/\text{kg}$):** چون پیستون روی استپر قرار گرفته، فرآیند ۲-۳ **هم‌حجم** است. در جدول `A-5` در $100\text{ kPa}$ داریم $v_f = 0.001043$ و $v_g = 1.6941\text{ m}^3/\text{kg}$؛ چون $v_f < v_3 < v_g$ است، حالت ۳ یک مخلوط اشباع با دمای $T_3 = 99.61\ ^\circ\text{C}$ است و کیفیت آن برابر $x_3 = (0.8858 - 0.001043)/(1.6941 - 0.001043) = 0.5226$ می‌شود؛ در نتیجه از جدول `A-5`:
+
+    $$
+    u_3 = u_f + x_3 u_{fg} = 1508.6\text{ kJ/kg}
+    $$
+
+    <div class="not-content" style="margin:0.85rem 0;padding:0.75rem;border-radius:10px;border:1px solid var(--sl-color-gray-5);background:var(--sl-color-bg-sidebar);">
+      <svg viewBox="0 0 380 190" style="width:100%;max-width:400px;display:block;margin:0 auto;direction:ltr" aria-label="نمودار T-v تمرین ۳-۴۳">
+        <line x1="40" y1="165" x2="350" y2="165" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6" />
+        <line x1="40" y1="15" x2="40" y2="165" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6" />
+        <text x="24" y="22" fill="currentColor" font-size="12" font-weight="700">T</text>
+        <text x="345" y="178" fill="currentColor" font-size="12" font-weight="700">v</text>
+        <path d="M 65 155 Q 125 40 175 40 Q 225 40 295 155" fill="none" stroke="#0284c7" stroke-width="2" />
+        {/* 200 kPa line */}
+        <polyline points="82,115 102,90 236,90 278,34" fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3" />
+        {/* 100 kPa line */}
+        <polyline points="72,135 88,118 262,118" fill="none" stroke="#64748b" stroke-width="1.2" stroke-dasharray="4 3" />
+        {/* Process 1-2-3 */}
+        <polyline points="278,34 236,90 236,118" fill="none" stroke="#dc2626" stroke-width="2.5" />
+        <circle cx="278" cy="34" r="4" fill="#dc2626" />
+        <circle cx="236" cy="90" r="4" fill="#dc2626" />
+        <circle cx="236" cy="118" r="4" fill="#dc2626" />
+        <text x="285" y="34" fill="#dc2626" font-size="10.5" font-weight="700">1 (300°C, 200 kPa)</text>
+        <text x="244" y="88" fill="#dc2626" font-size="10.5" font-weight="700">2 (x=1)</text>
+        <text x="244" y="132" fill="#dc2626" font-size="10.5" font-weight="700">3 (100 kPa, v=0.8858)</text>
+      </svg>
+    </div>
+
+    **تغییر کلی انرژی داخلی:**
+
+    $$
+    \Delta u = u_1 - u_3 = 2808.8 - 1508.6 = 1300\text{ kJ/kg}
+    $$
+
+    یعنی انرژی داخلی به اندازهٔ $1300\text{ kJ/kg}$ کاهش یافته است. *(توضیح علامت: از نظر ریاضی $u_3 - u_1 = -1300\text{ kJ/kg}$ است؛ در پاسخ‌نامهٔ سنجل و دست‌نویس حل‌تمرین (TA)، بزرگی کاهش انرژی داخلی به صورت $u_1 - u_3 = 1300\text{ kJ/kg}$ گزارش شده است.)*
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-46"
+  number="۳-۴۶"
+  title="دمای جوش آب در قابلمهٔ درب‌دار"
+  tables="Table A-5"
+  tags={['تعادل نیرو', 'دمای اشباع']}
+>
+  <Fragment slot="statement">
+    یک قابلمهٔ پخت‌وپز با قطر داخلی $20\text{ cm}$ پر از آب است و درپوشی به جرم $4\text{ kg}$ روی آن قرار دارد. اگر فشار اتمسفر محلی $101\text{ kPa}$ باشد، دمایی را که آب هنگام گرم شدن شروع به جوشیدن می‌کند بیابید.
+  </Fragment>
+  <Fragment slot="solution">
+    ابتدا فشار داخل قابلمه را از توازن نیروی عمودی روی درپوش (با شعاع $r = 0.1\text{ m}$) به‌دست می‌آوریم:
+
+    $$
+    P A = P_{\text{atm}} A + m g \quad \Longrightarrow \quad P = P_{\text{atm}} + \frac{m g}{\pi r^2}
+    $$
+
+    $$
+    P = 101\text{ kPa} + \frac{(4\text{ kg})(9.81\text{ m/s}^2)}{\pi (0.1\text{ m})^2} \left( \frac{1\text{ kPa}}{1000\text{ kg/m}\cdot\text{s}^2} \right) = 101 + 1.249 = 102.25\text{ kPa}
+    $$
+
+    دمای جوش آب برابر دمای اشباع متناظر با این فشار است (با درونیابی در جدول `A-5`):
+
+    $$
+    T = T_{\text{sat}@102.25\text{ kPa}} = 100.2\ ^\circ\text{C}
+    $$
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-61"
+  number="۳-۶۱"
+  title="تغییر حجم مبرد R-134a در سیلندر-پیستون وزنه‌دار"
+  tables="Table A-13"
+  tags={['مبرد R-134a', 'فشار ثابت']}
+>
+  <Fragment slot="statement">
+    مقدار $100\text{ g}$ مبرد $\text{R-134a}$ در ابتدا یک سیلندر-پیستون وزنه‌دار را در فشار $60\text{ kPa}$ و دمای $-20\ ^\circ\text{C}$ پر کرده است. این مجموعه گرم می‌شود تا دمای آن به $100\ ^\circ\text{C}$ برسد. تغییر حجم مجموعه در اثر گرم شدن را تعیین کنید.
+  </Fragment>
+  <Fragment slot="solution">
+    چون پیستون آزاد است، فرآیند در فشار ثابت $P_1 = P_2 = 60\text{ kPa} = 0.06\text{ MPa}$ انجام می‌شود و جرم مبرد $m = 0.100\text{ kg}$ است. از جدول بخار فوق‌گرم مبرد (`Table A-13` در فشار $0.06\text{ MPa}$):
+
+    * **حالت ۱ ($P_1 = 60\text{ kPa}, T_1 = -20\ ^\circ\text{C}$):**
+
+    $$
+    v_1 = 0.33608\text{ m}^3/\text{kg} \quad \Longrightarrow \quad V_1 = m v_1 = (0.100)(0.33608) = 0.033608\text{ m}^3
+    $$
+
+    * **حالت ۲ ($P_2 = 60\text{ kPa}, T_2 = 100\ ^\circ\text{C}$):**
+
+    $$
+    v_2 = 0.50410\text{ m}^3/\text{kg} \quad \Longrightarrow \quad V_2 = m v_2 = (0.100)(0.50410) = 0.050410\text{ m}^3
+    $$
+
+    * **تغییر حجم:**
+
+    $$
+    \Delta V = V_2 - V_1 = 0.050410 - 0.033608 = 0.0168\text{ m}^3
+    $$
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-82"
+  number="۳-۸۲"
+  title="مقایسه حجم مخصوص بخار آب با گاز ایده‌آل، نمودار Z و جدول بخار"
+  tables="Tables A-1, A-6 & Fig. A-15"
+  tags={['ضریب Z', 'گاز ایده‌آل', 'درصد خطا']}
+>
+  <Fragment slot="statement">
+    حجم مخصوص بخار آب فوق‌گرم را در فشار $15\text{ MPa}$ و دمای $350\ ^\circ\text{C}$ با استفاده از الف) معادلهٔ گاز ایده‌آل، ب) نمودار عمومی تراکم‌پذیری و پ) جداول بخار تعیین کنید. همچنین درصد خطای دو روش اول را بیابید.
+  </Fragment>
+  <Fragment slot="solution">
+    از جدول `A-1` برای آب داریم: $R = 0.4615\text{ kPa}\cdot\text{m}^3/\text{kg}\cdot\text{K}$، $T_{\text{cr}} = 647.1\text{ K}$ و $P_{\text{cr}} = 22.06\text{ MPa}$. دمای مطلق برابر $T = 350 + 273.15 = 623.15\text{ K}$ است.
+
+    **الف) معادلهٔ حالت گاز ایده‌آل:**
+
+    $$
+    v_{\text{ideal}} = \frac{RT}{P} = \frac{(0.4615\text{ kPa}\cdot\text{m}^3/\text{kg}\cdot\text{K})(623.15\text{ K})}{15{,}000\text{ kPa}} = 0.01917\text{ m}^3/\text{kg}
+    $$
+
+    **ب) نمودار عمومی تراکم‌پذیری (`Fig. A-15`):**
+    در پاسخ‌نامهٔ رسمی سنجل ویرایش ۸ (و دست‌نویس حل‌تمرین (TA))، با مقدار $Z = 0.65$ به‌دست می‌آید:
+
+    $$
+    v = Z \, v_{\text{ideal}} = (0.65)(0.01917\text{ m}^3/\text{kg}) = 0.01246\text{ m}^3/\text{kg}
+    $$
+
+    <div class="jh-trap not-content">
+      <strong>🔍 تلهٔ تایپی مهم در پاسخ‌نامهٔ رسمی سنجل ویرایش ۸:</strong>
+      <p style="margin:0.35rem 0 0">
+        در صفحهٔ <span dir="ltr">3-38</span> پاسخ‌نامهٔ رسمی سنجل (و همچنین در برگهٔ دست‌نویس حل‌تمرین (TA))، در قسمت (ب) به اشتباه تایپ شده <span dir="ltr">P_R = 10/22.06 = 0.453</span> و <span dir="ltr">T_R = 673/647.1 = 1.04</span> که به <span dir="ltr">Z = 0.65</span> منجر شده، در حالی که برای صورت مسئله (<span dir="ltr">15 MPa</span> و <span dir="ltr">350 °C = 623.15 K</span>) مقادیر کاهیدهٔ دقیق برابر <strong><span dir="ltr">P_R = 15/22.06 = 0.680</span></strong> و <strong><span dir="ltr">T_R = 623.15/647.1 = 0.963</span></strong> هستند! پاسخ‌های رسمی کلیدی کتاب همین اعداد <span dir="ltr">0.01246 m³/kg</span> و <span dir="ltr">8.5%</span> خطا است که باید هر دو را در ذهن داشته باشید.
+      </p>
+    </div>
+
+    **پ) جدول بخار فوق‌گرم (`Table A-6`):**
+    در فشار $15\text{ MPa}$ و دمای $350\ ^\circ\text{C}$ مقدار دقیق حجم مخصوص برابر است با:
+
+    $$
+    v_{\text{exact}} = 0.01148\text{ m}^3/\text{kg}
+    $$
+
+    **محاسبهٔ درصد خطاها نسبت به جدول بخار:**
+
+    $$
+    \text{Error}_a = \frac{|0.01917 - 0.01148|}{0.01148} \times 100 = 67.0\%
+    $$
+
+    $$
+    \text{Error}_b = \frac{|0.01246 - 0.01148|}{0.01148} \times 100 = 8.5\%
+    $$
+  </Fragment>
+</ExerciseCard>
+
+<ExerciseCard
+  id="prob-3-122"
+  number="۳-۱۲۲"
+  title="انبساط آزاد مبرد R-134a به محفظهٔ خلأ و تعیین حجم مخزن"
+  tables="Tables A-12, A-13"
+  tags={['پایستگی جرم', 'مبرد R-134a']}
+>
+  <Fragment slot="statement">
+    مخزنی با حجم نامعلوم توسط یک جداره به دو بخش تقسیم شده است. یک سمت مخزن حاوی $0.03\text{ m}^3$ مبرد $\text{R-134a}$ به صورت **مایع اشباع** در فشار $0.9\text{ MPa}$ است، در حالی که سمت دیگر در وضعیت **خلأ** (Evacuated) قرار دارد. جداره برداشته می‌شود و مبرد کل مخزن را پر می‌کند. اگر حالت نهایی مبرد $20\ ^\circ\text{C}$ و $280\text{ kPa}$ باشد، حجم کل مخزن را تعیین کنید.
+  </Fragment>
+  <Fragment slot="solution">
+    جرم مبرد طی فرآیند ثابت است. ابتدا جرم کل را از حالت اولیه به‌دست می‌آوریم. از جدول `A-12` در فشار $0.9\text{ MPa} = 900\text{ kPa}$ برای مایع اشباع داریم:
+
+    $$
+    v_1 = v_{f@0.9\text{ MPa}} = 0.0008580\text{ m}^3/\text{kg} \quad \Longrightarrow \quad m = \frac{V_1}{v_1} = \frac{0.03\text{ m}^3}{0.0008580\text{ m}^3/\text{kg}} = 34.96\text{ kg}
+    $$
+
+    در حالت نهایی ($P_2 = 280\text{ kPa} = 0.28\text{ MPa}$ و $T_2 = 20\ ^\circ\text{C}$)، از جدول `A-13` (فوق‌گرم) حجم مخصوص نهایی برابر است با:
+
+    $$
+    v_2 = 0.07997\text{ m}^3/\text{kg}
+    $$
+
+    بنابراین حجم کل مخزن برابر است با:
+
+    $$
+    V_{\text{tank}} = V_2 = m \, v_2 = (34.96\text{ kg})(0.07997\text{ m}^3/\text{kg}) = 2.80\text{ m}^3
+    $$
+  </Fragment>
+</ExerciseCard>

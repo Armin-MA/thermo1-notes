@@ -1,0 +1,197 @@
+---
+title: ۳-۲ جداول، گاز ایده‌آل، ضریب Z و معادلات حقیقی
+description: خلاصه الگوریتم جدول‌خوانی، معادله حالت گاز ایده‌آل و شرایط اعتبار آن برای بخار آب در هوا، ضریب تراکم‌پذیری Z، حجم کاهیده ظاهری v_R و معادلات وان‌دروالس، بتی-بریجمن و BWR.
+tags:
+  - درسنامه
+  - فصل-۳
+  - گاز-ایده‌آل
+  - ضریب-تراکم‌پذیری
+  - وان‌دروالس
+sitemap:
+  pageTitle: "فصل ۳: گازها و تراکم‌پذیری"
+---
+
+import EquationBox from '../../../components/EquationBox.astro';
+import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import PhaseCompressibilityExplorer from '../../../components/widgets/PhaseCompressibilityExplorer.astro';
+
+<TopicDependencyMap
+  prerequisites={[
+    { label: '۳-۱ ماده خالص و نمودارهای فازی', href: '/chapters/ch3-pure-substances-diagrams/', note: 'شناخت نقطه بحرانی، فشار و دمای اشباع' },
+    { label: 'روش‌شناسی جداول سنجل', href: '/tools/steam-tables/', note: 'نحوه استفاده از جداول A-1 و نمودار A-15' },
+  ]}
+  unlocks={[
+    { label: '۴-۱ کار مرزی و فرآیند پلی‌تروپیک', href: '/chapters/ch4-boundary-work-polytropic/', note: 'محاسبه کار گاز ایده‌آل در فرآیند هم‌دما و پلی‌تروپیک' },
+    { label: '۴-۲ قانون اول و گرمای ویژه', href: '/chapters/ch4-first-law-closed/', note: 'روابط مایر و محاسبه تغییرات انرژی داخلی گاز ایده‌آل' },
+    { label: '۵-۱ و ۵-۲ احجام کنترل', href: '/chapters/ch5-steady-flow-devices/', note: 'محاسبه دبی جرمی و حجم مخصوص گازها در نازل و کمپرسور' },
+    { label: 'تمارین فصل ۳ سنجل', href: '/exercises/ch3/', note: 'کاربرد مستقیم در مسائل ۳-۸۲ و ۳-۱۲۲ و جدول‌خوانی' },
+  ]}
+/>
+
+در بخش قبل دیدیم که برای موادی مثل آب و مبرد <span dir="ltr">R-134a</span>، به دلیل پیچیدگی رفتار تغییر فاز، از جداول ترمودینامیکی استفاده می‌کنیم. اما در مهندسی، همواره با جداول سر و کار نداریم؛ برای گازها در بسیاری از شرایط می‌توان از **معادلات حالت (Equations of State)** استفاده کرد که رابطهٔ تحلیلی بین <span dir="ltr">P</span>، <span dir="ltr">v</span> و <span dir="ltr">T</span> را می‌دهند.
+
+---
+
+## ۱. خلاصهٔ جدول‌خوانی و انتخاب معادلهٔ حالت
+
+در مواجهه با یک مسئلهٔ مادهٔ خالص، ابتدا باید تصمیم بگیرید که به جدول رجوع کنید یا به معادلهٔ حالت گاز:
+* اگر سیال شما **آب** یا **مبرد <span dir="ltr">R-134a</span>** است و در نزدیکی ناحیهٔ اشباع یا درون گنبد دوفازی قرار دارد، بدون تردید سراغ **جداول سنجل** بروید ([الگوریتم گام‌به‌گام جدول‌خوانی](/thermo1-notes/tools/steam-tables/)).
+* اگر سیال یک **گاز** (مثل هوا، نیتروژن، اکسیژن، هلیم یا <span dir="ltr">CO2</span>) است، یا فشار بسیار پایین و دما بسیار بالا دارد، ابتدا معادلهٔ **گاز ایده‌آل** را بررسی و در صورت لزوم با **ضریب تراکم‌پذیری <span dir="ltr">Z</span>** یا معادلات حالت حقیقی اصلاح کنید.
+
+---
+
+## ۲. معادلهٔ حالت گاز ایده‌آل (Ideal-Gas Equation of State)
+
+در سال ۱۶۶۲ **رابرت بویل** رابطهٔ معکوس فشار و حجم گاز را در دمای ثابت نشان داد، و در سال ۱۸۰۲ **شارل** و **گی‌لوساک** تناسب مستقیم حجم با دمای مطلق را در فشارهای پایین گزارش کردند. ترکیب این دو قانون تجربی به معادلهٔ حالت گاز ایده‌آل می‌انجامد:
+
+<EquationBox id="eq-3-5" number="۳-۵" label="اشکال مختلف معادله حالت گاز ایده‌آل">
+
+$$
+Pv = RT, \qquad PV = mRT, \qquad P\bar{v} = R_u T, \qquad PV = N R_u T
+$$
+
+</EquationBox>
+
+که در آن <span dir="ltr">P</span> **فشار مطلق** (<span dir="ltr">kPa</span>)، <span dir="ltr">T</span> **دمای مطلق** (<span dir="ltr">K</span>)، <span dir="ltr">v</span> حجم مخصوص جرمی (<span dir="ltr">m³/kg</span>)، $\bar{v}$ حجم مخصوص مولی (<span dir="ltr">m³/kmol</span>)، <span dir="ltr">N</span> تعداد مول‌ها (<span dir="ltr">kmol</span>) و <span dir="ltr">R</span> **ثابت گاز** ویژهٔ هر گاز است که از **ثابت جهانی گازها** (<span dir="ltr">R_u</span>) و **جرم مولی** (<span dir="ltr">M</span> از جدول `A-1`) به‌دست می‌آید:
+
+<EquationBox id="eq-3-6" number="۳-۶" label="رابطه ثابت گاز و جرم مولی">
+
+$$
+R = \frac{R_u}{M} \quad [\text{kJ/kg}\cdot\text{K}], \qquad m = N M, \qquad R_u = 8.31447\ \text{kJ/kmol}\cdot\text{K}
+$$
+
+</EquationBox>
+
+برای مثال، جرم مولی نیتروژن <span dir="ltr">M = 28.013 kg/kmol</span> است؛ یعنی یک کیلومول نیتروژن <span dir="ltr">28.013 kg</span> جرم دارد و ثابت گاز آن <span dir="ltr">R = 8.31447 / 28.013 = 0.2968 kJ/kg·K</span> می‌شود. برای مقایسهٔ دو حالت یک جرم ثابت از گاز ایده‌آل نیز از رابطهٔ کاربردی زیر استفاده می‌کنیم:
+
+$$
+\frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2}
+$$
+
+### چه زمانی یک گاز واقعی را می‌توان ایده‌آل فرض کرد؟
+گازهای واقعی در **چگالی‌های کم** (یعنی **فشار پایین** و **دمای بالا** نسبت به نقطهٔ بحرانی) رفتار بسیار نزدیکی به گاز ایده‌آل دارند. گازهایی مثل هوا، <span dir="ltr">N2</span>، <span dir="ltr">O2</span>، <span dir="ltr">H2</span>، <span dir="ltr">He</span>، <span dir="ltr">Ar</span> و <span dir="ltr">CO2</span> در شرایط محیط با دقتی زیر یک درصد ایده‌آل محسوب می‌شوند؛ اما بخار آب یا مبردها در فشارهای بالا (مثل دیگ بخار نیروگاه) انحراف شدیدی دارند.
+
+<div class="jh-trap not-content">
+  <strong>⚠️ تلهٔ بسیار مهم (آیا بخار آب در دمای اتاق گاز ایده‌آل است؟):</strong>
+  <p style="margin:0.35rem 0 0">
+    خیلی‌ها تصور می‌کنند چون دمای بحرانی آب بالاست (<span dir="ltr">374 °C</span>)، پس بخار آب در دمای اتاق (<span dir="ltr">25 °C</span>) هرگز گاز ایده‌آل نیست! اما اسلاید ۲۹ جزوه دکتر صفاری (نقشهٔ خطای آب) دقیقاً خلاف این تصور را ثابت می‌کند: <strong>بخار آب موجود در هوای اتمسفری</strong> فشار جزئی بسیار پایینی دارد (حداکثر <span dir="ltr">P_sat@25°C = 3.17 kPa</span>، یعنی <span dir="ltr">P_R = P/P_cr ≈ 0.00014 ≪ 1</span>). در فشارهای زیر <span dir="ltr">10 kPa</span>، خطای معادلهٔ گاز ایده‌آل برای بخار آب کمتر از <strong><span dir="ltr">0.1%</span></strong> است! در حالی که در فشارهای بالا (مثلاً <span dir="ltr">15 MPa</span> و <span dir="ltr">350 °C</span> در <a href="/thermo1-notes/exercises/ch3/#prob-3-82">تمرین ۳-۸۲</a>)، خطای گاز ایده‌آل به <strong><span dir="ltr">67%</span></strong> می‌رسد!
+  </p>
+</div>
+
+---
+
+## ۳. ضریب تراکم‌پذیری (<span dir="ltr">Z</span>) و اصل حالات متناظر
+
+برای تصحیح انحراف رفتار گاز واقعی از گاز ایده‌آل، **ضریب تراکم‌پذیری <span dir="ltr">Z</span>** را تعریف می‌کنیم:
+
+<EquationBox id="eq-3-7" number="۳-۷" label="تعریف ضریب تراکم‌پذیری">
+
+$$
+Z = \frac{Pv}{RT} = \frac{v_{\text{actual}}}{v_{\text{ideal}}} \quad \Longrightarrow \quad Pv = ZRT
+$$
+
+</EquationBox>
+
+برای گاز ایده‌آل دقیقاً <span dir="ltr">Z = 1</span> است؛ هرچه <span dir="ltr">Z</span> از یک دورتر شود (مثلاً <span dir="ltr">Z &lt; 1</span> به خاطر غلبهٔ جاذبهٔ بین‌مولکولی یا <span dir="ltr">Z &gt; 1</span> در فشارهای بسیار بالا به خاطر حجم خود مولکول‌ها)، انحراف از گاز ایده‌آل بیشتر است.
+
+طبق **اصل حالات متناظر (Principle of Corresponding States)**، اگر دما و فشار تمام گازها را با مقادیر بحرانی‌شان بی‌بعد کنیم، همگی در یک **فشار کاهیده** و **دمای کاهیده** یکسان، تقریباً ضریب <span dir="ltr">Z</span> یکسانی دارند:
+
+<EquationBox id="eq-3-8" number="۳-۸" label="فشار کاهیده، دمای کاهیده و حجم مخصوص شبه‌کاهیده">
+
+$$
+P_R = \frac{P}{P_{\text{cr}}}, \qquad T_R = \frac{T}{T_{\text{cr}}}, \qquad v_R = \frac{v_{\text{actual}}}{R T_{\text{cr}} / P_{\text{cr}}}
+$$
+
+</EquationBox>
+
+از روی دو مقدار <span dir="ltr">P_R</span> و <span dir="ltr">T_R</span> و مراجعه به **نمودار عمومی تراکم‌پذیری (`Figure A-15`)**، مقدار <span dir="ltr">Z</span> خوانده می‌شود. به‌طور کلی، رفتار گاز ایده‌آل با خطای کم برقرار است اگر:
+* فشار خیلی پایین باشد (<span dir="ltr">P_R ≪ 1</span>، مثلاً <span dir="ltr">P_R &lt; 0.05</span>)، **یا**
+* دما خیلی بالا باشد (<span dir="ltr">T_R &gt; 2</span>) مشروط بر اینکه فشار بسیار بالا نباشد.
+
+<PhaseCompressibilityExplorer />
+
+### مثال حل‌شده از جزوه (اسلاید ۳۴): مبرد <span dir="ltr">R-134a</span> در <span dir="ltr">1 MPa</span> و <span dir="ltr">50 °C</span>
+برای مبرد <span dir="ltr">R-134a</span> از جدول `A-1` داریم: <span dir="ltr">R = 0.0815 kPa·m³/kg·K</span>، <span dir="ltr">T_cr = 374.2 K</span> و <span dir="ltr">P_cr = 4.059 MPa</span>:
+1. **مقدار واقعی از جدول `A-13`:** <span dir="ltr">v = 0.021796 m³/kg</span>.
+2. **معادلهٔ گاز ایده‌آل:** <span dir="ltr">v_ideal = RT/P = (0.0815)(323.15)/1000 ≈ 0.026325 m³/kg</span> (در اسلاید با <span dir="ltr">T = 323 K</span> حساب شده که خطای **<span dir="ltr">20.8%</span>** می‌دهد).
+3. **نمودار تراکم‌پذیری `A-15`:** با <span dir="ltr">P_R = 1 / 4.059 = 0.246</span> و <span dir="ltr">T_R = 323 / 374.2 = 0.863</span> از نمودار داریم <span dir="ltr">Z = 0.84</span>؛ پس <span dir="ltr">v = Z · v_ideal = (0.84)(0.026325) = 0.022113 m³/kg</span> که خطا را از <span dir="ltr">20.8%</span> به کمتر از **<span dir="ltr">1.5%</span>** کاهش می‌دهد!
+
+<div class="jh-trap not-content">
+  <strong>⚠️ تلهٔ بسیار مهم (حجم مخصوص شبه‌کاهیده <span dir="ltr">v_R</span> در برابر <span dir="ltr">v_cr</span>):</strong>
+  <p style="margin:0.35rem 0 0">
+    اگر در مسئله <strong><span dir="ltr">v</span></strong> داده شده باشد ولی <strong><span dir="ltr">P</span> یا <span dir="ltr">T</span> مجهول</strong> باشد، استفاده از نمودار <span dir="ltr">Z</span> به‌طور مستقیم نیازمند سعی و خطا خواهد بود. برای حذف سعی و خطا، روی نمودار `A-15` خطوط ثابت <strong>حجم مخصوص شبه‌کاهیده (<span dir="ltr">v_R</span>)</strong> رسم شده است. حواستان باشد که مخرج <span dir="ltr">v_R</span> برابر <span dir="ltr">R T_cr / P_cr</span> است و <strong>هرگز نباید بر <span dir="ltr">v_cr</span> تقسیم کنید</strong>! چون اگر بر <span dir="ltr">v_cr</span> تقسیم می‌کردند، داده‌های گازهای مختلف روی نمودار <span dir="ltr">A-15</span> بر هم منطبق نمی‌شد.
+  </p>
+</div>
+
+---
+
+## ۴. معادلات حالت گازهای واقعی (حقیقی)
+
+وقتی به دقت تحلیلی بالا بدون نمودار نیاز داریم (مثلاً در شبیه‌سازی‌های عددی)، از معادلات حالت غیرخطی استفاده می‌کنیم:
+
+### الف) معادلهٔ حالت وان‌دروالس (Van der Waals — ۱۸۷۳)
+وان‌دروالس دو نقص بزرگ مدل گاز ایده‌آل را اصلاح کرد: **نیروی جاذبهٔ بین‌مولکولی** (اضافه کردن ترم <span dir="ltr">a / v²</span> به فشار) و **حجم اشغال‌شده توسط خود مولکول‌ها** (کم کردن ثابت <span dir="ltr">b</span> از حجم مخصوص):
+
+<EquationBox id="eq-3-9" number="۳-۹" label="معادله حالت وان‌دروالس و ضرایب بحرانی آن">
+
+$$
+\left( P + \frac{a}{v^2} \right)(v - b) = RT
+$$
+
+$$
+a = \frac{27 R^2 T_{\text{cr}}^2}{64 P_{\text{cr}}}, \qquad b = \frac{R T_{\text{cr}}}{8 P_{\text{cr}}}
+$$
+
+</EquationBox>
+
+ضرایب <span dir="ltr">a</span> و <span dir="ltr">b</span> دقیقاً از این شرط ریاضی به‌دست می‌آیند که در نقطهٔ بحرانی، منحنی همدمای <span dir="ltr">T = T_cr</span> روی نمودار <span dir="ltr">P-v</span> دارای یک **نقطهٔ عطف با مماس افقی** است:
+
+$$
+\left( \frac{\partial P}{\partial v} \right)_{T = T_{\text{cr}}} = 0 \qquad \text{and} \qquad \left( \frac{\partial^2 P}{\partial v^2} \right)_{T = T_{\text{cr}}} = 0
+$$
+
+### ب) معادلهٔ بتی-بریجمن (Beattie-Bridgeman — ۱۹۲۸)
+این معادله بر مبنای **۵ ثابت تجربی** (<span dir="ltr">A_0, a, B_0, b, c</span>) نوشته می‌شود و تا چگالی‌های کمتر از **<span dir="ltr">0.8 ρ_cr</span>** دقت بسیار خوبی دارد *(توجه: در اسلاید ۳۷ جزوه سهواً سال ۱۹۸۲ تایپ شده که تاریخ صحیح ارائهٔ آن ۱۹۲۸ است)*:
+
+<EquationBox id="eq-3-10" number="۳-۱۰" label="معادله حالت بتی-بریجمن (بر حسب حجم مولی)">
+
+$$
+P = \frac{R_u T}{\bar{v}^2} \left( 1 - \frac{c}{\bar{v} T^3} \right) (\bar{v} + B) - \frac{A}{\bar{v}^2}, \quad A = A_0 \left( 1 - \frac{a}{\bar{v}} \right), \quad B = B_0 \left( 1 - \frac{b}{\bar{v}} \right)
+$$
+
+</EquationBox>
+
+### پ) معادلهٔ بندیک-وب-رابین (Benedict-Webb-Rubin / BWR — ۱۹۴۰)
+این معادله با **۸ ثابت تجربی** (<span dir="ltr">a, A_0, b, B_0, c, C_0, α, γ</span>) دامنهٔ اعتبار را تا چگالی‌های بالا (حدود **<span dir="ltr">2.5 ρ_cr</span>**) گسترش می‌دهد:
+
+<EquationBox id="eq-3-11" number="۳-۱۱" label="معادله حالت بندیک-وب-رابین (BWR)">
+
+$$
+P = \frac{R_u T}{\bar{v}} + \left( B_0 R_u T - A_0 - \frac{C_0}{T^2} \right) \frac{1}{\bar{v}^2} + \frac{b R_u T - a}{\bar{v}^3} + \frac{a\alpha}{\bar{v}^6} + \frac{c}{\bar{v}^3 T^2} \left( 1 + \frac{\gamma}{\bar{v}^2} \right) e^{-\gamma/\bar{v}^2}
+$$
+
+</EquationBox>
+
+### مقایسهٔ کاربردی سه معادله (اسلاید ۳۹ برای گاز نیتروژن)
+| معادلهٔ حالت | تعداد ثابت‌ها | محدودهٔ اعتبار چگالی | دقت در فشار و دمای بالا |
+| :--- | :---: | :---: | :--- |
+| **وان‌دروالس** | <span dir="ltr">2</span> (از <span dir="ltr">T_cr, P_cr</span>) | چگالی کم تا متوسط | خطای بیشتر در نزدیکی گنبد اشباع (مثلاً <span dir="ltr">4.7%</span> تا <span dir="ltr">20%</span> برای نیتروژن پرفشار) |
+| **بتی-بریجمن** | <span dir="ltr">5</span> ثابت تجربی | <span dir="ltr">ρ &lt; 0.8 ρ_cr</span> | بسیار دقیق در ناحیهٔ گازی (<span dir="ltr">0.1%</span> تا <span dir="ltr">0.3%</span> در اغلب نواحی غیربحرانی) |
+| **BWR** | <span dir="ltr">8</span> ثابت تجربی | <span dir="ltr">ρ &lt; 2.5 ρ_cr</span> | دقیق‌ترین مدل در چگالی‌های زیاد و نزدیک خط اشباع |
+
+---
+
+## 📝 تمرین‌های این فصل
+
+تمامی ۱۰ تمرین منتخب دکتر صفاری از فصل سوم کتاب سنجل (ویرایش هشتم) به‌همراه راه‌حل تشریحی کامل، تطابق با جزوهٔ دست‌نویس و تله‌های امتحانی در صفحهٔ [بانک تمارین فصل ۳](/thermo1-notes/exercises/ch3/) قرار دارند:
+
+* [تمرین ۳-۲](/thermo1-notes/exercises/ch3/#prob-3-2): تفاوت بخار اشباع و بخار فوق‌گرم
+* [تمرین ۳-۶](/thermo1-notes/exercises/ch3/#prob-3-6): تفاوت نقطهٔ بحرانی و نقطهٔ سه‌گانه
+* [تمرین ۳-۲۰](/thermo1-notes/exercises/ch3/#prob-3-20): تکمیل جدول خواص آب (<span dir="ltr">H2O</span>) با جداول <span dir="ltr">A-4</span> تا <span dir="ltr">A-7</span> و درونیابی
+* [تمرین ۳-۲۶](/thermo1-notes/exercises/ch3/#prob-3-26): تکمیل جدول خواص مبرد <span dir="ltr">R-134a</span> با جداول <span dir="ltr">A-11</span> تا <span dir="ltr">A-13</span> (همراه با بررسی نکتهٔ دمای سطر چهارم)
+* [تمرین ۳-۲۸](/thermo1-notes/exercises/ch3/#prob-3-28): مخزن صلب بخار و تبدیل نسبت حجمی به کیفیت جرمی
+* [تمرین ۳-۴۳](/thermo1-notes/exercises/ch3/#prob-3-43): سرد شدن آب در سیلندر-پیستون با استپر و رسم نمودار <span dir="ltr">T-v</span>
+* [تمرین ۳-۴۶](/thermo1-notes/exercises/ch3/#prob-3-46): افزایش دمای جوش آب در قابلمهٔ درب‌دار
+* [تمرین ۳-۶۱](/thermo1-notes/exercises/ch3/#prob-3-61): تغییر حجم مبرد <span dir="ltr">R-134a</span> در سیلندر-پیستون وزنه‌دار
+* [تمرین ۳-۸۲](/thermo1-notes/exercises/ch3/#prob-3-82): مقایسهٔ حجم مخصوص بخار آب با گاز ایده‌آل، نمودار <span dir="ltr">Z</span> و جدول <span dir="ltr">A-6</span>
+* [تمرین ۳-۱۲۲](/thermo1-notes/exercises/ch3/#prob-3-122): انبساط آزاد مبرد <span dir="ltr">R-134a</span> به محفظهٔ خلأ و تعیین حجم مخزن

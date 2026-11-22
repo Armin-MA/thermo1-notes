@@ -1,0 +1,89 @@
+---
+// آزمایشگر مفهومی گنبد اشباع و ضریب تراکم‌پذیری Z (فصل ۳)
+---
+
+<div class="jh-widget not-content" id="phase-z-widget">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">کاوشگر ناحیهٔ فازی و شرط اعتبار گاز ایده‌آل <span dir="ltr" style="display:inline-block">(Z = Pv / RT)</span></span>
+    <span class="jh-widget__sub">بررسی <span dir="ltr">P_R, T_R</span> روی نمودار اشباع آب <span dir="ltr" style="display:inline-block">(T_cr = 647.1 K, P_cr = 22.06 MPa)</span></span>
+  </div>
+
+  <div class="jh-widget__btns" id="pz-presets">
+    <button type="button" class="jh-widget__btn is-active" data-t="298" data-p="2">بخار آب موجود در هوای اتاق</button>
+    <button type="button" class="jh-widget__btn" data-t="500" data-p="2000">بخار اشباع / سوپرهیت نیروگاهی</button>
+    <button type="button" class="jh-widget__btn" data-t="680" data-p="28000">ناحیه فوق‌بحرانی <span dir="ltr">(P &gt; P_cr)</span></button>
+  </div>
+
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl">
+      <span>دما <span dir="ltr">T</span> (K): <strong id="pz-t-lbl" dir="ltr">298</strong></span>
+      <input id="pz-t" type="range" min="280" max="900" step="5" value="298" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>فشار <span dir="ltr">P</span> (kPa): <strong id="pz-p-lbl" dir="ltr">2</strong></span>
+      <input id="pz-p" type="range" min="2" max="30000" step="50" value="2" />
+    </label>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">دمای کاهیده (<span dir="ltr">T_R = T/T_cr</span>)</span>
+      <span class="jh-metric__val" id="pz-tr">0.46</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">فشار کاهیده (<span dir="ltr">P_R = P/P_cr</span>)</span>
+      <span class="jh-metric__val" id="pz-pr">0.0001</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">اعتبار تقریب گاز ایده‌آل</span>
+      <span class="jh-metric__val" id="pz-status" style="direction:rtl;text-align:right">دقیق (P_R &lt;&lt; 1)</span>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('phase-z-widget');
+  if (!root) return;
+  const Tcr = 647.1;
+  const Pcr = 22060; // kPa
+  const tEl = root.querySelector('#pz-t');
+  const pEl = root.querySelector('#pz-p');
+  const tLbl = root.querySelector('#pz-t-lbl');
+  const pLbl = root.querySelector('#pz-p-lbl');
+  const trEl = root.querySelector('#pz-tr');
+  const prEl = root.querySelector('#pz-pr');
+  const stEl = root.querySelector('#pz-status');
+
+  function update() {
+    const T = parseFloat(tEl.value);
+    const P = parseFloat(pEl.value);
+    tLbl.textContent = T.toFixed(0);
+    pLbl.textContent = P.toFixed(0);
+    const Tr = T / Tcr;
+    const Pr = P / Pcr;
+    trEl.textContent = Tr.toFixed(3);
+    prEl.textContent = Pr < 0.01 ? Pr.toFixed(4) : Pr.toFixed(3);
+    if (Pr < 0.05 || Tr > 2.0) {
+      stEl.textContent = 'تقریب گاز ایده‌آل معتبر (Z ≈ 1)';
+    } else if (Pr >= 1.0 && Tr >= 1.0) {
+      stEl.textContent = 'فوق‌بحرانی — جدول یا نمودار Z';
+    } else {
+      stEl.textContent = 'انحراف زیاد از گاز ایده‌آل (نیازمند Z یا جدول)';
+    }
+  }
+
+  root.querySelectorAll('#pz-presets button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#pz-presets button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      tEl.value = btn.getAttribute('data-t') || '298';
+      pEl.value = btn.getAttribute('data-p') || '2';
+      update();
+    });
+  });
+  tEl.addEventListener('input', update);
+  pEl.addEventListener('input', update);
+  update();
+})();
+</script>
