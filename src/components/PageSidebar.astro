@@ -3,15 +3,27 @@ import Default from '@astrojs/starlight/components/PageSidebar.astro';
 import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
 ---
 
+<div class="jh-graph-col-resizer sl-hidden lg:sl-block" id="jh-graph-col-resizer" title="بکشید تا عرض حریم گراف کوچک یا بزرگ شود" aria-hidden="true"></div>
+
 <div class="right-sidebar-panel slsg-graph-panel">
   <div class="sl-container">
     <details class="slsg-graph-accordion" open id="jh-graph-accordion">
       <summary class="slsg-graph-accordion__summary">
         <span class="slsg-graph-accordion__title">{Astro.locals.t('starlight-site-graph.graph')}</span>
-        <span class="slsg-graph-accordion__chevron" aria-hidden="true">▾</span>
+        <span class="slsg-graph-accordion__controls">
+          <span class="jh-graph-size-btns sl-hidden lg:sl-inline-flex" role="group" aria-label="تغییر اندازه حریم گراف">
+            <button type="button" class="jh-gs-btn" data-gs="smaller" title="کوچکتر کردن حریم گراف">−</button>
+            <button type="button" class="jh-gs-btn" data-gs="reset" title="اندازه استاندارد">↺</button>
+            <button type="button" class="jh-gs-btn" data-gs="larger" title="بزرگتر کردن حریم گراف">+</button>
+          </span>
+          <span class="slsg-graph-accordion__chevron" aria-hidden="true">▾</span>
+        </span>
       </summary>
       <div class="slsg-graph-accordion__body">
         <PageGraph showGraph={true} />
+        <div class="jh-graph-h-resizer" id="jh-graph-h-resizer" title="بکشید تا ارتفاع کادر گراف تغییر کند" aria-hidden="true">
+          <span>⋯</span>
+        </div>
         <div class="slsg-graph-legend not-content" aria-label="راهنمای رنگ و شکل گره‌های گراف">
           <span class="lg-item"><i class="lg-dot lg-dot--current">★</i> فعلی</span>
           <span class="lg-item"><i class="lg-dot lg-dot--lesson">●</i> درسنامه</span>
@@ -40,21 +52,104 @@ import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
   if (saved !== null) {
     acc.open = saved === 'true';
   } else if (isMobile) {
-    // در موبایل به‌صورت پیش‌فرض بسته بماند تا اسکرول صفحه طولانی و انگشت‌گیر نشود
     acc.open = false;
+  }
+
+  function refreshGraphCanvas() {
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('resize'));
+      const g = acc.querySelector('graph-component');
+      if (g) {
+        try {
+          if (g.renderer && typeof g.renderer.resize === 'function') g.renderer.resize();
+          if (g.simulator && typeof g.simulator.updateCenterTransform === 'function') {
+            g.simulator.updateCenterTransform();
+          }
+          if (g.simulator && typeof g.simulator.resetZoom === 'function') g.simulator.resetZoom();
+        } catch (_) {}
+      }
+    });
   }
 
   acc.addEventListener('toggle', () => {
     sessionStorage.setItem('jh-graph-open', String(acc.open));
-    if (acc.open) {
-      requestAnimationFrame(() => {
-        window.dispatchEvent(new Event('resize'));
-        const g = acc.querySelector('graph-component');
-        if (g && g.simulator && typeof g.simulator.resetZoom === 'function') {
-          try { g.simulator.resetZoom(); } catch {}
-        }
-      });
-    }
+    if (acc.open) refreshGraphCanvas();
   });
+
+  const DEFAULT_W = 300;
+  const DEFAULT_H = 250;
+
+  function getCurSize() {
+    const cs = getComputedStyle(document.documentElement);
+    const w = parseInt(cs.getPropertyValue('--jh-right-col-w'), 10) || DEFAULT_W;
+    const h = parseInt(cs.getPropertyValue('--jh-graph-h'), 10) || DEFAULT_H;
+    return { w, h };
+  }
+
+  function applySize(w, h) {
+    const cw = Math.max(210, Math.min(480, Math.round(w)));
+    const ch = Math.max(160, Math.min(480, Math.round(h)));
+    document.documentElement.style.setProperty('--jh-right-col-w', `${cw}px`);
+    document.documentElement.style.setProperty('--jh-graph-h', `${ch}px`);
+    try { localStorage.setItem('jh-graph-size', JSON.stringify({ w: cw, h: ch })); } catch (_) {}
+    refreshGraphCanvas();
+  }
+
+  acc.querySelectorAll('.jh-gs-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const mode = btn.getAttribute('data-gs');
+      const cur = getCurSize();
+      if (mode === 'smaller') applySize(cur.w - 40, cur.h - 40);
+      else if (mode === 'larger') applySize(cur.w + 45, cur.h + 45);
+      else applySize(DEFAULT_W, DEFAULT_H);
+      if (!acc.open) acc.open = true;
+    });
+  });
+
+  // کشیدن لبهٔ کناری برای تغییر عرض ستون گراف (RTL: ستون در سمت چپ است، پس کشیدن به راست عرض را بیشتر می‌کند)
+  const colResizer = document.getElementById('jh-graph-col-resizer');
+  if (colResizer) {
+    colResizer.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startSize = getCurSize();
+      colResizer.classList.add('is-dragging');
+      const onMove = (ev) => {
+        const dw = ev.clientX - startX;
+        applySize(startSize.w + dw, startSize.h);
+      };
+      const onUp = () => {
+        colResizer.classList.remove('is-dragging');
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    });
+  }
+
+  // کشیدن لبهٔ پایینی برای تغییر ارتفاع کادر گراف
+  const hResizer = document.getElementById('jh-graph-h-resizer');
+  if (hResizer) {
+    hResizer.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      const startY = e.clientY;
+      const startSize = getCurSize();
+      hResizer.classList.add('is-dragging');
+      const onMove = (ev) => {
+        const dh = ev.clientY - startY;
+        applySize(startSize.w, startSize.h + dh);
+      };
+      const onUp = () => {
+        hResizer.classList.remove('is-dragging');
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+      };
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+    });
+  }
 })();
 </script>

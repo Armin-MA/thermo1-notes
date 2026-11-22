@@ -976,3 +976,166 @@ header.header {
     touch-action: pan-y;
   }
 }
+
+
+/* جمع‌کردن سایدبار فصول برای فضای بیشتر جزوه و تنظیم حریم گراف */
+:root {
+  --jh-right-col-w: 300px;
+  --jh-graph-h: 250px;
+}
+
+.jh-nav-toggle {
+  display: none;
+  margin-inline-start: 0.75rem;
+  padding: 0.28rem 0.68rem;
+  border-radius: 999px;
+  border: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-bg-sidebar);
+  color: var(--sl-color-gray-1);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.jh-nav-toggle:hover {
+  border-color: var(--sl-color-accent);
+  color: var(--sl-color-accent);
+}
+
+@media (min-width: 50rem) {
+  .jh-nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .header .title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  :root:not([data-jh-nav-collapsed='true']) {
+    --sl-content-width: 52rem;
+  }
+
+  :root[data-jh-nav-collapsed='true'] {
+    --sl-content-inline-start: 0rem !important;
+    --sl-content-width: 68rem;
+  }
+
+  :root[data-jh-nav-collapsed='true'] .sidebar-pane {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sidebar-pane {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+}
+
+@media (min-width: 72rem) {
+  .right-sidebar-container {
+    width: var(--jh-right-col-w) !important;
+    flex: 0 0 var(--jh-right-col-w);
+  }
+
+  .right-sidebar {
+    width: var(--jh-right-col-w) !important;
+  }
+
+  [data-has-sidebar][data-has-toc] .main-pane {
+    width: calc(100% - var(--jh-right-col-w)) !important;
+    flex: 1 1 auto;
+  }
+
+  .right-sidebar-panel .sl-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .right-sidebar-panel .sl-container {
+    padding-inline-start: 0.2rem;
+  }
+}
+
+.slsg-graph-accordion__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.jh-graph-size-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18rem;
+}
+
+.jh-gs-btn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-black);
+  color: var(--sl-color-gray-2);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.jh-gs-btn:hover {
+  border-color: var(--sl-color-accent);
+  color: var(--sl-color-accent);
+}
+
+.slsg-graph-accordion__body .slsg-graph-component:not(.slsg-is-fullscreen),
+.slsg-graph-accordion__body .slsg-graph-component:not(.slsg-is-fullscreen) .slsg-graph-container {
+  height: var(--jh-graph-h) !important;
+}
+
+.jh-graph-col-resizer {
+  position: absolute;
+  top: var(--sl-nav-height, 3.5rem);
+  inset-inline-start: 0;
+  width: 7px;
+  height: calc(100vh - var(--sl-nav-height, 3.5rem));
+  cursor: ew-resize;
+  z-index: 20;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.jh-graph-col-resizer:hover,
+.jh-graph-col-resizer.is-dragging {
+  background: rgba(2, 132, 199, 0.35);
+}
+
+.jh-graph-h-resizer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 14px;
+  margin-top: 2px;
+  cursor: ns-resize;
+  color: var(--sl-color-gray-4);
+  font-size: 0.85rem;
+  line-height: 1;
+  user-select: none;
+  border-radius: 6px;
+}
+
+.jh-graph-h-resizer:hover,
+.jh-graph-h-resizer.is-dragging {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-accent);
+}

@@ -7,6 +7,23 @@ import Default from '@astrojs/starlight/components/Head.astro';
 <script is:inline>
   window.process = window.process || { env: {}, platform: 'browser', versions: {} };
   (() => {
+    try {
+      if (localStorage.getItem('jh-nav-collapsed') === 'true') {
+        document.documentElement.dataset.jhNavCollapsed = 'true';
+      }
+      const rawSize = localStorage.getItem('jh-graph-size');
+      if (rawSize) {
+        const parsed = JSON.parse(rawSize);
+        if (parsed.w >= 210 && parsed.w <= 480) {
+          document.documentElement.style.setProperty('--jh-right-col-w', `${parsed.w}px`);
+        }
+        if (parsed.h >= 160 && parsed.h <= 480) {
+          document.documentElement.style.setProperty('--jh-graph-h', `${parsed.h}px`);
+        }
+      }
+    } catch (_) {}
+  })();
+  (() => {
     const cache = new Map();
     let popover = null;
     let hideTimer = null;
@@ -216,11 +233,44 @@ import Default from '@astrojs/starlight/components/Head.astro';
       }
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', bindHoverPopovers);
-    } else {
-      bindHoverPopovers();
+    function bindNavToggle() {
+      const titleWrap = document.querySelector('.header .title-wrapper');
+      if (!titleWrap || document.getElementById('jh-nav-toggle')) return;
+      const btn = document.createElement('button');
+      btn.id = 'jh-nav-toggle';
+      btn.type = 'button';
+      btn.className = 'jh-nav-toggle';
+      const syncLabel = () => {
+        const collapsed = document.documentElement.dataset.jhNavCollapsed === 'true';
+        btn.textContent = collapsed ? '☰ فهرست فصل‌ها' : '✕ بستن فهرست';
+        btn.setAttribute('aria-pressed', String(collapsed));
+        btn.title = collapsed ? 'باز کردن ستون فهرست فصل‌ها' : 'جمع کردن ستون فهرست برای فضای بیشتر جزوه';
+      };
+      syncLabel();
+      btn.addEventListener('click', () => {
+        const next = document.documentElement.dataset.jhNavCollapsed !== 'true';
+        if (next) {
+          document.documentElement.dataset.jhNavCollapsed = 'true';
+        } else {
+          delete document.documentElement.dataset.jhNavCollapsed;
+        }
+        try { localStorage.setItem('jh-nav-collapsed', String(next)); } catch (_) {}
+        syncLabel();
+        window.dispatchEvent(new Event('resize'));
+      });
+      titleWrap.appendChild(btn);
     }
-    document.addEventListener('astro:page-load', bindHoverPopovers);
+
+    function onReady() {
+      bindHoverPopovers();
+      bindNavToggle();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', onReady);
+    } else {
+      onReady();
+    }
+    document.addEventListener('astro:page-load', onReady);
   })();
 </script>
