@@ -507,10 +507,60 @@ header.header {
   border-inline-start-width: 5px !important;
 }
 
-/* کادر جداول مهندسی */
+/* کادر جداول مهندسی (دارای اسکرول لمسی افقی در موبایل بدون بریده شدن ستون‌ها) */
 .sl-markdown-content table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   border-radius: 10px;
-  overflow: hidden;
+  border: 1px solid var(--sl-color-gray-5);
+}
+
+.sl-markdown-content table th,
+.sl-markdown-content table td {
+  min-width: 6.75rem;
+  vertical-align: middle;
+  line-height: 1.6;
+}
+
+.sl-markdown-content table th .katex,
+.sl-markdown-content table td .katex {
+  white-space: nowrap;
+  font-size: 0.94em;
+}
+
+mobile-starlight-toc nav {
+  background-color: var(--sl-color-black) !important;
+  backdrop-filter: blur(12px);
+}
+
+@media (max-width: 48rem) {
+  .eq-card {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 0.45rem;
+    padding: 0.7rem 0.8rem;
+  }
+
+  .eq-card__meta {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .eq-card__body {
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
+
+  .eq-card__body .katex-display {
+    font-size: 0.95em;
+  }
 }
 
 /* کارت قهرمان صفحه اول */
