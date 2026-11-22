@@ -1016,6 +1016,9 @@ header.header {
     display: flex;
     align-items: center;
     gap: 0.35rem;
+    overflow: visible !important;
+    position: relative;
+    z-index: 10;
   }
 
   :root:not([data-jh-nav-collapsed='true']) {
@@ -1104,15 +1107,23 @@ header.header {
 }
 
 .jh-graph-col-resizer {
+  display: block;
   position: absolute;
   top: var(--sl-nav-height, 3.5rem);
   inset-inline-start: 0;
-  width: 7px;
+  width: 8px;
   height: calc(100vh - var(--sl-nav-height, 3.5rem));
   cursor: ew-resize;
-  z-index: 20;
+  z-index: 25;
   background: transparent;
   transition: background 0.15s ease;
+}
+
+@media (max-width: 71.99rem) {
+  .jh-graph-col-resizer,
+  .jh-graph-size-btns {
+    display: none !important;
+  }
 }
 
 .jh-graph-col-resizer:hover,
