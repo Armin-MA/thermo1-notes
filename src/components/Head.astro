@@ -261,9 +261,103 @@ import Default from '@astrojs/starlight/components/Head.astro';
       titleWrap.appendChild(btn);
     }
 
+    function bindSearchShortcuts() {
+      const openBtn = document.querySelector('site-search button[data-open-modal]');
+      if (openBtn) {
+        openBtn.setAttribute('aria-keyshortcuts', '/ Control+/ Control+K');
+        openBtn.title = 'جستجو در جزوه — میانبر: کلید / یا Ctrl+/ یا Ctrl+K';
+        const kbdWrap = openBtn.querySelector(':scope > kbd');
+        if (kbdWrap) {
+          kbdWrap.innerHTML = '<kbd dir="ltr">/</kbd>';
+          kbdWrap.style.display = '';
+        }
+      }
+
+      if (window.__jhSearchShortcutBound) return;
+      window.__jhSearchShortcutBound = true;
+
+      window.addEventListener(
+        'keydown',
+        (e) => {
+          const t = e.target;
+          const tag = t && t.tagName ? t.tagName.toUpperCase() : '';
+          const inEditable =
+            tag === 'INPUT' ||
+            tag === 'TEXTAREA' ||
+            tag === 'SELECT' ||
+            Boolean(t && t.isContentEditable);
+
+          const isSlashBare =
+            !e.ctrlKey &&
+            !e.metaKey &&
+            !e.altKey &&
+            !inEditable &&
+            (e.key === '/' || e.code === 'Slash' || e.code === 'NumpadDivide');
+
+          const isCtrlSlash =
+            (e.ctrlKey || e.metaKey) &&
+            !e.altKey &&
+            (e.key === '/' || e.code === 'Slash' || e.code === 'NumpadDivide');
+
+          const isCtrlK =
+            (e.ctrlKey || e.metaKey) &&
+            !e.altKey &&
+            (e.code === 'KeyK' || (e.key && e.key.toLowerCase() === 'k'));
+
+          const isAltS =
+            e.altKey &&
+            !e.ctrlKey &&
+            !e.metaKey &&
+            (e.code === 'KeyS' || (e.key && e.key.toLowerCase() === 's'));
+
+          if (!isSlashBare && !isCtrlSlash && !isCtrlK && !isAltS) return;
+
+          const siteSearch = document.querySelector('site-search');
+          if (!siteSearch) return;
+          const dialog = siteSearch.querySelector('dialog');
+          const btnOpen = siteSearch.querySelector('button[data-open-modal]');
+          const btnClose = siteSearch.querySelector('button[data-close-modal]');
+
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+
+          if (dialog && dialog.open) {
+            if (btnClose) btnClose.click();
+            else dialog.close();
+          } else if (btnOpen) {
+            const openSearch = () => {
+              btnOpen.click();
+              const cleanAndFocus = () => {
+                const inp = siteSearch.querySelector('input');
+                if (inp) {
+                  if (isSlashBare && inp.value === '/') {
+                    inp.value = '';
+                    inp.dispatchEvent(new Event('input', { bubbles: true }));
+                  }
+                  inp.focus();
+                }
+              };
+              cleanAndFocus();
+              if (isSlashBare) {
+                setTimeout(cleanAndFocus, 50);
+              }
+            };
+            if (isSlashBare) {
+              setTimeout(openSearch, 45);
+            } else {
+              openSearch();
+            }
+          }
+        },
+        { capture: true }
+      );
+    }
+
     function onReady() {
       bindHoverPopovers();
       bindNavToggle();
+      bindSearchShortcuts();
     }
 
     if (document.readyState === 'loading') {
