@@ -12,6 +12,7 @@ sitemap:
 
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 import ExerciseCard from '../../../components/ExerciseCard.astro';
+import FigureBox from '../../../components/FigureBox.astro';
 
 <TopicDependencyMap
   prerequisites={[
@@ -38,6 +39,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     یک دستگاه سیلندر-پیستون مجهز به تکیه‌گاه (Stops) در ابتدا حاوی $0.6\text{ kg}$ بخار آب در فشار $1.0\text{ MPa}$ و دمای $400\ ^\circ\text{C}$ است. محل تکیه‌گاه‌ها متناظر با $40\%$ حجم اولیه است. حال بخار سرد می‌شود. کار تراکم را تعیین کنید اگر حالت نهایی الف) $1.0\text{ MPa}$ و $250\ ^\circ\text{C}$ و ب) $500\text{ kPa}$ باشد. پ) دمای حالت نهایی در قسمت (ب) را نیز بیابید.
+
+    <FigureBox
+      src="images/exercises/p4-6.png"
+      alt="شکل تمرین ۴-۶ سیلندر-پیستون بخار آب با تکیه‌گاه"
+      caption="شکل مسئله ۴-۶ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="240px"
+    />
   </Fragment>
   <Fragment slot="solution">
     **الف) حالت نهایی $1.0\text{ MPa}$ و $250\ ^\circ\text{C}$:**
@@ -47,7 +56,7 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
     v_1 = 0.30661\text{ m}^3/\text{kg} \ (1\text{ MPa}, 400\ ^\circ\text{C}), \qquad v_{2a} = 0.23275\text{ m}^3/\text{kg} \ (1\text{ MPa}, 250\ ^\circ\text{C})
     $$
 
-    چون $v_{2a} > 0.40 v_1 = 0.12264\text{ m}^3/\text{kg}$ است، پیستون هنوز به استپرها نرسیده و کل فرآیند در فشار ثابت $1000\text{ kPa}$ انجام شده است؛ بنابراین بزرگی کار تراکم (کار انجام‌شده روی سیستم) برابر است با:
+    چون $v_{2a} \gt 0.40 v_1 = 0.12264\text{ m}^3/\text{kg}$ است، پیستون هنوز به استپرها نرسیده و کل فرآیند در فشار ثابت $1000\text{ kPa}$ انجام شده است؛ بنابراین بزرگی کار تراکم (کار انجام‌شده روی سیستم) برابر است با:
 
     $$
     W_{b,\text{in}} = m P (v_1 - v_{2a}) = (0.6\text{ kg})(1000\text{ kPa})(0.30661 - 0.23275)\text{ m}^3/\text{kg} = 44.3\text{ kJ}
@@ -63,7 +72,7 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
     $$
 
     **پ) دمای نهایی در قسمت (ب):**
-    در حالت نهایی داریم $P_{2b} = 0.5\text{ MPa}$ و $v_{2b} = 0.1226\text{ m}^3/\text{kg}$. از جدول `A-5` در فشار $500\text{ kPa}$ داریم $v_f = 0.001093$ و $v_g = 0.37483\text{ m}^3/\text{kg}$؛ چون $v_f < v_{2b} < v_g$ است، بخار در ناحیهٔ مخلوط اشباع است و:
+    در حالت نهایی داریم $P_{2b} = 0.5\text{ MPa}$ و $v_{2b} = 0.1226\text{ m}^3/\text{kg}$. از جدول `A-5` در فشار $500\text{ kPa}$ داریم $v_f = 0.001093$ و $v_g = 0.37483\text{ m}^3/\text{kg}$؛ چون $v_f \lt v_{2b} \lt v_g$ است، بخار در ناحیهٔ مخلوط اشباع است و:
 
     $$
     T_{2b} = T_{\text{sat}@500\text{ kPa}} = 151.8\ ^\circ\text{C}
@@ -80,6 +89,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     گازی از حجم اولیهٔ $0.42\text{ m}^3$ تا حجم نهایی $0.12\text{ m}^3$ متراکم می‌شود. طی این فرآیند شبه‌تعادلی، فشار بر حسب حجم از رابطهٔ $P = aV + b$ پیروی می‌کند که $a = -1200\text{ kPa/m}^3$ و $b = 600\text{ kPa}$ است. کار انجام‌شده را الف) با رسم نمودار $P-V$ و محاسبهٔ سطح زیر منحنی و ب) با انجام انتگرال‌گیری محاسبه کنید.
+
+    <FigureBox
+      src="images/exercises/p4-10.png"
+      alt="شکل تمرین ۴-۱۰ تراکم خطی گاز در سیلندر-پیستون"
+      caption="شکل مسئله ۴-۱۰ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="240px"
+    />
   </Fragment>
   <Fragment slot="solution">
     ابتدا فشارهای ابتدایی و انتهایی را محاسبه می‌کنیم:
@@ -117,6 +134,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     مقدار $1\text{ kg}$ آب که در ابتدا در دمای $90\ ^\circ\text{C}$ با کیفیت $10\%$ است، یک دستگاه سیلندر-پیستون فنردار را اشغال کرده است. این دستگاه گرم می‌شود تا فشار به $800\text{ kPa}$ و دما به $250\ ^\circ\text{C}$ برسد. کل کار تولیدشده طی این فرآیند را بر حسب $\text{kJ}$ تعیین کنید.
+
+    <FigureBox
+      src="images/exercises/p4-21.png"
+      alt="شکل تمرین ۴-۲۱ سیلندر-پیستون فنردار آب"
+      caption="شکل مسئله ۴-۲۱ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="240px"
+    />
   </Fragment>
   <Fragment slot="solution">
     **نکتهٔ دکتر صفاری:** «چون فنر خطی از ابتدا در تماس با پیستون است، تغییرات فشار بر حسب حجم کاملاً خطی است؛ پس مسیر فرآیند روی نمودار $P-V$ یک خط راست است.»
@@ -152,6 +177,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     یک دستگاه سیلندر-پیستون حاوی $50\text{ kg}$ آب در فشار $250\text{ kPa}$ و دمای $25\ ^\circ\text{C}$ است. سطح مقطع پیستون $0.1\text{ m}^2$ است. گرما به آب منتقل می‌شود و باعث تبخیر جزئی و انبساط آن می‌گردد. وقتی حجم به $0.2\text{ m}^3$ می‌رسد، پیستون به یک فنر خطی با ثابت $k = 100\text{ kN/m}$ می‌رسد. گرمای بیشتری داده می‌شود تا پیستون $20\text{ cm}$ دیگر بالا برود. الف) فشار و دمای نهایی و ب) کار انجام‌شده طی فرآیند را تعیین کرده و نمودار $P-V$ را رسم کنید.
+
+    <FigureBox
+      src="images/exercises/p4-24.png"
+      alt="شکل تمرین ۴-۲۴ سیلندر-پیستون دومرحله‌ای با فنر خطی"
+      caption="شکل مسئله ۴-۲۴ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="240px"
+    />
   </Fragment>
   <Fragment slot="solution">
     **الف) فشار و دمای نهایی (حالت ۳):**
@@ -167,7 +200,7 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
     V_3 = V_2 + x A = 0.2 + (0.2)(0.1) = 0.22\text{ m}^3 \quad \Longrightarrow \quad v_3 = \frac{V_3}{m} = \frac{0.22}{50} = 0.0044\text{ m}^3/\text{kg}
     $$
 
-    از جدول `A-5` در فشار $450\text{ kPa}$ داریم $v_f = 0.001088$ و $v_g = 0.41392\text{ m}^3/\text{kg}$. چون $v_f < v_3 < v_g$ است، حالت نهایی **مخلوط اشباع** است و دمای نهایی برابر است با:
+    از جدول `A-5` در فشار $450\text{ kPa}$ داریم $v_f = 0.001088$ و $v_g = 0.41392\text{ m}^3/\text{kg}$. چون $v_f \lt v_3 \lt v_g$ است، حالت نهایی **مخلوط اشباع** است و دمای نهایی برابر است با:
 
     $$
     T_3 = T_{\text{sat}@450\text{ kPa}} = 147.9\ ^\circ\text{C}
@@ -232,6 +265,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     یک سیلندر-پیستون عایق حاوی $5\text{ L}$ آب مایع اشباع در فشار ثابت $175\text{ kPa}$ است. آب توسط یک چرخ‌پره هم زده می‌شود در حالی که جریان $8\text{ A}$ به مدت $45\text{ min}$ از یک مقاومت برقی درون آب عبور می‌کند. اگر نیمی از مایع طی این فرآیند فشار ثابت تبخیر شود و کار چرخ‌پره برابر $400\text{ kJ}$ باشد، ولتاژ منبع تغذیه را تعیین کنید.
+
+    <FigureBox
+      src="images/exercises/p4-34.png"
+      alt="شکل تمرین ۴-۳۴ سیلندر-پیستون عایق با هم‌زن پره‌ای و گرم‌کن برقی"
+      caption="شکل مسئله ۴-۳۴ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="240px"
+    />
   </Fragment>
   <Fragment slot="solution">
     **تراز انرژی در فشار ثابت:**
@@ -269,6 +310,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     یک مخزن عایق توسط جداره‌ای به دو بخش تقسیم شده است. یک بخش حاوی $2.5\text{ kg}$ آب مایع متراکم در دمای $60\ ^\circ\text{C}$ و فشار $600\text{ kPa}$ است و بخش دیگر خلأ است. جداره برداشته می‌شود و آب کل مخزن را پر می‌کند. دمای نهایی آب و حجم کل مخزن را برای فشار نهایی $10\text{ kPa}$ تعیین کنید.
+
+    <FigureBox
+      src="images/exercises/p4-41.png"
+      alt="شکل تمرین ۴-۴۱ مخزن دوقسمتی آب و خلأ"
+      caption="شکل مسئله ۴-۴۱ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="280px"
+    />
   </Fragment>
   <Fragment slot="solution">
     کل مخزن را به عنوان سیستم بسته می‌گیریم. چون مخزن صلب و عایق است ($W = 0$ و $Q = 0$)، از قانون اول داریم:
@@ -283,7 +332,7 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
     u_1 \approx u_{f@60^\circ\text{C}} = 251.16\text{ kJ/kg}
     $$
 
-    در حالت ۲ ($P_2 = 10\text{ kPa}$ و $u_2 = 251.16\text{ kJ/kg}$)، از جدول `A-5` داریم $u_f = 191.79$, $u_{fg} = 2245.4\text{ kJ/kg}$ و $v_f = 0.001010$, $v_g = 14.670\text{ m}^3/\text{kg}$. چون $u_f < u_2 < u_g$ است، آب در حالت نهایی مخلوط اشباع است و:
+    در حالت ۲ ($P_2 = 10\text{ kPa}$ و $u_2 = 251.16\text{ kJ/kg}$)، از جدول `A-5` داریم $u_f = 191.79$, $u_{fg} = 2245.4\text{ kJ/kg}$ و $v_f = 0.001010$, $v_g = 14.670\text{ m}^3/\text{kg}$. چون $u_f \lt u_2 \lt u_g$ است، آب در حالت نهایی مخلوط اشباع است و:
 
     $$
     x_2 = \frac{u_2 - u_f}{u_{fg}} = \frac{251.16 - 191.79}{2245.4} = 0.02644
@@ -361,6 +410,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     یک مخزن صلب و عایق توسط جداره‌ای به دو قسمت مساوی تقسیم شده است. در ابتدا یک قسمت حاوی $4\text{ kg}$ گاز ایده‌آل در فشار $800\text{ kPa}$ و دمای $50\ ^\circ\text{C}$ است و قسمت دیگر خلأ است. جداره برداشته می‌شود و گاز کل مخزن را پر می‌کند. دما و فشار نهایی در مخزن را تعیین کنید.
+
+    <FigureBox
+      src="images/exercises/p4-62.png"
+      alt="شکل تمرین ۴-۶۲ مخزن دوقسمتی گاز ایده‌آل و خلأ"
+      caption="شکل مسئله ۴-۶۲ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="280px"
+    />
   </Fragment>
   <Fragment slot="solution">
     کل مخزن را به عنوان سیستم بسته در نظر می‌گیریم. مخزن عایق ($Q = 0$) و صلب ($W = 0$) است، پس از قانون اول:
@@ -392,6 +449,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     هوا درون یک دستگاه سیلندر-پیستون قرار دارد. پیستون در ابتدا روی تکیه‌گاه‌ها (Stops) تکیه دارد و برای حرکت آن فشاری برابر $200\text{ kPa}$ لازم است. در ابتدا هوا در فشار $100\text{ kPa}$ و دمای $23\ ^\circ\text{C}$ حجمی برابر $0.25\text{ m}^3$ را اشغال کرده است. مقدار گرمای منتقل‌شده به هوا را بر حسب $\text{kJ}$ هنگام افزایش دما تا $700\text{ K}$ تعیین کنید (گرمای ویژه را در $300\text{ K}$ ثابت بگیرید).
+
+    <FigureBox
+      src="images/exercises/p4-76.png"
+      alt="شکل تمرین ۴-۷۶ سیلندر-پیستون هوا روی استپر"
+      caption="شکل مسئله ۴-۷۶ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="240px"
+    />
   </Fragment>
   <Fragment slot="solution">
     از جدول `A-2a` برای هوا: $R = 0.287\text{ kJ/kg}\cdot\text{K}$ و $c_v = 0.718\text{ kJ/kg}\cdot\text{K}$.
@@ -432,6 +497,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     در یک خط تولید، گوی‌های برنجی به قطر $5\text{ cm}$ ($\rho = 8522\text{ kg/m}^3$ و $c_p = 0.385\text{ kJ/kg}\cdot^\circ\text{C}$) که در ابتدا دمای $120\ ^\circ\text{C}$ دارند، با نرخ $100$ گوی در دقیقه به مدت $2\text{ min}$ درون حمام آبی در دمای $50\ ^\circ\text{C}$ کوئنچ می‌شوند. اگر دمای گوی‌ها پس از کوئنچ به $74\ ^\circ\text{C}$ برسد، نرخی را که باید گرما از آب دفع شود تا دمای حمام آب در $50\ ^\circ\text{C}$ ثابت بماند تعیین کنید.
+
+    <FigureBox
+      src="images/exercises/p4-88.png"
+      alt="شکل تمرین ۴-۸۸ کوئنچ کردن گوی‌های برنجی در حمام آب"
+      caption="شکل مسئله ۴-۸۸ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="280px"
+    />
   </Fragment>
   <Fragment slot="solution">
     یک گوی برنجی را به عنوان سیستم بسته می‌گیریم. جرم هر گوی برابر است با:
@@ -463,6 +536,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     یک خانهٔ خورشیدی پسیو که با نرخ متوسط $50{,}000\text{ kJ/h}$ به بیرون گرما تلف می‌کند، در طول یک شب زمستانی به مدت $10\text{ h}$ پیوسته در دمای $22\ ^\circ\text{C}$ نگه داشته می‌شود. خانه توسط $50$ مخزن شیشه‌ای که هر یک حاوی $20\text{ L}$ آب است و در طول روز با انرژی خورشیدی تا $80\ ^\circ\text{C}$ گرم شده، گرمایش می‌شود. یک هیتر برقی پشتیبان $15\text{ kW}$ مجهز به ترموستات هرگاه لازم باشد روشن می‌شود تا دما در $22\ ^\circ\text{C}$ بماند. الف) سیستم گرمایش برقی آن شب چند ساعت کار کرده است؟ ب) اگر گرمایش خورشیدی وجود نداشت، هیتر چند ساعت کار می‌کرد؟
+
+    <FigureBox
+      src="images/exercises/p4-121.png"
+      alt="شکل تمرین ۴-۱۲۱ خانه خورشیدی با مخازن آب و هیتر"
+      caption="شکل مسئله ۴-۱۲۱ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="300px"
+    />
   </Fragment>
   <Fragment slot="solution">
     از جدول `A-3` برای آب مایع در دمای اتاق داریم $\rho = 1\text{ kg/L}$ و $c = 4.18\text{ kJ/kg}\cdot^\circ\text{C}$. جرم کل آب برابر است با:
@@ -504,6 +585,14 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
 >
   <Fragment slot="statement">
     دو مخزن صلب توسط یک شیر به هم متصل شده‌اند. مخزن <span dir="ltr">A</span> حاوی $0.2\text{ m}^3$ آب در فشار $400\text{ kPa}$ و کیفیت $80\%$ است. مخزن <span dir="ltr">B</span> حاوی $0.5\text{ m}^3$ آب در فشار $200\text{ kPa}$ و دمای $250\ ^\circ\text{C}$ است. اکنون شیر باز می‌شود و دو مخزن به حالت نهایی یکسانی در تعادل حرارتی با محیط $25\ ^\circ\text{C}$ می‌رسند. فشار نهایی و مقدار انتقال حرارت را تعیین کنید.
+
+    <FigureBox
+      src="images/exercises/p4-131.png"
+      alt="شکل تمرین ۴-۱۳۱ دو مخزن صلب متصل با شیر"
+      caption="شکل مسئله ۴-۱۳۱ کتاب سنجل"
+      source="سنجل ویرایش ۸"
+      maxWidth="300px"
+    />
   </Fragment>
   <Fragment slot="solution">
     کل مجموعهٔ دو مخزن <span dir="ltr">A</span> و <span dir="ltr">B</span> را به عنوان یک سیستم بسته می‌گیریم. چون مخازن صلب هستند کار مرزی صفر است ($W = 0$).
@@ -531,7 +620,7 @@ import ExerciseCard from '../../../components/ExerciseCard.astro';
     v_2 = \frac{V_t}{m_t} = \frac{0.7}{0.9573} = 0.73117\text{ m}^3/\text{kg}
     $$
 
-    از جدول `A-4` در دمای $25\ ^\circ\text{C}$ داریم $v_f = 0.001003, v_g = 43.340\text{ m}^3/\text{kg}$ و $u_f = 104.83, u_{fg} = 2304.3\text{ kJ/kg}$. چون $v_f < v_2 < v_g$ است، حالت نهایی مخلوط اشباع است:
+    از جدول `A-4` در دمای $25\ ^\circ\text{C}$ داریم $v_f = 0.001003, v_g = 43.340\text{ m}^3/\text{kg}$ و $u_f = 104.83, u_{fg} = 2304.3\text{ kJ/kg}$. چون $v_f \lt v_2 \lt v_g$ است، حالت نهایی مخلوط اشباع است:
 
     $$
     P_2 = P_{\text{sat}@25^\circ\text{C}} = 3.17\text{ kPa}

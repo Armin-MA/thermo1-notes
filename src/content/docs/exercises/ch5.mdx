@@ -13,6 +13,7 @@ sitemap:
 
 import ExerciseCard from '../../../components/ExerciseCard.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import FigureBox from '../../../components/FigureBox.astro';
 
 <TopicDependencyMap
   prerequisites={[
@@ -41,6 +42,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     هوا به‌صورت پایا وارد لوله‌ای به قطر $28\text{ cm}$ در فشار $200\text{ kPa}$ و دمای $20^\circ\text{C}$ با سرعت $5\text{ m/s}$ می‌شود. هوا ضمن عبور از لوله گرم شده و در فشار $180\text{ kPa}$ و دمای $40^\circ\text{C}$ از آن خارج می‌گردد. مطلوب است: الف) دبی حجمی هوا در ورودی، ب) دبی جرمی هوا، ج) سرعت و دبی حجمی هوا در خروجی.
+
+    <FigureBox
+      src="images/exercises/p5-7.png"
+      alt="شکل تمرین ۵-۷ جریان هوا در لوله گرم شونده"
+      caption="شکل کتاب سنجل — تمرین ۵-۷"
+      source="سنجل ویرایش ۸"
+      maxWidth="360px"
+    />
   </Fragment>
   <Fragment slot="solution">
     از جدول `A-1` (یا `A-2`) برای هوا داریم: $R = 0.287\text{ kJ/(kg}\cdot\text{K)}$. دماهای مطلق عبارت‌اند از $T_1 = 20 + 273 = 293\text{ K}$ و $T_2 = 40 + 273 = 313\text{ K}$.
@@ -85,6 +94,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     یک رایانهٔ رومیزی با فن خنک‌کننده‌ای با دبی حجمی $0.34\text{ m}^3/\text{min}$ خنک می‌شود. دبی جرمی هوای عبوری از فن را در ارتفاع $3400\text{ m}$ که چگالی هوا در آن برابر $0.7\text{ kg/m}^3$ است، تعیین کنید. همچنین اگر سرعت متوسط هوا نباید از $110\text{ m/min}$ تجاوز کند، قطر محفظهٔ فن را محاسبه نمایید.
+
+    <FigureBox
+      src="images/exercises/p5-12.png"
+      alt="شکل تمرین ۵-۱۲ فن خنک کننده کیس رایانه"
+      caption="شکل کتاب سنجل — تمرین ۵-۱۲"
+      source="سنجل ویرایش ۸"
+      maxWidth="320px"
+    />
   </Fragment>
   <Fragment slot="solution">
     **۱. محاسبهٔ دبی جرمی:**
@@ -156,6 +173,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     بخار آب به‌صورت پایا از یک توربین آدیاباتیک عبور می‌کند. شرایط ورودی بخار $4\text{ MPa}$، $500^\circ\text{C}$ و سرعت $80\text{ m/s}$ است و در خروجی دارای فشار $30\text{ kPa}$، کیفیت بخار $92\%$ و سرعت $50\text{ m/s}$ می‌باشد. دبی جرمی بخار $12\text{ kg/s}$ است. مطلوب است: الف) تغییر انرژی جنبشی، ب) توان خروجی توربین و ج) مساحت مقطع ورودی توربین.
+
+    <FigureBox
+      src="images/exercises/p5-46.png"
+      alt="شکل تمرین ۵-۴۶ توربین بخار آدیاباتیک"
+      caption="شکل کتاب سنجل — تمرین ۵-۴۶"
+      source="سنجل ویرایش ۸"
+      maxWidth="360px"
+    />
   </Fragment>
   <Fragment slot="solution">
     استخراج خواص از جداول بخار آب:
@@ -201,6 +226,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     مبرد `R-134a` از حالت مایع اشباع در فشار $700\text{ kPa}$ تا فشار $160\text{ kPa}$ خفه (اختناق) می‌شود. افت دما در طول این فرآیند و حجم مخصوص نهایی مبرد را تعیین کنید.
+
+    <FigureBox
+      src="images/exercises/p5-62.png"
+      alt="شکل تمرین ۵-۶۲ شیر اختناق مبرد R-134a"
+      caption="شکل کتاب سنجل — تمرین ۵-۶۲"
+      source="سنجل ویرایش ۸"
+      maxWidth="320px"
+    />
   </Fragment>
   <Fragment slot="solution">
     در شیر اختناق ($\dot{Q} \approx 0, \dot{W} = 0, \Delta ke \approx \Delta pe \approx 0$) فرآیند هم‌آنتالپی است: $h_2 = h_1$.
@@ -209,7 +242,7 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
     * در $P_2 = 160\text{ kPa}$: $T_{\text{sat}} = -15.60^\circ\text{C}$، $h_f = 31.18\text{ kJ/kg}$، $h_{fg} = 209.96\text{ kJ/kg}$، $h_g = 241.14\text{ kJ/kg}$، $v_f = 0.0007435\text{ m}^3/\text{kg}$ و $v_g = 0.12355\text{ m}^3/\text{kg}$.
 
     **۱. افت دما:**
-    چون $h_f < h_2 = 88.82 < h_g$ است، حالت ۲ در ناحیهٔ **مخلوط اشباع** قرار دارد؛ بنابراین $T_2 = T_{\text{sat}@160\text{kPa}} = -15.60^\circ\text{C}$:
+    چون $h_f \lt h_2 = 88.82 \lt h_g$ است، حالت ۲ در ناحیهٔ **مخلوط اشباع** قرار دارد؛ بنابراین $T_2 = T_{\text{sat}@160\text{kPa}} = -15.60^\circ\text{C}$:
 
     $$
     \Delta T = T_2 - T_1 = -15.60 - 26.69 = -42.3^\circ\text{C} \quad (\text{drop of } \mathbf{42.3^\circ\text{C}})
@@ -239,6 +272,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     بخار آب در چگالندهٔ (کندانسور) یک نیروگاه بخار در دمای $50^\circ\text{C}$ توسط آب خنک‌کنندهٔ یک دریاچهٔ مجاور تقطیر می‌شود. آب خنک‌کننده با دبی $101\text{ kg/s}$ و دمای $18^\circ\text{C}$ وارد لوله‌های چگالنده شده و با دمای $27^\circ\text{C}$ خارج می‌گردد. نرخ تقطیر بخار در چگالنده را بیابید.
+
+    <FigureBox
+      src="images/exercises/p5-86.png"
+      alt="شکل تمرین ۵-۸۶ چگالنده نیروگاه بخار"
+      caption="شکل کتاب سنجل — تمرین ۵-۸۶"
+      source="سنجل ویرایش ۸"
+      maxWidth="340px"
+    />
   </Fragment>
   <Fragment slot="solution">
     از جدول `A-4` در دمای $50^\circ\text{C}$ داریم $h_{fg} = 2382.0\text{ kJ/kg}$، و از جدول `A-3` گرمای ویژهٔ آب سرد $c_p = 4.18\text{ kJ/(kg}\cdot^\circ\text{C)}$ است.
@@ -274,6 +315,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     هوا در دمای $300\text{ K}$ و فشار $100\text{ kPa}$ به‌صورت پایا وارد یک سشوار با توان الکتریکی ورودی $1500\text{ W}$ می‌شود. به‌دلیل بزرگ بودن ورودی هوا، سرعت ورودی ناچیز است. دما و سرعت هوا در خروجی سشوار به‌ترتیب $80^\circ\text{C}$ و $21\text{ m/s}$ می‌باشد. فرآیند هم‌فشار و آدیاباتیک است. با فرض گرمای ویژهٔ ثابت در دمای $300\text{ K}$: الف) دبی جرمی هوای ورودی ($\text{kg/s}$) و ب) دبی حجمی هوا در خروجی ($\text{m}^3/\text{s}$) را بیابید.
+
+    <FigureBox
+      src="images/exercises/p5-108.png"
+      alt="شکل تمرین ۵-۱۰۸ سشوار برقی"
+      caption="شکل کتاب سنجل — تمرین ۵-۱۰۸"
+      source="سنجل ویرایش ۸"
+      maxWidth="340px"
+    />
   </Fragment>
   <Fragment slot="solution">
     از جدول `A-2a` در دمای $300\text{ K}$ برای هوا: $c_p = 1.005\text{ kJ/(kg}\cdot\text{K)}$ و $R = 0.287\text{ kPa}\cdot\text{m}^3/(\text{kg}\cdot\text{K})$. دمای خروجی $T_2 = 80 + 273 = 353\text{ K}$ و توان ورودی $\dot{W}_{\text{in}} = 1.50\text{ kW}$ است.
@@ -311,6 +360,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     یک زودپز با حجم $4\text{ L}$ دارای فشار کاری $175\text{ kPa}$ است. در ابتدا نیمی از حجم آن پر از آب مایع و نیمی دیگر پر از بخار است. اگر بخواهیم آب مایع زودپز تا مدت $1\text{ h}$ تمام نشود، بیشترین نرخ انتقال حرارت مجاز چقدر است؟
+
+    <FigureBox
+      src="images/exercises/p5-117.png"
+      alt="شکل تمرین ۵-۱۱۷ زودپز ۴ لیتری"
+      caption="شکل کتاب سنجل — تمرین ۵-۱۱۷"
+      source="سنجل ویرایش ۸"
+      maxWidth="300px"
+    />
   </Fragment>
   <Fragment slot="solution">
     این یک فرآیند **ناپایا (جریان یکنواخت)** است زیرا جرم درون زودپز در حال خروج است. از جدول `A-5` در فشار $P = 175\text{ kPa}$:
@@ -361,6 +418,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     یک دستگاه سیلندر–پیستون عمودی در ابتدا حاوی $0.25\text{ m}^3$ هوا در فشار $600\text{ kPa}$ و دمای $300^\circ\text{C}$ است. شیر متصل به سیلندر باز می‌شود و هوا اجازهٔ خروج می‌یابد تا زمانی که سه‌چهارم جرم اولیه از سیلندر خارج شود؛ در این لحظه حجم به $0.05\text{ m}^3$ می‌رسد. دمای نهایی هوا در سیلندر و کار مرزی طی این فرآیند را بیابید.
+
+    <FigureBox
+      src="images/exercises/p5-131.png"
+      alt="شکل تمرین ۵-۱۳۱ تخلیه هوا از سیلندر پیستون"
+      caption="شکل کتاب سنجل — تمرین ۵-۱۳۱"
+      source="سنجل ویرایش ۸"
+      maxWidth="300px"
+    />
   </Fragment>
   <Fragment slot="solution">
     چون پیستون آزادانه در راستای عمودی حرکت می‌کند، فشار داخل سیلندر در تمام فرآیند **ثابت** می‌ماند ($P_2 = P_1 = 600\text{ kPa}$). برای هوا از جدول `A-1` داریم $R = 0.287\text{ kJ/(kg}\cdot\text{K)}$ و $T_1 = 300 + 273 = 573\text{ K}$.
@@ -403,6 +468,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     یک دستگاه سیلندر–پیستون عمودیِ عایق‌بندی‌شده در ابتدا حاوی $0.8\text{ m}^3$ مبرد `R-134a` در فشار $1.4\text{ MPa}$ و دمای $120^\circ\text{C}$ است و یک فنر خطی در این حالت به پیستون نیرو وارد می‌کند. شیر متصل به سیلندر باز می‌شود و مبرد خارج می‌گردد. با پایین آمدن پیستون، فنر باز شده و در پایان فرآیند فشار و حجم به $0.7\text{ MPa}$ و $0.5\text{ m}^3$ می‌رسد. مطلوب است: الف) جرم مبرد خارج‌شده و ب) دمای نهایی مبرد.
+
+    <FigureBox
+      src="images/exercises/p5-134.png"
+      alt="شکل تمرین ۵-۱۳۴ تخلیه مبرد R-134a از سیلندر با فنر خطی"
+      caption="شکل کتاب سنجل — تمرین ۵-۱۳۴"
+      source="سنجل ویرایش ۸"
+      maxWidth="300px"
+    />
   </Fragment>
   <Fragment slot="solution">
     **۱. خواص اولیه (`Table A-13`, $P_1 = 1.4\text{ MPa}, T_1 = 120^\circ\text{C}$):**
@@ -414,7 +487,7 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
     $$
 
     **۲. کار مرزی ورودی با فنر خطی:**
-    در فرآیند خطی از $(P_1, \mathcal{V}_1)$ تا $(P_2, \mathcal{V}_2)$ کار مرزی **به داخل سیستم** انجام می‌شود ($\mathcal{V}_2 < \mathcal{V}_1$):
+    در فرآیند خطی از $(P_1, \mathcal{V}_1)$ تا $(P_2, \mathcal{V}_2)$ کار مرزی **به داخل سیستم** انجام می‌شود ($\mathcal{V}_2 \lt \mathcal{V}_1$):
 
     $$
     W_{b,\text{in}} = \frac{P_1 + P_2}{2}(\mathcal{V}_1 - \mathcal{V}_2) = \frac{1400 + 700}{2}(0.8 - 0.5) = 315\text{ kJ}
@@ -432,7 +505,7 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
     $$
 
     **۴. حل به روش سعی و خطا در جدول `A-13` (در فشار نهایی $P_2 = 0.7\text{ MPa}$):**
-    مطابق الگوریتم دست‌نویس حل‌تمرین (TA)، یک دما در فشار $P_2 = 0.7\text{ MPa}$ حدس می‌زنیم، $v_2$ و $h_2$ را می‌خوانیم، از معادلهٔ بالا $u_2$ را حساب می‌کنیم و با مراجعهٔ مجدد به جدول دمای متناظر با $u_2$ را می‌خوانیم تا $|\Delta T| < 0.1^\circ\text{C}$ شود:
+    مطابق الگوریتم دست‌نویس حل‌تمرین (TA)، یک دما در فشار $P_2 = 0.7\text{ MPa}$ حدس می‌زنیم، $v_2$ و $h_2$ را می‌خوانیم، از معادلهٔ بالا $u_2$ را حساب می‌کنیم و با مراجعهٔ مجدد به جدول دمای متناظر با $u_2$ را می‌خوانیم تا $|\Delta T| \lt 0.1^\circ\text{C}$ شود:
     * با همگرایی در جدول `A-13` در فشار $0.7\text{ MPa}$ داریم: $T_2 = \mathbf{96.2^\circ\text{C}}$، $v_2 = 0.04011\text{ m}^3/\text{kg}$، $u_2 = 306.43\text{ kJ/kg}$ و $h_2 = 334.51\text{ kJ/kg}$.
     * جرم باقی‌مانده $m_2 = \frac{0.5}{0.04011} = 12.47\text{ kg}$ و جرم خارج‌شده:
 

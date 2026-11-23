@@ -1,0 +1,35 @@
+---
+interface Props {
+  id: string;
+  number: string;
+  title: string;
+  slide?: string;
+  open?: boolean;
+}
+
+const { id, number, title, slide = '', open = true } = Astro.props;
+---
+
+<article class="jh-example-card not-content" id={id}>
+  <header class="jh-example-card__head">
+    <div class="jh-example-card__title-wrap">
+      <span class="jh-example-badge">{number}</span>
+      <h4 class="jh-example-title">{title}</h4>
+    </div>
+    {slide && <span class="jh-example-slide">{slide}</span>}
+  </header>
+
+  <div class="jh-example-statement sl-markdown-content">
+    <slot name="statement" />
+  </div>
+
+  <details class="jh-example-solution" open={open}>
+    <summary class="jh-example-solution__summary">
+      <span>پاسخ تشریحی و تحلیل فیزیکی</span>
+      <span class="jh-example-solution__arrow" aria-hidden="true">▾</span>
+    </summary>
+    <div class="jh-example-solution__body sl-markdown-content">
+      <slot name="solution" />
+    </div>
+  </details>
+</article>

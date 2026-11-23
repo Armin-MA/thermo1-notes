@@ -12,6 +12,7 @@ sitemap:
 
 import ExerciseCard from '../../../components/ExerciseCard.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import FigureBox from '../../../components/FigureBox.astro';
 
 <TopicDependencyMap
   prerequisites={[
@@ -87,6 +88,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     ساختمانی دارای بار سرمایشی سالانهٔ $40{,}000\text{ kWh}$ در منطقه‌ای با تعرفهٔ برق $0.10\text{ USD/kWh}$ است. دو کولر گازی پیشنهاد شده‌اند: کولر `A` با ضریب عملکرد فصلی متوسط $2.3$ و قیمت تمام‌شدهٔ خرید و نصب $5500\text{ USD}$، و کولر `B` با ضریب عملکرد فصلی متوسط $3.6$ و قیمت خرید و نصب $7000\text{ USD}$. با یکسان بودن سایر شرایط، تعیین کنید کدام کولر خرید بهتری است؟
+
+    <FigureBox
+      src="images/exercises/p6-54.png"
+      alt="شکل تمرین ۶-۵۴ مقایسه دو کولر گازی"
+      caption="شکل کتاب سنجل — تمرین ۶-۵۴"
+      source="سنجل ویرایش ۸"
+      maxWidth="360px"
+    />
   </Fragment>
   <Fragment slot="solution">
     **۱. صرفه‌جویی سالانهٔ انرژی الکتریکی با خرید کولر کارآمدتر `B`:**
@@ -122,6 +131,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     مبرد `R-134a` با دبی جرمی $0.018\text{ kg/s}$ در فشار $800\text{ kPa}$ و دمای $35^\circ\text{C}$ وارد چگالندهٔ (کندانسور) یک پمپ حرارتی مسکونی می‌شود و در فشار $800\text{ kPa}$ به‌صورت مایع اشباع خارج می‌گردد. اگر کمپرسور توان $1.2\text{ kW}$ مصرف کند، مطلوب است: الف) ضریب عملکرد پمپ حرارتی و ب) نرخ جذب گرما از هوای سرد بیرون.
+
+    <FigureBox
+      src="images/exercises/p6-55.png"
+      alt="شکل تمرین ۶-۵۵ پمپ حرارتی مسکونی با مبرد R-134a"
+      caption="شکل کتاب سنجل — تمرین ۶-۵۵"
+      source="سنجل ویرایش ۸"
+      maxWidth="360px"
+    />
   </Fragment>
   <Fragment slot="solution">
     از جداول مبرد `R-134a`:
@@ -186,6 +203,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     یک یخچال باید گرما را با نرخ $300\text{ kJ/min}$ از فضای خنک‌شده خارج کند تا دمای آن را در $-8^\circ\text{C}$ نگه دارد. اگر دمای هوای اطراف یخچال $25^\circ\text{C}$ باشد، کمترین توان ورودی مورد نیاز برای این یخچال را محاسبه کنید.
+
+    <FigureBox
+      src="images/exercises/p6-95.png"
+      alt="شکل تمرین ۶-۹۵ یخچال سردخانه در منفی ۸ درجه سلسیوس"
+      caption="شکل کتاب سنجل — تمرین ۶-۹۵"
+      source="سنجل ویرایش ۸"
+      maxWidth="340px"
+    />
   </Fragment>
   <Fragment slot="solution">
     کمترین توان ورودی زمانی رخ می‌دهد که یخچال به‌صورت **برگشت‌پذیر (کارنو)** بین $T_L = -8 + 273 = 265\text{ K}$ و $T_H = 25 + 273 = 298\text{ K}$ کار کند:
@@ -215,6 +240,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     یک یخچال تجاری با سیال عامل `R-134a` فضای سردخانه را در دمای $-35^\circ\text{C}$ نگه می‌دارد و گرمای زائد را به آب خنک‌کننده‌ای دفع می‌کند که با دبی $0.25\text{ kg/s}$ در دمای $18^\circ\text{C}$ وارد چگالنده شده و در دمای $26^\circ\text{C}$ خارج می‌شود. مبرد در فشار $1.2\text{ MPa}$ و دمای $50^\circ\text{C}$ وارد چگالنده شده و در همان فشار با $5^\circ\text{C}$ زیرسردشدگی خارج می‌گردد. اگر کمپرسور توان $3.3\text{ kW}$ مصرف کند، بیابید: الف) دبی جرمی مبرد، ب) بار تبرید، ج) ضریب عملکرد یخچال، د) کمترین توان ورودی به کمپرسور برای همان بار تبرید.
+
+    <FigureBox
+      src="images/exercises/p6-101.png"
+      alt="شکل تمرین ۶-۱۰۱ یخچال تجاری R-134a خنک شده با آب"
+      caption="شکل کتاب سنجل — تمرین ۶-۱۰۱"
+      source="سنجل ویرایش ۸"
+      maxWidth="380px"
+    />
   </Fragment>
   <Fragment slot="solution">
     استخراج خواص از جداول `R-134a` و آب:
@@ -271,6 +304,14 @@ import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 >
   <Fragment slot="statement">
     یک پمپ حرارتی کارنو برای گرم نگه داشتن خانه‌ای در دمای $25^\circ\text{C}$ در فصل زمستان به کار می‌رود. در روزی که دمای متوسط بیرون حدود $2^\circ\text{C}$ باقی می‌ماند، نرخ اتلاف گرمای خانه برابر $55{,}000\text{ kJ/h}$ برآورد شده است. اگر پمپ حرارتی هنگام کار کردن توان $4.8\text{ kW}$ مصرف کند، تعیین کنید: الف) پمپ حرارتی در آن روز چند ساعت کار کرده است؟ ب) هزینهٔ کل گرمایش آن روز (با قیمت برق $0.11\text{ USD/kWh}$) چقدر است؟ ج) اگر به‌جای پمپ حرارتی از بخاری برقی مقاومتی استفاده می‌شد، هزینه چقدر بود؟
+
+    <FigureBox
+      src="images/exercises/p6-104.png"
+      alt="شکل تمرین ۶-۱۰۴ پمپ حرارتی کارنو برای گرمایش خانه"
+      caption="شکل کتاب سنجل — تمرین ۶-۱۰۴"
+      source="سنجل ویرایش ۸"
+      maxWidth="320px"
+    />
   </Fragment>
   <Fragment slot="solution">
     **الف) ضریب عملکرد کارنو و مدت زمان کارکرد روزانه:**

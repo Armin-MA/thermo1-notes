@@ -1,0 +1,31 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  source?: string;
+  maxWidth?: string;
+}
+
+const { src, alt, caption, source, maxWidth } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const resolvedSrc =
+  src.startsWith('http://') || src.startsWith('https://') || src.startsWith(`${base}/`)
+    ? src
+    : `${base}/${src.replace(/^\//, '')}`;
+---
+
+<figure
+  class="jh-figure not-content"
+  style={maxWidth ? `--jh-fig-max: ${maxWidth};` : undefined}
+>
+  <div class="jh-figure__frame">
+    <img src={resolvedSrc} alt={alt} loading="lazy" decoding="async" />
+  </div>
+  {(caption || source) && (
+    <figcaption class="jh-figure__cap">
+      {source && <span class="jh-figure__tag">{source}</span>}
+      {caption && <span>{caption}</span>}
+    </figcaption>
+  )}
+</figure>

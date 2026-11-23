@@ -1,8 +1,7 @@
 ---
 title: ۷-۲ روابط گیبس، تغییر آنتروپی گاز ایده‌آل و کار پایا
-description: استخراج و کاربرد روابط Tds گیبس، تغییر آنتروپی مایعات و جامدات، روش دقیق و تقریبی گاز ایده‌آل (جداول A-17 و ضرایب Pr و vr)، کار جریان پایا، برنولی و تراکم چندمرحله‌ای.
+description: استخراج و کاربرد روابط Tds گیبس، تغییر آنتروپی مایعات و جامدات، روش دقیق و تقریبی گاز ایده‌آل (جداول A-17 و ضرایب Pr و vr)، کار جریان پایا، برنولی، تراکم چندمرحله‌ای و مثال‌های کلاسی.
 tags:
-  - درسنامه
   - فصل-۷
   - روابط-Tds
   - گاز-ایده‌آل
@@ -13,6 +12,8 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import FigureBox from '../../../components/FigureBox.astro';
+import ExampleBox from '../../../components/ExampleBox.astro';
 
 <TopicDependencyMap
   prerequisites={[
@@ -44,8 +45,8 @@ $$
 </EquationBox>
 
 <div class="jh-trap not-content">
-  <strong>نکتهٔ مفهومی طلایی:</strong> ما معادلات <a href="#eq-7-4">۷-۴</a> را روی یک مسیر برگشت‌پذیر داخلی استخراج کردیم، اما در نهایت این دو معادله <strong>فقط بین خواص سیستم ($T, s, u, h, P, v$)</strong> رابطه برقرار می‌کنند و هیچ ربطی به مسیر ندارند! بنابراین روابط <span dir="ltr">Tds</span>:
-  <ul>
+  <p><strong>نکتهٔ مفهومی طلایی:</strong> ما معادلات <a href="#eq-7-4">۷-۴</a> را روی یک مسیر برگشت‌پذیر داخلی استخراج کردیم، اما در نهایت این دو معادله <strong>فقط بین خواص سیستم ($T, s, u, h, P, v$)</strong> رابطه برقرار می‌کنند و هیچ ربطی به مسیر ندارند! بنابراین روابط <span dir="ltr">Tds</span>:</p>
+  <ul style="margin-bottom:0">
     <li>برای فرآیندهای <strong>برگشت‌پذیر و برگشت‌ناپذیر</strong> هر دو کاملاً معتبرند.</li>
     <li>برای <strong>سیستم‌های بسته و احجام کنترل (باز)</strong> هر دو معتبرند.</li>
   </ul>
@@ -71,11 +72,55 @@ $$
 s_2 - s_1 = c_{\text{avg}} \ln \frac{T_2}{T_1} = 0 \quad \Longrightarrow \quad T_2 = T_1 \quad (\text{isentropic liquid/solid})
 $$
 
-### مثال کلاسی (اسلایدهای ۲۸ و ۲۹): خطای فرض تراکم‌ناپذیری در متان مایع
-متان مایع در کاربردهای کرایوجنیک از $P_1 = 1\text{ MPa}, T_1 = 110\text{ K}$ تا $P_2 = 5\text{ MPa}, T_2 = 120\text{ K}$ پمپاژ می‌شود:
-* **روش دقیق (جدول خواص متان):** $\Delta s_{\text{actual}} = s_2 - s_1 = 5.145 - 4.875 = 0.270\text{ kJ/kg}\cdot\text{K}$.
-* **روش فرض تراکم‌ناپذیر:** با $c_{\text{avg}} = (3.471 + 3.486)/2 = 3.4785\text{ kJ/kg}\cdot\text{K}$، داریم $\Delta s_{\text{ideal}} = 3.4785 \ln(120/110) = 0.303\text{ kJ/kg}\cdot\text{K}$.
-* **علت خطای $12.2\%$:** در نزدیکی دمای بحرانی ($191\text{ K}$)، چگالی متان مایع حدود $3\%$ کاهش یافته ($425.8 \to 415.2\text{ kg/m}^3$) و فرض تراکم‌ناپذیری دقیق نیست.
+<ExampleBox
+  id="ex-7-6"
+  number="مثال ۷-۶"
+  title="تاثیر تغییر چگالی مایع بر محاسبه آنتروپی در پمپاژ متان کرایوجنیک"
+  slide="اسلایدهای ۲۸ و ۲۹"
+>
+  <Fragment slot="statement">
+
+متان مایع دارای کاربردهای مختلفی در کرایوجنیک (تولید دمای پایین) است و دمای بحرانی آن $191\text{ K}$ ($-82^\circ\text{C}$) است. متان مایع از $P_1 = 1\text{ MPa}$ و $T_1 = 110\text{ K}$ تا $P_2 = 5\text{ MPa}$ و $T_2 = 120\text{ K}$ پمپاژ می‌شود. تغییر آنتروپی متان را در شرایط زیر بیابید: (الف) استفاده از جداول خواص ترمودینامیکی، (ب) استفاده از فرض تراکم‌ناپذیری و (ج) مقایسهٔ درصد خطا.
+
+<FigureBox
+  src="images/v9/ch7_s28_fig1.png"
+  alt="پمپ متان مایع کرایوجنیک از 1 MPa و 110 K تا 5 MPa و 120 K"
+  caption="شماتیک پمپاژ متان مایع کرایوجنیک در نزدیکی دمای بحرانی"
+  source="جزوه دکتر صفاری V9-7 · اسلاید ۲۸"
+  maxWidth="280px"
+/>
+
+  </Fragment>
+  <Fragment slot="solution">
+
+**الف) استفاده از جداول خواص متان (روش دقیق):**
+* حالت ۱ ($1\text{ MPa}, 110\text{ K}$): $s_1 = 4.875\text{ kJ/kg}\cdot\text{K}$ و $c_{p1} = 3.471\text{ kJ/kg}\cdot\text{K}$.
+* حالت ۲ ($5\text{ MPa}, 120\text{ K}$): $s_2 = 5.145\text{ kJ/kg}\cdot\text{K}$ و $c_{p2} = 3.486\text{ kJ/kg}\cdot\text{K}$.
+
+$$
+\Delta s_{\text{actual}} = s_2 - s_1 = 5.145 - 4.875 = 0.270\text{ kJ/kg}\cdot\text{K}
+$$
+
+**ب) فرض عدم تراکم‌پذیری متان مایع:**
+
+$$
+c_{\text{avg}} = \frac{c_{p1} + c_{p2}}{2} = \frac{3.471 + 3.486}{2} = 3.4785\text{ kJ/kg}\cdot\text{K}
+$$
+
+$$
+\Delta s_{\text{ideal}} = c_{\text{avg}} \ln \frac{T_2}{T_1} = (3.4785\text{ kJ/kg}\cdot\text{K}) \ln \frac{120\text{ K}}{110\text{ K}} = 0.303\text{ kJ/kg}\cdot\text{K}
+$$
+
+**ج) محاسبهٔ درصد خطا:**
+
+$$
+\text{Error} = \frac{|\Delta s_{\text{actual}} - \Delta s_{\text{ideal}}|}{\Delta s_{\text{actual}}} = \frac{|0.270 - 0.303|}{0.270} = 0.122 \quad (12.2\%)
+$$
+
+**تحلیل فیزیکی:** گرچه مایعات معمولاً تراکم‌ناپذیر فرض می‌شوند، در نزدیکی دمای بحرانی ($191\text{ K}$) با افزایش دما و فشار، چگالی متان مایع از $425.8$ به $415.2\text{ kg/m}^3$ (حدود $3\%$ کاهش) تغییر کرده است؛ همین تغییر چگالی $dv \neq 0$ موجب خطای $12.2\%$ در فرض تراکم‌ناپذیری می‌شود.
+
+  </Fragment>
+</ExampleBox>
 
 ---
 
@@ -104,7 +149,15 @@ $$
 
 </EquationBox>
 
-*(نکته: برای گازهای تک‌اتمی مانند هلیم و آرگون، $c_p$ و $c_v$ مستقل از دما و کاملاً ثابت‌اند؛ پس این روابط برایشان **دقیق** است! همچنین برای شکل مولی کافی است به‌جای $c_v, c_p, R$ از $\bar{c}_v, \bar{c}_p, R_u$ با واحد $\text{kJ/kmol}\cdot\text{K}$ استفاده کنید.)*
+<FigureBox
+  src="images/v9/ch7_s31_fig1.png"
+  alt="مقایسه گرمای ویژه واقعی تابع دما با گرمای ویژه متوسط ثابت"
+  caption="در بازه‌های دمایی وسیع، جایگزینی منحنی cp(T) با مقدار متوسط cp,avg خطای کوچکی وارد می‌کند؛ برای گازهای تک‌اتمی مثل هلیم cp کاملاً ثابت است."
+  source="جزوه دکتر صفاری V9-7 · اسلاید ۳۱"
+  maxWidth="360px"
+/>
+
+*(نکته: برای شکل مولی کافی است به‌جای $c_v, c_p, R$ از $\bar{c}_v, \bar{c}_p, R_u$ با واحد $\text{kJ/kmol}\cdot\text{K}$ استفاده کنید.)*
 
 ### روش دوم: گرمای ویژه متغیر با دما (تحلیل دقیق با جدول <span dir="ltr">A-17</span>)
 وقتی بازهٔ دمایی بزرگ است، انتگرال $\int_0^T (c_p(T)/T)\,dT$ از صفر مطلق محاسبه و با نماد **$s^\circ(T)$** در جداول گاز ایده‌آل (هوا در `Table A-17` و سایر گازها بر واحد مول در `A-18` تا `A-25`) فهرست شده است. توجه کنید $s^\circ$ **فقط تابع دماست**:
@@ -118,22 +171,57 @@ $$
 </EquationBox>
 
 <div class="jh-trap not-content">
-  <strong>تلهٔ امتحانی مرگبار جدول A-17:</strong> بسیاری از دانشجویان به‌اشتباه می‌نویسند $s_2 - s_1 = s^\circ_2 - s^\circ_1$ و جملهٔ $- R \ln(P_2/P_1)$ را فراموش می‌کنند! آنتروپی گاز ایده‌آل به <strong>هر دو متغیر $T$ و $P$</strong> بستگی دارد؛ $s^\circ$ فقط سهم دما را می‌دهد (ببینید: <a href="/thermo1-notes/exercises/ch7/#prob-7-80">تمرین ۷-۸۰</a>).
+  <p style="margin-bottom:0"><strong>تلهٔ امتحانی مرگبار جدول A-17:</strong> بسیاری از دانشجویان به‌اشتباه می‌نویسند $s_2 - s_1 = s^\circ_2 - s^\circ_1$ و جملهٔ $- R \ln(P_2/P_1)$ را فراموش می‌کنند! آنتروپی گاز ایده‌آل به <strong>هر دو متغیر $T$ و $P$</strong> بستگی دارد؛ $s^\circ$ فقط سهم دما را می‌دهد (ببینید: <a href="/thermo1-notes/exercises/ch7/#prob-7-80">تمرین ۷-۸۰</a>).</p>
 </div>
 
-### مثال کلاسی (اسلایدهای ۳۴ و ۳۵): تراکم هوا
-هوا از $P_1 = 100\text{ kPa}, T_1 = 290\text{ K}$ به $P_2 = 600\text{ kPa}, T_2 = 330\text{ K}$ متراکم می‌شود:
-* **روش دقیق (`A-17`):** $s^\circ_1 = 1.66802$ و $s^\circ_2 = 1.79783\text{ kJ/kg}\cdot\text{K}$:
+<ExampleBox
+  id="ex-7-7"
+  number="مثال ۷-۷"
+  title="محاسبه تغییر آنتروپی هوا در کمپرسور به دو روش دقیق و گرمای ویژه متوسط"
+  slide="اسلایدهای ۳۴ و ۳۵"
+>
+  <Fragment slot="statement">
 
-  $$
-  s_2 - s_1 = (1.79783 - 1.66802) - 0.287 \ln\left(\frac{600}{100}\right) = -0.3844\text{ kJ/kg}\cdot\text{K}
-  $$
+هوا در یک کمپرسور از فشار $P_1 = 100\text{ kPa}$ و دمای $T_1 = 290\text{ K}$ به فشار $P_2 = 600\text{ kPa}$ و دمای $T_2 = 330\text{ K}$ متراکم می‌شود. تغییر آنتروپی هوا را در طی این تحول محاسبه کنید: (الف) با مقادیر دقیق خواص از جدول `A-17` و (ب) با گرمای ویژهٔ متوسط از جدول `A-2b`.
 
-* **روش تقریبی (`A-2b` در $T_{\text{avg}} = 310\text{ K} = 37^\circ\text{C}$):** با $c_{p,\text{avg}} = 1.006\text{ kJ/kg}\cdot\text{K}$:
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;align-items:center;">
+  <FigureBox
+    src="images/v9/ch7_s34_fig1.png"
+    alt="کمپرسور هوا از 100 kPa و 290 K به 600 kPa و 330 K"
+    caption="ورودی و خروجی کمپرسور هوا"
+    source="اسلاید ۳۴"
+    maxWidth="280px"
+  />
+  <FigureBox
+    src="images/v9/ch7_s35_fig1.png"
+    alt="نمودار T-s فرآیند تراکم هوا از فشار 100 kPa به 600 kPa"
+    caption="نمایش تحول تراکم روی نمودار T-s؛ افزایش فشار باعث کاهش آنتروپی شده است."
+    source="اسلاید ۳۵"
+    maxWidth="300px"
+  />
+</div>
 
-  $$
-  s_2 - s_1 = 1.006 \ln\left(\frac{330}{290}\right) - 0.287 \ln\left(\frac{600}{100}\right) = -0.3842\text{ kJ/kg}\cdot\text{K}
-  $$
+  </Fragment>
+  <Fragment slot="solution">
+
+**الف) روش دقیق با استفاده از جدول `A-17` (هوا):**
+در $T_1 = 290\text{ K}$ داریم $s^\circ_1 = 1.66802\text{ kJ/kg}\cdot\text{K}$ و در $T_2 = 330\text{ K}$ داریم $s^\circ_2 = 1.79783\text{ kJ/kg}\cdot\text{K}$ (با $R = 0.287\text{ kJ/kg}\cdot\text{K}$):
+
+$$
+s_2 - s_1 = s^\circ_2 - s^\circ_1 - R \ln \frac{P_2}{P_1} = (1.79783 - 1.66802) - (0.287)\ln\left(\frac{600}{100}\right) = -0.3844\text{ kJ/kg}\cdot\text{K}
+$$
+
+**ب) روش تقریبی بر مبنای گرمای ویژهٔ متوسط از جدول `A-2b`:**
+در دمای میانگین $T_{\text{avg}} = (290 + 330)/2 = 310\text{ K} = 37^\circ\text{C}$ مقدار $c_{p,\text{avg}} = 1.006\text{ kJ/kg}\cdot\text{K}$ است:
+
+$$
+s_2 - s_1 = c_{p,\text{avg}}\ln\frac{T_2}{T_1} - R\ln\frac{P_2}{P_1} = (1.006)\ln\left(\frac{330}{290}\right) - (0.287)\ln\left(\frac{600}{100}\right) = -0.3842\text{ kJ/kg}\cdot\text{K}
+$$
+
+**تحلیل فیزیکی:** گرچه دمای هوا افزایش یافته (که تمایل به افزایش آنتروپی دارد)، اما افزایش ۶ برابری فشار، مولکول‌ها را در فضای بسیار کوچک‌تری متراکم کرده است؛ بنابراین اثر فشار غلبه کرده و $\Delta s$ منفی شده است. همچنین در این بازهٔ دمایی کوچک ($40\text{ K}$)، روش تقریبی و دقیق تقریباً یکسان‌اند.
+
+  </Fragment>
+</ExampleBox>
 
 ---
 
@@ -166,12 +254,57 @@ $$
 </EquationBox>
 
 <div class="jh-trap not-content">
-  <strong>تلهٔ امتحانی مهم:</strong> مقادیر $P_r$ و $v_r$ در جدول `A-17` فشار و حجم واقعی سیستم نیستند و <strong>فقط برای فرآیندهای ایزنتروپیک ($s_2 = s_1$)</strong> مجاز به استفاده هستند! اگر فرآیند هم‌فشار، هم‌حجم یا غیرآیزنتروپیک باشد، هرگز حق استفاده از $P_r$ و $v_r$ را ندارید.
+  <p style="margin-bottom:0"><strong>تلهٔ امتحانی مهم:</strong> مقادیر $P_r$ و $v_r$ در جدول `A-17` فشار و حجم واقعی سیستم نیستند و <strong>فقط برای فرآیندهای ایزنتروپیک ($s_2 = s_1$)</strong> مجاز به استفاده هستند! اگر فرآیند هم‌فشار، هم‌حجم یا غیرآیزنتروپیک باشد، هرگز حق استفاده از $P_r$ و $v_r$ را ندارید.</p>
 </div>
 
-**مثال کلاسی (اسلاید ۳۹):** هوا در سیلندر آدیاباتیک از $P_1 = 95\text{ kPa}, T_1 = 295\text{ K}$ به‌صورت برگشت‌پذیر با نسبت تراکم $v_1/v_2 = 8$ متراکم می‌شود:
-* با `Table A-17`: در $T_1 = 295\text{ K}$ داریم $v_{r1} = 647.9 \implies v_{r2} = 647.9 \times (1/8) = 80.99 \implies T_2 = 662.7\text{ K}$.
-* با گرمای ویژه ثابت ($k = 1.391$ از `A-2b`): $T_2 = 295 \times 8^{1.391 - 1} = 665.2\text{ K}$.
+<ExampleBox
+  id="ex-7-8"
+  number="مثال ۷-۸"
+  title="یافتن دمای نهایی هوا در سیلندر آدیاباتیک برگشت‌پذیر با روش دقیق و تقریبی"
+  slide="اسلاید ۳۹"
+>
+  <Fragment slot="statement">
+
+هوا در یک سیلندر آدیاباتیک با شرایط اولیه $P_1 = 95\text{ kPa}$ و $T_1 = 295\text{ K}$ طی یک تحول برگشت‌پذیر با نسبت تراکم حجمی $V_1/V_2 = 8$ متراکم می‌شود. دمای نهایی هوا را پس از تراکم به‌دست آورید.
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;align-items:center;">
+  <FigureBox
+    src="images/v9/ch7_s39_fig1.png"
+    alt="سیلندر-پیستون آدیاباتیک حاوی هوا با نسبت تراکم 8"
+    caption="شرایط اولیه هوا درون سیلندر"
+    source="اسلاید ۳۹"
+    maxWidth="250px"
+  />
+  <FigureBox
+    src="images/v9/ch7_s39_fig2.png"
+    alt="فرآیند تراکم ایزنتروپیک عمودی بین دو خط هم‌حجم v1 و v2 روی نمودار T-s"
+    caption="نمایش تراکم ایزنتروپیک بین دو خط هم‌حجم روی نمودار T-s"
+    source="اسلاید ۳۹"
+    maxWidth="310px"
+  />
+</div>
+
+  </Fragment>
+  <Fragment slot="solution">
+
+**روش اول — تحلیل دقیق با جدول `A-17` (استفاده از $v_r$):**
+در سیستم بسته، نسبت حجم مخصوص برابر نسبت حجم کل است ($v_2/v_1 = V_2/V_1 = 1/8$). از جدول `A-17` در $T_1 = 295\text{ K}$ داریم $v_{r1} = 647.9$:
+
+$$
+v_{r2} = v_{r1} \left(\frac{v_2}{v_1}\right) = (647.9)\left(\frac{1}{8}\right) = 80.99 \xrightarrow{\text{Table A-17}} T_2 = 662.7\text{ K}
+$$
+
+**روش دوم — فرض گرمای ویژهٔ ثابت با جدول `A-2b`:**
+در دمای متوسط تقریبی، $k = 1.391$ است؛ پس از <a href="#eq-7-8">معادله ۷-۸</a> داریم:
+
+$$
+\left(\frac{T_2}{T_1}\right)_{s=\text{const}} = \left(\frac{v_1}{v_2}\right)^{k-1} \implies T_2 = (295\text{ K})(8)^{1.391 - 1} = 665.2\text{ K}
+$$
+
+**تحلیل فیزیکی:** در فرآیند تراکم آدیاباتیک برگشت‌پذیر، تمام کار مکانیکی داده‌شده به پیستون مستقیماً صرف افزایش انرژی داخلی هوا و بالارفتن دما می‌شود. همچنین توجه کنید $v_r$ مستقیماً برای نسبت حجم استفاده می‌شود و نیازی به یافتن فشار $P_2$ نداشتیم!
+
+  </Fragment>
+</ExampleBox>
 
 ---
 
@@ -187,7 +320,15 @@ $$
 
 </EquationBox>
 
-تفاوت این معادله را با کار مرزی سیستم بسته ($w_b = +\int P\,dv$) ببینید! همچنین اگر وسیله‌ای کار شفت نداشته باشد ($w_{\text{rev}} = 0$ مثل لوله یا شیپورهٔ بدون اصطکاک) و سیال **تراکم‌ناپذیر** باشد ($v = \text{const}$)، <a href="#eq-7-10">معادله ۷-۱۰</a> مستقیماً به **معادلهٔ برنولی** در مکانیک سیالات تبدیل می‌شود:
+<FigureBox
+  src="images/v9/ch7_s41_fig1.png"
+  alt="مقایسه کار جریان پایا w_rev = -∫v dP با کار مرزی سیستم بسته w_rev = ∫P dv"
+  caption="تفاوت کلیدی کار جریان پایا (انتگرال v dP) و کار مرزی سیستم بسته (انتگرال P dv)"
+  source="جزوه دکتر صفاری V9-7 · اسلاید ۴۱"
+  maxWidth="280px"
+/>
+
+اگر وسیله‌ای کار شفت نداشته باشد ($w_{\text{rev}} = 0$ مثل لوله یا شیپورهٔ بدون اصطکاک) و سیال **تراکم‌ناپذیر** باشد ($v = \text{const}$)، <a href="#eq-7-10">معادله ۷-۱۰</a> مستقیماً به **معادلهٔ برنولی** در مکانیک سیالات تبدیل می‌شود:
 
 $$
 v(P_2 - P_1) + \frac{V_2^2 - V_1^2}{2} + g(z_2 - z_1) = 0
@@ -200,11 +341,47 @@ $$
 w_{\text{pump,rev,in}} = \int_1^2 v\,dP = v\,(P_2 - P_1) \qquad (1\text{ kPa}\cdot\text{m}^3 = 1\text{ kJ})
 $$
 
-**مثال کلاسی (اسلایدهای ۴۳ و ۴۴):** آب را در یک فرآیند ایزنتروپیک از $100\text{ kPa}$ به $1\text{ MPa}$ می‌رسانیم:
-* **الف) به‌صورت مایع اشباع در پمپ:** $v_1 = v_{f@100\text{ kPa}} = 0.001043\text{ m}^3/\text{kg} \implies w_{\text{rev,in}} = 0.001043 \times (1000 - 100) = 0.94\text{ kJ/kg}$ (مشابه [تمرین ۷-۱۰۶](/thermo1-notes/exercises/ch7/#prob-7-106)).
-* **ب) به‌صورت بخار اشباع در کمپرسور:** $h_1 = 2675.0, s_1 = 7.3589 \xrightarrow{1\text{ MPa}, s_2=s_1} h_2 = 3194.5 \implies w_{\text{rev,in}} = h_2 - h_1 = 519.5\text{ kJ/kg}$!
+<ExampleBox
+  id="ex-7-9"
+  number="مثال ۷-۹"
+  title="مقایسه کار لازم برای تراکم ایزنتروپیک آب در حالت مایع اشباع (پمپ) و بخار اشباع (کمپرسور)"
+  slide="اسلایدهای ۴۳ و ۴۴"
+>
+  <Fragment slot="statement">
 
-یعنی متراکم کردن بخار آب بیش از **۵۵۰ برابر** مایع انرژی مصرف می‌کند؛ دلیل آن هم حجم مخصوص بسیار کوچک مایع نسبت به بخار است. به همین دلیل در نیروگاه بخار (چرخه رانکین) کار خروجی توربین (که $v$ بزرگ است) بسیار بزرگ‌تر از کار مصرفی پمپ است!
+مقدار کار لازم بر واحد جرم را برای تراکم آب از فشار $P_1 = 100\text{ kPa}$ به $P_2 = 1\text{ MPa}$ در یک تحول ایزنتروپیک (با صرف‌نظر از تغییرات انرژی جنبشی و پتانسیل) در دو حالت محاسبه و مقایسه کنید: (الف) آب در حالت مایع اشباع (پمپ) و (ب) آب در حالت بخار اشباع (کمپرسور).
+
+<FigureBox
+  src="images/v9/ch7_s43_fig1.png"
+  alt="مقایسه تراکم مایع اشباع در پمپ و بخار اشباع در کمپرسور روی نمودار T-s"
+  caption="مقایسه دو مسیر ایزنتروپیک بین 100 kPa و 1 MPa در فاز مایع (پمپ) و فاز بخار (کمپرسور)"
+  source="جزوه دکتر صفاری V9-7 · اسلاید ۴۳"
+  maxWidth="540px"
+/>
+
+  </Fragment>
+  <Fragment slot="solution">
+
+**الف) آب در حالت مایع اشباع (پمپ، $v = \text{const}$):**
+از جدول `A-5` در $P_1 = 100\text{ kPa}$ داریم $v_1 = v_{f@100\text{ kPa}} = 0.001043\text{ m}^3/\text{kg}$:
+
+$$
+w_{\text{rev,in}} = \int_1^2 v\,dP \cong v_1(P_2 - P_1) = (0.001043\text{ m}^3/\text{kg})\left[(1000 - 100)\text{ kPa}\right]\left(\frac{1\text{ kJ}}{1\text{ kPa}\cdot\text{m}^3}\right) = 0.94\text{ kJ/kg}
+$$
+
+**ب) آب در حالت بخار اشباع (کمپرسور):**
+در تحول ایزنتروپیک از معادلهٔ دوم گیبس ($T\,ds = dh - v\,dP$ با $ds = 0$) داریم $v\,dP = dh$؛ پس $w_{\text{rev,in}} = \int_1^2 v\,dP = h_2 - h_1$:
+* حالت ۱ (`Table A-5`، بخار اشباع در $100\text{ kPa}$): $h_1 = 2675.0\text{ kJ/kg}$ و $s_1 = 7.3589\text{ kJ/kg}\cdot\text{K}$.
+* حالت ۲ (`Table A-6`، در $P_2 = 1\text{ MPa}$ و $s_2 = s_1 = 7.3589$): $h_2 = 3194.5\text{ kJ/kg}$.
+
+$$
+w_{\text{rev,in}} = h_2 - h_1 = 3194.5 - 2675.0 = 519.5\text{ kJ/kg}
+$$
+
+**تحلیل فیزیکی:** کار لازم برای متراکم کردن بخار ($519.5\text{ kJ/kg}$) بیش از **۵۵۰ برابر** کار پمپاژ مایع ($0.94\text{ kJ/kg}$) است! علت مستقیم آن نسبت عظیم حجم مخصوص بخار به مایع است. به همین دلیل در نیروگاه‌های بخار (چرخهٔ رانکین)، کار مصرفی پمپ ناچیز است و توربین توان خالص بسیار بزرگی تحویل می‌دهد.
+
+  </Fragment>
+</ExampleBox>
 
 ---
 
@@ -212,54 +389,21 @@ $$
 
 از آنجا که $w_{\text{rev,in}} = \int_1^2 v\,dP$ متناظر با **سطح سمت چپ منحنی روی نمودار <span dir="ltr">P-v</span>** است، برای کاهش کار مصرفی کمپرسور باید **حجم مخصوص گاز ($v = RT/P$) را در حین تراکم کوچک نگه داریم**؛ و این کار با **خنک‌کاری گاز** (کاهش $T$) ممکن است.
 
-<div class="not-content" style="margin: 1.25rem 0; padding: 1rem; border-radius: 14px; border: 1px solid var(--sl-color-gray-5); background: var(--sl-color-bg-sidebar);">
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;align-items:center;">
-    <svg viewBox="0 0 310 220" style="width:100%;max-width:330px;margin:0 auto;display:block;direction:ltr;" aria-label="مقایسه کار کمپرسور در فرآیند ایزونتروپیک، پلی‌تروپیک و هم‌دما">
-      <line x1="42" y1="192" x2="290" y2="192" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6"/>
-      <line x1="42" y1="18" x2="42" y2="192" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6"/>
-      <text x="280" y="208" fill="currentColor" font-size="12" font-weight="700">v</text>
-      <text x="24" y="28" fill="currentColor" font-size="12" font-weight="700">P</text>
-      {/* خطوط فشار */}
-      <line x1="42" y1="50" x2="265" y2="50" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
-      <line x1="42" y1="162" x2="265" y2="162" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
-      <text x="22" y="54" fill="currentColor" font-size="10">P₂</text>
-      <text x="22" y="166" fill="currentColor" font-size="10">P₁</text>
-      {/* نقطه 1 */}
-      <circle cx="240" cy="162" r="4" fill="currentColor"/>
-      <text x="245" y="175" fill="currentColor" font-size="11" font-weight="700">1</text>
-      {/* ایزنتروپیک */}
-      <path d="M 240 162 Q 195 100 165 50" fill="none" stroke="#ef4444" stroke-width="2.2"/>
-      <text x="172" y="43" fill="#ef4444" font-size="9.5" font-weight="700">Isentropic (k)</text>
-      {/* پلی‌تروپیک */}
-      <path d="M 240 162 Q 175 108 130 50" fill="none" stroke="#0284c7" stroke-width="2.2"/>
-      <text x="108" y="43" fill="#0284c7" font-size="9.5" font-weight="700">Polytropic (n)</text>
-      {/* هم‌دما */}
-      <path d="M 240 162 Q 155 118 96 50" fill="none" stroke="#10b981" stroke-width="2.2"/>
-      <text x="54" y="43" fill="#10b981" font-size="9.5" font-weight="700">Isothermal (1)</text>
-    </svg>
-    <svg viewBox="0 0 310 220" style="width:100%;max-width:330px;margin:0 auto;display:block;direction:ltr;" aria-label="تراکم دو مرحله‌ای با خنک‌کن میانی و صرفه‌جویی کار">
-      <line x1="42" y1="192" x2="290" y2="192" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6"/>
-      <line x1="42" y1="18" x2="42" y2="192" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6"/>
-      <text x="280" y="208" fill="currentColor" font-size="12" font-weight="700">v</text>
-      <text x="24" y="28" fill="currentColor" font-size="12" font-weight="700">P</text>
-      <line x1="42" y1="45" x2="255" y2="45" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
-      <line x1="42" y1="104" x2="255" y2="104" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
-      <line x1="42" y1="164" x2="255" y2="164" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
-      <text x="22" y="49" fill="currentColor" font-size="10">P₂</text>
-      <text x="22" y="108" fill="currentColor" font-size="10">Pₓ</text>
-      <text x="22" y="168" fill="currentColor" font-size="10">P₁</text>
-      {/* هاشور کار صرفه‌جویی‌شده */}
-      <path d="M 192 104 Q 170 72 150 45 L 114 45 Q 130 74 150 104 Z" fill="#10b981" fill-opacity="0.22"/>
-      {/* منحنی تک‌مرحله‌ای ادامه */}
-      <path d="M 245 164 Q 218 134 192 104 Q 170 72 150 45" fill="none" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="4 3"/>
-      {/* مرحله ۱ + خنک‌کن + مرحله ۲ */}
-      <path d="M 245 164 Q 218 134 192 104" fill="none" stroke="#0284c7" stroke-width="2.4"/>
-      <line x1="192" y1="104" x2="150" y2="104" stroke="#10b981" stroke-width="2.4"/>
-      <path d="M 150 104 Q 130 74 114 45" fill="none" stroke="#0284c7" stroke-width="2.4"/>
-      <text x="152" y="82" fill="#10b981" font-size="9.5" font-weight="700">Work saved</text>
-      <text x="160" y="118" fill="#10b981" font-size="9" font-weight="700">Intercooling</text>
-    </svg>
-  </div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;align-items:start;">
+  <FigureBox
+    src="images/v9/ch7_s48_fig1.png"
+    alt="مقایسه کار کمپرسور روی نمودار P-v در سه فرآیند ایزونتروپیک، پلی‌تروپیک و هم‌دما"
+    caption="سطح سمت چپ منحنی P-v بیانگر کار ورودی است: هم‌دما کمترین کار و ایزونتروپیک بیشترین کار را نیاز دارد."
+    source="اسلاید ۴۸"
+    maxWidth="360px"
+  />
+  <FigureBox
+    src="images/v9/ch7_s49_fig1.png"
+    alt="تراکم دومرحله‌ای با خنک‌کن میانی روی نمودارهای P-v و T-s و سطح کار صرفه‌جویی‌شده"
+    caption="تراکم دومرحله‌ای با خنک‌کن میانی: سطح هاشورخورده مقدار کار صرفه‌جویی‌شده را نشان می‌دهد."
+    source="اسلاید ۴۹"
+    maxWidth="460px"
+  />
 </div>
 
 کار کمپرسور برگشت‌پذیر در سه حالت استاندارد (برای گاز ایده‌آل بین فشارهای $P_1$ و $P_2$):

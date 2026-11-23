@@ -2,7 +2,6 @@
 title: ۴-۱ کار مرزی متحرک، پلی‌تروپیک، فنر و پین
 description: تحلیل کار مرز متحرک شبه‌تعادلی و غیرتعادلی، انبساط آزاد به خلأ، فرآیند پلی‌تروپیک و حالات خاص آن، ویجت تعاملی P-v و مکانیک چندمرحله‌ای پیستون-فنر-استپر.
 tags:
-  - درسنامه
   - فصل-۴
   - کار-مرزی
   - پلی‌تروپیک
@@ -14,6 +13,8 @@ sitemap:
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 import PvDiagramInteractive from '../../../components/widgets/PvDiagramInteractive.astro';
+import FigureBox from '../../../components/FigureBox.astro';
+import ExampleBox from '../../../components/ExampleBox.astro';
 
 <TopicDependencyMap
   prerequisites={[
@@ -33,11 +34,19 @@ import PvDiagramInteractive from '../../../components/widgets/PvDiagramInteracti
 
 ## ۱. کار مرز متحرک در فرآیندهای شبه‌تعادلی
 
-فرض کنید گازی درون یک دستگاه سیلندر-پیستون با سطح مقطع <span dir="ltr">A</span> و فشار مطلق <span dir="ltr">P</span> محبوس است. اگر پیستون به‌صورت **شبه‌تعادلی (Quasi-equilibrium)** — یعنی آن‌قدر آهسته که فشار در کل حجم گاز در هر لحظه یکنواخت باشد — به اندازهٔ دیفرانسیلی <span dir="ltr">ds</span> حرکت کند، کار دیفرانسیلی انجام‌شده توسط سیستم برابر است با:
+فرض کنید گازی درون یک دستگاه سیلندر-پیستون با سطح مقطع $A$ و فشار مطلق $P$ محبوس است. اگر پیستون به‌صورت **شبه‌تعادلی (Quasi-equilibrium)** — یعنی آن‌قدر آهسته که فشار در کل حجم گاز در هر لحظه یکنواخت باشد — به اندازهٔ دیفرانسیلی $ds$ حرکت کند، کار دیفرانسیلی انجام‌شده توسط سیستم برابر است با:
 
 $$
 \delta W_b = F \, ds = (P A) \, ds = P \, dV
 $$
+
+<FigureBox
+  src="images/v9/ch4_s2_fig1.png"
+  alt="گاز درون سیلندر-پیستون و جابه‌جایی دیفرانسیلی پیستون به اندازه ds"
+  caption="کار مرز متحرک در یک فرآیند شبه‌تعادلی: نیروی فشار گاز P A در جابه‌جایی دیفرانسیلی ds ضرب می‌شود."
+  source="جزوه دکتر صفاری — فصل ۴، اسلاید ۲"
+  maxWidth="280px"
+/>
 
 با انتگرال‌گیری از حالت ۱ تا حالت ۲، **کار مرز متحرک کل** به‌دست می‌آید:
 
@@ -50,17 +59,63 @@ $$
 </EquationBox>
 
 ### تفسیر هندسی و تابع مسیر بودن کار
-از نظر هندسی، <span dir="ltr">W_b</span> دقیقاً برابر **مساحت زیر منحنی فرآیند در نمودار <span dir="ltr">P-V</span>** است (و به ازای واحد جرم، مساحت زیر منحنی در نمودار <span dir="ltr">P-v</span> برابر <span dir="ltr">w_b</span> است). به همین دلیل کار یک **تابع مسیر (Path Function)** است و با دیفرانسیل غیرکامل $\delta W_b$ نشان داده می‌شود؛ اگر دو حالت ابتدایی و انتهایی یکسان باشند اما مسیرهای <span dir="ltr">A</span>، <span dir="ltr">B</span> یا <span dir="ltr">C</span> متفاوت باشند، کار مرزی آن‌ها متفاوت خواهد بود.
+از نظر هندسی، $W_b$ دقیقاً برابر **مساحت زیر منحنی فرآیند در نمودار $P-V$** است (و به ازای واحد جرم، مساحت زیر منحنی در نمودار $P-v$ برابر $w_b$ است). به همین دلیل کار یک **تابع مسیر (Path Function)** است و با دیفرانسیل غیرکامل $\delta W_b$ نشان داده می‌شود؛ اگر دو حالت ابتدایی و انتهایی یکسان باشند اما مسیرهای $A$، $B$ یا $C$ متفاوت باشند، کار مرزی آن‌ها متفاوت خواهد بود و در یک چرخهٔ بسته نیز کار خالص برابر مساحت محصور داخل حلقه است.
 
-* **علامت‌گذاری استاندارد:** در انبساط (<span dir="ltr">dV &gt; 0</span>) کار مرزی **مثبت** (<span dir="ltr">W_b &gt; 0</span>، کار انجام‌شده **توسط سیستم**) و در تراکم (<span dir="ltr">dV &lt; 0</span>) **منفی** (<span dir="ltr">W_b &lt; 0</span>، کار انجام‌شده **روی سیستم**) است.
-* **مخزن صلب (اسلاید ۴ جزوه):** اگر هوا درون یک مخزن صلب سرد شود و فشارش از <span dir="ltr">500 kPa</span> به <span dir="ltr">400 kPa</span> بیفتد، چون مرز حرکت نمی‌کند (<span dir="ltr">dV = 0</span>)، کار مرزی دقیقاً **صفر** است!
-* **تلهٔ واحدها:** اگر <span dir="ltr">P</span> بر حسب <span dir="ltr">kPa</span> و <span dir="ltr">V</span> بر حسب <span dir="ltr">m³</span> باشد، چون <span dir="ltr">1 kPa · m³ = 1 kJ</span> است، کار مستقیماً بر حسب <span dir="ltr">kJ</span> به‌دست می‌آید (در فشار <span dir="ltr">MPa</span> حتماً ابتدا به <span dir="ltr">kPa</span> ضرب در <span dir="ltr">1000</span> تبدیل کنید!).
+<FigureBox
+  src="images/v9/ch4_s3_fig1.png"
+  alt="مساحت زیر منحنی P-V به عنوان کار مرز متحرک"
+  caption="تفسیر هندسی انتگرال کار مرزی: هر نوار عمودی به عرض dV و ارتفاع P برابر کار دیفرانسیلی dW = P dV است."
+  source="جزوه دکتر صفاری — فصل ۴، اسلاید ۳"
+  maxWidth="320px"
+/>
+
+<FigureBox
+  src="images/v9/ch4_s3_fig2.png"
+  alt="وابستگی کار مرزی به مسیر فرآیند بین دو حالت یکسان"
+  caption="کار یک تابع مسیر است: بین دو حالت ثابت ۱ و ۲، مسیرهای A، B و C مساحت‌های زیر منحنی (کار) متفاوتی دارند."
+  source="جزوه دکتر صفاری — فصل ۴، اسلاید ۳"
+  maxWidth="320px"
+/>
+
+<FigureBox
+  src="images/v9/ch4_s3_fig3.png"
+  alt="کار خالص یک چرخه برابر مساحت محصور داخل حلقه در نمودار P-V"
+  caption="در یک چرخهٔ ترمودینامیکی بسته، کار خالص خروجی برابر تفاضل کار انبساط و تراکم، یعنی مساحت محصور در حلقه است."
+  source="جزوه دکتر صفاری — فصل ۴، اسلاید ۳"
+  maxWidth="300px"
+/>
+
+* **علامت‌گذاری استاندارد:** در انبساط ($dV \gt 0$) کار مرزی **مثبت** ($W_b \gt 0$، کار انجام‌شده **توسط سیستم**) و در تراکم ($dV \lt 0$) **منفی** ($W_b \lt 0$، کار انجام‌شده **روی سیستم**) است.
+* **تلهٔ واحدها:** اگر $P$ بر حسب $\text{kPa}$ و $V$ بر حسب $\text{m}^3$ باشد، چون $1\text{ kPa} \cdot \text{m}^3 = 1\text{ kJ}$ است، کار مستقیماً بر حسب $\text{kJ}$ به‌دست می‌آید (در فشار $\text{MPa}$ حتماً ابتدا با ضرب در $1000$ به $\text{kPa}$ تبدیل کنید!).
+
+<ExampleBox id="ex-4-1" number="مثال ۴-۱" title="کار مرزی صفر در مخزن صلب" slide="اسلاید ۴">
+  <Fragment slot="statement">
+    مخزن صلبی حاوی هوا در فشار $500\text{ kPa}$ و دمای $150\ ^\circ\text{C}$ است. به دلیل انتقال حرارت به محیط خنک شده، فشار و دمای داخل آن به $400\text{ kPa}$ و $65\ ^\circ\text{C}$ افت می‌کند. مطلوب است کار مرزی انجام‌شده طی این فرآیند.
+
+    <FigureBox
+      src="images/v9/ch4_s4_fig1.png"
+      alt="نمودار هم‌حجم سرد شدن هوا در مخزن صلب روی P-V"
+      caption="مسیر عمودی هم‌حجم (۱ به ۲) روی نمودار P-V برای مخزن صلب خنک‌شونده."
+      source="جزوه دکتر صفاری — فصل ۴، اسلاید ۴"
+      maxWidth="440px"
+    />
+  </Fragment>
+  <Fragment slot="solution">
+    به دلیل صلب بودن مخزن، هیچ بخشی از مرز سیستم حرکت نمی‌کند ($V = \text{const} \implies dV = 0$):
+
+    $$
+    W_b = \int_{1}^{2} P \, dV = 0
+    $$
+
+    **تفسیر فیزیکی:** اگرچه فشار گاز به اندازهٔ $100\text{ kPa}$ کاهش یافته، اما چون مساحت زیر یک خط عمودی روی نمودار $P-V$ صفر است، کار مرز متحرک دقیقاً برابر صفر می‌شود.
+  </Fragment>
+</ExampleBox>
 
 ---
 
 ## ۲. فرآیندهای غیرشبه‌تعادلی و انبساط آزاد به خلأ
 
-رابطهٔ <span dir="ltr">W_b = ∫ P dV</span> فقط زمانی معتبر است که **فشار گاز در مرز حرکت با فشار کل گاز برابر باشد** (فرآیند شبه‌تعادلی). اگر پیستون ناگهان رها شود یا یک جدارهٔ میانی ناگهان برداشته شود، فرآیند غیرتعادلی است؛ در این حالت، کار مرزی بر اساس **فشار مقاوم خارجی (<span dir="ltr">P_ext</span>)** در سطح مرز محاسبه می‌شود:
+رابطهٔ $W_b = \int P \, dV$ فقط زمانی معتبر است که **فشار گاز در مرز حرکت با فشار کل گاز برابر باشد** (فرآیند شبه‌تعادلی). اگر پیستون ناگهان رها شود یا یک جدارهٔ میانی ناگهان برداشته شود، فرآیند غیرتعادلی است؛ در این حالت، کار مرزی بر اساس **فشار مقاوم خارجی ($P_{\text{ext}}$)** در سطح مرز محاسبه می‌شود:
 
 <EquationBox id="eq-4-2" number="۴-۲" label="کار مرزی در فرآیند غیرشبه‌تعادلی و انبساط آزاد">
 
@@ -73,7 +128,7 @@ $$
 <div class="jh-trap not-content">
   <strong>⚠️ تلهٔ کلاسیک امتحانی (انبساط آزاد به سمت خلأ):</strong>
   <p style="margin:0.35rem 0 0">
-    اگر گاز یا بخار آب در یک طرف مخزن صلب باشد و طرف دیگر <strong>خلأ (Evacuated)</strong> باشد و جداره را برداریم (مانند <a href="/thermo1-notes/exercises/ch4/#prob-4-41">تمرین ۴-۴۱</a> و <a href="/thermo1-notes/exercises/ch4/#prob-4-62">تمرین ۴-۶۲</a>)، حجم سیال دو برابر می‌شود؛ اما چون سیال در برابر هیچ مقاومتی کار انجام نمی‌دهد (<span dir="ltr">P_ext = 0</span> و مرز بیرونی مخزن صلب جابه‌جا نمی‌شود)، <strong>کار مرزی دقیقاً صفر است (<span dir="ltr">W_b = 0</span>)</strong>! هرگز برای انبساط آزاد از <span dir="ltr">P_1 V_1 ln(V_2/V_1)</span> استفاده نکنید!
+    اگر گاز یا بخار آب در یک طرف مخزن صلب باشد و طرف دیگر <strong>خلأ (Evacuated)</strong> باشد و جداره را برداریم (مانند <a href="/thermo1-notes/exercises/ch4/#prob-4-41">تمرین ۴-۴۱</a> و <a href="/thermo1-notes/exercises/ch4/#prob-4-62">تمرین ۴-۶۲</a>)، حجم سیال دو برابر می‌شود؛ اما چون سیال در برابر هیچ مقاومتی کار انجام نمی‌دهد ($P_{\text{ext}} = 0$ و مرز بیرونی مخزن صلب جابه‌جا نمی‌شود)، <strong>کار مرزی دقیقاً صفر است ($W_b = 0$)</strong>! هرگز برای انبساط آزاد از $P_1 V_1 \ln(V_2/V_1)$ استفاده نکنید!
   </p>
 </div>
 
@@ -83,6 +138,14 @@ $$
 
 در انبساط و تراکم گازهای واقعی در سیلندرهای صنعتی، رابطهٔ فشار و حجم اغلب با دقت بسیار بالا از معادلهٔ **پلی‌تروپیک** پیروی می‌کند:
 
+<FigureBox
+  src="images/v9/ch4_s6_fig1.png"
+  alt="فرآیند پلی‌تروپیک PV^n = const روی نمودار P-V"
+  caption="تغییر فشار و حجم در فرآیند پلی‌تروپیک P V^n = C روی نمودار P-V."
+  source="جزوه دکتر صفاری — فصل ۴، اسلاید ۶"
+  maxWidth="460px"
+/>
+
 <EquationBox id="eq-4-3" number="۴-۳" label="فرمول کار مرزی فرآیند پلی‌تروپیک و حالت گاز ایده‌آل">
 
 $$
@@ -91,16 +154,49 @@ $$
 
 </EquationBox>
 
-*(توجه: تساوی دوم یعنی <span dir="ltr">mR(T_2 - T_1)/(1-n)</span> فقط در صورتی برقرار است که سیال **گاز ایده‌آل** باشد؛ در حالی که فرم <span dir="ltr">(P_2 V_2 - P_1 V_1)/(1-n)</span> برای هر مادهٔ خالصی در فرآیند پلی‌تروپیک معتبر است.)*
+*(توجه: تساوی دوم یعنی $mR(T_2 - T_1)/(1-n)$ فقط در صورتی برقرار است که سیال **گاز ایده‌آل** باشد؛ در حالی که فرم $(P_2 V_2 - P_1 V_1)/(1-n)$ برای هر مادهٔ خالصی در فرآیند پلی‌تروپیک معتبر است.)*
 
-| شاخص پلی‌تروپیک <span dir="ltr">n</span> | نام فرآیند | رابطهٔ مشخصه | فرمول کار مرزی <span dir="ltr">W_b</span> |
+| شاخص پلی‌تروپیک $n$ | نام فرآیند | رابطهٔ مشخصه | فرمول کار مرزی $W_b$ |
 | :---: | :--- | :--- | :--- |
-| <span dir="ltr">n = 0</span> | **هم‌فشار (Isobaric)** | <span dir="ltr">P = C</span> | <span dir="ltr">W_b = P (V_2 - V_1) = m P (v_2 - v_1)</span> |
-| <span dir="ltr">n = 1</span> | **هم‌دما (Isothermal)** برای گاز ایده‌آل | <span dir="ltr">PV = mRT = C</span> | $W_b = P_1 V_1 \ln(V_2 / V_1) = P_1 V_1 \ln(P_1 / P_2)$ |
-| <span dir="ltr">n = k</span> | **آدیاباتیک برگشت‌پذیر (ایزنتروپیک)** گاز ایده‌آل | <span dir="ltr">P V^k = C</span> | $W_b = \frac{P_2 V_2 - P_1 V_1}{1 - k} = \frac{mR(T_2 - T_1)}{1 - k}$ |
-| $n \to \infty$ | **هم‌حجم (Isochoric)** | <span dir="ltr">V = C</span> | <span dir="ltr">W_b = 0</span> |
+| $n = 0$ | **هم‌فشار (Isobaric)** | $P = C$ | $W_b = P (V_2 - V_1) = m P (v_2 - v_1)$ |
+| $n = 1$ | **هم‌دما (Isothermal)** برای گاز ایده‌آل | $PV = mRT = C$ | $W_b = P_1 V_1 \ln(V_2 / V_1) = P_1 V_1 \ln(P_1 / P_2)$ |
+| $n = k$ | **آدیاباتیک برگشت‌پذیر (ایزنتروپیک)** گاز ایده‌آل | $P V^k = C$ | $W_b = \frac{P_2 V_2 - P_1 V_1}{1 - k} = \frac{mR(T_2 - T_1)}{1 - k}$ |
+| $n \to \infty$ | **هم‌حجم (Isochoric)** | $V = C$ | $W_b = 0$ |
 
-در اسلاید ۵ جزوه، <span dir="ltr">0.4 m³</span> هوا در <span dir="ltr">100 kPa</span> و <span dir="ltr">80 °C</span> به‌صورت هم‌دما تا <span dir="ltr">0.1 m³</span> فشرده می‌شود؛ از فرمول <span dir="ltr">n = 1</span> داریم: <span dir="ltr">W_b = (100)(0.4) ln(0.1/0.4) = -55.45 kJ</span> (علامت منفی یعنی کار روی سیستم انجام شده است). با ویجت زیر اثر تغییر <span dir="ltr">n</span> را روی سطح زیر منحنی <span dir="ltr">P-v</span> ببینید:
+<ExampleBox id="ex-4-2" number="مثال ۴-۲" title="تراکم هم‌دمای هوا به عنوان گاز ایده‌آل" slide="اسلاید ۵">
+  <Fragment slot="statement">
+    دستگاه سیلندر-پیستون بدون اصطکاکی حاوی $0.4\text{ m}^3$ هوا در فشار $100\text{ kPa}$ و دمای $80\ ^\circ\text{C}$ است. آن را تا حجم $0.1\text{ m}^3$ متراکم می‌کنیم و به سیلندر نیز اجازهٔ تبادل حرارت با محیط در دمای ثابت را می‌دهیم. با فرض هوا به عنوان گاز ایده‌آل، کار انجام‌شده را محاسبه نمایید.
+
+    <FigureBox
+      src="images/v9/ch4_s5_fig2.png"
+      alt="منحنی تراکم همدمای هوا از ۰٫۴ به ۰٫۱ مترمکعب روی نمودار P-V"
+      caption="مسیر هذلولی تراکم هم‌دما (T_0 = 80 °C = const) روی نمودار P-V."
+      source="جزوه دکتر صفاری — فصل ۴، اسلاید ۵"
+      maxWidth="320px"
+    />
+  </Fragment>
+  <Fragment slot="solution">
+    برای گاز ایده‌آل در دمای ثابت ($T_0 = \text{const}$، متناظر با حالت خاص $n = 1$):
+
+    $$
+    P V = m R T_0 = C \quad \Longrightarrow \quad P = \frac{C}{V}
+    $$
+
+    با انتگرال‌گیری از حالت ۱ تا ۲:
+
+    $$
+    W_b = \int_{1}^{2} P \, dV = C \int_{1}^{2} \frac{dV}{V} = P_1 V_1 \ln\left(\frac{V_2}{V_1}\right)
+    $$
+
+    $$
+    W_b = (100\text{ kPa})(0.4\text{ m}^3)\ln\left(\frac{0.1}{0.4}\right)\left(\frac{1\text{ kJ}}{1\text{ kPa}\cdot\text{m}^3}\right) = -55.5\text{ kJ}
+    $$
+
+    **تفسیر فیزیکی:** علامت منفی نشان می‌دهد که کار روی سیستم (برای متراکم کردن هوا) انجام شده است. برای آنکه دمای هوا حین تراکم بالا نرود و ثابت بماند، معادل همین $55.5\text{ kJ}$ حرارت از سیلندر به محیط دفع می‌شود!
+  </Fragment>
+</ExampleBox>
+
+با ویجت تعاملی زیر اثر تغییر شاخص $n$ را روی سطح زیر منحنی $P-v$ و مقدار کار مرزی مشاهده کنید:
 
 <PvDiagramInteractive />
 
@@ -108,60 +204,10 @@ $$
 
 ## ۴. مکانیک پیستون، فنر خطی و پین / استپر (مبحث طلایی امتحان!)
 
-مسائل ترکیبی **سیلندر-پیستون + فنر خطی + استپر (تکیه‌گاه)** یکی از محبوب‌ترین سوالات امتحان دکتر صفاری هستند (مانند تمارین [۴-۶](/thermo1-notes/exercises/ch4/#prob-4-6)، [۴-۲۱](/thermo1-notes/exercises/ch4/#prob-4-21)، [۴-۲۴](/thermo1-notes/exercises/ch4/#prob-4-24) و [۴-۷۶](/thermo1-notes/exercises/ch4/#prob-4-76)). نکتهٔ کلیدی، تحلیل **توازن نیرو روی پیستون** و رسم دقیق **نمودار <span dir="ltr">P-V</span> چندمرحله‌ای** است.
-
-<div class="not-content" style="margin:1.2rem 0;padding:1rem;border-radius:14px;border:1px solid var(--sl-color-gray-5);background:var(--sl-color-bg-sidebar);">
-  <svg viewBox="0 0 720 220" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودارهای P-V برای فنر خطی و استپر">
-    {/* Left: Spring + Constant Pressure (Prob 4-24 style) */}
-    <g transform="translate(20,15)">
-      <line x1="35" y1="165" x2="310" y2="165" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.8" />
-      <line x1="35" y1="15" x2="35" y2="165" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.8" />
-      <text x="16" y="22" fill="currentColor" font-size="13" font-weight="700">P</text>
-      <text x="305" y="180" fill="currentColor" font-size="13" font-weight="700">V</text>
-      {/* Area */}
-      <polygon points="75,165 75,110 185,110 265,45 265,165" fill="#0284c7" fill-opacity="0.14" />
-      <polygon points="185,110 265,45 265,110" fill="#d97706" fill-opacity="0.24" />
-      <polyline points="75,110 185,110 265,45" fill="none" stroke="#0284c7" stroke-width="2.8" />
-      <line x1="185" y1="110" x2="265" y2="110" stroke="#d97706" stroke-dasharray="4 3" stroke-width="1.5" />
-      <line x1="75" y1="110" x2="75" y2="165" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3" />
-      <line x1="185" y1="110" x2="185" y2="165" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3" />
-      <line x1="265" y1="45" x2="265" y2="165" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3" />
-      <circle cx="75" cy="110" r="4.5" fill="#0284c7" />
-      <circle cx="185" cy="110" r="4.5" fill="#0284c7" />
-      <circle cx="265" cy="45" r="4.5" fill="#0284c7" />
-      <text x="67" y="102" fill="currentColor" font-size="11" font-weight="700">1</text>
-      <text x="180" y="100" fill="currentColor" font-size="11" font-weight="700">2 (touches spring)</text>
-      <text x="268" y="42" fill="currentColor" font-size="11" font-weight="700">3</text>
-      <text x="228" y="95" fill="#b45309" font-size="10.5" font-weight="700">W_spring</text>
-      <text x="165" y="196" text-anchor="middle" fill="currentColor" font-size="11.5" font-weight="700">Stage 1-2 (P=const) + Stage 2-3 (Linear Spring)</text>
-    </g>
-
-    {/* Right: Stops / Liftoff Pressure (Slide 25 / Prob 4-76 style) */}
-    <g transform="translate(380,15)">
-      <line x1="35" y1="165" x2="310" y2="165" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.8" />
-      <line x1="35" y1="15" x2="35" y2="165" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.8" />
-      <text x="16" y="22" fill="currentColor" font-size="13" font-weight="700">P</text>
-      <text x="305" y="180" fill="currentColor" font-size="13" font-weight="700">V</text>
-      <rect x="105" y="55" width="150" height="110" fill="#059669" fill-opacity="0.16" />
-      <polyline points="105,125 105,55 255,55" fill="none" stroke="#059669" stroke-width="2.8" />
-      <line x1="35" y1="55" x2="105" y2="55" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3" />
-      <line x1="35" y1="125" x2="105" y2="125" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3" />
-      <circle cx="105" cy="125" r="4.5" fill="#059669" />
-      <circle cx="105" cy="55" r="4.5" fill="#059669" />
-      <circle cx="255" cy="55" r="4.5" fill="#059669" />
-      <text x="114" y="128" fill="currentColor" font-size="11" font-weight="700">1 (on stops)</text>
-      <text x="95" y="45" fill="currentColor" font-size="11" font-weight="700">2 (liftoff P_float)</text>
-      <text x="255" y="45" fill="currentColor" font-size="11" font-weight="700">3</text>
-      <text x="8" y="59" fill="currentColor" font-size="10">P₂</text>
-      <text x="8" y="129" fill="currentColor" font-size="10">P₁</text>
-      <text x="180" y="116" fill="#047857" font-size="11" font-weight="700" text-anchor="middle">W = P₂(V₃ - V₂)</text>
-      <text x="165" y="196" text-anchor="middle" fill="currentColor" font-size="11.5" font-weight="700">Piston on Stops: Isochoric (1-2) then Isobaric (2-3)</text>
-    </g>
-  </svg>
-</div>
+مسائل ترکیبی **سیلندر-پیستون + فنر خطی + استپر (تکیه‌گاه)** یکی از محبوب‌ترین سوالات امتحان دکتر صفاری هستند (مانند تمارین [۴-۶](/thermo1-notes/exercises/ch4/#prob-4-6)، [۴-۲۱](/thermo1-notes/exercises/ch4/#prob-4-21)، [۴-۲۴](/thermo1-notes/exercises/ch4/#prob-4-24) و [۴-۷۶](/thermo1-notes/exercises/ch4/#prob-4-76)). نکتهٔ کلیدی، تحلیل **توازن نیرو روی پیستون** و رسم دقیق **نمودار $P-V$ چندمرحله‌ای** است.
 
 ### الف) اثر فنر خطی روی رابطهٔ <span dir="ltr">P-V</span>
-اگر یک فنر خطی با ثابت <span dir="ltr">k</span> روی پیستونی با سطح مقطع <span dir="ltr">A</span> قرار گیرد، با جابه‌جایی <span dir="ltr">x = (V - V_0)/A</span> نیروی فنر برابر <span dir="ltr">F_s = k x</span> می‌شود؛ بنابراین از تعادل نیروی پیستون داریم:
+اگر یک فنر خطی با ثابت $k$ روی پیستونی با سطح مقطع $A$ قرار گیرد، با جابه‌جایی $x = (V - V_0)/A$ نیروی فنر برابر $F_s = k x$ می‌شود؛ بنابراین از تعادل نیروی پیستون داریم:
 
 <EquationBox id="eq-4-4" number="۴-۴" label="فشار و کار در حضور فنر خطی">
 
@@ -175,13 +221,121 @@ $$
 
 </EquationBox>
 
-چون رابطهٔ <span dir="ltr">P</span> بر حسب <span dir="ltr">V</span> خطی است، نمودار <span dir="ltr">P-V</span> همیشه یک **خط راست** است و مساحت زیر آن یک **ذوزنقه** است! همان‌طور که دکتر صفاری در اسلایدهای ۷ و ۸ نشان می‌دهند، کل مساحت ذوزنقه شامل دو بخش است:
-1. **مستطیل پایینی:** کار برای غلبه بر فشار ثابت اتمسفر و وزن پیستون ($P_0 \Delta V$).
-2. **مثلث بالایی:** کار ذخیره‌شده برای فشردن فنر ($W_{\text{spring}} = \frac{1}{2}k(x_2^2 - x_1^2)$).
+چون رابطهٔ $P$ بر حسب $V$ خطی است، نمودار $P-V$ همیشه یک **خط راست** است و مساحت زیر آن یک **ذوزنقه** است!
 
-*(در مثال اسلاید ۷-۸: <span dir="ltr">A = 0.25 m², V_1 = 0.05 m³, P_1 = 200 kPa, k = 150 kN/m</span> و حجم دو برابر می‌شود یعنی <span dir="ltr">V_2 = 0.1 m³</span>؛ پس <span dir="ltr">x = 0.05/0.25 = 0.2 m</span>، فشار نهایی <span dir="ltr">P_2 = 200 + 150(0.2)/0.25 = 320 kPa</span>، کار کل <span dir="ltr">W = 13 kJ</span> و کار فنر $W_{\text{spring}} = 3 \text{ kJ}$ است.)*
+<ExampleBox id="ex-4-3" number="مثال ۴-۳" title="انبساط گاز در مقابل فنر خطی" slide="اسلاید ۷ و ۸">
+  <Fragment slot="statement">
+    سیلندر-پیستونی به سطح مقطع $0.25\text{ m}^2$، حاوی گاز به حجم $0.05\text{ m}^3$ با فشار اولیهٔ $200\text{ kPa}$ است. فنری نیز با ضریب ثابت $k = 150\text{ kN/m}$ بدون فشردگی بر سطح پیستون مماس است. با حرارت دادن به سیلندر، حجم گاز داخل سیلندر به دو برابر افزایش می‌یابد. مطلوب است: الف) فشار نهایی داخل سیلندر، ب) کل کار انجام‌شده به‌وسیلهٔ گاز و پ) قسمتی از کار فوق که موجب فشردگی فنر شده است.
+
+    <FigureBox
+      src="images/v9/ch4_s7_fig1.png"
+      alt="شماتیک سیلندر-پیستون در تماس با فنر خطی ۱۵۰ کیلونیوتن بر متر"
+      caption="وضعیت اولیهٔ سیلندر-پیستون در تماس با فنر خطی بدون فشردگی اولیه."
+      source="جزوه دکتر صفاری — فصل ۴، اسلاید ۷"
+      maxWidth="250px"
+    />
+  </Fragment>
+  <Fragment slot="solution">
+    **الف) فشار نهایی داخل سیلندر:**
+    حجم نهایی $V_2 = 2 V_1 = 2(0.05\text{ m}^3) = 0.1\text{ m}^3$ است؛ پس جابه‌جایی پیستون و نیروی فنر در حالت نهایی برابرند با:
+
+    $$
+    x = \frac{\Delta V}{A} = \frac{0.1 - 0.05}{0.25} = 0.2\text{ m} \quad \Longrightarrow \quad F = k x = (150\text{ kN/m})(0.2\text{ m}) = 30\text{ kN}
+    $$
+
+    افزایش فشار ناشی از فنر برابر $\Delta P_s = F / A = 30 / 0.25 = 120\text{ kPa}$ است؛ بنابراین فشار نهایی:
+
+    $$
+    P_2 = P_1 + \Delta P_s = 200 + 120 = 320\text{ kPa}
+    $$
+
+    **ب) کل کار انجام‌شده توسط گاز (مساحت ذوزنقه I + II):**
+
+    <FigureBox
+      src="images/v9/ch4_s8_fig1.png"
+      alt="نمودار P-V ذوزنقه‌ای فرآیند انبساط در مقابل فنر و تفکیک ناحیه مستطیل و مثلث"
+      caption="تفکیک کار کل در نمودار P-V: مستطیل I سهم غلبه بر فشار ثابت پیستون و اتمسفر (10 kJ) و مثلث II سهم فشردگی فنر (3 kJ)."
+      source="جزوه دکتر صفاری — فصل ۴، اسلاید ۸"
+      maxWidth="360px"
+    />
+
+    $$
+    W = \text{area} = \frac{P_1 + P_2}{2}(V_2 - V_1) = \frac{200 + 320}{2}(0.1 - 0.05)\left(\frac{1\text{ kJ}}{1\text{ kPa}\cdot\text{m}^3}\right) = 13\text{ kJ}
+    $$
+
+    **پ) سهم فشردگی فنر (مثلث II یا فرمول انرژی فنر):**
+
+    $$
+    W_{\text{spring}} = \frac{1}{2}(P_2 - P_1)\Delta V = \frac{1}{2}(320 - 200)(0.05) = 3\text{ kJ}
+    $$
+
+    یا مستقیماً از رابطهٔ مکانیکی فنر:
+
+    $$
+    W_{\text{spring}} = \frac{1}{2}k(x_2^2 - x_1^2) = \frac{1}{2}(150\text{ kN/m})\left[(0.2\text{ m})^2 - 0^2\right]\left(\frac{1\text{ kJ}}{1\text{ kN}\cdot\text{m}}\right) = 3\text{ kJ}
+    $$
+
+    **تفسیر فیزیکی:** از کل $13\text{ kJ}$ کار انبساط گاز، $10\text{ kJ}$ صرف بالابردن وزن پیستون و پس‌زدن هوای محیط می‌شود و دقیقاً $3\text{ kJ}$ به صورت انرژی پتانسیل کشسانی در فنر ذخیره می‌گردد.
+  </Fragment>
+</ExampleBox>
 
 ### ب) منطق حرکت پیستون در حضور استپر (Stops) یا پین (Pin)
-* **حالت اول — پیستون در ابتدا روی استپر است (مثل مثال اسلاید ۲۵ و [تمرین ۴-۷۶](/thermo1-notes/exercises/ch4/#prob-4-76)):** تا زمانی که فشار گاز کمتر از **فشار شناوری (Liftoff Pressure)** یعنی $P_{\text{float}} = P_{\text{atm}} + m_p g / A$ باشد، تکیه‌گاه مانع پایین رفتن پیستون می‌شود و پیستون حرکت نمی‌کند (**فرآیند ۱-۲ هم‌حجم و <span dir="ltr">W_{12} = 0</span>**). به‌محض رسیدن فشار به $P_{\text{float}}$، پیستون از روی استپر بلند می‌شود و بقیهٔ انبساط در فشار ثابت انجام می‌گیرد (**فرآیند ۲-۳ هم‌فشار و <span dir="ltr">W_{23} = P_2(V_3 - V_2)</span>**). اگر گرما کافی نباشد که فشار به $P_{\text{float}}$ برسد، پیستون اصلاً تکان نمی‌خورد و کل فرآیند هم‌حجم خواهد بود!
-* **حالت دوم — پیستون حین سرد شدن به استپر می‌خورد (مثل [تمرین ۴-۶](/thermo1-notes/exercises/ch4/#prob-4-6)):** ابتدا سیال در فشار ثابت منقبض می‌شود تا حجم به حجم استپر ($V_{\text{stops}}$) برسد؛ از آن نقطه به بعد («نقطه‌ای که استپر قرار دارد» در حاشیهٔ دست‌نویس حل‌تمرین (TA))، حجم ثابت می‌ماند و فشار کاهش می‌یابد (<span dir="ltr">W = 0</span> در بخش هم‌حجم).
+* **حالت اول — پیستون در ابتدا روی استپر است:** تا زمانی که فشار گاز کمتر از **فشار شناوری (Liftoff Pressure)** یعنی $P_{\text{float}} = P_{\text{atm}} + m_p g / A$ باشد، تکیه‌گاه مانع پایین رفتن پیستون می‌شود و پیستون حرکت نمی‌کند (**فرآیند ۱-۲ هم‌حجم و $W_{12} = 0$**). به‌محض رسیدن فشار به $P_{\text{float}}$، پیستون از روی استپر بلند می‌شود و بقیهٔ انبساط در فشار ثابت انجام می‌گیرد (**فرآیند ۲-۳ هم‌فشار و $W_{23} = P_2(V_3 - V_2)$**). اگر گرما کافی نباشد که فشار به $P_{\text{float}}$ برسد، پیستون اصلاً تکان نمی‌خورد و کل فرآیند هم‌حجم خواهد بود!
+* **حالت دوم — پیستون حین سرد شدن به استپر می‌خورد (مثل [تمرین ۴-۶](/thermo1-notes/exercises/ch4/#prob-4-6)):** ابتدا سیال در فشار ثابت منقبض می‌شود تا حجم به حجم استپر ($V_{\text{stops}}$) برسد؛ از آن نقطه به بعد («نقطه‌ای که استپر قرار دارد» در حاشیهٔ دست‌نویس دکتر صفاری)، حجم ثابت می‌ماند و فشار کاهش می‌یابد ($W = 0$ در بخش هم‌حجم).
 * **حالت سوم — پیستون با پین قفل شده است:** تا قبل از کشیدن پین، حجم ثابت است؛ به محض کشیدن پین، اگر فشار داخلی با فشار تعادل بیرونی ($P_{\text{float}}$) فرق داشته باشد، پیستون حرکت می‌کند تا به تعادل یا استپر برسد.
+
+<ExampleBox id="ex-4-4" number="مثال ۴-۴" title="سیلندر-پیستون روی تکیه‌گاه تا فشار شناوری و دو برابر شدن حجم" slide="اسلاید ۲۵ و ۲۶">
+  <Fragment slot="statement">
+    سیلندر-پیستونی ایده‌آل به حجم $V_1 = 400\text{ L}$ حاوی هوا در فشار $150\text{ kPa}$ و دمای $27\ ^\circ\text{C}$ را در نظر بگیرید. پیستون روی تکیه‌گاه قرار دارد و جرم پیستون به میزانی است که فشار $350\text{ kPa}$ برای حرکت آن نیاز است. حال به هوا به قدری حرارت داده می‌شود که حجم آن دو برابر می‌شود. مطلوب است محاسبهٔ: الف) دمای نهایی، ب) کار انجام‌شده توسط هوا، پ) کل حرارت منتقل‌شده به هوا.
+
+    <FigureBox
+      src="images/v9/ch4_s25_fig1.png"
+      alt="شماتیک سیلندر-پیستون هوا در تکیه‌گاه با حجم اولیه ۴۰۰ لیتر"
+      caption="سیلندر-پیستون حاوی هوا روی استپر؛ حرکت پیستون فقط پس از رسیدن فشار به 350 kPa آغاز می‌شود."
+      source="جزوه دکتر صفاری — فصل ۴، اسلاید ۲۵"
+      maxWidth="240px"
+    />
+
+    <FigureBox
+      src="images/v9/ch4_s25_fig2.png"
+      alt="نمودار P-V دومرحله‌ای هم‌حجم و سپس هم‌فشار تا دو برابر شدن حجم"
+      caption="نمودار P-V فرآیند: مرحلهٔ ۱-۲ هم‌حجم (W=0) تا فشار شناوری 350 kPa، سپس مرحلهٔ ۲-۳ هم‌فشار تا V = 0.8 m³."
+      source="جزوه دکتر صفاری — فصل ۴، اسلاید ۲۵"
+      maxWidth="340px"
+    />
+  </Fragment>
+  <Fragment slot="solution">
+    ابتدا واحدها را مرتب می‌کنیم: $V_1 = 400\text{ L} = 0.4\text{ m}^3$، $V_3 = 2 V_1 = 0.8\text{ m}^3$ و $T_1 = 27 + 273 = 300\text{ K}$.
+
+    **الف) دمای نهایی ($T_3$):** از معادلهٔ گاز ایده‌آل بین حالت ۱ و ۳ ($P_3 = 350\text{ kPa}$):
+
+    $$
+    \frac{P_1 V_1}{T_1} = \frac{P_3 V_3}{T_3} \quad \Longrightarrow \quad \frac{(150\text{ kPa})(V_1)}{300\text{ K}} = \frac{(350\text{ kPa})(2 V_1)}{T_3} \quad \Longrightarrow \quad T_3 = 1400\text{ K}
+    $$
+
+    **ب) کار انجام‌شده توسط هوا:** بخش ۱-۲ هم‌حجم است ($W_{12} = 0$)؛ کل کار مربوط به مستطیل زیر خط ۲-۳ در فشار $350\text{ kPa}$ است:
+
+    $$
+    W_{13} = W_{23} = P_2 (V_3 - V_2) = (350\text{ kPa})(0.8 - 0.4)\text{ m}^3 = 140\text{ kJ}
+    $$
+
+    **پ) کل حرارت منتقل‌شده به هوا (با کمک قانون اول و جدول `A-17` که در درس بعد می‌خوانیم):**
+    جرم هوا از معادلهٔ حالت برابر است با:
+
+    $$
+    m = \frac{P_1 V_1}{R T_1} = \frac{(150\text{ kPa})(0.4\text{ m}^3)}{(0.287\text{ kPa}\cdot\text{m}^3/\text{kg}\cdot\text{K})(300\text{ K})} = 0.697\text{ kg}
+    $$
+
+    از جدول هوا (`Table A-17`) داریم $u_{1@300\text{ K}} = 214.07\text{ kJ/kg}$ و $u_{3@1400\text{ K}} = 1113.52\text{ kJ/kg}$؛ پس از قانون اول بسته:
+
+    $$
+    Q_{\text{in}} - W_{b,\text{out}} = \Delta U = m(u_3 - u_1)
+    $$
+
+    $$
+    Q_{\text{in}} - 140\text{ kJ} = (0.697\text{ kg})(1113.52 - 214.07)\text{ kJ/kg} \quad \Longrightarrow \quad Q_{\text{in}} = 767\text{ kJ}
+    $$
+
+    **تفسیر فیزیکی:** از کل $767\text{ kJ}$ گرمای ورودی، $627\text{ kJ}$ صرف افزایش انرژی داخلی (بالارفتن دمای هوا از $300\text{ K}$ تا $1400\text{ K}$) و $140\text{ kJ}$ صرف انجام کار مرزی پس از بلند شدن پیستون از روی استپر می‌شود.
+  </Fragment>
+</ExampleBox>
