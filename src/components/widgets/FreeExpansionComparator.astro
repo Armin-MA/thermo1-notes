@@ -1,0 +1,435 @@
+---
+// مقایسه‌گر زنده انبساط آزاد به خلأ: گاز ایده‌آل در برابر آب واقعی (فصل ۴ - بخش ۱، تله ۲)
+---
+
+<div class="jh-widget not-content" id="free-exp-widget">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ انبساط آزاد به خلأ: گاز ایده‌آل در برابر آب واقعی</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ <span dir="ltr">W_b = 0, ΔU = 0</span> برای گاز ایده‌آل (آزمایش ژول: <span dir="ltr">T₂ = T₁</span>) و آب (تبخیر جزئی و افت دما در تمرین ۴-۴۱)
+  </div>
+
+  <div class="jh-widget__btns" id="fex-scenarios">
+    <button type="button" class="jh-widget__btn is-active" data-scen="prob441">تمرین ۴-۴۱ (عایق کامل: <span dir="ltr">Q = 0</span>)</button>
+    <button type="button" class="jh-widget__btn" data-scen="ex46">مثال ۴-۶ (هم‌دما با محیط: <span dir="ltr">T = 25 °C</span>)</button>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="fex-release">🔓 برداشتن جدارهٔ میانی (انبساط آزاد)</button>
+    <button type="button" class="jh-widget__btn" id="fex-reset">↺ بازنشانی جداره (حالت اولیه)</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>نسبت حجم کل به حجم اولیه (<span dir="ltr">V_total / V₁</span>): <strong id="fex-rv-lbl" dir="ltr">2.0×</strong></span>
+      <input id="fex-rv" type="range" min="1.5" max="4.0" step="0.1" value="2.0" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- مخزن ۱: گاز ایده‌آل -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>مخزن ۱: گاز ایده‌آل (هوا)</span>
+        <span dir="ltr" id="fex-gas-badge" style="color:#059669">ΔT = 0.0 °C</span>
+      </div>
+      <svg id="fex-gas-svg" viewBox="0 0 300 200" style="width:100%;height:auto;display:block;direction:ltr" aria-label="انبساط آزاد گاز ایده‌آل به خلأ">
+        <!-- عایق اطراف مخزن (هاشور کمرنگ) -->
+        <rect x="16" y="34" width="218" height="134" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="8" stroke-dasharray="6 4" />
+        <!-- دیواره صلب مخزن -->
+        <rect x="20" y="38" width="210" height="126" rx="7" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.72" stroke-width="3" />
+
+        <!-- بخش خلأ سمت راست -->
+        <rect id="fex-g-vac" x="125" y="40" width="103" height="122" fill="currentColor" fill-opacity="0.04" />
+        <text id="fex-g-vac-lbl" x="176" y="104" text-anchor="middle" fill="currentColor" fill-opacity="0.45" font-size="11" font-weight="700">VACUUM (P=0)</text>
+
+        <!-- محفظه رنگ گاز -->
+        <rect id="fex-g-fill" x="22" y="40" width="103" height="122" fill="#0284c7" fill-opacity="0.22" />
+
+        <!-- ذرات گاز -->
+        <g id="fex-g-particles"></g>
+
+        <!-- جداره میانی متحرک -->
+        <g id="fex-g-wall" transform="translate(0, 0)">
+          <rect x="123" y="34" width="5" height="134" rx="2" fill="#d97706" />
+          <circle cx="125.5" cy="28" r="5" fill="#d97706" />
+        </g>
+
+        <!-- برچسب فشار و عایق -->
+        <text id="fex-g-plbl" x="72" y="184" text-anchor="middle" fill="#0284c7" font-size="11" font-weight="800">P = 200 kPa</text>
+        <text x="176" y="184" text-anchor="middle" fill="currentColor" fill-opacity="0.6" font-size="10" font-weight="700">W_b = 0 | Q = 0</text>
+
+        <!-- دماسنج جیوه‌ای سمت راست -->
+        <g transform="translate(264, 38)">
+          <rect x="-7" y="4" width="14" height="96" rx="7" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6" />
+          <circle cx="0" cy="110" r="12" fill="#ef4444" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6" />
+          <rect id="fex-g-merc" x="-3.5" y="34" width="7" height="72" rx="3" fill="#ef4444" />
+          <text id="fex-g-tlbl" x="0" y="138" text-anchor="middle" fill="#ef4444" font-size="11.5" font-weight="800">60.0 °C</text>
+          <text x="0" y="-4" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9" font-weight="700">T_gas</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- مخزن ۲: آب واقعی -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>مخزن ۲: آب واقعی (مادهٔ خالص)</span>
+        <span dir="ltr" id="fex-water-badge" style="color:#d97706">آماده انبساط</span>
+      </div>
+      <svg id="fex-water-svg" viewBox="0 0 300 200" style="width:100%;height:auto;display:block;direction:ltr" aria-label="انبساط آزاد آب واقعی به خلأ">
+        <!-- عایق اطراف مخزن -->
+        <rect id="fex-w-insul" x="16" y="34" width="218" height="134" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="8" stroke-dasharray="6 4" />
+        <!-- دیواره صلب مخزن -->
+        <rect x="20" y="38" width="210" height="126" rx="7" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.72" stroke-width="3" />
+
+        <!-- بخش خلأ سمت راست -->
+        <rect id="fex-w-vac" x="125" y="40" width="103" height="122" fill="currentColor" fill-opacity="0.04" />
+        <text id="fex-w-vac-lbl" x="176" y="104" text-anchor="middle" fill="currentColor" fill-opacity="0.45" font-size="11" font-weight="700">VACUUM (P=0)</text>
+
+        <!-- مه بخار آب هنگام تبخیر جزئی -->
+        <rect id="fex-w-vapor" x="22" y="40" width="206" height="122" fill="#38bdf8" fill-opacity="0" />
+
+        <!-- آب مایع -->
+        <rect id="fex-w-liq" x="22" y="40" width="103" height="122" fill="#0284c7" fill-opacity="0.52" />
+
+        <!-- حباب‌های بخار در حال فلش شدن -->
+        <g id="fex-w-bubbles"></g>
+
+        <!-- جداره میانی متحرک -->
+        <g id="fex-w-wall" transform="translate(0, 0)">
+          <rect x="123" y="34" width="5" height="134" rx="2" fill="#d97706" />
+          <circle cx="125.5" cy="28" r="5" fill="#d97706" />
+        </g>
+
+        <!-- برچسب فشار و حالت -->
+        <text id="fex-w-plbl" x="72" y="184" text-anchor="middle" fill="#0284c7" font-size="11" font-weight="800">P = 200 kPa</text>
+        <text id="fex-w-qlbl" x="176" y="184" text-anchor="middle" fill="currentColor" fill-opacity="0.6" font-size="10" font-weight="700">W_b = 0 | Q = 0</text>
+
+        <!-- دماسنج جیوه‌ای سمت راست -->
+        <g transform="translate(264, 38)">
+          <rect x="-7" y="4" width="14" height="96" rx="7" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6" />
+          <circle cx="0" cy="110" r="12" fill="#ef4444" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6" />
+          <rect id="fex-w-merc" x="-3.5" y="34" width="7" height="72" rx="3" fill="#ef4444" />
+          <text id="fex-w-tlbl" x="0" y="138" text-anchor="middle" fill="#ef4444" font-size="11.5" font-weight="800">60.0 °C</text>
+          <text x="0" y="-4" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9" font-weight="700">T_water</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">کار مرزی هر دو مخزن (<span dir="ltr">W_b</span>)</span>
+      <span class="jh-metric__val" id="fex-m-w">0.0 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">دمای گاز ایده‌آل (<span dir="ltr">T_gas</span>)</span>
+      <span class="jh-metric__val" id="fex-m-tg">60.0 °C (ثابت!)</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">دمای آب واقعی (<span dir="ltr">T_water</span>)</span>
+      <span class="jh-metric__val" id="fex-m-tw">60.0 °C</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">کیفیت بخار آب (<span dir="ltr">x₂</span>)</span>
+      <span class="jh-metric__val" id="fex-m-x">0.00% (مایع متراکم)</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="fex-explain">
+    قبل از برداشتن جداره، هر دو مخزن در فشار <span dir="ltr">200 kPa</span> و دمای <span dir="ltr">60.0 °C</span> هستند و نیمهٔ راست هر دو مخزن <strong>خلأ مطلق</strong> است. دکمهٔ <strong>«برداشتن جدارهٔ میانی»</strong> را بزنید تا تفاوت بنیادین رفتار گاز ایده‌آل و آب را به‌صورت زنده ببینید!
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('free-exp-widget');
+  if (!root) return;
+
+  let scenario = 'prob441'; // 'prob441' | 'ex46'
+  let volRatio = 2.0;
+  let released = false;
+  let animT = 0; // 0 = before release, 1 = settled after expansion
+  let playing = false;
+  let isVisible = true;
+  let rafId = 0;
+  let lastTs = 0;
+
+  const rvSlider = root.querySelector('#fex-rv');
+  const rvLbl = root.querySelector('#fex-rv-lbl');
+  const releaseBtn = root.querySelector('#fex-release');
+  const resetBtn = root.querySelector('#fex-reset');
+
+  const gasBadge = root.querySelector('#fex-gas-badge');
+  const waterBadge = root.querySelector('#fex-water-badge');
+  const gVac = root.querySelector('#fex-g-vac');
+  const gVacLbl = root.querySelector('#fex-g-vac-lbl');
+  const gFill = root.querySelector('#fex-g-fill');
+  const gParticlesGrp = root.querySelector('#fex-g-particles');
+  const gWall = root.querySelector('#fex-g-wall');
+  const gPlbl = root.querySelector('#fex-g-plbl');
+  const gMerc = root.querySelector('#fex-g-merc');
+  const gTlbl = root.querySelector('#fex-g-tlbl');
+
+  const wInsul = root.querySelector('#fex-w-insul');
+  const wVac = root.querySelector('#fex-w-vac');
+  const wVacLbl = root.querySelector('#fex-w-vac-lbl');
+  const wVapor = root.querySelector('#fex-w-vapor');
+  const wLiq = root.querySelector('#fex-w-liq');
+  const wBubblesGrp = root.querySelector('#fex-w-bubbles');
+  const wWall = root.querySelector('#fex-w-wall');
+  const wPlbl = root.querySelector('#fex-w-plbl');
+  const wQlbl = root.querySelector('#fex-w-qlbl');
+  const wMerc = root.querySelector('#fex-w-merc');
+  const wTlbl = root.querySelector('#fex-w-tlbl');
+
+  const mW = root.querySelector('#fex-m-w');
+  const mTg = root.querySelector('#fex-m-tg');
+  const mTw = root.querySelector('#fex-m-tw');
+  const mX = root.querySelector('#fex-m-x');
+  const explainEl = root.querySelector('#fex-explain');
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const gasParticles = [];
+  for (let i = 0; i < 16; i++) {
+    const angle = (i * 2.15 + 0.4) % (Math.PI * 2);
+    const el = document.createElementNS(SVG_NS, 'circle');
+    el.setAttribute('r', '2.5');
+    el.setAttribute('fill', '#0284c7');
+    gParticlesGrp.appendChild(el);
+    gasParticles.push({
+      x: 30 + ((i * 23) % 68),
+      y: 48 + ((i * 19) % 104),
+      vx: Math.cos(angle) * 58,
+      vy: Math.sin(angle) * 58,
+      el,
+    });
+  }
+
+  const bubbles = [];
+  for (let i = 0; i < 12; i++) {
+    const el = document.createElementNS(SVG_NS, 'circle');
+    el.setAttribute('r', String(2 + (i % 3)));
+    el.setAttribute('fill', '#e0f2fe');
+    el.setAttribute('fill-opacity', '0');
+    el.setAttribute('stroke', '#38bdf8');
+    el.setAttribute('stroke-width', '1');
+    el.setAttribute('stroke-opacity', '0');
+    wBubblesGrp.appendChild(el);
+    bubbles.push({
+      baseX: 34 + (i * 16.5),
+      phase: (i * 0.27) % 1,
+      el,
+    });
+  }
+
+  function setThermometer(mercEl, lblEl, tempC) {
+    // نگاشت 15°C..70°C به ارتفاع جیوه 22..84 پیکسل
+    const norm = Math.max(0.1, Math.min(1, (tempC - 15) / 55));
+    const h = 16 + norm * 72;
+    const y = 104 - h;
+    mercEl.setAttribute('y', y.toFixed(1));
+    mercEl.setAttribute('height', h.toFixed(1));
+    lblEl.textContent = `${tempC.toFixed(1)} °C`;
+  }
+
+  function render(dt = 0) {
+    rvLbl.textContent = `${volRatio.toFixed(1)}×`;
+
+    const totalW = 206; // x = 22..228
+    const wallX = 22 + totalW / volRatio;
+    const wallOffset = wallX - 125.5;
+    const wallLift = -animT * 52;
+
+    // موقعیت دیوار میانی
+    gWall.setAttribute('transform', `translate(${wallOffset.toFixed(1)}, ${wallLift.toFixed(1)})`);
+    wWall.setAttribute('transform', `translate(${wallOffset.toFixed(1)}, ${wallLift.toFixed(1)})`);
+    gWall.style.opacity = String(Math.max(0, 1 - animT * 1.15));
+    wWall.style.opacity = String(Math.max(0, 1 - animT * 1.15));
+
+    // ناحیه خلأ پیش از باز شدن
+    gVac.setAttribute('x', wallX.toFixed(1));
+    gVac.setAttribute('width', Math.max(0, 228 - wallX).toFixed(1));
+    gVacLbl.setAttribute('x', ((wallX + 228) / 2).toFixed(1));
+    gVacLbl.style.opacity = String(Math.max(0, 1 - animT * 2.5));
+
+    wVac.setAttribute('x', wallX.toFixed(1));
+    wVac.setAttribute('width', Math.max(0, 228 - wallX).toFixed(1));
+    wVacLbl.setAttribute('x', ((wallX + 228) / 2).toFixed(1));
+    wVacLbl.style.opacity = String(Math.max(0, 1 - animT * 2.5));
+
+    // محاسبات فیزیکی دو مخزن
+    const T1 = scenario === 'prob441' ? 60.0 : 25.0;
+    const P1 = 200.0;
+    const gasP2 = P1 / volRatio;
+    const gasCurP = P1 + (gasP2 - P1) * animT;
+    const gasCurT = T1; // قانون ژول: Δu = 0 => T2 = T1
+
+    // مخزن گاز ایده‌آل: پرشدن عرض
+    const gasFillW = (wallX - 22) + (228 - wallX) * Math.min(1, animT * 1.35);
+    gFill.setAttribute('width', gasFillW.toFixed(1));
+    gFill.setAttribute('fill-opacity', (0.24 - 0.12 * animT).toFixed(2));
+    gPlbl.textContent = `P = ${gasCurP.toFixed(1)} kPa`;
+    setThermometer(gMerc, gTlbl, gasCurT);
+
+    // ذرات گاز داخل محدوده فعلی
+    const gMaxX = 20 + gasFillW - 4;
+    for (const pt of gasParticles) {
+      if (dt > 0) {
+        pt.x += pt.vx * dt;
+        pt.y += pt.vy * dt;
+      }
+      if (pt.x < 25) { pt.x = 25; pt.vx = Math.abs(pt.vx); }
+      if (pt.x > gMaxX) {
+        if (animT > 0.1 && pt.vx > 0 && pt.x < gMaxX + 4) {
+          pt.x = Math.min(gMaxX, pt.x);
+        } else {
+          pt.x = gMaxX;
+          pt.vx = -Math.abs(pt.vx);
+        }
+      }
+      if (pt.y < 44) { pt.y = 44; pt.vy = Math.abs(pt.vy); }
+      if (pt.y > 158) { pt.y = 158; pt.vy = -Math.abs(pt.vy); }
+      pt.el.setAttribute('cx', pt.x.toFixed(1));
+      pt.el.setAttribute('cy', pt.y.toFixed(1));
+    }
+
+    // مخزن آب واقعی
+    let waterCurT, waterCurP, xVap, qTxt, badgeTxt;
+    if (scenario === 'prob441') {
+      const T2 = 45.81;
+      const P2 = 10.0;
+      waterCurT = T1 + (T2 - T1) * animT;
+      waterCurP = P1 + (P2 - P1) * animT;
+      xVap = 2.64 * animT;
+      qTxt = 'W_b = 0 | Q = 0 (عایق)';
+      wInsul.style.opacity = '1';
+      badgeTxt = animT > 0.1 ? `تبخیر جزئی! ΔT = ${(waterCurT - T1).toFixed(1)} °C` : 'آماده انبساط';
+      waterBadge.style.color = animT > 0.1 ? '#ef4444' : '#d97706';
+    } else {
+      waterCurT = 25.0;
+      const P2 = 3.17;
+      waterCurP = P1 + (P2 - P1) * animT;
+      xVap = ((volRatio - 1) * 0.001003 / 43.339) * 100 * animT;
+      const qIn = 5 * (xVap / 100) * 2304.3;
+      qTxt = animT > 0.1 ? `W_b=0 | Q_in=+${qIn.toFixed(2)} kJ` : 'W_b = 0 | تعادل 25 °C';
+      wInsul.style.opacity = '0.35';
+      badgeTxt = animT > 0.1 ? 'تبخیر جزئی با جذب گرما' : 'آماده انبساط';
+      waterBadge.style.color = '#0284c7';
+    }
+
+    // سطح آب مایع از چپ به کل کف مخزن پخش می‌شود
+    const liqW = (wallX - 22) + (228 - wallX) * animT;
+    const liqH = 122 / (1 + (volRatio - 1) * animT * 0.85);
+    const liqY = 162 - liqH;
+    wLiq.setAttribute('width', liqW.toFixed(1));
+    wLiq.setAttribute('y', liqY.toFixed(1));
+    wLiq.setAttribute('height', liqH.toFixed(1));
+
+    // مه بخار بالا/راست
+    wVapor.setAttribute('fill-opacity', (animT * (scenario === 'prob441' ? 0.22 : 0.12)).toFixed(2));
+    wPlbl.textContent = `P = ${waterCurP.toFixed(1)} kPa`;
+    wQlbl.textContent = qTxt;
+    setThermometer(wMerc, wTlbl, waterCurT);
+    waterBadge.textContent = badgeTxt;
+    gasBadge.textContent = animT > 0.1 ? 'ΔT = 0.0 °C (ثابت!)' : 'آماده انبساط';
+
+    // انیمیشن حباب‌های تبخیر
+    bubbles.forEach((b, idx) => {
+      const show = animT > 0.15;
+      const p = (b.phase + animT * 1.4 + idx * 0.05) % 1;
+      const bx = Math.min(220, 28 + (b.baseX - 28) * (0.6 + 0.4 * animT));
+      const by = liqY + 18 - p * 44;
+      b.el.setAttribute('cx', bx.toFixed(1));
+      b.el.setAttribute('cy', Math.max(46, by).toFixed(1));
+      b.el.setAttribute('fill-opacity', show ? (0.65 * (1 - p)).toFixed(2) : '0');
+      b.el.setAttribute('stroke-opacity', show ? (0.85 * (1 - p)).toFixed(2) : '0');
+    });
+
+    // متریک‌ها و توضیح
+    mW.textContent = '0.0 kJ';
+    mTg.textContent = `${gasCurT.toFixed(1)} °C (ΔT = 0)`;
+    mTw.textContent = `${waterCurT.toFixed(1)} °C`;
+    mX.textContent = animT < 0.05 ? '0.00% (مایع متراکم)' : `${xVap.toFixed(scenario === 'prob441' ? 2 : 4)}% (مخلوط اشباع)`;
+
+    if (animT < 0.05) {
+      explainEl.innerHTML = `هر دو مخزن صلب و در دمای اولیهٔ <strong><span dir="ltr">${T1.toFixed(1)} °C</span></strong> و فشار <span dir="ltr">200 kPa</span> هستند. چون سمت راست هر دو مخزن خلأ است (<span dir="ltr">P_ext = 0</span>)، هنگام برداشتن جداره <strong>کار مرزی در هر دو مخزن صفر است (<span dir="ltr">W_b = 0</span>)</strong>.`;
+    } else if (scenario === 'prob441') {
+      explainEl.innerHTML = `<strong>تفاوت طلایی امتحان (تمرین ۴-۴۱):</strong> در مخزن عایق (<span dir="ltr">Q = 0, W_b = 0</span>) هر دو سیستم <strong><span dir="ltr">u₂ = u₁</span></strong> دارند؛ اما برای <strong>گاز ایده‌آل</strong> <span dir="ltr">u = u(T)</span> است پس دمایش دقیقاً ثابت می‌ماند (<span dir="ltr">T₂ = 60.0 °C</span>)، در حالی که برای <strong>آب</strong> <span dir="ltr">u = u(T, v)</span> است؛ بخشی از آب برای پر کردن خلأ گرمای نهان از خود مایع می‌گیرد (تبخیر جزئی <span dir="ltr">x₂ = 2.64%</span>) و دمایش تا <strong><span dir="ltr">45.81 °C</span></strong> افت می‌کند!`;
+    } else {
+      explainEl.innerHTML = `<strong>تطبیق با مثال ۴-۶:</strong> پس از برداشتن جداره، فشار آب متراکم از <span dir="ltr">200 kPa</span> به فشار اشباع <span dir="ltr">3.17 kPa</span> سقوط می‌کند. برای آنکه دمای آب با محیط روی <strong><span dir="ltr">25.0 °C</span></strong> باقی بماند، کسر بسیار کوچکی (<span dir="ltr">x₂ = ${(xVap).toFixed(4)}%</span>) تبخیر می‌شود و آب گرمای اندکی از محیط می‌گیرد (<span dir="ltr">W_b = 0</span>).`;
+    }
+  }
+
+  function stepAnim(now) {
+    if (!playing || !isVisible) {
+      rafId = 0;
+      return;
+    }
+    if (!lastTs) lastTs = now;
+    const dt = Math.min((now - lastTs) / 1000, 0.05);
+    lastTs = now;
+
+    if (animT < 1) {
+      animT = Math.min(1, animT + dt * 0.65);
+      render(dt);
+      rafId = requestAnimationFrame(stepAnim);
+    } else {
+      // ۵/۲ ثانیه حرکت آرام ذرات پس از رسیدن جداره به انتها سپس توقف خودکار
+      playing = false;
+      rafId = 0;
+      render(dt);
+    }
+  }
+
+  releaseBtn.addEventListener('click', () => {
+    if (released && animT >= 1) {
+      // ریست و بازپخش
+      animT = 0;
+    }
+    released = true;
+    playing = true;
+    lastTs = 0;
+    releaseBtn.textContent = '▶ پخش مجدد انبساط آزاد';
+    if (!rafId && isVisible) rafId = requestAnimationFrame(stepAnim);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    released = false;
+    playing = false;
+    animT = 0;
+    releaseBtn.textContent = '🔓 برداشتن جدارهٔ میانی (انبساط آزاد)';
+    render(0);
+  });
+
+  root.querySelectorAll('#fex-scenarios button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#fex-scenarios button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      scenario = btn.getAttribute('data-scen') || 'prob441';
+      released = false;
+      playing = false;
+      animT = 0;
+      releaseBtn.textContent = '🔓 برداشتن جدارهٔ میانی (انبساط آزاد)';
+      render(0);
+    });
+  });
+
+  rvSlider.addEventListener('input', () => {
+    volRatio = parseFloat(rvSlider.value);
+    render(0);
+  });
+
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      isVisible = entries[0]?.isIntersecting ?? true;
+      if (isVisible && playing && !rafId) {
+        lastTs = 0;
+        rafId = requestAnimationFrame(stepAnim);
+      }
+    }, { threshold: 0.05 });
+    obs.observe(root);
+  }
+
+  render(0);
+})();
+</script>

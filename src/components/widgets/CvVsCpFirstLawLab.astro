@@ -1,0 +1,467 @@
+---
+// آزمایشگر زنده مقایسه گرمای ویژه حجم ثابت و فشار ثابت و رابطه مایر (فصل ۴ - بخش ۲)
+---
+
+<div class="jh-widget not-content" id="cv-cp-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ <span dir="ltr">c_v</span> در برابر <span dir="ltr">c_p</span> و رابطهٔ مایر (<span dir="ltr">c_p - c_v = R</span>)</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ هم‌زمان مخزن صلب (<span dir="ltr">V = const</span>) و سیلندر-پیستون هم‌فشار (<span dir="ltr">P = const</span>) برای <span dir="ltr">m = 1 kg</span> گاز ایده‌آل
+  </div>
+
+  <div class="jh-widget__btns" id="ccl-gases">
+    <button type="button" class="jh-widget__btn is-active" data-gas="he">هلیم (<span dir="ltr">He</span> — اسلاید ۱۷، <span dir="ltr">k = 1.67</span>)</button>
+    <button type="button" class="jh-widget__btn" data-gas="air">هوا (<span dir="ltr">Air</span> — دواتمی، <span dir="ltr">k = 1.40</span>)</button>
+    <button type="button" class="jh-widget__btn" data-gas="co2">دی‌اکسید کربن (<span dir="ltr">CO₂</span>، <span dir="ltr">k = 1.29</span>)</button>
+  </div>
+
+  <div class="jh-widget__btns" id="ccl-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="equal-dt">افزایش دمای یکسان <span dir="ltr">ΔT</span> (اثبات <span dir="ltr">c_p = c_v + R</span>)</button>
+    <button type="button" class="jh-widget__btn" data-mode="equal-q">گرمای ورودی یکسان <span dir="ltr">Q_in</span> (کدام داغ‌تر می‌شود؟)</button>
+    <button type="button" class="jh-widget__btn" data-mode="slide17">🎯 مثال اسلاید ۱۷ (<span dir="ltr">He, ΔT = 1 K</span>)</button>
+  </div>
+
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl" id="ccl-dt-wrap">
+      <span>افزایش دما هدف (<span dir="ltr">ΔT</span> از <span dir="ltr">300 K</span>): <strong id="ccl-dt-lbl" dir="ltr">100 K</strong></span>
+      <input id="ccl-dt" type="range" min="1" max="200" step="1" value="100" />
+    </label>
+    <label class="jh-widget__ctrl" id="ccl-q-wrap" style="display:none">
+      <span>گرمای ورودی یکسان (<span dir="ltr">Q_in</span>): <strong id="ccl-q-lbl" dir="ltr">100 kJ</strong></span>
+      <input id="ccl-q" type="range" min="10" max="300" step="5" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="ccl-play">▶ پخش گرمایش زنده</button>
+    <button type="button" class="jh-widget__btn" id="ccl-reset">↺ بازنشانی</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>پیشرفت گرمایش (<span dir="ltr">t</span>): <strong id="ccl-t-lbl" dir="ltr">100%</strong></span>
+      <input id="ccl-t" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱: دوقلوی مخزن صلب و سیلندر پیستون هم‌فشار -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>دو سیستم هم‌زمان (<span dir="ltr">m = 1 kg</span>)</span>
+        <span dir="ltr" id="ccl-gas-props">c_v=3.12 | c_p=5.19</span>
+      </div>
+      <svg id="ccl-sys-svg" viewBox="0 0 320 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="مقایسه مخزن صلب حجم ثابت و سیلندر پیستون فشار ثابت">
+        <defs>
+          <marker id="ccl-arr-w" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#d97706" />
+          </marker>
+        </defs>
+
+        <!-- چپ: مخزن صلب (V = const) -->
+        <text x="76" y="15" text-anchor="middle" fill="currentColor" font-size="11" font-weight="800">V = const (c_v)</text>
+        <rect id="ccl-v-gas" x="30" y="94" width="92" height="82" fill="#0284c7" fill-opacity="0.22" rx="3" />
+        <rect x="28" y="92" width="96" height="86" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" />
+        <!-- پیچ‌های درب قفل‌شده -->
+        <rect x="24" y="86" width="104" height="8" rx="3" fill="#64748b" />
+        <circle cx="32" cy="90" r="2.2" fill="#ffffff" />
+        <circle cx="120" cy="90" r="2.2" fill="#ffffff" />
+        <text x="76" y="128" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">W_b = 0</text>
+        <text id="ccl-v-tlbl" x="76" y="146" text-anchor="middle" fill="#ef4444" font-size="11.5" font-weight="800">T = 400.0 K</text>
+        <text id="ccl-v-qlbl" x="76" y="216" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">Q_v = 311.6 kJ</text>
+        <!-- شعله چپ -->
+        <path id="ccl-v-flame" d="M 60 198 Q 68 181 76 198 Q 84 181 92 198" fill="none" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round" />
+
+        <!-- دماسنج چپ -->
+        <rect x="131" y="76" width="8" height="72" rx="4" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4" />
+        <circle cx="135" cy="154" r="7" fill="#ef4444" />
+        <rect id="ccl-v-merc" x="133" y="102" width="4" height="48" rx="2" fill="#ef4444" />
+
+        <!-- راست: سیلندر پیستون هم‌فشار (P = const) -->
+        <text x="228" y="15" text-anchor="middle" fill="currentColor" font-size="11" font-weight="800">P = const (c_p)</text>
+        <rect id="ccl-p-gas" x="182" y="94" width="92" height="82" fill="#d97706" fill-opacity="0.22" rx="2" />
+        <path d="M 180 34 L 180 178 L 276 178 L 276 34" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" stroke-linejoin="round" />
+
+        <!-- پیستون متحرک با وزنه فشار ثابت -->
+        <g id="ccl-piston-grp" transform="translate(0, 0)">
+          <rect x="182" y="82" width="92" height="12" rx="2" fill="#64748b" stroke="currentColor" stroke-opacity="0.55" />
+          <rect x="212" y="66" width="32" height="16" rx="3" fill="#475569" stroke="currentColor" stroke-opacity="0.5" />
+          <text x="228" y="77" text-anchor="middle" fill="#ffffff" font-size="8.5" font-weight="700">P₀</text>
+          <!-- فلش کار انبساط -->
+          <g id="ccl-w-arrow">
+            <line x1="256" y1="74" x2="256" y2="52" stroke="#d97706" stroke-width="2.4" marker-end="url(#ccl-arr-w)" />
+            <text x="263" y="65" fill="#d97706" font-size="9.5" font-weight="800">W_b</text>
+          </g>
+        </g>
+
+        <text id="ccl-p-tlbl" x="228" y="146" text-anchor="middle" fill="#ef4444" font-size="11.5" font-weight="800">T = 400.0 K</text>
+        <text id="ccl-p-qlbl" x="228" y="216" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800">Q_p = 519.3 kJ</text>
+        <!-- شعله راست -->
+        <path id="ccl-p-flame" d="M 212 198 Q 220 181 228 198 Q 236 181 244 198" fill="none" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round" />
+
+        <!-- دماسنج راست -->
+        <rect x="284" y="76" width="8" height="72" rx="4" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.4" />
+        <circle cx="288" cy="154" r="7" fill="#ef4444" />
+        <rect id="ccl-p-merc" x="286" y="102" width="4" height="48" rx="2" fill="#ef4444" />
+      </svg>
+    </div>
+
+    <!-- پنل ۲: نمودار ستونی تفکیک انرژی ΔU، W_b و ΔH -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>تفکیک زندهٔ انرژی (<span dir="ltr">ΔU</span> در برابر <span dir="ltr">ΔH = ΔU + W_b</span>)</span>
+        <span dir="ltr" id="ccl-mayer-tag" style="color:#059669">c_p - c_v = R</span>
+      </div>
+      <svg id="ccl-bar-svg" viewBox="0 0 300 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار میله‌ای تفکیک انرژی داخلی و کار انبساط">
+        <!-- محور مبنا -->
+        <line x1="34" y1="186" x2="278" y2="186" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="34" y1="24" x2="34" y2="186" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4" />
+        <line x1="34" y1="42" x2="278" y2="42" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3" />
+        <line x1="34" y1="114" x2="278" y2="114" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3" />
+        <text x="28" y="189" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">0</text>
+
+        <!-- میله چپ: V = const (فقط ΔU) -->
+        <rect id="ccl-bar-v-du" x="64" y="96" width="56" height="90" rx="5" fill="#0284c7" fill-opacity="0.88" />
+        <text id="ccl-txt-v-du" x="92" y="145" text-anchor="middle" fill="#ffffff" font-size="10.5" font-weight="800">ΔU</text>
+        <text id="ccl-top-v" x="92" y="88" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">311.6</text>
+        <text x="92" y="204" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">V = const</text>
+
+        <!-- خط مقایسه هم‌تراز ΔU -->
+        <line id="ccl-du-eq-line" x1="64" y1="96" x2="218" y2="96" stroke="#0284c7" stroke-opacity="0.55" stroke-dasharray="4 3" stroke-width="1.3" />
+
+        <!-- میله راست: P = const (ΔU + W_b = ΔH) -->
+        <rect id="ccl-bar-p-du" x="162" y="96" width="56" height="90" rx="4" fill="#0284c7" fill-opacity="0.88" />
+        <rect id="ccl-bar-p-wb" x="162" y="42" width="56" height="54" rx="4" fill="#d97706" fill-opacity="0.9" />
+        <text id="ccl-txt-p-du" x="190" y="145" text-anchor="middle" fill="#ffffff" font-size="10.5" font-weight="800">ΔU</text>
+        <text id="ccl-txt-p-wb" x="190" y="72" text-anchor="middle" fill="#ffffff" font-size="10.5" font-weight="800">W_b</text>
+        <text id="ccl-top-p" x="190" y="34" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">519.3</text>
+        <text x="190" y="204" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">P = const</text>
+
+        <!-- کمان جمع ΔH در سمت راست میله P=const -->
+        <path id="ccl-dh-bracket" d="M 226 42 L 234 42 L 234 186 L 226 186" fill="none" stroke="#059669" stroke-width="2" />
+        <text id="ccl-dh-lbl" x="240" y="118" fill="#059669" font-size="11" font-weight="800">ΔH</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">گرمای حجم ثابت <span dir="ltr">(Q_v = ΔU_v)</span></span>
+      <span class="jh-metric__val" id="ccl-m-qv">311.6 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">گرمای فشار ثابت <span dir="ltr">(Q_p = ΔH_p)</span></span>
+      <span class="jh-metric__val" id="ccl-m-qp">519.3 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">کار انبساط پیستون <span dir="ltr">(W_b = PΔV)</span></span>
+      <span class="jh-metric__val" id="ccl-m-wb">207.7 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">دمای نهایی <span dir="ltr">(T_v | T_p)</span></span>
+      <span class="jh-metric__val" id="ccl-m-temps">400.0 K | 400.0 K</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="ccl-explain">
+    برای رسیدن هر دو ظرف به افزایش دمای یکسان <strong><span dir="ltr">ΔT = 100 K</span></strong>، تغییر انرژی درونی هر دو دقیقاً برابر <strong><span dir="ltr">ΔU = 311.6 kJ</span></strong> است؛ اما در سیلندر هم‌فشار، پیستون بالا می‌رود و <strong><span dir="ltr">W_b = R·ΔT = 207.7 kJ</span></strong> کار انجام می‌دهد. کل این دو عدد در <strong><span dir="ltr">ΔH = Q_p = 519.3 kJ</span></strong> جمع شده است (تلهٔ رابطهٔ ۴-۶: هنگام استفاده از <span dir="ltr">ΔH</span>، هرگز <span dir="ltr">W_b</span> را دوباره حساب نکنید!).
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('cv-cp-lab');
+  if (!root) return;
+
+  const GASES = {
+    he: { name: 'هلیم (He)', cv: 3.1156, cp: 5.1926, R: 2.0769, k: 1.667 },
+    air: { name: 'هوا (Air)', cv: 0.718, cp: 1.005, R: 0.287, k: 1.4 },
+    co2: { name: 'دی‌اکسید کربن (CO₂)', cv: 0.657, cp: 0.846, R: 0.1889, k: 1.288 },
+  };
+
+  let gasKey = 'he';
+  let expMode = 'equal-dt'; // 'equal-dt' | 'equal-q'
+  let targetDT = 100;
+  let targetQ = 100;
+  let progress = 1.0;
+  let playing = false;
+  let isVisible = true;
+  let rafId = 0;
+  let lastTs = 0;
+
+  const dtWrap = root.querySelector('#ccl-dt-wrap');
+  const qWrap = root.querySelector('#ccl-q-wrap');
+  const dtSlider = root.querySelector('#ccl-dt');
+  const qSlider = root.querySelector('#ccl-q');
+  const dtLbl = root.querySelector('#ccl-dt-lbl');
+  const qLbl = root.querySelector('#ccl-q-lbl');
+  const playBtn = root.querySelector('#ccl-play');
+  const resetBtn = root.querySelector('#ccl-reset');
+  const tSlider = root.querySelector('#ccl-t');
+  const tLbl = root.querySelector('#ccl-t-lbl');
+
+  const gasProps = root.querySelector('#ccl-gas-props');
+  const mayerTag = root.querySelector('#ccl-mayer-tag');
+  const vGas = root.querySelector('#ccl-v-gas');
+  const pGas = root.querySelector('#ccl-p-gas');
+  const pistonGrp = root.querySelector('#ccl-piston-grp');
+  const wArrow = root.querySelector('#ccl-w-arrow');
+  const vTlbl = root.querySelector('#ccl-v-tlbl');
+  const pTlbl = root.querySelector('#ccl-p-tlbl');
+  const vQlbl = root.querySelector('#ccl-v-qlbl');
+  const pQlbl = root.querySelector('#ccl-p-qlbl');
+  const vMerc = root.querySelector('#ccl-v-merc');
+  const pMerc = root.querySelector('#ccl-p-merc');
+  const vFlame = root.querySelector('#ccl-v-flame');
+  const pFlame = root.querySelector('#ccl-p-flame');
+
+  const barVDu = root.querySelector('#ccl-bar-v-du');
+  const txtVDu = root.querySelector('#ccl-txt-v-du');
+  const topV = root.querySelector('#ccl-top-v');
+  const duEqLine = root.querySelector('#ccl-du-eq-line');
+  const barPDu = root.querySelector('#ccl-bar-p-du');
+  const barPWb = root.querySelector('#ccl-bar-p-wb');
+  const txtPDu = root.querySelector('#ccl-txt-p-du');
+  const txtPWb = root.querySelector('#ccl-txt-p-wb');
+  const topP = root.querySelector('#ccl-top-p');
+  const dhBracket = root.querySelector('#ccl-dh-bracket');
+  const dhLbl = root.querySelector('#ccl-dh-lbl');
+
+  const mQv = root.querySelector('#ccl-m-qv');
+  const mQp = root.querySelector('#ccl-m-qp');
+  const mWb = root.querySelector('#ccl-m-wb');
+  const mTemps = root.querySelector('#ccl-m-temps');
+  const explainEl = root.querySelector('#ccl-explain');
+
+  function setMiniTherm(mercEl, tempK) {
+    // 300K..600K -> height 14..60
+    const norm = Math.max(0.1, Math.min(1, (tempK - 280) / 340));
+    const h = 14 + norm * 50;
+    const y = 148 - h;
+    mercEl.setAttribute('y', y.toFixed(1));
+    mercEl.setAttribute('height', h.toFixed(1));
+  }
+
+  function render() {
+    const g = GASES[gasKey];
+    tLbl.textContent = `${Math.round(progress * 100)}%`;
+    tSlider.value = String(Math.round(progress * 100));
+    dtLbl.textContent = `${targetDT.toFixed(0)} K`;
+    qLbl.textContent = `${targetQ.toFixed(0)} kJ`;
+    gasProps.textContent = `c_v=${g.cv.toFixed(2)} | c_p=${g.cp.toFixed(2)}`;
+    mayerTag.textContent = `${g.cp.toFixed(2)} - ${g.cv.toFixed(2)} = ${g.R.toFixed(2)}`;
+
+    const T0 = 300;
+    let dTv, dTp, qv, qp, dUv, dUp, wb, maxEnergy;
+    if (expMode === 'equal-dt') {
+      dTv = targetDT * progress;
+      dTp = targetDT * progress;
+      qv = g.cv * dTv;
+      dUv = qv;
+      dUp = g.cv * dTp;
+      wb = g.R * dTp;
+      qp = dUp + wb; // = cp * dTp
+      maxEnergy = Math.max(0.01, g.cp * targetDT);
+    } else {
+      qv = targetQ * progress;
+      qp = targetQ * progress;
+      dTv = qv / g.cv;
+      dTp = qp / g.cp;
+      dUv = qv;
+      dUp = g.cv * dTp;
+      wb = g.R * dTp;
+      maxEnergy = Math.max(0.01, targetQ);
+    }
+
+    const Tv = T0 + dTv;
+    const Tp = T0 + dTp;
+
+    // انبساط پیستون راست متناسب با افزایش دمای هم‌فشار (حداکثر بالا رفتن 24 پیکسل)
+    const liftRatio = Math.min(1, dTp / 220);
+    const liftPx = liftRatio * 24;
+    pistonGrp.setAttribute('transform', `translate(0, ${(-liftPx).toFixed(1)})`);
+    pGas.setAttribute('y', (94 - liftPx).toFixed(1));
+    pGas.setAttribute('height', (82 + liftPx).toFixed(1));
+    wArrow.style.opacity = dTp > 0.2 ? '1' : '0.2';
+
+    const heatGlow = 0.16 + 0.22 * progress;
+    vGas.setAttribute('fill-opacity', heatGlow.toFixed(2));
+    pGas.setAttribute('fill-opacity', heatGlow.toFixed(2));
+    vFlame.style.opacity = progress > 0.01 && progress < 0.995 ? '1' : '0.4';
+    pFlame.style.opacity = progress > 0.01 && progress < 0.995 ? '1' : '0.4';
+
+    vTlbl.textContent = `T = ${Tv.toFixed(1)} K`;
+    pTlbl.textContent = `T = ${Tp.toFixed(1)} K`;
+    vQlbl.textContent = `Q_v = ${qv.toFixed(1)} kJ`;
+    pQlbl.textContent = `Q_p = ${qp.toFixed(1)} kJ`;
+    setMiniTherm(vMerc, Tv);
+    setMiniTherm(pMerc, Tp);
+
+    // نمودار میله‌ای
+    const baseY = 186;
+    const maxH = 142;
+    const hVDu = (dUv / maxEnergy) * maxH;
+    const hPDu = (dUp / maxEnergy) * maxH;
+    const hPWb = (wb / maxEnergy) * maxH;
+
+    const yVTop = baseY - hVDu;
+    barVDu.setAttribute('y', yVTop.toFixed(1));
+    barVDu.setAttribute('height', Math.max(2, hVDu).toFixed(1));
+    txtVDu.setAttribute('y', (yVTop + Math.max(12, hVDu / 2) + 3).toFixed(1));
+    txtVDu.style.display = hVDu > 16 ? '' : 'none';
+    topV.setAttribute('y', (yVTop - 6).toFixed(1));
+    topV.textContent = qv.toFixed(qv < 10 ? 2 : 1);
+
+    const yPDuTop = baseY - hPDu;
+    const yPTop = baseY - (hPDu + hPWb);
+    barPDu.setAttribute('y', yPDuTop.toFixed(1));
+    barPDu.setAttribute('height', Math.max(2, hPDu).toFixed(1));
+    barPWb.setAttribute('y', yPTop.toFixed(1));
+    barPWb.setAttribute('height', Math.max(1, hPWb).toFixed(1));
+
+    txtPDu.setAttribute('y', (yPDuTop + Math.max(12, hPDu / 2) + 3).toFixed(1));
+    txtPDu.style.display = hPDu > 16 ? '' : 'none';
+    txtPWb.setAttribute('y', (yPTop + Math.max(10, hPWb / 2) + 3).toFixed(1));
+    txtPWb.style.display = hPWb > 14 ? '' : 'none';
+    topP.setAttribute('y', (yPTop - 6).toFixed(1));
+    topP.textContent = qp.toFixed(qp < 10 ? 2 : 1);
+
+    duEqLine.style.display = expMode === 'equal-dt' && hVDu > 4 ? '' : 'none';
+    duEqLine.setAttribute('y1', yVTop.toFixed(1));
+    duEqLine.setAttribute('y2', yVTop.toFixed(1));
+
+    if (hPDu + hPWb > 8) {
+      dhBracket.style.display = '';
+      dhLbl.style.display = '';
+      dhBracket.setAttribute('d', `M 224 ${yPTop.toFixed(1)} L 232 ${yPTop.toFixed(1)} L 232 ${baseY} L 224 ${baseY}`);
+      dhLbl.setAttribute('y', ((yPTop + baseY) / 2 + 4).toFixed(1));
+    } else {
+      dhBracket.style.display = 'none';
+      dhLbl.style.display = 'none';
+    }
+
+    const fmt = (val) => val.toFixed(val < 10 && val > 0 ? 2 : 1);
+    mQv.textContent = `${fmt(qv)} kJ`;
+    mQp.textContent = `${fmt(qp)} kJ`;
+    mWb.textContent = `${fmt(wb)} kJ`;
+    mTemps.textContent = `${Tv.toFixed(1)} K | ${Tp.toFixed(1)} K`;
+
+    if (expMode === 'equal-dt') {
+      const qvFull = g.cv * targetDT;
+      const qpFull = g.cp * targetDT;
+      const wbFull = g.R * targetDT;
+      explainEl.innerHTML = `برای بالا بردن دمای <span dir="ltr">1 kg</span> از <strong>${g.name}</strong> به اندازهٔ یکسان <strong><span dir="ltr">ΔT = ${targetDT} K</span></strong>: تغییر انرژی درونی هر دو ظرف یکسان (<span dir="ltr">ΔU = ${fmt(qvFull)} kJ</span>) است، اما پیستون هم‌فشار <strong><span dir="ltr">W_b = R·ΔT = ${fmt(wbFull)} kJ</span></strong> کار انبساط انجام می‌دهد؛ پس به گرمای بیشتری نیاز دارد (<span dir="ltr">Q_p = ΔH = ${fmt(qpFull)} kJ</span>). طبق رابطهٔ ۴-۶، کار <span dir="ltr">W_b</span> درون <span dir="ltr">ΔH</span> لحاظ شده و نباید دوباره جمع شود!`;
+    } else {
+      const dTvFull = targetQ / g.cv;
+      const dTpFull = targetQ / g.cp;
+      explainEl.innerHTML = `وقتی هر دو ظرف دقیقاً <strong><span dir="ltr">Q_in = ${targetQ} kJ</span></strong> گرما دریافت می‌کنند: در مخزن صلب تمام گرما دما را بالا می‌برد (<span dir="ltr">ΔT_v = ${dTvFull.toFixed(1)} K</span>)؛ اما در سیلندر هم‌فشار بخشی از گرما صرف بلندکردن پیستون (<span dir="ltr">W_b = ${(g.R * dTpFull).toFixed(1)} kJ</span>) می‌شود و دمای گاز تنها <strong><span dir="ltr">${dTpFull.toFixed(1)} K</span></strong> (<span dir="ltr">1/${g.k.toFixed(2)}</span> برابر) بالا می‌رود!`;
+    }
+  }
+
+  function stepAnim(now) {
+    if (!playing || !isVisible) {
+      rafId = 0;
+      return;
+    }
+    if (!lastTs) lastTs = now;
+    const dt = Math.min((now - lastTs) / 1000, 0.05);
+    lastTs = now;
+
+    progress += dt * 0.30;
+    if (progress >= 1) {
+      progress = 1;
+      playing = false;
+      playBtn.textContent = '▶ پخش گرمایش زنده';
+    }
+    render();
+    if (playing) rafId = requestAnimationFrame(stepAnim);
+  }
+
+  function startPlay() {
+    if (progress >= 0.995) progress = 0;
+    playing = true;
+    lastTs = 0;
+    playBtn.textContent = '⏸ توقف';
+    if (!rafId && isVisible) rafId = requestAnimationFrame(stepAnim);
+  }
+
+  function stopPlay() {
+    playing = false;
+    playBtn.textContent = '▶ پخش گرمایش زنده';
+  }
+
+  root.querySelectorAll('#ccl-gases button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#ccl-gases button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      gasKey = btn.getAttribute('data-gas') || 'he';
+      render();
+    });
+  });
+
+  root.querySelectorAll('#ccl-modes button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const m = btn.getAttribute('data-mode') || 'equal-dt';
+      root.querySelectorAll('#ccl-modes button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      if (m === 'slide17') {
+        expMode = 'equal-dt';
+        gasKey = 'he';
+        targetDT = 1;
+        dtSlider.value = '1';
+        progress = 1.0;
+        root.querySelectorAll('#ccl-gases button').forEach((b) => {
+          b.classList.toggle('is-active', b.getAttribute('data-gas') === 'he');
+        });
+        dtWrap.style.display = '';
+        qWrap.style.display = 'none';
+      } else {
+        expMode = m;
+        dtWrap.style.display = expMode === 'equal-dt' ? '' : 'none';
+        qWrap.style.display = expMode === 'equal-q' ? '' : 'none';
+      }
+      stopPlay();
+      render();
+    });
+  });
+
+  dtSlider.addEventListener('input', () => {
+    targetDT = parseFloat(dtSlider.value);
+    render();
+  });
+
+  qSlider.addEventListener('input', () => {
+    targetQ = parseFloat(qSlider.value);
+    render();
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (playing) stopPlay();
+    else startPlay();
+  });
+
+  resetBtn.addEventListener('click', () => {
+    stopPlay();
+    progress = 0;
+    render();
+  });
+
+  tSlider.addEventListener('input', () => {
+    stopPlay();
+    progress = parseFloat(tSlider.value) / 100;
+    render();
+  });
+
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      isVisible = entries[0]?.isIntersecting ?? true;
+      if (isVisible && playing && !rafId) {
+        lastTs = 0;
+        rafId = requestAnimationFrame(stepAnim);
+      }
+    }, { threshold: 0.05 });
+    obs.observe(root);
+  }
+
+  render();
+})();
+</script>

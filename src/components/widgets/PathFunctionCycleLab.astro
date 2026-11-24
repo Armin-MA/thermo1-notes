@@ -1,0 +1,623 @@
+---
+// آزمایشگر زنده تابع مسیر بودن کار، تابع حالت بودن ΔU و کار خالص چرخه بسته (فصل ۴ - بخش ۱)
+---
+
+<div class="jh-widget not-content" id="path-cycle-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ تابع مسیر (<span dir="ltr">W, Q</span>)، تابع حالت (<span dir="ltr">ΔU</span>) و چرخهٔ بسته</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ <span dir="ltr">ΔU</span> ثابت در مسیرهای مختلف (<span dir="ltr">1 → 2</span>) و مساحت محصور چرخهٔ بسته روی نمودار <span dir="ltr">P-V</span>
+  </div>
+
+  <div class="jh-widget__btns" id="pcl-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="path">۱) مقایسهٔ مسیرها (۱ → ۲)</button>
+    <button type="button" class="jh-widget__btn" data-mode="cycle">۲) چرخهٔ بسته (کار خالص حلقه)</button>
+  </div>
+
+  <div id="pcl-path-controls">
+    <div class="jh-widget__btns" id="pcl-paths">
+      <button type="button" class="jh-widget__btn is-active" data-path="A">مسیر A (هم‌فشار ← هم‌حجم)</button>
+      <button type="button" class="jh-widget__btn" data-path="B">مسیر B (خط مستقیم)</button>
+      <button type="button" class="jh-widget__btn" data-path="C">مسیر C (هم‌حجم ← هم‌فشار)</button>
+      <button type="button" class="jh-widget__btn" data-path="custom">مسیر منحنی دلخواه</button>
+    </div>
+    <div class="jh-widget__grid" id="pcl-curve-wrap" style="display:none">
+      <label class="jh-widget__ctrl">
+        <span>انحنای مسیر دلخواه (<span dir="ltr">α</span>): <strong id="pcl-alpha-lbl" dir="ltr">+0.60</strong></span>
+        <input id="pcl-alpha" type="range" min="-1.0" max="1.0" step="0.05" value="0.6" />
+      </label>
+    </div>
+  </div>
+
+  <div id="pcl-cycle-controls" style="display:none">
+    <div class="jh-widget__btns" id="pcl-cycle-dirs">
+      <button type="button" class="jh-widget__btn is-active" data-dir="cw">ساعت‌گرد (موتور گرمایی: <span dir="ltr">W_net &gt; 0</span>)</button>
+      <button type="button" class="jh-widget__btn" data-dir="ccw">پادساعت‌گرد (تبرید/تراکم: <span dir="ltr">W_net &lt; 0</span>)</button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>گشودگی حلقهٔ فشار (<span dir="ltr">ΔP_loop</span>): <strong id="pcl-spread-lbl" dir="ltr">140 kPa</strong></span>
+        <input id="pcl-spread" type="range" min="40" max="220" step="10" value="140" />
+      </label>
+    </div>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="pcl-play">▶ پخش حرکت نقطهٔ حالت</button>
+    <button type="button" class="jh-widget__btn" id="pcl-reset">↺ از ابتدا</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>پیشرفت روی مسیر (<span dir="ltr">t</span>): <strong id="pcl-t-lbl" dir="ltr">100%</strong></span>
+      <input id="pcl-t" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>نمودار زندهٔ <span dir="ltr">P-V</span></span>
+        <span dir="ltr" id="pcl-state-tag">V = 4.00 m³, P = 100 kPa</span>
+      </div>
+      <svg id="pcl-pv-svg" viewBox="0 0 380 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار زنده P-V مسیر و چرخه">
+        <defs>
+          <marker id="pcl-arr-cw" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#059669" />
+          </marker>
+          <marker id="pcl-arr-ccw" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#d97706" />
+          </marker>
+        </defs>
+        <!-- شبکه‌بندی -->
+        <g stroke="currentColor" stroke-opacity="0.12" stroke-width="1">
+          <line x1="52" y1="68" x2="352" y2="68" />
+          <line x1="52" y1="112" x2="352" y2="112" />
+          <line x1="52" y1="156" x2="352" y2="156" />
+          <line x1="127" y1="20" x2="127" y2="196" />
+          <line x1="202" y1="20" x2="202" y2="196" />
+          <line x1="277" y1="20" x2="277" y2="196" />
+        </g>
+        <!-- محورها -->
+        <line x1="52" y1="18" x2="52" y2="196" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <line x1="52" y1="196" x2="356" y2="196" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <text x="16" y="26" fill="currentColor" font-size="11.5" font-weight="700">P(kPa)</text>
+        <text x="342" y="216" fill="currentColor" font-size="11.5" font-weight="700">V(m³)</text>
+        <text x="46" y="72" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="10">300</text>
+        <text x="46" y="116" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="10">200</text>
+        <text x="46" y="160" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="10">100</text>
+        <text x="46" y="200" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="10">0</text>
+        <text x="82" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="10">1.0</text>
+        <text x="157" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="10">2.0</text>
+        <text x="232" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="10">3.0</text>
+        <text x="307" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="10">4.0</text>
+
+        <!-- مسیرهای کمکی شبح (فقط در حالت مسیرها) -->
+        <g id="pcl-ghost-paths" stroke="currentColor" stroke-opacity="0.22" stroke-width="1.6" stroke-dasharray="4 4" fill="none">
+          <path id="pcl-ghost-A" d="" />
+          <path id="pcl-ghost-B" d="" />
+          <path id="pcl-ghost-C" d="" />
+        </g>
+
+        <!-- سطح مساحت چرخه یا مساحت کار رفته‌رفته -->
+        <path id="pcl-loop-fill" d="" fill="#059669" fill-opacity="0.18" />
+        <path id="pcl-swept-area" d="" fill="#0284c7" fill-opacity="0.22" />
+
+        <!-- منحنی کامل مسیر/چرخه و بخش طی‌شده -->
+        <path id="pcl-full-curve" d="" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="2" />
+        <path id="pcl-active-curve" d="" fill="none" stroke="#0284c7" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+
+        <!-- فلش جهت چرخه -->
+        <g id="pcl-cycle-arrows" style="display:none">
+          <path id="pcl-arr-top" d="" fill="none" stroke="#059669" stroke-width="2.5" marker-end="url(#pcl-arr-cw)" />
+          <path id="pcl-arr-bot" d="" fill="none" stroke="#059669" stroke-width="2.5" marker-end="url(#pcl-arr-cw)" />
+        </g>
+
+        <!-- خط‌چین مختصات نقطه متحرک -->
+        <line id="pcl-guide-v" x1="82" y1="68" x2="82" y2="196" stroke="#d97706" stroke-dasharray="3 3" stroke-width="1.2" />
+        <line id="pcl-guide-p" x1="52" y1="68" x2="82" y2="68" stroke="#d97706" stroke-dasharray="3 3" stroke-width="1.2" />
+
+        <!-- نقاط ۱ و ۲ -->
+        <circle id="pcl-pt1" cx="82" cy="68" r="4.5" fill="#059669" />
+        <text id="pcl-lbl1" x="72" y="61" fill="currentColor" font-size="11.5" font-weight="800">1</text>
+        <circle id="pcl-pt2" cx="307" cy="156" r="4.5" fill="#0284c7" />
+        <text id="pcl-lbl2" x="315" y="152" fill="currentColor" font-size="11.5" font-weight="800">2</text>
+
+        <!-- نقطه متحرک حالت -->
+        <circle id="pcl-dot" cx="307" cy="156" r="6.5" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+        <text id="pcl-area-badge" x="202" y="182" text-anchor="middle" fill="currentColor" font-size="11.5" font-weight="800"></text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>موازنهٔ زندهٔ انرژی <span dir="ltr">(Q = ΔU + W_b)</span></span>
+        <span dir="ltr" id="pcl-lock-tag" style="color:#059669">🔒 ΔU₁→₂ = +250 kJ</span>
+      </div>
+      <svg id="pcl-bar-svg" viewBox="0 0 280 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار میله‌ای مقایسه تغییر انرژی درونی، کار و گرما">
+        <!-- خط مبنای صفر -->
+        <line x1="36" y1="168" x2="274" y2="168" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="36" y1="32" x2="36" y2="205" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4" />
+        <text x="30" y="172" text-anchor="end" fill="currentColor" fill-opacity="0.7" font-size="10">0</text>
+        <text x="30" y="90" text-anchor="end" fill="currentColor" fill-opacity="0.6" font-size="9.5">+600</text>
+        <text x="30" y="42" text-anchor="end" fill="currentColor" fill-opacity="0.6" font-size="9.5">+1000</text>
+        <line x1="36" y1="86" x2="274" y2="86" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3" />
+        <line x1="36" y1="38" x2="274" y2="38" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3" />
+
+        <!-- خط قفل تغییر انرژی درونی -->
+        <line id="pcl-du-lock-line" x1="36" y1="141" x2="274" y2="141" stroke="#059669" stroke-opacity="0.55" stroke-width="1.4" stroke-dasharray="4 3" />
+        <text id="pcl-du-lock-txt" x="272" y="136" text-anchor="end" fill="#059669" font-size="9.5" font-weight="800">🔒 +250 kJ</text>
+
+        <!-- میله ΔU -->
+        <rect id="pcl-bar-du" x="48" y="134" width="38" height="34" rx="5" fill="#059669" fill-opacity="0.88" />
+        <text id="pcl-val-du" x="67" y="128" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">+250</text>
+        <text x="67" y="219" text-anchor="middle" fill="currentColor" font-size="11" font-weight="700">ΔU</text>
+
+        <!-- میله W_b -->
+        <rect id="pcl-bar-w" x="106" y="86" width="38" height="82" rx="5" fill="#0284c7" fill-opacity="0.88" />
+        <text id="pcl-val-w" x="125" y="80" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">+600</text>
+        <text x="125" y="219" text-anchor="middle" fill="currentColor" font-size="11" font-weight="700">W_b</text>
+
+        <!-- میله Q -->
+        <rect id="pcl-bar-q" x="164" y="52" width="38" height="116" rx="5" fill="#d97706" fill-opacity="0.88" />
+        <text id="pcl-val-q" x="183" y="46" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">+850</text>
+        <text x="183" y="219" text-anchor="middle" fill="currentColor" font-size="11" font-weight="700">Q_in</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">تغییر انرژی درونی (<span dir="ltr">ΔU</span> — تابع حالت)</span>
+      <span class="jh-metric__val" id="pcl-m-du">+250.0 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">کار مرزی پیموده‌شده (<span dir="ltr">W_b</span> — تابع مسیر)</span>
+      <span class="jh-metric__val" id="pcl-m-w">+900.0 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">گرمای کل مبادله‌شده <span dir="ltr">(Q = ΔU + W_b)</span></span>
+      <span class="jh-metric__val" id="pcl-m-q">+1150.0 kJ</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="pcl-explain">
+    بین حالت ۱ و حالت ۲، مقدار <strong><span dir="ltr">ΔU = +250.0 kJ</span></strong> برای همهٔ مسیرها کاملاً یکسان است (چون به مسیر بستگی ندارد)؛ اما با تغییر مسیر، مساحت زیر نمودار <span dir="ltr">P-V</span> تغییر کرده و کار مرزی از <strong><span dir="ltr">300 kJ</span></strong> در مسیر C تا <strong><span dir="ltr">900 kJ</span></strong> در مسیر A عوض می‌شود.
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('path-cycle-lab');
+  if (!root) return;
+
+  const kAir = 1.4;
+  let mode = 'path'; // 'path' | 'cycle'
+  let pathKey = 'A'; // 'A' | 'B' | 'C' | 'custom'
+  let alpha = 0.6;
+  let cycleDir = 'cw'; // 'cw' | 'ccw'
+  let spread = 140;
+  let progress = 1.0;
+  let playing = false;
+  let isVisible = true;
+  let rafId = 0;
+  let lastTs = 0;
+
+  const V_MIN = 0.6;
+  const V_MAX = 4.6;
+  const P_MAX = 420;
+  const xOfV = (v) => 52 + ((v - V_MIN) / (V_MAX - V_MIN)) * 300;
+  const yOfP = (p) => 196 - (Math.max(0, Math.min(P_MAX, p)) / P_MAX) * 176;
+
+  const pathControls = root.querySelector('#pcl-path-controls');
+  const cycleControls = root.querySelector('#pcl-cycle-controls');
+  const curveWrap = root.querySelector('#pcl-curve-wrap');
+  const alphaSlider = root.querySelector('#pcl-alpha');
+  const alphaLbl = root.querySelector('#pcl-alpha-lbl');
+  const spreadSlider = root.querySelector('#pcl-spread');
+  const spreadLbl = root.querySelector('#pcl-spread-lbl');
+  const playBtn = root.querySelector('#pcl-play');
+  const resetBtn = root.querySelector('#pcl-reset');
+  const tSlider = root.querySelector('#pcl-t');
+  const tLbl = root.querySelector('#pcl-t-lbl');
+  const stateTag = root.querySelector('#pcl-state-tag');
+  const lockTag = root.querySelector('#pcl-lock-tag');
+
+  const ghostGroup = root.querySelector('#pcl-ghost-paths');
+  const ghostA = root.querySelector('#pcl-ghost-A');
+  const ghostB = root.querySelector('#pcl-ghost-B');
+  const ghostC = root.querySelector('#pcl-ghost-C');
+  const loopFill = root.querySelector('#pcl-loop-fill');
+  const sweptArea = root.querySelector('#pcl-swept-area');
+  const fullCurve = root.querySelector('#pcl-full-curve');
+  const activeCurve = root.querySelector('#pcl-active-curve');
+  const cycleArrows = root.querySelector('#pcl-cycle-arrows');
+  const arrTop = root.querySelector('#pcl-arr-top');
+  const arrBot = root.querySelector('#pcl-arr-bot');
+  const guideV = root.querySelector('#pcl-guide-v');
+  const guideP = root.querySelector('#pcl-guide-p');
+  const pt1 = root.querySelector('#pcl-pt1');
+  const pt2 = root.querySelector('#pcl-pt2');
+  const lbl1 = root.querySelector('#pcl-lbl1');
+  const lbl2 = root.querySelector('#pcl-lbl2');
+  const dot = root.querySelector('#pcl-dot');
+  const areaBadge = root.querySelector('#pcl-area-badge');
+
+  const duLockLine = root.querySelector('#pcl-du-lock-line');
+  const duLockTxt = root.querySelector('#pcl-du-lock-txt');
+  const barDu = root.querySelector('#pcl-bar-du');
+  const barW = root.querySelector('#pcl-bar-w');
+  const barQ = root.querySelector('#pcl-bar-q');
+  const valDu = root.querySelector('#pcl-val-du');
+  const valW = root.querySelector('#pcl-val-w');
+  const valQ = root.querySelector('#pcl-val-q');
+
+  const mDu = root.querySelector('#pcl-m-du');
+  const mW = root.querySelector('#pcl-m-w');
+  const mQ = root.querySelector('#pcl-m-q');
+  const explainEl = root.querySelector('#pcl-explain');
+
+  function evalPath(key, u) {
+    if (key === 'A') {
+      if (u <= 0.65) {
+        const s = u / 0.65;
+        return { v: 1.0 + 3.0 * s, p: 300 };
+      }
+      const s = (u - 0.65) / 0.35;
+      return { v: 4.0, p: 300 - 200 * s };
+    }
+    if (key === 'B') {
+      return { v: 1.0 + 3.0 * u, p: 300 - 200 * u };
+    }
+    if (key === 'C') {
+      if (u <= 0.35) {
+        const s = u / 0.35;
+        return { v: 1.0, p: 300 - 200 * s };
+      }
+      const s = (u - 0.35) / 0.65;
+      return { v: 1.0 + 3.0 * s, p: 100 };
+    }
+    const v = 1.0 + 3.0 * u;
+    const p = Math.max(25, 300 - 200 * u + 600 * alpha * u * (1 - u));
+    return { v, p };
+  }
+
+  function evalCycle(dir, sLoop, u) {
+    // sLoop = spread in kPa; endpoints V1=1.2, P1=270 | V2=3.8, P2=160
+    const amp = 0.55 * sLoop;
+    const topP = (s) => 270 - 110 * s + amp * Math.sin(Math.PI * s);
+    const botP = (s) => 270 - 110 * s - amp * Math.sin(Math.PI * s);
+    if (u <= 0.5) {
+      const s = u * 2;
+      const v = 1.2 + 2.6 * s;
+      return { v, p: dir === 'cw' ? topP(s) : botP(s) };
+    }
+    const s = 1 - (u - 0.5) * 2;
+    const v = 1.2 + 2.6 * s;
+    return { v, p: dir === 'cw' ? botP(s) : topP(s) };
+  }
+
+  function buildPolyline(fn, uMax, steps = 120) {
+    const pts = [];
+    const n = Math.max(2, Math.round(steps * uMax));
+    for (let i = 0; i <= n; i++) {
+      const u = (i / n) * uMax;
+      pts.push(fn(u));
+    }
+    if (pts.length === 0) pts.push(fn(0));
+    let work = 0;
+    for (let i = 1; i < pts.length; i++) {
+      work += 0.5 * (pts[i].p + pts[i - 1].p) * (pts[i].v - pts[i - 1].v);
+    }
+    return { pts, work };
+  }
+
+  function toPathD(pts, closed = false) {
+    if (!pts.length) return '';
+    let d = pts.map((pt, idx) => `${idx === 0 ? 'M' : 'L'} ${xOfV(pt.v).toFixed(1)} ${yOfP(pt.p).toFixed(1)}`).join(' ');
+    if (closed) d += ' Z';
+    return d;
+  }
+
+  function setBar(rectEl, txtEl, x, val, maxScale, color) {
+    const zeroY = 168;
+    const pxPerUnit = 136 / maxScale;
+    const h = Math.max(2, Math.abs(val) * pxPerUnit);
+    if (val >= 0) {
+      const y = zeroY - h;
+      rectEl.setAttribute('y', y.toFixed(1));
+      rectEl.setAttribute('height', h.toFixed(1));
+      txtEl.setAttribute('y', Math.max(16, y - 6).toFixed(1));
+    } else {
+      rectEl.setAttribute('y', zeroY.toFixed(1));
+      rectEl.setAttribute('height', Math.min(34, h).toFixed(1));
+      txtEl.setAttribute('y', Math.min(204, zeroY + Math.min(34, h) + 13).toFixed(1));
+    }
+    rectEl.setAttribute('fill', color);
+    const sign = val > 0.05 ? '+' : '';
+    txtEl.textContent = `${sign}${val.toFixed(0)}`;
+  }
+
+  function drawGhosts() {
+    ghostA.setAttribute('d', toPathD(buildPolyline((u) => evalPath('A', u), 1, 60).pts));
+    ghostB.setAttribute('d', toPathD(buildPolyline((u) => evalPath('B', u), 1, 40).pts));
+    ghostC.setAttribute('d', toPathD(buildPolyline((u) => evalPath('C', u), 1, 60).pts));
+  }
+
+  function render() {
+    tLbl.textContent = `${Math.round(progress * 100)}%`;
+    tSlider.value = String(Math.round(progress * 100));
+
+    if (mode === 'path') {
+      ghostGroup.style.display = '';
+      cycleArrows.style.display = 'none';
+      loopFill.setAttribute('d', '');
+      duLockLine.style.display = '';
+      duLockTxt.style.display = '';
+      lockTag.textContent = '🔒 ΔU₁→₂ = +250 kJ (ثابت)';
+      lockTag.style.color = '#059669';
+
+      const full = buildPolyline((u) => evalPath(pathKey, u), 1, 140);
+      const cur = buildPolyline((u) => evalPath(pathKey, u), progress, 140);
+      const curPt = evalPath(pathKey, progress);
+      const startPt = evalPath(pathKey, 0);
+      const endPt = evalPath(pathKey, 1);
+
+      fullCurve.setAttribute('d', toPathD(full.pts));
+      activeCurve.setAttribute('d', toPathD(cur.pts));
+      activeCurve.setAttribute('stroke', '#0284c7');
+
+      if (cur.pts.length >= 2) {
+        const areaD = `${toPathD(cur.pts)} L ${xOfV(curPt.v).toFixed(1)} 196 L ${xOfV(startPt.v).toFixed(1)} 196 Z`;
+        sweptArea.setAttribute('d', areaD);
+        sweptArea.setAttribute('fill', '#0284c7');
+        sweptArea.setAttribute('fill-opacity', '0.20');
+      } else {
+        sweptArea.setAttribute('d', '');
+      }
+
+      const cx = xOfV(curPt.v);
+      const cy = yOfP(curPt.p);
+      dot.setAttribute('cx', cx.toFixed(1));
+      dot.setAttribute('cy', cy.toFixed(1));
+      guideV.setAttribute('x1', cx.toFixed(1));
+      guideV.setAttribute('x2', cx.toFixed(1));
+      guideV.setAttribute('y1', cy.toFixed(1));
+      guideP.setAttribute('y1', cy.toFixed(1));
+      guideP.setAttribute('y2', cy.toFixed(1));
+      guideP.setAttribute('x2', cx.toFixed(1));
+
+      pt1.setAttribute('cx', xOfV(startPt.v).toFixed(1));
+      pt1.setAttribute('cy', yOfP(startPt.p).toFixed(1));
+      lbl1.setAttribute('x', (xOfV(startPt.v) - 12).toFixed(1));
+      lbl1.setAttribute('y', (yOfP(startPt.p) - 7).toFixed(1));
+      pt2.setAttribute('cx', xOfV(endPt.v).toFixed(1));
+      pt2.setAttribute('cy', yOfP(endPt.p).toFixed(1));
+      lbl2.setAttribute('x', (xOfV(endPt.v) + 8).toFixed(1));
+      lbl2.setAttribute('y', (yOfP(endPt.p) - 5).toFixed(1));
+
+      const dU = (curPt.p * curPt.v - startPt.p * startPt.v) / (kAir - 1);
+      const wb = cur.work;
+      const qIn = dU + wb;
+
+      stateTag.textContent = `V = ${curPt.v.toFixed(2)} m³, P = ${curPt.p.toFixed(0)} kPa`;
+      areaBadge.textContent = `W_b = ${wb.toFixed(0)} kJ`;
+
+      // مقیاس نمودار میله‌ای تا 1250 kJ
+      const maxScale = 1250;
+      const targetY = 168 - (250 / maxScale) * 136;
+      duLockLine.setAttribute('y1', targetY.toFixed(1));
+      duLockLine.setAttribute('y2', targetY.toFixed(1));
+      duLockTxt.setAttribute('y', (targetY - 4).toFixed(1));
+
+      setBar(barDu, valDu, 56, dU, maxScale, '#059669');
+      setBar(barW, valW, 128, wb, maxScale, '#0284c7');
+      setBar(barQ, valQ, 200, qIn, maxScale, '#d97706');
+
+      mDu.textContent = `${dU >= 0 ? '+' : ''}${dU.toFixed(1)} kJ`;
+      mW.textContent = `${wb >= 0 ? '+' : ''}${wb.toFixed(1)} kJ`;
+      mQ.textContent = `${qIn >= 0 ? '+' : ''}${qIn.toFixed(1)} kJ`;
+
+      const pathNames = {
+        A: 'مسیر A (هم‌فشار در 300 kPa ← سپس هم‌حجم)',
+        B: 'مسیر B (خط مستقیم بین حالت ۱ و ۲)',
+        C: 'مسیر C (ابتدا هم‌حجم ← سپس هم‌فشار در 100 kPa)',
+        custom: `مسیر منحنی دلخواه (α = ${alpha >= 0 ? '+' : ''}${alpha.toFixed(2)})`,
+      };
+      explainEl.innerHTML = `در <strong>${pathNames[pathKey]}</strong>، گرما و کار کل فرآیند به‌ترتیب <strong><span dir="ltr">${(250 + full.work).toFixed(1)} kJ</span></strong> و <strong><span dir="ltr">${full.work.toFixed(1)} kJ</span></strong> هستند (تابع مسیر)، اما در پایان مسیر بدون استثنا <strong><span dir="ltr">ΔU₁→₂ = +250.0 kJ</span></strong> ثابت می‌ماند (تابع حالت).`;
+    } else {
+      ghostGroup.style.display = 'none';
+      cycleArrows.style.display = '';
+      duLockLine.style.display = 'none';
+      duLockTxt.style.display = 'none';
+      lockTag.textContent = '🔒 ΔU_cycle = 0 (بازگشت به حالت ۱)';
+      lockTag.style.color = cycleDir === 'cw' ? '#059669' : '#d97706';
+
+      const full = buildPolyline((u) => evalCycle(cycleDir, spread, u), 1, 160);
+      const cur = buildPolyline((u) => evalCycle(cycleDir, spread, u), progress, 160);
+      const curPt = evalCycle(cycleDir, spread, progress);
+      const startPt = evalCycle(cycleDir, spread, 0);
+      const midPt = evalCycle(cycleDir, spread, 0.5);
+
+      const fullD = toPathD(full.pts, true);
+      fullCurve.setAttribute('d', fullD);
+      loopFill.setAttribute('d', fullD);
+      const isCW = cycleDir === 'cw';
+      loopFill.setAttribute('fill', isCW ? '#059669' : '#d97706');
+      loopFill.setAttribute('fill-opacity', '0.18');
+
+      activeCurve.setAttribute('d', toPathD(cur.pts));
+      activeCurve.setAttribute('stroke', isCW ? '#059669' : '#d97706');
+      sweptArea.setAttribute('d', '');
+
+      // فلش‌های راهنمای جهت روی نیمه بالا و پایین
+      const topMid1 = evalCycle(cycleDir, spread, 0.22);
+      const topMid2 = evalCycle(cycleDir, spread, 0.28);
+      const botMid1 = evalCycle(cycleDir, spread, 0.72);
+      const botMid2 = evalCycle(cycleDir, spread, 0.78);
+      const markerUrl = isCW ? 'url(#pcl-arr-cw)' : 'url(#pcl-arr-ccw)';
+      const arrCol = isCW ? '#059669' : '#d97706';
+      arrTop.setAttribute('d', `M ${xOfV(topMid1.v).toFixed(1)} ${yOfP(topMid1.p).toFixed(1)} L ${xOfV(topMid2.v).toFixed(1)} ${yOfP(topMid2.p).toFixed(1)}`);
+      arrBot.setAttribute('d', `M ${xOfV(botMid1.v).toFixed(1)} ${yOfP(botMid1.p).toFixed(1)} L ${xOfV(botMid2.v).toFixed(1)} ${yOfP(botMid2.p).toFixed(1)}`);
+      arrTop.setAttribute('stroke', arrCol);
+      arrBot.setAttribute('stroke', arrCol);
+      arrTop.setAttribute('marker-end', markerUrl);
+      arrBot.setAttribute('marker-end', markerUrl);
+
+      const cx = xOfV(curPt.v);
+      const cy = yOfP(curPt.p);
+      dot.setAttribute('cx', cx.toFixed(1));
+      dot.setAttribute('cy', cy.toFixed(1));
+      guideV.setAttribute('x1', cx.toFixed(1));
+      guideV.setAttribute('x2', cx.toFixed(1));
+      guideV.setAttribute('y1', cy.toFixed(1));
+      guideP.setAttribute('y1', cy.toFixed(1));
+      guideP.setAttribute('y2', cy.toFixed(1));
+      guideP.setAttribute('x2', cx.toFixed(1));
+
+      pt1.setAttribute('cx', xOfV(startPt.v).toFixed(1));
+      pt1.setAttribute('cy', yOfP(startPt.p).toFixed(1));
+      lbl1.setAttribute('x', (xOfV(startPt.v) - 12).toFixed(1));
+      lbl1.setAttribute('y', (yOfP(startPt.p) - 6).toFixed(1));
+      pt2.setAttribute('cx', xOfV(midPt.v).toFixed(1));
+      pt2.setAttribute('cy', yOfP(midPt.p).toFixed(1));
+      lbl2.setAttribute('x', (xOfV(midPt.v) + 8).toFixed(1));
+      lbl2.setAttribute('y', (yOfP(midPt.p) - 5).toFixed(1));
+
+      const dU = (curPt.p * curPt.v - startPt.p * startPt.v) / (kAir - 1);
+      const wb = cur.work;
+      const qIn = dU + wb;
+      const wNetFull = full.work;
+
+      stateTag.textContent = `V = ${curPt.v.toFixed(2)} m³, P = ${curPt.p.toFixed(0)} kPa`;
+      areaBadge.textContent = `W_net = ${wNetFull >= 0 ? '+' : ''}${wNetFull.toFixed(1)} kJ`;
+
+      const maxScale = 450;
+      setBar(barDu, valDu, 56, dU, maxScale, '#059669');
+      setBar(barW, valW, 128, wb, maxScale, '#0284c7');
+      setBar(barQ, valQ, 200, qIn, maxScale, '#d97706');
+
+      mDu.textContent = `${Math.abs(dU) < 0.2 ? '0.0' : (dU > 0 ? '+' : '') + dU.toFixed(1)} kJ`;
+      mW.textContent = `${wb >= 0 ? '+' : ''}${wb.toFixed(1)} kJ`;
+      mQ.textContent = `${qIn >= 0 ? '+' : ''}${qIn.toFixed(1)} kJ`;
+
+      if (isCW) {
+        explainEl.innerHTML = `در <strong>چرخهٔ ساعت‌گرد</strong>، فشار انبساط (<span dir="ltr">1 → 2</span>) از فشار تراکم (<span dir="ltr">2 → 1</span>) بیشتر است؛ پس مساحت زیر مسیر بالایی بزرگ‌تر بوده و <strong>کار خالص خروجی مثبت</strong> (<span dir="ltr">W_net = +${wNetFull.toFixed(1)} kJ</span>) به‌اندازهٔ مساحت محصور داخل حلقه تولید می‌شود. با بسته شدن چرخه، <strong><span dir="ltr">ΔU_cycle = 0</span></strong> و <strong><span dir="ltr">Q_net = W_net</span></strong> است.`;
+      } else {
+        explainEl.innerHTML = `در <strong>چرخهٔ پادساعت‌گرد</strong> (یخچال یا کمپرسور)، تراکم (<span dir="ltr">2 → 1</span>) در فشار بالاتری از انبساط انجام می‌شود؛ پس کار مصرفی از کار تولیدی بیشتر بوده و <strong>کار خالص منفی</strong> (<span dir="ltr">W_net = ${wNetFull.toFixed(1)} kJ</span>) روی سیستم انجام می‌شود.`;
+      }
+    }
+  }
+
+  function stepAnim(now) {
+    if (!playing || !isVisible) {
+      rafId = 0;
+      return;
+    }
+    if (!lastTs) lastTs = now;
+    const dt = Math.min((now - lastTs) / 1000, 0.05);
+    lastTs = now;
+
+    const speed = mode === 'cycle' ? 0.28 : 0.36;
+    progress += dt * speed;
+    if (progress >= 1) {
+      if (mode === 'cycle') {
+        progress -= 1;
+      } else {
+        progress = 1;
+        playing = false;
+        playBtn.textContent = '▶ پخش حرکت نقطهٔ حالت';
+      }
+    }
+    render();
+    if (playing) rafId = requestAnimationFrame(stepAnim);
+  }
+
+  function startPlay() {
+    if (progress >= 0.995) progress = 0;
+    playing = true;
+    lastTs = 0;
+    playBtn.textContent = '⏸ توقف';
+    if (!rafId && isVisible) rafId = requestAnimationFrame(stepAnim);
+  }
+
+  function stopPlay() {
+    playing = false;
+    playBtn.textContent = '▶ پخش حرکت نقطهٔ حالت';
+  }
+
+  root.querySelectorAll('#pcl-modes button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#pcl-modes button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      mode = btn.getAttribute('data-mode') || 'path';
+      pathControls.style.display = mode === 'path' ? '' : 'none';
+      cycleControls.style.display = mode === 'cycle' ? '' : 'none';
+      progress = 1.0;
+      stopPlay();
+      render();
+    });
+  });
+
+  root.querySelectorAll('#pcl-paths button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#pcl-paths button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      pathKey = btn.getAttribute('data-path') || 'A';
+      curveWrap.style.display = pathKey === 'custom' ? '' : 'none';
+      render();
+    });
+  });
+
+  root.querySelectorAll('#pcl-cycle-dirs button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#pcl-cycle-dirs button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      cycleDir = btn.getAttribute('data-dir') || 'cw';
+      render();
+    });
+  });
+
+  alphaSlider.addEventListener('input', () => {
+    alpha = parseFloat(alphaSlider.value);
+    alphaLbl.textContent = `${alpha >= 0 ? '+' : ''}${alpha.toFixed(2)}`;
+    render();
+  });
+
+  spreadSlider.addEventListener('input', () => {
+    spread = parseFloat(spreadSlider.value);
+    spreadLbl.textContent = `${spread.toFixed(0)} kPa`;
+    render();
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (playing) stopPlay();
+    else startPlay();
+  });
+
+  resetBtn.addEventListener('click', () => {
+    stopPlay();
+    progress = 0;
+    render();
+  });
+
+  tSlider.addEventListener('input', () => {
+    stopPlay();
+    progress = parseFloat(tSlider.value) / 100;
+    render();
+  });
+
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      isVisible = entries[0]?.isIntersecting ?? true;
+      if (isVisible && playing && !rafId) {
+        lastTs = 0;
+        rafId = requestAnimationFrame(stepAnim);
+      }
+    }, { threshold: 0.05 });
+    obs.observe(root);
+  }
+
+  drawGhosts();
+  render();
+})();
+</script>

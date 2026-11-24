@@ -12,7 +12,9 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import PathFunctionCycleLab from '../../../components/widgets/PathFunctionCycleLab.astro';
 import PvDiagramInteractive from '../../../components/widgets/PvDiagramInteractive.astro';
+import PistonSpringStopsSim from '../../../components/widgets/PistonSpringStopsSim.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
 
@@ -84,6 +86,10 @@ $$
   source="جزوه دکتر صفاری — فصل ۴، اسلاید ۳"
   maxWidth="300px"
 />
+
+در آزمایشگر زندهٔ زیر می‌توانید تفاوت **تابع حالت (<span dir="ltr">ΔU</span> ثابت)** و **تابع مسیر (<span dir="ltr">W_b</span> و <span dir="ltr">Q</span> متغیر)** و همچنین کار خالص یک چرخهٔ بسته را به‌صورت پویا مشاهده کنید:
+
+<PathFunctionCycleLab />
 
 * **علامت‌گذاری استاندارد:** در انبساط ($dV \gt 0$) کار مرزی **مثبت** ($W_b \gt 0$، کار انجام‌شده **توسط سیستم**) و در تراکم ($dV \lt 0$) **منفی** ($W_b \lt 0$، کار انجام‌شده **روی سیستم**) است.
 * **تلهٔ واحدها:** اگر $P$ بر حسب $\text{kPa}$ و $V$ بر حسب $\text{m}^3$ باشد، چون $1\text{ kPa} \cdot \text{m}^3 = 1\text{ kJ}$ است، کار مستقیماً بر حسب $\text{kJ}$ به‌دست می‌آید (در فشار $\text{MPa}$ حتماً ابتدا با ضرب در $1000$ به $\text{kPa}$ تبدیل کنید!).
@@ -196,7 +202,7 @@ $$
   </Fragment>
 </ExampleBox>
 
-با ویجت تعاملی زیر اثر تغییر شاخص $n$ را روی سطح زیر منحنی $P-v$ و مقدار کار مرزی مشاهده کنید:
+با شبیه‌ساز زندهٔ سیلندر-پیستون و نمودار <span dir="ltr">P-v</span> زیر، حرکت پیستون، جنبش مولکول‌ها و تغییر مساحت کار مرزی را با تغییر شاخص <span dir="ltr">n</span> بررسی کنید:
 
 <PvDiagramInteractive />
 
@@ -339,3 +345,7 @@ $$
     **تفسیر فیزیکی:** از کل $767\text{ kJ}$ گرمای ورودی، $627\text{ kJ}$ صرف افزایش انرژی داخلی (بالارفتن دمای هوا از $300\text{ K}$ تا $1400\text{ K}$) و $140\text{ kJ}$ صرف انجام کار مرزی پس از بلند شدن پیستون از روی استپر می‌شود.
   </Fragment>
 </ExampleBox>
+
+در شبیه‌ساز مکانیکی زیر می‌توانید هر دو مثال ۴-۳ و ۴-۴ و یک مسئلهٔ ترکیبی سه‌مرحله‌ای (استپر پایینی + فنر + استپر بالایی) را هم‌زمان با عقربهٔ گیج فشار و تفکیک مساحت <span dir="ltr">P-V</span> به‌صورت زنده بازپخش کنید:
+
+<PistonSpringStopsSim />

@@ -1,0 +1,614 @@
+---
+// شبیه‌ساز زنده مکانیک پیستون، فنر خطی و استپرهای پایینی و بالایی (فصل ۴ - بخش ۴)
+---
+
+<div class="jh-widget not-content" id="spring-stops-sim">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">شبیه‌ساز زندهٔ مکانیک پیستون، فنر خطی و تکیه‌گاه (<span dir="ltr">Stops</span>)</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    بازپخش زندهٔ مثال‌های ۴-۳ و ۴-۴ و حالت ترکیبی ۳مرحله‌ای روی نمودار <span dir="ltr">P-V</span> هم‌زمان با گیج فشار و فنر مارپیچ
+  </div>
+
+  <div class="jh-widget__btns" id="pss-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="stops">مثال ۴-۴: پیستون روی استپر پایینی</button>
+    <button type="button" class="jh-widget__btn" data-mode="spring">مثال ۴-۳: انبساط در مقابل فنر خطی</button>
+    <button type="button" class="jh-widget__btn" data-mode="combo">ترکیبی ۳مرحله‌ای (استپر + فنر + استپر بالایی)</button>
+  </div>
+
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl" id="pss-pfloat-wrap">
+      <span>فشار شناوری پیستون (<span dir="ltr">P_float</span>): <strong id="pss-pfloat-lbl" dir="ltr">350 kPa</strong></span>
+      <input id="pss-pfloat" type="range" min="200" max="450" step="10" value="350" />
+    </label>
+    <label class="jh-widget__ctrl" id="pss-k-wrap" style="display:none">
+      <span>سختی فنر خطی (<span dir="ltr">k</span>): <strong id="pss-k-lbl" dir="ltr">150 kN/m</strong></span>
+      <input id="pss-k" type="range" min="50" max="250" step="10" value="150" />
+    </label>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="pss-play">▶ پخش فرآیند</button>
+    <button type="button" class="jh-widget__btn" id="pss-reset">↺ بازنشانی</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>پیشرفت گرمایش (<span dir="ltr">t</span>): <strong id="pss-t-lbl" dir="ltr">100%</strong></span>
+      <input id="pss-t" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>شماتیک زندهٔ مکانیکی</span>
+        <span dir="ltr" id="pss-stage-tag">Phase 2: Isobaric Expansion</span>
+      </div>
+      <svg id="pss-mech-svg" viewBox="0 0 260 235" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک زنده سیلندر پیستون فنر و استپر">
+        <!-- سقف محفظه (برای تکیه فنر) -->
+        <rect x="48" y="18" width="136" height="8" rx="3" fill="currentColor" fill-opacity="0.55" />
+
+        <!-- محفظه گاز -->
+        <rect id="pss-gas" x="58" y="70" width="116" height="112" fill="#f59e0b" fill-opacity="0.22" rx="2" />
+
+        <!-- دیواره‌های سیلندر -->
+        <path d="M 54 22 L 54 185 L 178 185 L 178 22" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="5" stroke-linejoin="round" />
+
+        <!-- استپر پایینی -->
+        <g id="pss-lower-stops">
+          <rect x="57" y="132" width="13" height="7" rx="2" fill="#64748b" />
+          <rect x="162" y="132" width="13" height="7" rx="2" fill="#64748b" />
+        </g>
+
+        <!-- استپر بالایی -->
+        <g id="pss-upper-stops" style="display:none">
+          <rect x="57" y="64" width="13" height="7" rx="2" fill="#64748b" />
+          <rect x="162" y="64" width="13" height="7" rx="2" fill="#64748b" />
+        </g>
+
+        <!-- فنر مارپیچ زنده -->
+        <path id="pss-spring-path" d="" fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:none" />
+
+        <!-- پیستون و میله -->
+        <g id="pss-piston-grp">
+          <rect id="pss-rod" x="110" y="10" width="12" height="58" rx="3" fill="currentColor" fill-opacity="0.4" />
+          <rect id="pss-piston-head" x="57" y="66" width="118" height="14" rx="3" fill="#64748b" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" />
+          <line x1="65" y1="73" x2="167" y2="73" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" />
+        </g>
+
+        <!-- شعله مشعل زیر سیلندر -->
+        <g id="pss-flame">
+          <path d="M 95 215 Q 103 192 116 215 Q 128 190 138 215" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" />
+          <path d="M 101 215 Q 108 199 116 215 Q 124 198 131 215" fill="#f59e0b" fill-opacity="0.7" />
+          <line x1="88" y1="218" x2="144" y2="218" stroke="currentColor" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round" />
+        </g>
+
+        <!-- گیج عقربه‌ای فشار سمت راست -->
+        <g transform="translate(218, 76)">
+          <circle cx="0" cy="0" r="30" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.45" stroke-width="2.2" />
+          <path d="M -20 14 A 24 24 0 1 1 20 14" fill="none" stroke="currentColor" stroke-opacity="0.25" stroke-width="3" stroke-linecap="round" />
+          <circle cx="0" cy="0" r="3.5" fill="currentColor" />
+          <line id="pss-needle" x1="0" y1="0" x2="-15" y2="10" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" />
+          <text x="0" y="-12" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="8.5" font-weight="700">kPa</text>
+          <text id="pss-dial-val" x="0" y="21" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">350</text>
+        </g>
+
+        <!-- نمایشگر دیجیتال حجم زیر گیج -->
+        <rect x="187" y="118" width="62" height="52" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" />
+        <text x="218" y="135" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9" font-weight="700">V (m³)</text>
+        <text id="pss-mech-v" x="218" y="150" text-anchor="middle" fill="#059669" font-size="11" font-weight="800">0.800</text>
+        <text id="pss-mech-w" x="218" y="164" text-anchor="middle" fill="#d97706" font-size="9.5" font-weight="700">W=140 kJ</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>نمودار هم‌زمان <span dir="ltr">P-V</span> (تفکیک مستطیل I و مثلث II)</span>
+        <span dir="ltr" id="pss-pv-tag">P = 350 kPa</span>
+      </div>
+      <svg id="pss-pv-svg" viewBox="0 0 380 235" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار P-V پیستون فنر و استپر">
+        <!-- محورها و شبکه -->
+        <g stroke="currentColor" stroke-opacity="0.12" stroke-width="1">
+          <line x1="54" y1="62" x2="354" y2="62" />
+          <line x1="54" y1="106" x2="354" y2="106" />
+          <line x1="54" y1="150" x2="354" y2="150" />
+          <line x1="129" y1="22" x2="129" y2="196" />
+          <line x1="204" y1="22" x2="204" y2="196" />
+          <line x1="279" y1="22" x2="279" y2="196" />
+        </g>
+        <line x1="54" y1="20" x2="54" y2="196" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <line x1="54" y1="196" x2="358" y2="196" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <text x="16" y="25" fill="currentColor" font-size="11.5" font-weight="700">P(kPa)</text>
+        <text x="336" y="216" fill="currentColor" font-size="11.5" font-weight="700">V(m³)</text>
+
+        <text id="pss-ax-pmax" x="48" y="34" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">500</text>
+        <text id="pss-ax-pmid" x="48" y="114" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">250</text>
+        <text x="48" y="200" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">0</text>
+        <text id="pss-ax-v1" x="115" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5">0.40</text>
+        <text id="pss-ax-v2" x="290" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5">0.80</text>
+
+        <!-- نواحی کار: مستطیل آبی (I) و مثلث فنر کهربایی (II) -->
+        <path id="pss-area-base" d="" fill="#0284c7" fill-opacity="0.22" />
+        <path id="pss-area-spring" d="" fill="#d97706" fill-opacity="0.28" />
+        <line id="pss-split-line" x1="54" y1="120" x2="350" y2="120" stroke="#d97706" stroke-opacity="0.45" stroke-dasharray="4 3" style="display:none" />
+
+        <!-- مسیر کل و طی‌شده -->
+        <path id="pss-full-path" d="" fill="none" stroke="currentColor" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="5 4" />
+        <path id="pss-cur-path" d="" fill="none" stroke="#0284c7" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+
+        <!-- خط‌چین راهنمای نقطه جاری -->
+        <line id="pss-gv" x1="120" y1="100" x2="120" y2="196" stroke="#d97706" stroke-dasharray="3 3" stroke-width="1.2" />
+        <line id="pss-gp" x1="54" y1="100" x2="120" y2="100" stroke="#d97706" stroke-dasharray="3 3" stroke-width="1.2" />
+
+        <!-- برچسب‌های نقاط -->
+        <g id="pss-markers"></g>
+
+        <!-- نقطه متحرک حالت -->
+        <circle id="pss-dot" cx="120" cy="100" r="6.5" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+        <text id="pss-area-lbl1" x="210" y="168" text-anchor="middle" fill="#0284c7" font-size="11" font-weight="800"></text>
+        <text id="pss-area-lbl2" x="235" y="102" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800"></text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">فشار لحظه‌ای (<span dir="ltr">P</span>)</span>
+      <span class="jh-metric__val" id="pss-m-p">350.0 kPa</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">حجم لحظه‌ای (<span dir="ltr">V</span>)</span>
+      <span class="jh-metric__val" id="pss-m-v">0.800 m³</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">کار کل تا این لحظه (<span dir="ltr">W_total</span>)</span>
+      <span class="jh-metric__val" id="pss-m-wt">140.0 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">سهم فشرده‌سازی فنر (<span dir="ltr">W_spring</span>)</span>
+      <span class="jh-metric__val" id="pss-m-ws">0.0 kJ</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="pss-explain">
+    در حالت <strong>مثال ۴-۴</strong>، تا پیش از رسیدن فشار به <strong><span dir="ltr">P_float = 350 kPa</span></strong>، پیستون روی استپر پایینی قفل است (مسیر هم‌حجم <span dir="ltr">1 → 2</span> با کار صفر)؛ به‌محض رسیدن به این فشار، پیستون بلند شده و انبساط هم‌فشار تا دو برابر شدن حجم <span dir="ltr">140.0 kJ</span> کار تولید می‌کند.
+  </div>
+</div>
+
+<script is:inline>
+(() => {
+  const root = document.getElementById('spring-stops-sim');
+  if (!root) return;
+
+  let mode = 'stops'; // 'stops' | 'spring' | 'combo'
+  let pFloat = 350;
+  let kSpring = 150;
+  let progress = 1.0;
+  let playing = false;
+  let isVisible = true;
+  let rafId = 0;
+  let lastTs = 0;
+
+  const pfloatWrap = root.querySelector('#pss-pfloat-wrap');
+  const kWrap = root.querySelector('#pss-k-wrap');
+  const pfloatSlider = root.querySelector('#pss-pfloat');
+  const kSlider = root.querySelector('#pss-k');
+  const pfloatLbl = root.querySelector('#pss-pfloat-lbl');
+  const kLbl = root.querySelector('#pss-k-lbl');
+  const playBtn = root.querySelector('#pss-play');
+  const resetBtn = root.querySelector('#pss-reset');
+  const tSlider = root.querySelector('#pss-t');
+  const tLbl = root.querySelector('#pss-t-lbl');
+
+  const stageTag = root.querySelector('#pss-stage-tag');
+  const pvTag = root.querySelector('#pss-pv-tag');
+  const gasRect = root.querySelector('#pss-gas');
+  const lowerStops = root.querySelector('#pss-lower-stops');
+  const upperStops = root.querySelector('#pss-upper-stops');
+  const springPath = root.querySelector('#pss-spring-path');
+  const pistonGrp = root.querySelector('#pss-piston-grp');
+  const rodEl = root.querySelector('#pss-rod');
+  const flameEl = root.querySelector('#pss-flame');
+  const needleEl = root.querySelector('#pss-needle');
+  const dialVal = root.querySelector('#pss-dial-val');
+  const mechV = root.querySelector('#pss-mech-v');
+  const mechW = root.querySelector('#pss-mech-w');
+
+  const axPmax = root.querySelector('#pss-ax-pmax');
+  const axPmid = root.querySelector('#pss-ax-pmid');
+  const axV1 = root.querySelector('#pss-ax-v1');
+  const axV2 = root.querySelector('#pss-ax-v2');
+  const areaBase = root.querySelector('#pss-area-base');
+  const areaSpring = root.querySelector('#pss-area-spring');
+  const splitLine = root.querySelector('#pss-split-line');
+  const fullPath = root.querySelector('#pss-full-path');
+  const curPath = root.querySelector('#pss-cur-path');
+  const gv = root.querySelector('#pss-gv');
+  const gp = root.querySelector('#pss-gp');
+  const markersGrp = root.querySelector('#pss-markers');
+  const dot = root.querySelector('#pss-dot');
+  const areaLbl1 = root.querySelector('#pss-area-lbl1');
+  const areaLbl2 = root.querySelector('#pss-area-lbl2');
+
+  const mP = root.querySelector('#pss-m-p');
+  const mV = root.querySelector('#pss-m-v');
+  const mWt = root.querySelector('#pss-m-wt');
+  const mWs = root.querySelector('#pss-m-ws');
+  const explainEl = root.querySelector('#pss-explain');
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function buildSpringPath(yTop, yBottom) {
+    const coils = 7;
+    const cx = 116;
+    const amp = 14;
+    const span = Math.max(12, yBottom - yTop);
+    const lead = 4;
+    const usable = span - 2 * lead;
+    let d = `M ${cx} ${yTop.toFixed(1)} L ${cx} ${(yTop + lead).toFixed(1)}`;
+    for (let i = 0; i < coils; i++) {
+      const y1 = yTop + lead + ((i + 0.25) / coils) * usable;
+      const y2 = yTop + lead + ((i + 0.75) / coils) * usable;
+      d += ` L ${(cx - amp).toFixed(1)} ${y1.toFixed(1)} L ${(cx + amp).toFixed(1)} ${y2.toFixed(1)}`;
+    }
+    d += ` L ${cx} ${(yBottom - lead).toFixed(1)} L ${cx} ${yBottom.toFixed(1)}`;
+    return d;
+  }
+
+  function getSpec() {
+    if (mode === 'stops') {
+      return {
+        vMinPlot: 0.2,
+        vMaxPlot: 0.95,
+        pMaxPlot: 500,
+        vLow: 0.4,
+        vHigh: 0.8,
+        vTick1: '0.40',
+        vTick2: '0.80',
+        nodes: [
+          { t: 0, v: 0.4, p: 150, label: '1' },
+          { t: 0.45, v: 0.4, p: pFloat, label: '2' },
+          { t: 1.0, v: 0.8, p: pFloat, label: '3' },
+        ],
+        evalAt(t) {
+          if (t <= 0.45) {
+            const u = t / 0.45;
+            const p = 150 + (pFloat - 150) * u;
+            return { v: 0.4, p, wBase: 0, wSpring: 0, wTotal: 0, stage: 'مرحله ۱: هم‌حجم روی استپر پایینی (W=0)', onLower: true, onUpper: false };
+          }
+          const u = (t - 0.45) / 0.55;
+          const v = 0.4 + 0.4 * u;
+          const wTotal = pFloat * (v - 0.4);
+          return { v, p: pFloat, wBase: wTotal, wSpring: 0, wTotal, stage: 'مرحله ۲: بلندشدن و انبساط هم‌فشار', onLower: u < 0.02, onUpper: false };
+        },
+      };
+    }
+    if (mode === 'spring') {
+      const A = 0.25;
+      const v1 = 0.05;
+      const v2 = 0.10;
+      const p1 = 200;
+      const p2 = p1 + (kSpring / (A * A)) * (v2 - v1);
+      return {
+        vMinPlot: 0.03,
+        vMaxPlot: 0.12,
+        pMaxPlot: 460,
+        vLow: v1,
+        vHigh: v2,
+        vTick1: '0.05',
+        vTick2: '0.10',
+        nodes: [
+          { t: 0, v: v1, p: p1, label: '1' },
+          { t: 1.0, v: v2, p: p2, label: '2' },
+        ],
+        evalAt(t) {
+          const v = v1 + (v2 - v1) * t;
+          const p = p1 + (p2 - p1) * t;
+          const dv = v - v1;
+          const wBase = p1 * dv;
+          const wSpring = 0.5 * (p - p1) * dv;
+          return { v, p, wBase, wSpring, wTotal: wBase + wSpring, stage: 'انبساط خطی P-V در مقابل فنر', onLower: false, onUpper: false };
+        },
+      };
+    }
+    // combo mode: lower stops -> spring -> upper stops
+    const v1 = 0.20;
+    const vUpper = 0.40;
+    const p1 = 100;
+    const p2 = 200;
+    const p3 = p2 + 140 * (kSpring / 150);
+    const p4 = p3 + 120;
+    return {
+      vMinPlot: 0.12,
+      vMaxPlot: 0.46,
+      pMaxPlot: 600,
+      vLow: v1,
+      vHigh: vUpper,
+      vTick1: '0.20',
+      vTick2: '0.40',
+      nodes: [
+        { t: 0, v: v1, p: p1, label: '1' },
+        { t: 0.30, v: v1, p: p2, label: '2' },
+        { t: 0.72, v: vUpper, p: p3, label: '3' },
+        { t: 1.0, v: vUpper, p: p4, label: '4' },
+      ],
+      evalAt(t) {
+        if (t <= 0.30) {
+          const u = t / 0.30;
+          return { v: v1, p: p1 + (p2 - p1) * u, wBase: 0, wSpring: 0, wTotal: 0, stage: 'مرحله ۱: هم‌حجم روی استپر پایینی', onLower: true, onUpper: false };
+        }
+        if (t <= 0.72) {
+          const u = (t - 0.30) / 0.42;
+          const v = v1 + (vUpper - v1) * u;
+          const p = p2 + (p3 - p2) * u;
+          const dv = v - v1;
+          const wBase = p2 * dv;
+          const wSpring = 0.5 * (p - p2) * dv;
+          return { v, p, wBase, wSpring, wTotal: wBase + wSpring, stage: 'مرحله ۲: فشرده‌سازی فنر تا استپر بالایی', onLower: u < 0.02, onUpper: u > 0.98 };
+        }
+        const u = (t - 0.72) / 0.28;
+        const dv = vUpper - v1;
+        const wBase = p2 * dv;
+        const wSpring = 0.5 * (p3 - p2) * dv;
+        return { v: vUpper, p: p3 + (p4 - p3) * u, wBase, wSpring, wTotal: wBase + wSpring, stage: 'مرحله ۳: قفل در استپر بالایی (هم‌حجم، W=0)', onLower: false, onUpper: true };
+      },
+    };
+  }
+
+  function render() {
+    tLbl.textContent = `${Math.round(progress * 100)}%`;
+    tSlider.value = String(Math.round(progress * 100));
+    pfloatLbl.textContent = `${pFloat.toFixed(0)} kPa`;
+    kLbl.textContent = `${kSpring.toFixed(0)} kN/m`;
+
+    const spec = getSpec();
+    const cur = spec.evalAt(progress);
+    const fullEnd = spec.evalAt(1.0);
+
+    // نگاشت حجم به موقعیت پیستون
+    const vNorm = (cur.v - spec.vLow) / (spec.vHigh - spec.vLow); // 0..1
+    const yPistonLow = 132;
+    const yPistonHigh = 64;
+    const pistonY = yPistonLow - vNorm * (yPistonLow - yPistonHigh);
+
+    pistonGrp.setAttribute('transform', `translate(0, ${(pistonY - 66).toFixed(1)})`);
+    gasRect.setAttribute('y', (pistonY + 12).toFixed(1));
+    gasRect.setAttribute('height', Math.max(10, 185 - (pistonY + 12)).toFixed(1));
+    gasRect.setAttribute('fill-opacity', (0.16 + 0.16 * progress).toFixed(2));
+
+    // استپرهای پایینی و بالایی
+    lowerStops.style.display = mode === 'spring' ? 'none' : '';
+    upperStops.style.display = mode === 'combo' ? '' : 'none';
+    lowerStops.querySelectorAll('rect').forEach((r) => {
+      r.setAttribute('fill', cur.onLower ? '#ef4444' : '#64748b');
+    });
+    upperStops.querySelectorAll('rect').forEach((r) => {
+      r.setAttribute('fill', cur.onUpper ? '#ef4444' : '#64748b');
+    });
+
+    // فنر مارپیچ و میله پیستون
+    if (mode === 'spring' || mode === 'combo') {
+      springPath.style.display = '';
+      rodEl.style.display = 'none';
+      const yTop = 26;
+      const yBottom = pistonY;
+      springPath.setAttribute('d', buildSpringPath(yTop, yBottom));
+      const compRatio = vNorm;
+      springPath.setAttribute('stroke-width', (2.6 + compRatio * 1.4).toFixed(1));
+    } else {
+      springPath.style.display = 'none';
+      rodEl.style.display = '';
+    }
+
+    // شعله مشعل زیر سیلندر
+    flameEl.style.opacity = progress > 0.02 && progress < 0.995 ? '1' : '0.35';
+
+    // عقربه گیج فشار (0..600 kPa -> -135 deg .. +135 deg)
+    const pRatio = Math.min(1, Math.max(0, cur.p / spec.pMaxPlot));
+    const angleDeg = -135 + pRatio * 270;
+    const rad = ((angleDeg - 90) * Math.PI) / 180;
+    needleEl.setAttribute('x2', (Math.cos(rad) * 21).toFixed(1));
+    needleEl.setAttribute('y2', (Math.sin(rad) * 21).toFixed(1));
+    dialVal.textContent = cur.p.toFixed(0);
+    mechV.textContent = cur.v.toFixed(3);
+    mechW.textContent = `W=${cur.wTotal.toFixed(1)} kJ`;
+
+    stageTag.textContent = cur.stage;
+    pvTag.textContent = `P = ${cur.p.toFixed(0)} kPa`;
+
+    // نمودار P-V
+    const xOfV = (v) => 54 + ((v - spec.vMinPlot) / (spec.vMaxPlot - spec.vMinPlot)) * 296;
+    const yOfP = (p) => 196 - (Math.min(spec.pMaxPlot, Math.max(0, p)) / spec.pMaxPlot) * 168;
+
+    axPmax.textContent = String(spec.pMaxPlot);
+    axPmid.textContent = String(Math.round(spec.pMaxPlot / 2));
+    axV1.setAttribute('x', xOfV(spec.vLow).toFixed(1));
+    axV1.textContent = spec.vTick1;
+    axV2.setAttribute('x', xOfV(spec.vHigh).toFixed(1));
+    axV2.textContent = spec.vTick2;
+
+    // مسیر کامل
+    const fullPts = spec.nodes.map((nd) => [xOfV(nd.v), yOfP(nd.p)]);
+    fullPath.setAttribute('d', fullPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' '));
+
+    // مسیر طی‌شده تا progress
+    const curPts = [];
+    for (const nd of spec.nodes) {
+      if (nd.t <= progress) curPts.push([xOfV(nd.v), yOfP(nd.p)]);
+    }
+    curPts.push([xOfV(cur.v), yOfP(cur.p)]);
+    curPath.setAttribute('d', curPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' '));
+
+    // نواحی مستطیل (I) و مثلث فنر (II)
+    const xStart = xOfV(spec.vLow);
+    const xCur = xOfV(cur.v);
+    if (cur.v > spec.vLow + 1e-5) {
+      if (mode === 'stops') {
+        const yP = yOfP(pFloat);
+        areaBase.setAttribute('d', `M ${xStart.toFixed(1)} ${yP.toFixed(1)} L ${xCur.toFixed(1)} ${yP.toFixed(1)} L ${xCur.toFixed(1)} 196 L ${xStart.toFixed(1)} 196 Z`);
+        areaSpring.setAttribute('d', '');
+        splitLine.style.display = 'none';
+        areaLbl1.textContent = `W = ${cur.wBase.toFixed(1)} kJ`;
+        areaLbl1.setAttribute('x', ((xStart + xCur) / 2).toFixed(1));
+        areaLbl1.setAttribute('y', ((yP + 196) / 2 + 4).toFixed(1));
+        areaLbl2.textContent = '';
+      } else {
+        const pSpringStart = mode === 'spring' ? 200 : 200;
+        const pAtCurSpring = Math.min(cur.p, mode === 'combo' ? spec.nodes[2].p : cur.p);
+        const yBase = yOfP(pSpringStart);
+        const yCurTop = yOfP(pAtCurSpring);
+        areaBase.setAttribute('d', `M ${xStart.toFixed(1)} ${yBase.toFixed(1)} L ${xCur.toFixed(1)} ${yBase.toFixed(1)} L ${xCur.toFixed(1)} 196 L ${xStart.toFixed(1)} 196 Z`);
+        areaSpring.setAttribute('d', `M ${xStart.toFixed(1)} ${yBase.toFixed(1)} L ${xCur.toFixed(1)} ${yCurTop.toFixed(1)} L ${xCur.toFixed(1)} ${yBase.toFixed(1)} Z`);
+        splitLine.style.display = '';
+        splitLine.setAttribute('x1', xStart.toFixed(1));
+        splitLine.setAttribute('x2', xOfV(spec.vHigh).toFixed(1));
+        splitLine.setAttribute('y1', yBase.toFixed(1));
+        splitLine.setAttribute('y2', yBase.toFixed(1));
+        areaLbl1.textContent = `I: ${cur.wBase.toFixed(1)} kJ`;
+        areaLbl1.setAttribute('x', ((xStart + xCur) / 2).toFixed(1));
+        areaLbl1.setAttribute('y', ((yBase + 196) / 2 + 4).toFixed(1));
+        areaLbl2.textContent = `II: ${cur.wSpring.toFixed(1)} kJ`;
+        areaLbl2.setAttribute('x', (xStart + (xCur - xStart) * 0.68).toFixed(1));
+        areaLbl2.setAttribute('y', (yBase - 8).toFixed(1));
+      }
+    } else {
+      areaBase.setAttribute('d', '');
+      areaSpring.setAttribute('d', '');
+      splitLine.style.display = 'none';
+      areaLbl1.textContent = '';
+      areaLbl2.textContent = '';
+    }
+
+    // نقاط شماره ۱، ۲، ۳، ۴ روی نمودار
+    markersGrp.innerHTML = '';
+    spec.nodes.forEach((nd) => {
+      const mx = xOfV(nd.v);
+      const my = yOfP(nd.p);
+      const c = document.createElementNS(SVG_NS, 'circle');
+      c.setAttribute('cx', mx.toFixed(1));
+      c.setAttribute('cy', my.toFixed(1));
+      c.setAttribute('r', '4');
+      c.setAttribute('fill', '#0284c7');
+      markersGrp.appendChild(c);
+
+      const t = document.createElementNS(SVG_NS, 'text');
+      t.setAttribute('x', (mx + (nd.label === '1' ? -12 : 8)).toFixed(1));
+      t.setAttribute('y', (my + (nd.label === '1' ? 4 : -6)).toFixed(1));
+      t.setAttribute('fill', 'currentColor');
+      t.setAttribute('font-size', '11');
+      t.setAttribute('font-weight', '800');
+      t.textContent = nd.label;
+      markersGrp.appendChild(t);
+    });
+
+    const cx = xOfV(cur.v);
+    const cy = yOfP(cur.p);
+    dot.setAttribute('cx', cx.toFixed(1));
+    dot.setAttribute('cy', cy.toFixed(1));
+    gv.setAttribute('x1', cx.toFixed(1));
+    gv.setAttribute('x2', cx.toFixed(1));
+    gv.setAttribute('y1', cy.toFixed(1));
+    gp.setAttribute('y1', cy.toFixed(1));
+    gp.setAttribute('y2', cy.toFixed(1));
+    gp.setAttribute('x2', cx.toFixed(1));
+
+    mP.textContent = `${cur.p.toFixed(1)} kPa`;
+    mV.textContent = `${cur.v.toFixed(3)} m³`;
+    mWt.textContent = `${cur.wTotal.toFixed(1)} kJ`;
+    mWs.textContent = `${cur.wSpring.toFixed(1)} kJ`;
+
+    if (mode === 'stops') {
+      const T3 = 300 * ((pFloat * 0.8) / (150 * 0.4));
+      explainEl.innerHTML = `در <strong>مثال ۴-۴</strong>، با تنظیم <span dir="ltr">P_float = ${pFloat} kPa</span>، پیستون تا رسیدن فشار به این آستانه روی استپر می‌ماند (<span dir="ltr">W₁₂ = 0</span>)؛ سپس در فشار ثابت تا <span dir="ltr">0.8 m³</span> بالا رفته و در پایان کار کل برابر <strong><span dir="ltr">${fullEnd.wTotal.toFixed(1)} kJ</span></strong> و دمای نهایی <strong><span dir="ltr">${T3.toFixed(0)} K</span></strong> می‌شود.`;
+    } else if (mode === 'spring') {
+      explainEl.innerHTML = `در <strong>مثال ۴-۳</strong> (<span dir="ltr">A = 0.25 m²</span>)، فنر خطی با سختی <span dir="ltr">k = ${kSpring} kN/m</span> باعث رشد خطی فشار از <span dir="ltr">200</span> تا <strong><span dir="ltr">${spec.nodes[1].p.toFixed(0)} kPa</span></strong> می‌شود. از کل کار <strong><span dir="ltr">${fullEnd.wTotal.toFixed(1)} kJ</span></strong>، مستطیل آبی (<span dir="ltr">${fullEnd.wBase.toFixed(1)} kJ</span>) سهم فشار پایه و مثلث کهربایی (<strong><span dir="ltr">${fullEnd.wSpring.toFixed(1)} kJ</span></strong>) دقیقاً انرژی ذخیره شده در فنر است.`;
+    } else {
+      explainEl.innerHTML = `در <strong>حالت ترکیبی ۳مرحله‌ای</strong>: ابتدا پیستون روی استپر پایینی در حجم ثابت <span dir="ltr">0.20 m³</span> تا <span dir="ltr">200 kPa</span> گرم می‌شود (<span dir="ltr">W₁₂ = 0</span>)؛ سپس فنر را تا رسیدن به استپر بالایی (<span dir="ltr">0.40 m³</span>) فشرده می‌کند (<span dir="ltr">W_total = ${fullEnd.wTotal.toFixed(1)} kJ</span>، شامل <span dir="ltr">${fullEnd.wSpring.toFixed(1)} kJ</span> سهم فنر)؛ و در مرحلهٔ آخر با قفل‌شدن زیر استپر بالایی، فشار بدون هیچ کار مرزی (<span dir="ltr">W₃₄ = 0</span>) جهش می‌کند.`;
+    }
+  }
+
+  function stepAnim(now) {
+    if (!playing || !isVisible) {
+      rafId = 0;
+      return;
+    }
+    if (!lastTs) lastTs = now;
+    const dt = Math.min((now - lastTs) / 1000, 0.05);
+    lastTs = now;
+
+    progress += dt * 0.26;
+    if (progress >= 1) {
+      progress = 1;
+      playing = false;
+      playBtn.textContent = '▶ پخش فرآیند';
+    }
+    render();
+    if (playing) rafId = requestAnimationFrame(stepAnim);
+  }
+
+  function startPlay() {
+    if (progress >= 0.995) progress = 0;
+    playing = true;
+    lastTs = 0;
+    playBtn.textContent = '⏸ توقف';
+    if (!rafId && isVisible) rafId = requestAnimationFrame(stepAnim);
+  }
+
+  function stopPlay() {
+    playing = false;
+    playBtn.textContent = '▶ پخش فرآیند';
+  }
+
+  root.querySelectorAll('#pss-modes button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#pss-modes button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      mode = btn.getAttribute('data-mode') || 'stops';
+      pfloatWrap.style.display = mode === 'stops' ? '' : 'none';
+      kWrap.style.display = mode === 'stops' ? 'none' : '';
+      stopPlay();
+      progress = 1.0;
+      render();
+    });
+  });
+
+  pfloatSlider.addEventListener('input', () => {
+    pFloat = parseFloat(pfloatSlider.value);
+    render();
+  });
+
+  kSlider.addEventListener('input', () => {
+    kSpring = parseFloat(kSlider.value);
+    render();
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (playing) stopPlay();
+    else startPlay();
+  });
+
+  resetBtn.addEventListener('click', () => {
+    stopPlay();
+    progress = 0;
+    render();
+  });
+
+  tSlider.addEventListener('input', () => {
+    stopPlay();
+    progress = parseFloat(tSlider.value) / 100;
+    render();
+  });
+
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      isVisible = entries[0]?.isIntersecting ?? true;
+      if (isVisible && playing && !rafId) {
+        lastTs = 0;
+        rafId = requestAnimationFrame(stepAnim);
+      }
+    }, { threshold: 0.05 });
+    obs.observe(root);
+  }
+
+  render();
+})();
+</script>

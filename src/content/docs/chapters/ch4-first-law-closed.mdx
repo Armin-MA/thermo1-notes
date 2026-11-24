@@ -12,6 +12,8 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import FreeExpansionComparator from '../../../components/widgets/FreeExpansionComparator.astro';
+import CvVsCpFirstLawLab from '../../../components/widgets/CvVsCpFirstLawLab.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
 
@@ -193,6 +195,10 @@ $$
   </Fragment>
 </ExampleBox>
 
+در آزمایشگر دوقلوی زیر، جدارهٔ میانی را بردارید تا ببینید چرا با وجود یکسان بودن <span dir="ltr">W_b = 0</span>، دمای گاز ایده‌آل ثابت می‌ماند اما آب در شرایط عایق تبخیر جزئی پیدا کرده و سرد می‌شود:
+
+<FreeExpansionComparator />
+
 ---
 
 ## ۲. گرمای ویژه (<span dir="ltr">c_v, c_p</span>) و روابط مایر برای گاز ایده‌آل
@@ -246,6 +252,10 @@ $$
 </EquationBox>
 
 به خاطر داشته باشید که برای گازهای تک‌اتمی (مثل $\text{He, Ar}$) مقدار $k = 1.667$ و برای گازهای دواتمی در دمای اتاق (مثل هوا، $\text{N}_2, \text{O}_2$) مقدار $k \approx 1.4$ است.
+
+در آزمایشگر زندهٔ زیر می‌توانید هم‌زمان گرمایش مخزن صلب (<span dir="ltr">c_v</span>) و سیلندر پیستون هم‌فشار (<span dir="ltr">c_p</span>) را مقایسه کنید و ببینید چگونه <span dir="ltr">W_b = R·ΔT</span> باعث می‌شود <span dir="ltr">c_p - c_v = R</span> برقرار بماند:
+
+<CvVsCpFirstLawLab />
 
 ---
 

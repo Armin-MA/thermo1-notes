@@ -1,37 +1,185 @@
 ---
-// نمودار تعاملی فرآیند پلی‌تروپیک P-v (فصل ۴) با ظاهر آرام دانشگاهی
+// شبیه‌ساز زنده سیلندر-پیستون و نمودار P-v فرآیند پلی‌تروپیک (فصل ۴)
 ---
 
 <div class="jh-widget not-content" id="pv-explorer">
   <div class="jh-widget__head">
-    <span class="jh-widget__title">نمودار تعاملی <span dir="ltr">P-v</span> و کار مرزی پلی‌تروپیک</span>
-    <span class="jh-widget__sub">تغییر سطح زیر منحنی (<span dir="ltr">W_b = ∫ P dV</span>) با تغییر شاخص <span dir="ltr">n</span></span>
+    <span class="jh-widget__title">آزمایشگر زندهٔ سیلندر-پیستون پلی‌تروپیک و نمودار <span dir="ltr">P-v</span></span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    حرکت هم‌زمان پیستون، جنبش مولکول‌های گاز (<span dir="ltr">1 kg Air</span>) و مساحت کار <span dir="ltr">w_b = ∫ P dv</span> با تغییر شاخص <span dir="ltr">n</span>
   </div>
 
   <div class="jh-widget__btns" id="pv-presets">
-    <button type="button" class="jh-widget__btn" data-n="0">هم‌فشار (n = 0)</button>
-    <button type="button" class="jh-widget__btn" data-n="1">هم‌دما (n = 1)</button>
-    <button type="button" class="jh-widget__btn is-active" data-n="1.4">آدیاباتیک هوا (n = 1.4)</button>
-    <button type="button" class="jh-widget__btn" data-n="1.8">تراکم/انبساط تند (n = 1.8)</button>
+    <button type="button" class="jh-widget__btn" data-n="0">هم‌فشار (<span dir="ltr">n = 0</span>)</button>
+    <button type="button" class="jh-widget__btn" data-n="1">هم‌دما (<span dir="ltr">n = 1</span>)</button>
+    <button type="button" class="jh-widget__btn is-active" data-n="1.4">آدیاباتیک هوا (<span dir="ltr">n = 1.4</span>)</button>
+    <button type="button" class="jh-widget__btn" data-n="1.8">پلی‌تروپیک تند (<span dir="ltr">n = 1.8</span>)</button>
+    <button type="button" class="jh-widget__btn" data-n="inf">هم‌حجم (<span dir="ltr">n → ∞</span>)</button>
   </div>
 
-  <label class="jh-widget__ctrl" style="margin-bottom:0.7rem">
-    <span>شاخص فرآیند (<span dir="ltr">n</span>): <strong id="pv-n-label" dir="ltr">1.40</strong></span>
-    <input id="pv-n" type="range" min="0" max="2" step="0.1" value="1.4" />
-  </label>
+  <div class="jh-widget__btns" id="pv-dirs">
+    <button type="button" class="jh-widget__btn is-active" data-dir="exp">انبساط (<span dir="ltr">V₁ → V₂</span>)</button>
+    <button type="button" class="jh-widget__btn" data-dir="comp">تراکم (<span dir="ltr">V₂ → V₁</span>)</button>
+  </div>
 
-  <div class="jh-widget__canvas">
-    <svg id="pv-svg" viewBox="0 0 460 210" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تعاملی P-v">
-      <line x1="50" y1="18" x2="50" y2="178" stroke="currentColor" stroke-opacity="0.45" stroke-width="2" />
-      <line x1="50" y1="178" x2="430" y2="178" stroke="currentColor" stroke-opacity="0.45" stroke-width="2" />
-      <text x="28" y="26" fill="currentColor" font-size="13" font-weight="700">P</text>
-      <text x="434" y="182" fill="currentColor" font-size="13" font-weight="700">v</text>
-      <path id="pv-area" d="" fill="#0284c7" fill-opacity="0.18" />
-      <path id="pv-curve" d="" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round" />
-      <circle cx="95" cy="44" r="5" fill="#d97706" />
-      <circle id="pv-dot2" cx="385" cy="145" r="5" fill="#059669" />
-      <text id="pv-work-text" x="235" y="156" text-anchor="middle" fill="currentColor" font-size="13" font-weight="700"></text>
-    </svg>
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl">
+      <span>شاخص پلی‌تروپیک (<span dir="ltr">n</span>): <strong id="pv-n-label" dir="ltr">1.40</strong></span>
+      <input id="pv-n" type="range" min="0" max="2.2" step="0.05" value="1.4" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>نسبت تراکم/انبساط حجمی (<span dir="ltr">r_V = V_max / V_min</span>): <strong id="pv-rv-label" dir="ltr">2.8</strong></span>
+      <input id="pv-rv" type="range" min="1.5" max="4.0" step="0.1" value="2.8" />
+    </label>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="pv-play">▶ پخش زنده</button>
+    <button type="button" class="jh-widget__btn" id="pv-reset">↺ بازنشانی</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>پیشرفت فرآیند (<span dir="ltr">t</span>): <strong id="pv-t-lbl" dir="ltr">100%</strong></span>
+      <input id="pv-t" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>سیلندر-پیستون زنده + جنبش مولکول‌ها</span>
+        <span dir="ltr" id="pv-live-t">T = 198.7 K</span>
+      </div>
+      <svg id="pv-cyl-svg" viewBox="0 0 260 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک زنده سیلندر و پیستون">
+        <defs>
+          <marker id="pv-arr-b" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#0284c7" />
+          </marker>
+          <marker id="pv-arr-a" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#d97706" />
+          </marker>
+        </defs>
+
+        <!-- محفظه گاز با رنگ متناسب با دما -->
+        <rect id="pv-gas-fill" x="58" y="68" width="124" height="114" fill="#38bdf8" fill-opacity="0.24" rx="2" />
+
+        <!-- گروه ذرات متحرک گاز -->
+        <g id="pv-particles"></g>
+
+        <!-- دیواره U-شکل سیلندر -->
+        <path d="M 54 24 L 54 186 L 186 186 L 186 24" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" />
+
+        <!-- پیستون و میله متحرک -->
+        <g id="pv-piston-grp" transform="translate(0, 0)">
+          <rect x="114" y="0" width="12" height="54" rx="3" fill="currentColor" fill-opacity="0.45" />
+          <rect x="57" y="52" width="126" height="16" rx="3" fill="#64748b" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" />
+          <line x1="65" y1="60" x2="175" y2="60" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" />
+        </g>
+
+        <!-- فلش کار مرزی روی میله پیستون -->
+        <g id="pv-work-arrow">
+          <line id="pv-w-line" x1="142" y1="36" x2="142" y2="10" stroke="#0284c7" stroke-width="2.6" marker-end="url(#pv-arr-b)" />
+          <text id="pv-w-lbl" x="150" y="24" fill="#0284c7" font-size="11" font-weight="800">W_b</text>
+        </g>
+
+        <!-- فلش یا نشانگر انتقال حرارت زیر سیلندر -->
+        <g id="pv-heat-grp">
+          <line id="pv-q-l1" x1="94" y1="214" x2="94" y2="193" stroke="#d97706" stroke-width="2.3" marker-end="url(#pv-arr-a)" />
+          <line id="pv-q-l2" x1="120" y1="214" x2="120" y2="193" stroke="#d97706" stroke-width="2.3" marker-end="url(#pv-arr-a)" />
+          <line id="pv-q-l3" x1="146" y1="214" x2="146" y2="193" stroke="#d97706" stroke-width="2.3" marker-end="url(#pv-arr-a)" />
+          <text id="pv-q-txt" x="120" y="226" text-anchor="middle" fill="#d97706" font-size="11" font-weight="800">Q = 0 (Adiabatic)</text>
+        </g>
+
+        <!-- گیج خلاصه لحظه‌ای سمت راست -->
+        <rect x="196" y="42" width="58" height="122" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" />
+        <text x="225" y="60" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5" font-weight="700">P (kPa)</text>
+        <text id="pv-g-p" x="225" y="75" text-anchor="middle" fill="#0284c7" font-size="11.5" font-weight="800">71.0</text>
+        <text x="225" y="98" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5" font-weight="700">T (K)</text>
+        <text id="pv-g-t" x="225" y="113" text-anchor="middle" fill="#d97706" font-size="11.5" font-weight="800">198.7</text>
+        <text x="225" y="136" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5" font-weight="700">v (m³/kg)</text>
+        <text id="pv-g-v" x="225" y="151" text-anchor="middle" fill="#059669" font-size="11" font-weight="800">0.804</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>نمودار هم‌زمان <span dir="ltr">P-v</span></span>
+        <span dir="ltr" id="pv-eq-tag">P · v^1.40 = const</span>
+      </div>
+      <svg id="pv-svg" viewBox="0 0 380 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تعاملی P-v">
+        <!-- شبکه‌بندی -->
+        <g stroke="currentColor" stroke-opacity="0.12" stroke-width="1">
+          <line x1="52" y1="49" x2="356" y2="49" />
+          <line x1="52" y1="98" x2="356" y2="98" />
+          <line x1="52" y1="147" x2="356" y2="147" />
+          <line x1="126" y1="20" x2="126" y2="196" />
+          <line x1="200" y1="20" x2="200" y2="196" />
+          <line x1="274" y1="20" x2="274" y2="196" />
+        </g>
+
+        <!-- محورها -->
+        <line x1="52" y1="18" x2="52" y2="196" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <line x1="52" y1="196" x2="360" y2="196" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <text x="14" y="25" fill="currentColor" font-size="11.5" font-weight="700">P(kPa)</text>
+        <text x="336" y="216" fill="currentColor" font-size="11.5" font-weight="700">v(m³/kg)</text>
+        <text x="46" y="53" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">300</text>
+        <text x="46" y="102" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">200</text>
+        <text x="46" y="151" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">100</text>
+        <text x="46" y="200" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">0</text>
+        <text x="72" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5">0.29</text>
+        <text x="155" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5">0.57</text>
+        <text x="238" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5">0.86</text>
+        <text x="321" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9.5">1.15</text>
+
+        <!-- منحنی‌های مرجع شبح n=0 و n=1 -->
+        <path id="pv-ref-0" d="" fill="none" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.3" stroke-dasharray="4 4" />
+        <path id="pv-ref-1" d="" fill="none" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.3" stroke-dasharray="4 4" />
+
+        <!-- مساحت کار رفته‌رفته -->
+        <path id="pv-area" d="" fill="#0284c7" fill-opacity="0.2" />
+
+        <!-- کل مسیر و مسیر طی‌شده -->
+        <path id="pv-full-curve" d="" fill="none" stroke="currentColor" stroke-opacity="0.28" stroke-width="2" />
+        <path id="pv-curve" d="" fill="none" stroke="#0284c7" stroke-width="3.2" stroke-linecap="round" />
+
+        <!-- خط‌چین راهنمای نقطه جاری -->
+        <line id="pv-guide-v" x1="72" y1="49" x2="72" y2="196" stroke="#d97706" stroke-dasharray="3 3" stroke-width="1.2" />
+        <line id="pv-guide-p" x1="52" y1="49" x2="72" y2="49" stroke="#d97706" stroke-dasharray="3 3" stroke-width="1.2" />
+
+        <!-- نقاط ۱ و ۲ -->
+        <circle id="pv-pt1" cx="72" cy="49" r="4.5" fill="#059669" />
+        <text id="pv-lbl1" x="62" y="42" fill="currentColor" font-size="11.5" font-weight="800">1</text>
+        <circle id="pv-pt2" cx="220" cy="161" r="4.5" fill="#0284c7" />
+        <text id="pv-lbl2" x="228" y="158" fill="currentColor" font-size="11.5" font-weight="800">2</text>
+
+        <!-- نقطه متحرک -->
+        <circle id="pv-dot" cx="220" cy="161" r="6.5" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+        <text id="pv-work-text" x="195" y="182" text-anchor="middle" fill="currentColor" font-size="11.5" font-weight="800"></text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">کار مرزی ویژه (<span dir="ltr">w_b</span>)</span>
+      <span class="jh-metric__val" id="pv-m-w">+72.7 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">تغییر انرژی درونی (<span dir="ltr">Δu</span>)</span>
+      <span class="jh-metric__val" id="pv-m-du">-72.7 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">گرمای مبادله‌شده (<span dir="ltr">q = Δu + w_b</span>)</span>
+      <span class="jh-metric__val" id="pv-m-q">0.0 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">دمای لحظه‌ای گاز (<span dir="ltr">T</span>)</span>
+      <span class="jh-metric__val" id="pv-m-t">198.7 K</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="pv-explain">
+    در فرآیند <strong>آدیاباتیک برگشت‌پذیر هوا (<span dir="ltr">n = k = 1.4</span>)</strong> هیچ گرمایی از دیواره عبور نمی‌کند (<span dir="ltr">q = 0</span>)؛ پس تمام کار انبساط (<span dir="ltr">+72.7 kJ/kg</span>) دقیقاً از محل کاهش انرژی درونی (<span dir="ltr">Δu = -72.7 kJ/kg</span>) تأمین می‌شود و گاز سرد می‌گردد!
   </div>
 </div>
 
@@ -39,50 +187,432 @@
 (() => {
   const root = document.getElementById('pv-explorer');
   if (!root) return;
-  const slider = root.querySelector('#pv-n');
-  const label = root.querySelector('#pv-n-label');
+
+  const R = 0.287;
+  const kAir = 1.4;
+  const cv = R / (kAir - 1); // 0.7175 kJ/(kg·K) -> دقیقاً منطبق با k=1.4 تا q در n=1.4 صفرِ مطلق شود
+  const Va = 0.287;
+  const Pa = 300;
+  const Ta = 300;
+
+  let isIsochoric = false;
+  let nVal = 1.4;
+  let rV = 2.8;
+  let dir = 'exp'; // 'exp' | 'comp'
+  let progress = 1.0;
+  let playing = false;
+  let isVisible = true;
+  let rafId = 0;
+  let lastTs = 0;
+
+  const nSlider = root.querySelector('#pv-n');
+  const rvSlider = root.querySelector('#pv-rv');
+  const tSlider = root.querySelector('#pv-t');
+  const nLbl = root.querySelector('#pv-n-label');
+  const rvLbl = root.querySelector('#pv-rv-label');
+  const tLbl = root.querySelector('#pv-t-lbl');
+  const playBtn = root.querySelector('#pv-play');
+  const resetBtn = root.querySelector('#pv-reset');
+
+  const liveT = root.querySelector('#pv-live-t');
+  const eqTag = root.querySelector('#pv-eq-tag');
+  const gasFill = root.querySelector('#pv-gas-fill');
+  const particlesGrp = root.querySelector('#pv-particles');
+  const pistonGrp = root.querySelector('#pv-piston-grp');
+  const wArrow = root.querySelector('#pv-work-arrow');
+  const wLine = root.querySelector('#pv-w-line');
+  const wLbl = root.querySelector('#pv-w-lbl');
+  const qLines = [root.querySelector('#pv-q-l1'), root.querySelector('#pv-q-l2'), root.querySelector('#pv-q-l3')];
+  const qTxt = root.querySelector('#pv-q-txt');
+  const gP = root.querySelector('#pv-g-p');
+  const gT = root.querySelector('#pv-g-t');
+  const gV = root.querySelector('#pv-g-v');
+
+  const ref0 = root.querySelector('#pv-ref-0');
+  const ref1 = root.querySelector('#pv-ref-1');
   const area = root.querySelector('#pv-area');
+  const fullCurve = root.querySelector('#pv-full-curve');
   const curve = root.querySelector('#pv-curve');
-  const dot2 = root.querySelector('#pv-dot2');
+  const guideV = root.querySelector('#pv-guide-v');
+  const guideP = root.querySelector('#pv-guide-p');
+  const pt1 = root.querySelector('#pv-pt1');
+  const lbl1 = root.querySelector('#pv-lbl1');
+  const pt2 = root.querySelector('#pv-pt2');
+  const lbl2 = root.querySelector('#pv-lbl2');
+  const dot = root.querySelector('#pv-dot');
   const workText = root.querySelector('#pv-work-text');
 
-  function renderPV(nVal) {
-    const n = Number(nVal);
-    label.textContent = n.toFixed(2);
-    const v1 = 1.0, v2 = 3.2, p1 = 300;
-    const pts = [];
-    for (let i = 0; i <= 40; i++) {
-      const v = v1 + (v2 - v1) * (i / 40);
-      const p = p1 * Math.pow(v1 / v, n);
-      const x = 95 + ((v - v1) / (v2 - v1)) * 290;
-      const y = 178 - (p / 340) * 140;
-      pts.push([x, y]);
-    }
-    const curveD = pts.map((pt, idx) => `${idx === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' ');
-    const last = pts[pts.length - 1];
-    curve.setAttribute('d', curveD);
-    area.setAttribute('d', `${curveD} L ${last[0].toFixed(1)} 178 L ${pts[0][0].toFixed(1)} 178 Z`);
-    dot2.setAttribute('cx', last[0].toFixed(1));
-    dot2.setAttribute('cy', last[1].toFixed(1));
+  const mW = root.querySelector('#pv-m-w');
+  const mDu = root.querySelector('#pv-m-du');
+  const mQ = root.querySelector('#pv-m-q');
+  const mT = root.querySelector('#pv-m-t');
+  const explainEl = root.querySelector('#pv-explain');
 
-    const work = Math.abs(n - 1) < 0.02
-      ? p1 * v1 * Math.log(v2 / v1)
-      : (p1 * Math.pow(v1 / v2, n) * v2 - p1 * v1) / (1 - n);
-    workText.textContent = `w_b ≈ ${work.toFixed(1)} kJ/kg`;
+  // ساخت ۱۴ ذرهٔ مولکولی برای نمایش جنبش حرارتی
+  const particles = [];
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  for (let i = 0; i < 14; i++) {
+    const angle = (i * 2.39996) % (Math.PI * 2);
+    const px = 68 + ((i * 29) % 102);
+    const py = 148 + ((i * 17) % 24);
+    const el = document.createElementNS(SVG_NS, 'circle');
+    el.setAttribute('r', '2.4');
+    el.setAttribute('fill', 'currentColor');
+    el.setAttribute('fill-opacity', '0.78');
+    particlesGrp.appendChild(el);
+    particles.push({
+      x: px,
+      y: py,
+      vx: Math.cos(angle) * 42,
+      vy: Math.sin(angle) * 42,
+      el,
+    });
   }
 
-  slider.addEventListener('input', (e) => renderPV(e.target.value));
+  const V_PLOT_MIN = 0.22;
+  const V_PLOT_MAX = 1.24;
+  const P_PLOT_MAX = 350;
+  const xOfV = (v) => 52 + ((v - V_PLOT_MIN) / (V_PLOT_MAX - V_PLOT_MIN)) * 300;
+  const yOfP = (p) => 196 - (Math.max(0, Math.min(P_PLOT_MAX, p)) / P_PLOT_MAX) * 172;
+
+  function evalState(u) {
+    if (isIsochoric) {
+      const p1 = dir === 'exp' ? 120 : 300;
+      const p2 = dir === 'exp' ? 300 : 120;
+      const p = p1 + (p2 - p1) * u;
+      const v = Va;
+      const T = (p * v) / R;
+      const T1 = (p1 * v) / R;
+      const du = cv * (T - T1);
+      return { v, p, T, wb: 0, du, q: du, vStart: v, pStart: p1, vEnd: v, pEnd: p2 };
+    }
+    const vMax = rV * Va;
+    const vStart = dir === 'exp' ? Va : vMax;
+    const vEnd = dir === 'exp' ? vMax : Va;
+    const v = vStart + (vEnd - vStart) * u;
+    const pStart = Pa * Math.pow(Va / vStart, nVal);
+    const pEnd = Pa * Math.pow(Va / vEnd, nVal);
+    const p = Pa * Math.pow(Va / v, nVal);
+    const TStart = Ta * Math.pow(Va / vStart, nVal - 1);
+    const T = Ta * Math.pow(Va / v, nVal - 1);
+
+    let wb;
+    if (Math.abs(nVal - 1) < 0.015) {
+      wb = Pa * Va * Math.log(v / vStart);
+    } else {
+      wb = (p * v - pStart * vStart) / (1 - nVal);
+    }
+    const du = cv * (T - TStart);
+    const q = du + wb;
+    return { v, p, T, wb, du, q, vStart, pStart, vEnd, pEnd };
+  }
+
+  function tempToColor(T) {
+    if (T <= 240) return '#38bdf8';
+    if (T <= 340) return '#0284c7';
+    if (T <= 550) return '#f59e0b';
+    return '#ef4444';
+  }
+
+  function updateParticles(dt, tempK, pistonY) {
+    const minX = 62;
+    const maxX = 178;
+    const minY = pistonY + 5;
+    const maxY = 180;
+    const speedScale = Math.sqrt(Math.max(80, tempK) / 300);
+
+    for (const pt of particles) {
+      if (dt > 0) {
+        pt.x += pt.vx * speedScale * dt;
+        pt.y += pt.vy * speedScale * dt;
+      }
+      if (pt.x < minX) { pt.x = minX; pt.vx = Math.abs(pt.vx); }
+      if (pt.x > maxX) { pt.x = maxX; pt.vx = -Math.abs(pt.vx); }
+      if (pt.y < minY) { pt.y = minY + 1; pt.vy = Math.abs(pt.vy); }
+      if (pt.y > maxY) { pt.y = maxY - 1; pt.vy = -Math.abs(pt.vy); }
+      pt.el.setAttribute('cx', pt.x.toFixed(1));
+      pt.el.setAttribute('cy', pt.y.toFixed(1));
+    }
+  }
+
+  function render(dt = 0) {
+    tLbl.textContent = `${Math.round(progress * 100)}%`;
+    tSlider.value = String(Math.round(progress * 100));
+    rvLbl.textContent = rV.toFixed(1);
+    nLbl.textContent = isIsochoric ? '∞' : nVal.toFixed(2);
+
+    const st = evalState(progress);
+    const fullEnd = evalState(1.0);
+    const ratio = st.v / Va; // 1.0 .. 4.0
+    const cavityH = 34 + ((ratio - 1) / 3) * 106; // 34..140 px
+    const pistonY = 184 - cavityH;
+
+    // موقعیت پیستون و پرشدگی گاز
+    pistonGrp.setAttribute('transform', `translate(0, ${(pistonY - 68).toFixed(1)})`);
+    gasFill.setAttribute('y', pistonY.toFixed(1));
+    gasFill.setAttribute('height', (184 - pistonY).toFixed(1));
+    const col = tempToColor(st.T);
+    gasFill.setAttribute('fill', col);
+    gasFill.setAttribute('fill-opacity', '0.26');
+
+    updateParticles(dt, st.T, pistonY);
+
+    // فلش کار مرزی
+    if (isIsochoric) {
+      wArrow.style.display = 'none';
+    } else {
+      wArrow.style.display = '';
+      const rodTop = Math.max(8, pistonY - 48);
+      if (dir === 'exp') {
+        wLine.setAttribute('y1', (rodTop + 26).toFixed(1));
+        wLine.setAttribute('y2', rodTop.toFixed(1));
+        wLine.setAttribute('stroke', '#0284c7');
+        wLine.setAttribute('marker-end', 'url(#pv-arr-b)');
+        wLbl.setAttribute('fill', '#0284c7');
+        wLbl.textContent = 'W_out';
+      } else {
+        wLine.setAttribute('y1', rodTop.toFixed(1));
+        wLine.setAttribute('y2', (rodTop + 26).toFixed(1));
+        wLine.setAttribute('stroke', '#d97706');
+        wLine.setAttribute('marker-end', 'url(#pv-arr-a)');
+        wLbl.setAttribute('fill', '#d97706');
+        wLbl.textContent = 'W_in';
+      }
+      wLbl.setAttribute('y', (rodTop + 16).toFixed(1));
+    }
+
+    // فلش‌های حرارت بر اساس علامت کل q
+    const qRef = fullEnd.q;
+    if (Math.abs(qRef) < 0.8) {
+      qLines.forEach((l) => { l.style.display = 'none'; });
+      qTxt.setAttribute('fill', '#059669');
+      qTxt.textContent = 'Insulated: q = 0';
+    } else if (qRef > 0) {
+      qLines.forEach((l) => {
+        l.style.display = '';
+        l.setAttribute('y1', '214');
+        l.setAttribute('y2', '193');
+        l.setAttribute('stroke', '#d97706');
+        l.setAttribute('marker-end', 'url(#pv-arr-a)');
+      });
+      qTxt.setAttribute('fill', '#d97706');
+      qTxt.textContent = 'Q_in (+)';
+    } else {
+      qLines.forEach((l) => {
+        l.style.display = '';
+        l.setAttribute('y1', '192');
+        l.setAttribute('y2', '213');
+        l.setAttribute('stroke', '#0284c7');
+        l.setAttribute('marker-end', 'url(#pv-arr-b)');
+      });
+      qTxt.setAttribute('fill', '#0284c7');
+      qTxt.textContent = 'Q_out (-)';
+    }
+
+    liveT.textContent = `T = ${st.T.toFixed(1)} K`;
+    gP.textContent = st.p.toFixed(1);
+    gT.textContent = st.T.toFixed(1);
+    gV.textContent = st.v.toFixed(3);
+    eqTag.textContent = isIsochoric ? 'v = const (n → ∞)' : `P · v^${nVal.toFixed(2)} = const`;
+
+    // خطوط مرجع شبح n=0 و n=1 روی نمودار P-v
+    if (!isIsochoric) {
+      const vMax = rV * Va;
+      const d0 = `M ${xOfV(Va).toFixed(1)} ${yOfP(Pa).toFixed(1)} L ${xOfV(vMax).toFixed(1)} ${yOfP(Pa).toFixed(1)}`;
+      ref0.setAttribute('d', d0);
+      const pts1 = [];
+      for (let i = 0; i <= 30; i++) {
+        const vv = Va + (vMax - Va) * (i / 30);
+        const pp = Pa * (Va / vv);
+        pts1.push(`${i === 0 ? 'M' : 'L'} ${xOfV(vv).toFixed(1)} ${yOfP(pp).toFixed(1)}`);
+      }
+      ref1.setAttribute('d', pts1.join(' '));
+      ref0.style.display = '';
+      ref1.style.display = '';
+    } else {
+      ref0.style.display = 'none';
+      ref1.style.display = 'none';
+    }
+
+    // منحنی کامل و منحنی طی‌شده تا progress
+    const fullPts = [];
+    const curPts = [];
+    const N = 48;
+    for (let i = 0; i <= N; i++) {
+      const u = i / N;
+      const s = evalState(u);
+      fullPts.push([xOfV(s.v), yOfP(s.p)]);
+    }
+    const nCur = Math.max(1, Math.round(N * progress));
+    for (let i = 0; i <= nCur; i++) {
+      const u = (i / nCur) * progress;
+      const s = evalState(u);
+      curPts.push([xOfV(s.v), yOfP(s.p)]);
+    }
+
+    fullCurve.setAttribute('d', fullPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' '));
+    const curD = curPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' ');
+    curve.setAttribute('d', curD);
+
+    const activeColor = isIsochoric ? '#059669' : (dir === 'exp' ? '#0284c7' : '#d97706');
+    curve.setAttribute('stroke', activeColor);
+
+    if (!isIsochoric && curPts.length >= 2) {
+      const first = curPts[0];
+      const last = curPts[curPts.length - 1];
+      area.setAttribute('d', `${curD} L ${last[0].toFixed(1)} 196 L ${first[0].toFixed(1)} 196 Z`);
+      area.setAttribute('fill', activeColor);
+      area.setAttribute('fill-opacity', '0.20');
+    } else {
+      area.setAttribute('d', '');
+    }
+
+    const cx = xOfV(st.v);
+    const cy = yOfP(st.p);
+    dot.setAttribute('cx', cx.toFixed(1));
+    dot.setAttribute('cy', cy.toFixed(1));
+    guideV.setAttribute('x1', cx.toFixed(1));
+    guideV.setAttribute('x2', cx.toFixed(1));
+    guideV.setAttribute('y1', cy.toFixed(1));
+    guideP.setAttribute('y1', cy.toFixed(1));
+    guideP.setAttribute('y2', cy.toFixed(1));
+    guideP.setAttribute('x2', cx.toFixed(1));
+
+    pt1.setAttribute('cx', xOfV(st.vStart).toFixed(1));
+    pt1.setAttribute('cy', yOfP(st.pStart).toFixed(1));
+    lbl1.setAttribute('x', (xOfV(st.vStart) - 12).toFixed(1));
+    lbl1.setAttribute('y', (yOfP(st.pStart) - 6).toFixed(1));
+    pt2.setAttribute('cx', xOfV(st.vEnd).toFixed(1));
+    pt2.setAttribute('cy', yOfP(st.pEnd).toFixed(1));
+    lbl2.setAttribute('x', (xOfV(st.vEnd) + 8).toFixed(1));
+    lbl2.setAttribute('y', (yOfP(st.pEnd) - 5).toFixed(1));
+
+    workText.textContent = `w_b = ${st.wb >= 0 ? '+' : ''}${st.wb.toFixed(1)} kJ/kg`;
+    mW.textContent = `${st.wb >= 0 ? '+' : ''}${st.wb.toFixed(1)} kJ/kg`;
+    mDu.textContent = `${st.du >= 0 ? '+' : ''}${st.du.toFixed(1)} kJ/kg`;
+    mQ.textContent = `${Math.abs(st.q) < 0.05 ? '0.0' : (st.q > 0 ? '+' : '') + st.q.toFixed(1)} kJ/kg`;
+    mT.textContent = `${st.T.toFixed(1)} K`;
+
+    if (isIsochoric) {
+      explainEl.innerHTML = `در فرآیند <strong>هم‌حجم (<span dir="ltr">n → ∞, v = const</span>)</strong> پیستون قفل است؛ پس مساحت زیر خط عمودی صفر بوده و <strong><span dir="ltr">w_b = 0</span></strong> است. تمام حرارت ${dir === 'exp' ? 'ورودی' : 'دفع‌شده'} مستقیماً به تغییر انرژی درونی (<span dir="ltr">Δu = q</span>) می‌رود.`;
+    } else if (Math.abs(nVal - 1.4) < 0.03) {
+      explainEl.innerHTML = `در فرآیند <strong>آدیاباتیک برگشت‌پذیر هوا (<span dir="ltr">n = k = 1.40</span>)</strong>، تبادل حرارت صفر است (<span dir="ltr">q = 0</span>). در ${dir === 'exp' ? 'انبساط' : 'تراکم'}، تمام کار مرزی مستقیماً از تغییر انرژی درونی تأمین می‌شود و گاز به‌سرعت ${dir === 'exp' ? 'خنک' : 'گرم'} می‌گردد.`;
+    } else if (Math.abs(nVal - 1.0) < 0.03) {
+      explainEl.innerHTML = `در فرآیند <strong>هم‌دما (<span dir="ltr">n = 1.00</span>)</strong> برای گاز ایده‌آل، دما ثابت می‌ماند (<span dir="ltr">Δu = 0</span>) و سرعت متوسط مولکول‌ها تغییر نمی‌کند؛ بنابراین گرمای مبادله‌شده دقیقاً برابر کار مرزی است (<span dir="ltr">q = w_b</span>).`;
+    } else if (nVal < 0.03) {
+      explainEl.innerHTML = `در فرآیند <strong>هم‌فشار (<span dir="ltr">n = 0</span>)</strong> فشار ثابت می‌ماند و مساحت زیر منحنی یک مستطیل کامل است (<span dir="ltr">w_b = P Δv</span>). برای جبران انبساط هم‌فشار، دمای گاز هم‌زمان به شدت افزایش می‌یابد.`;
+    } else {
+      explainEl.innerHTML = `با شاخص <strong><span dir="ltr">n = ${nVal.toFixed(2)}</span></strong>، در پایان فرآیند <span dir="ltr">w_b = ${fullEnd.wb >= 0 ? '+' : ''}${fullEnd.wb.toFixed(1)} kJ/kg</span> و <span dir="ltr">q = ${fullEnd.q >= 0 ? '+' : ''}${fullEnd.q.toFixed(1)} kJ/kg</span> است. هرچه <span dir="ltr">n</span> بزرگ‌تر شود، منحنی <span dir="ltr">P-v</span> شیب تندتری پیدا می‌کند.`;
+    }
+  }
+
+  function stepAnim(now) {
+    if (!playing || !isVisible) {
+      rafId = 0;
+      return;
+    }
+    if (!lastTs) lastTs = now;
+    const dt = Math.min((now - lastTs) / 1000, 0.05);
+    lastTs = now;
+
+    progress += dt * 0.28;
+    if (progress >= 1) {
+      progress = 1;
+      playing = false;
+      playBtn.textContent = '▶ پخش زنده';
+    }
+    render(dt);
+    if (playing) rafId = requestAnimationFrame(stepAnim);
+  }
+
+  function startPlay() {
+    if (progress >= 0.995) progress = 0;
+    playing = true;
+    lastTs = 0;
+    playBtn.textContent = '⏸ توقف';
+    if (!rafId && isVisible) rafId = requestAnimationFrame(stepAnim);
+  }
+
+  function stopPlay() {
+    playing = false;
+    playBtn.textContent = '▶ پخش زنده';
+  }
+
+  function syncPresetBtns() {
+    root.querySelectorAll('#pv-presets button').forEach((b) => {
+      const attr = b.getAttribute('data-n');
+      const match = (isIsochoric && attr === 'inf') || (!isIsochoric && attr !== 'inf' && Math.abs(parseFloat(attr) - nVal) < 0.03);
+      b.classList.toggle('is-active', match);
+    });
+  }
+
   root.querySelectorAll('#pv-presets button').forEach((btn) => {
     btn.addEventListener('click', () => {
-      root.querySelectorAll('#pv-presets button').forEach((b) => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
       const val = btn.getAttribute('data-n');
-      if (val !== null) {
-        slider.value = val;
-        renderPV(val);
+      if (val === 'inf') {
+        isIsochoric = true;
+        nSlider.disabled = true;
+      } else {
+        isIsochoric = false;
+        nSlider.disabled = false;
+        nVal = parseFloat(val || '1.4');
+        nSlider.value = String(nVal);
       }
+      syncPresetBtns();
+      render(0);
     });
   });
-  renderPV(1.4);
+
+  root.querySelectorAll('#pv-dirs button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#pv-dirs button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      dir = btn.getAttribute('data-dir') || 'exp';
+      render(0);
+    });
+  });
+
+  nSlider.addEventListener('input', () => {
+    isIsochoric = false;
+    nSlider.disabled = false;
+    nVal = parseFloat(nSlider.value);
+    syncPresetBtns();
+    render(0);
+  });
+
+  rvSlider.addEventListener('input', () => {
+    rV = parseFloat(rvSlider.value);
+    render(0);
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (playing) stopPlay();
+    else startPlay();
+  });
+
+  resetBtn.addEventListener('click', () => {
+    stopPlay();
+    progress = 0;
+    render(0);
+  });
+
+  tSlider.addEventListener('input', () => {
+    stopPlay();
+    progress = parseFloat(tSlider.value) / 100;
+    render(0.016);
+  });
+
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      isVisible = entries[0]?.isIntersecting ?? true;
+      if (isVisible && playing && !rafId) {
+        lastTs = 0;
+        rafId = requestAnimationFrame(stepAnim);
+      }
+    }, { threshold: 0.05 });
+    obs.observe(root);
+  }
+
+  render(0);
 })();
 </script>
