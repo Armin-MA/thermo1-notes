@@ -1,0 +1,988 @@
+---
+// آزمایشگاه زنده سیستم بسته/باز، آزمون نصف کردن و اصل حالت (فصل ۱ - بخش ۱)
+---
+
+<div class="jh-widget not-content" id="sys-boundary-state-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگاه زندهٔ مرز سیستم، آزمون نصف‌کردن و اصل حالت <span dir="ltr">(System &amp; State Lab)</span></span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ سیستم بسته و حجم کنترل باز، آزمون نصف‌کردن اسلاید ۱۵ و بررسی استقلال خواص در اصل حالت
+  </div>
+
+  <div class="jh-widget__btns" id="sbs-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="closed-open">۱. سیستم بسته در برابر باز <span dir="ltr">(CM vs CV)</span></button>
+    <button type="button" class="jh-widget__btn" data-mode="halving">۲. آزمون نصف‌کردن سیستم (اسلاید ۱۵)</button>
+    <button type="button" class="jh-widget__btn" data-mode="postulate">۳. کاوشگر اصل حالت <span dir="ltr">(State Postulate)</span></button>
+  </div>
+
+  <!-- کنترل‌های حالت ۱: بسته در برابر باز -->
+  <div id="sbs-ctrl-co">
+    <div class="jh-widget__btns" id="sbs-co-sub">
+      <button type="button" class="jh-widget__btn is-active" data-sub="both">نمایش هم‌زمان <span dir="ltr">(Side-by-Side)</span></button>
+      <button type="button" class="jh-widget__btn" data-sub="closed">فقط سیستم بسته (پیستون)</button>
+      <button type="button" class="jh-widget__btn" data-sub="open">فقط سیستم باز (حجم کنترل)</button>
+    </div>
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="sbs-play">⏸ توقف حرکت</button>
+      <button type="button" class="jh-widget__btn" id="sbs-reset">↺ بازنشانی</button>
+      <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+        <span>شدت جریان / گرمایش: <strong id="sbs-rate-lbl" dir="ltr">1.2×</strong></span>
+        <input id="sbs-rate" type="range" min="0.4" max="2.0" step="0.1" value="1.2" />
+      </label>
+    </div>
+  </div>
+
+  <!-- کنترل‌های حالت ۲: آزمون نصف‌کردن -->
+  <div id="sbs-ctrl-half" style="display:none">
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="sbs-halve-btn">✂️ نصف کردن سیستم</button>
+      <button type="button" class="jh-widget__btn" id="sbs-half-reset">↺ بازگردانی به حالت کامل</button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>دمای مخزن (<span dir="ltr">T</span>): <strong id="sbs-ht-lbl" dir="ltr">300 K</strong></span>
+        <input id="sbs-ht" type="range" min="250" max="450" step="10" value="300" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>فشار مخزن (<span dir="ltr">P</span>): <strong id="sbs-hp-lbl" dir="ltr">200 kPa</strong></span>
+        <input id="sbs-hp" type="range" min="100" max="400" step="10" value="200" />
+      </label>
+    </div>
+  </div>
+
+  <!-- کنترل‌های حالت ۳: اصل حالت -->
+  <div id="sbs-ctrl-post" style="display:none">
+    <div class="jh-widget__btns" id="sbs-post-sub">
+      <button type="button" class="jh-widget__btn is-active" data-phase="air">تک‌فاز هوا (<span dir="ltr">P, T</span> مستقل ← حالت تثبیت‌شده)</button>
+      <button type="button" class="jh-widget__btn" data-phase="water">دوفازی آب+بخار — <span dir="ltr">P = P_sat(T)</span> (نیازمند کیفیت <span dir="ltr">x</span>)</button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>دما (<span dir="ltr">T</span>): <strong id="sbs-pt-lbl" dir="ltr">150.0 °C (423.2 K)</strong></span>
+        <input id="sbs-pt" type="range" min="100" max="260" step="2" value="150" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>فشار (<span dir="ltr">P</span>) <span id="sbs-pp-lock" style="color:#d97706;display:none">(قفل روی <span dir="ltr">P_sat</span>)</span>: <strong id="sbs-pp-lbl" dir="ltr">476.2 kPa</strong></span>
+        <input id="sbs-pp" type="range" min="101" max="4700" step="10" value="476" />
+      </label>
+      <label class="jh-widget__ctrl" id="sbs-px-wrap" style="display:none">
+        <span>کیفیت بخار (<span dir="ltr">x</span> — خاصیت مستقل دوم): <strong id="sbs-px-lbl" dir="ltr">0.40</strong></span>
+        <input id="sbs-px" type="range" min="0" max="1" step="0.02" value="0.40" />
+      </label>
+    </div>
+  </div>
+
+  <!-- نمای دوپنلی ۱: سیستم بسته در برابر باز -->
+  <div class="jh-widget__split" id="sbs-view-co">
+    <div class="jh-widget__pane" id="sbs-pane-closed">
+      <div class="jh-widget__pane-title">
+        <span>سیستم بسته / جرم کنترل (<span dir="ltr">Control Mass</span>)</span>
+        <span dir="ltr" style="color:#0284c7">Δm = 0 | m = const</span>
+      </div>
+      <svg id="sbs-svg-closed" viewBox="0 0 300 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک سیستم بسته با مرز متحرک و جرم ثابت">
+        <defs>
+          <marker id="sbs-arr-q" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#ef4444" />
+          </marker>
+          <marker id="sbs-arr-w" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#d97706" />
+          </marker>
+          <marker id="sbs-arr-m" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#0284c7" />
+          </marker>
+        </defs>
+
+        <text x="16" y="20" fill="#059669" font-size="10.5" font-weight="800">m = 1.50 kg (const)</text>
+        <text x="284" y="20" text-anchor="end" fill="currentColor" fill-opacity="0.7" font-size="10" font-weight="700">No Mass Crosses</text>
+
+        <!-- محفظه گاز -->
+        <rect id="sbs-c-gas" x="80" y="92" width="140" height="82" fill="#0284c7" fill-opacity="0.18" rx="2" />
+        <!-- دیواره‌های سیلندر -->
+        <path d="M 76 38 L 76 176 L 224 176 L 224 38" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4.5" stroke-linejoin="round" />
+
+        <!-- مولکول‌های محبوس -->
+        <g id="sbs-closed-pts"></g>
+
+        <!-- مرز متحرک خط‌چین -->
+        <rect id="sbs-c-bound" x="72" y="90" width="156" height="90" rx="4" fill="none" stroke="#0284c7" stroke-width="2" stroke-dasharray="6 4" />
+        <text id="sbs-c-blbl" x="234" y="128" fill="#0284c7" font-size="9.5" font-weight="800">Moving</text>
+        <text id="sbs-c-blbl2" x="234" y="140" fill="#0284c7" font-size="9.5" font-weight="800">Boundary</text>
+
+        <!-- پیستون و میله -->
+        <g id="sbs-c-piston" transform="translate(0,0)">
+          <rect x="144" y="18" width="12" height="60" rx="3" fill="currentColor" fill-opacity="0.42" />
+          <rect x="79" y="76" width="142" height="14" rx="3" fill="#64748b" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.4" />
+          <line x1="196" y1="74" x2="196" y2="48" stroke="#d97706" stroke-width="2.5" marker-end="url(#sbs-arr-w)" />
+          <text x="204" y="62" fill="#d97706" font-size="10.5" font-weight="800">W_b</text>
+        </g>
+
+        <!-- انتقال گرما از مرز -->
+        <line x1="150" y1="210" x2="150" y2="181" stroke="#ef4444" stroke-width="2.6" marker-end="url(#sbs-arr-q)" />
+        <text x="160" y="205" fill="#ef4444" font-size="10.5" font-weight="800">Q_in</text>
+        <text x="150" y="221" text-anchor="middle" fill="currentColor" fill-opacity="0.7" font-size="9.5" font-weight="700">Energy crosses boundary | Δm = 0</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane" id="sbs-pane-open">
+      <div class="jh-widget__pane-title">
+        <span>سیستم باز / حجم کنترل (<span dir="ltr">Control Volume</span>)</span>
+        <span dir="ltr" style="color:#059669">m_in &amp; m_out cross CS</span>
+      </div>
+      <svg id="sbs-svg-open" viewBox="0 0 300 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک حجم کنترل باز با ورود و خروج جرم از سطح کنترل">
+        <defs>
+          <marker id="sbs-o-arr-m" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#0284c7" />
+          </marker>
+          <marker id="sbs-o-arr-q" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#ef4444" />
+          </marker>
+        </defs>
+
+        <text x="150" y="20" text-anchor="middle" fill="#059669" font-size="10.5" font-weight="800">Control Surface (CS) — Permeable Ports</text>
+
+        <!-- پس‌زمینه جریان داخل مجرا -->
+        <path d="M 36 74 L 118 74 L 184 90 L 264 90 L 264 138 L 184 138 L 118 154 L 36 154 Z" fill="#0284c7" fill-opacity="0.14" />
+        <!-- دیواره نازل / مبدل -->
+        <path d="M 36 74 L 118 74 L 184 90 L 264 90" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" stroke-linejoin="round" />
+        <path d="M 36 154 L 118 154 L 184 138 L 264 138" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" stroke-linejoin="round" />
+
+        <!-- ذرات جریان ورودی و خروجی -->
+        <g id="sbs-open-pts"></g>
+
+        <!-- سطح کنترل خط‌چین -->
+        <rect x="64" y="60" width="172" height="108" rx="6" fill="none" stroke="#059669" stroke-width="2.2" stroke-dasharray="6 4" />
+        <text x="150" y="51" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">Control Volume (CV)</text>
+
+        <!-- فلش جرم ورودی -->
+        <line x1="14" y1="114" x2="58" y2="114" stroke="#0284c7" stroke-width="2.8" marker-end="url(#sbs-o-arr-m)" />
+        <text id="sbs-o-min" x="32" y="65" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">m_in</text>
+
+        <!-- فلش جرم خروجی -->
+        <line x1="242" y1="114" x2="286" y2="114" stroke="#0284c7" stroke-width="2.8" marker-end="url(#sbs-o-arr-m)" />
+        <text id="sbs-o-mout" x="268" y="80" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">m_out</text>
+
+        <!-- فلش گرمای دفعی (مانند رادیاتور) -->
+        <line x1="150" y1="168" x2="150" y2="198" stroke="#ef4444" stroke-width="2.5" marker-end="url(#sbs-o-arr-q)" />
+        <text x="162" y="191" fill="#ef4444" font-size="10.5" font-weight="800">Q_out</text>
+        <text x="150" y="220" text-anchor="middle" fill="currentColor" fill-opacity="0.7" font-size="9.5" font-weight="700">Mass + Energy both cross Control Surface</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane" id="sbs-pane-ledger" style="display:none">
+      <div class="jh-widget__pane-title">
+        <span>تراز عبور از مرز سیستم (<span dir="ltr">Boundary Crossing Ledger</span>)</span>
+        <span dir="ltr" id="sbs-ledger-tag">Closed System</span>
+      </div>
+      <svg id="sbs-svg-ledger" viewBox="0 0 300 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار میله‌ای عبور جرم و انرژی از مرز سیستم">
+        <line x1="36" y1="184" x2="278" y2="184" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="36" y1="28" x2="36" y2="184" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4" />
+        <line x1="36" y1="68" x2="278" y2="68" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3" />
+        <line x1="36" y1="126" x2="278" y2="126" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3" />
+
+        <rect id="sbs-lg-mbar" x="62" y="182" width="54" height="2" rx="4" fill="#0284c7" fill-opacity="0.88" />
+        <text id="sbs-lg-mval" x="89" y="172" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">0.00 kg/s</text>
+        <text x="89" y="204" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">Mass Cross</text>
+
+        <rect id="sbs-lg-qbar" x="140" y="94" width="52" height="90" rx="4" fill="#ef4444" fill-opacity="0.85" />
+        <text id="sbs-lg-qval" x="166" y="86" text-anchor="middle" fill="#ef4444" font-size="10.5" font-weight="800">Q</text>
+        <text x="166" y="204" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">Heat (Q)</text>
+
+        <rect id="sbs-lg-wbar" x="212" y="124" width="52" height="60" rx="4" fill="#d97706" fill-opacity="0.85" />
+        <text id="sbs-lg-wval" x="238" y="116" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800">W</text>
+        <text x="238" y="204" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">Work / Flow</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- نمای دوپنلی ۲: آزمون نصف‌کردن سیستم -->
+  <div class="jh-widget__split" id="sbs-view-half" style="display:none">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>مخزن گاز همگن (دیوارهٔ فرضی نصف‌کننده)</span>
+        <span dir="ltr" id="sbs-half-state">Whole: N = 12</span>
+      </div>
+      <svg id="sbs-svg-half-tank" viewBox="0 0 300 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="آزمون نصف کردن مخزن گاز و تقسیم ذرات">
+        <text id="sbs-htop-whole" x="150" y="26" text-anchor="middle" fill="#0284c7" font-size="11" font-weight="800">Whole System (100%): N = 12</text>
+        <text id="sbs-htop-l" x="92" y="26" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800" style="display:none">Left (50%): N = 6</text>
+        <text id="sbs-htop-r" x="208" y="26" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800" style="display:none">Right (50%): N = 6</text>
+
+        <!-- دو نیمه مخزن -->
+        <rect id="sbs-h-left-bg" x="36" y="44" width="114" height="136" fill="#0284c7" fill-opacity="0.16" />
+        <rect id="sbs-h-right-bg" x="150" y="44" width="114" height="136" fill="#0284c7" fill-opacity="0.16" />
+        <rect x="34" y="42" width="232" height="140" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" />
+
+        <!-- مولکول‌ها (۶ چپ + ۶ راست) -->
+        <g id="sbs-half-pts-l"></g>
+        <g id="sbs-half-pts-r"></g>
+
+        <!-- خط برش دیواره فرضی -->
+        <g id="sbs-half-wall" style="display:none">
+          <line x1="150" y1="32" x2="150" y2="190" stroke="#ef4444" stroke-width="2.8" stroke-dasharray="6 4" />
+          <rect x="132" y="184" width="36" height="16" rx="4" fill="#ef4444" />
+          <text x="150" y="195" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="800">1/2 CUT</text>
+        </g>
+
+        <text id="sbs-hbot-lbl" x="150" y="214" text-anchor="middle" fill="currentColor" fill-opacity="0.75" font-size="10" font-weight="700">Click "Halve System" to apply virtual partition</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>نمودار زندهٔ مقایسهٔ خواص شدتی و مقداری</span>
+        <span dir="ltr" id="sbs-half-badge" style="color:#059669">Intensive 100% | Extensive 100%</span>
+      </div>
+      <svg id="sbs-svg-half-bars" viewBox="0 0 320 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="مقایسه خواص شدتی و مقداری قبل و بعد از نصف کردن">
+        <text x="54" y="18" fill="#059669" font-size="9.5" font-weight="800">INTENSIVE (Independent of size)</text>
+        <g id="sbs-bars-rows"></g>
+        <line x1="14" y1="114" x2="306" y2="114" stroke="currentColor" stroke-opacity="0.22" stroke-dasharray="4 3" />
+        <text x="54" y="128" fill="#d97706" font-size="9.5" font-weight="800">EXTENSIVE (Proportional to mass/size)</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- نمای دوپنلی ۳: کاوشگر اصل حالت -->
+  <div class="jh-widget__split" id="sbs-view-post" style="display:none">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>سیلندر-پیستون تعادلی <span dir="ltr" style="white-space:nowrap">(Simple Compressible)</span></span>
+        <span dir="ltr" id="sbs-post-phase-tag" style="color:#0284c7">Single-Phase Gas</span>
+      </div>
+      <svg id="sbs-svg-post-cyl" viewBox="0 0 300 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="سیلندر پیستون کاوشگر اصل حالت">
+        <text id="sbs-p-status" x="150" y="18" text-anchor="middle" fill="#059669" font-size="10.5" font-weight="800">State Fixed (2 Independent Properties)</text>
+
+        <!-- محفظه فازها -->
+        <rect id="sbs-p-vap" x="58" y="88" width="136" height="94" fill="#38bdf8" fill-opacity="0.18" />
+        <rect id="sbs-p-liq" x="58" y="182" width="136" height="0" fill="#0284c7" fill-opacity="0.58" />
+        <path d="M 54 34 L 54 184 L 198 184 L 198 34" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4.5" stroke-linejoin="round" />
+
+        <g id="sbs-post-pts"></g>
+
+        <!-- پیستون -->
+        <g id="sbs-p-piston" transform="translate(0,0)">
+          <rect x="120" y="16" width="12" height="58" rx="3" fill="currentColor" fill-opacity="0.4" />
+          <rect x="57" y="74" width="138" height="14" rx="3" fill="#64748b" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.4" />
+        </g>
+
+        <!-- دماسنج و خوانش -->
+        <rect x="218" y="56" width="10" height="92" rx="5" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.38" />
+        <circle cx="223" cy="154" r="9" fill="#ef4444" />
+        <rect id="sbs-p-merc" x="220.5" y="94" width="5" height="56" rx="2.5" fill="#ef4444" />
+        <text id="sbs-p-tlbl" x="262" y="102" text-anchor="middle" fill="#ef4444" font-size="10.5" font-weight="800">150 °C</text>
+        <text id="sbs-p-plbl" x="262" y="122" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">476 kPa</text>
+        <text id="sbs-p-vlbl" x="262" y="142" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">v = 0.255</text>
+
+        <text id="sbs-p-bot" x="126" y="210" text-anchor="middle" fill="currentColor" fill-opacity="0.75" font-size="10" font-weight="700">Air: P and T vary independently</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="sbs-diag-title">نقشهٔ تثبیت حالت (<span dir="ltr">P-T</span> تک‌فاز در برابر گنبد <span dir="ltr">T-v</span>)</span>
+        <span dir="ltr" id="sbs-dof-tag" style="color:#059669">DOF = 2</span>
+      </div>
+      <svg id="sbs-svg-post-diag" viewBox="0 0 320 225" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تثبیت حالت تک‌فاز و دوفازی">
+        <g stroke="currentColor" stroke-opacity="0.12" stroke-width="1">
+          <line x1="48" y1="54" x2="298" y2="54" />
+          <line x1="48" y1="98" x2="298" y2="98" />
+          <line x1="48" y1="142" x2="298" y2="142" />
+          <line x1="110" y1="48" x2="110" y2="184" />
+          <line x1="172" y1="48" x2="172" y2="184" />
+          <line x1="234" y1="48" x2="234" y2="184" />
+        </g>
+        <line x1="48" y1="42" x2="48" y2="184" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <line x1="48" y1="184" x2="300" y2="184" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+
+        <text id="sbs-ax-y" x="14" y="34" fill="currentColor" font-size="10.5" font-weight="700">P(kPa)</text>
+        <text id="sbs-ax-x" x="276" y="206" fill="currentColor" font-size="10.5" font-weight="700">T(°C)</text>
+
+        <!-- لایه تک‌فاز هوا -->
+        <g id="sbs-diag-air">
+          <rect x="49" y="48" width="249" height="135" fill="#059669" fill-opacity="0.06" />
+          <line id="sbs-air-gx" x1="140" y1="48" x2="140" y2="184" stroke="#ef4444" stroke-dasharray="4 3" stroke-width="1.3" />
+          <line id="sbs-air-gy" x1="48" y1="120" x2="298" y2="120" stroke="#0284c7" stroke-dasharray="4 3" stroke-width="1.3" />
+          <circle id="sbs-air-dot" cx="140" cy="120" r="6" fill="#059669" stroke="#ffffff" stroke-width="2" />
+          <text id="sbs-air-note" x="174" y="28" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">Unique Point (T, P) -> v fixed</text>
+        </g>
+
+        <!-- لایه گنبد اشباع آب -->
+        <g id="sbs-diag-water" style="display:none">
+          <path id="sbs-dome-fill" d="" fill="#0284c7" fill-opacity="0.11" />
+          <path id="sbs-dome-liq" d="" fill="none" stroke="#0284c7" stroke-width="2.4" />
+          <path id="sbs-dome-vap" d="" fill="none" stroke="#ef4444" stroke-width="2.4" />
+          <line id="sbs-w-tieline" x1="80" y1="115" x2="240" y2="115" stroke="#d97706" stroke-width="2.2" stroke-dasharray="5 3" />
+          <circle id="sbs-w-vf" cx="80" cy="115" r="3.5" fill="#0284c7" />
+          <circle id="sbs-w-vg" cx="240" cy="115" r="3.5" fill="#ef4444" />
+          <circle id="sbs-w-dot" cx="145" cy="115" r="6" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+          <text id="sbs-w-note" x="174" y="28" text-anchor="middle" fill="#d97706" font-size="9.8" font-weight="800">P = P_sat(T): Need quality x!</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="sbs-m1-lbl">نوع سیستم</span>
+      <span class="jh-metric__val" id="sbs-m1-val" style="direction:rtl;text-align:right">سیستم بسته و باز</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="sbs-m2-lbl">عبور جرم از مرز</span>
+      <span class="jh-metric__val" id="sbs-m2-val">Δm_closed = 0 | ṁ_open = 1.50 kg/s</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="sbs-m3-lbl">خواص شدتی / مستقل</span>
+      <span class="jh-metric__val" id="sbs-m3-val">Q &amp; W cross boundary</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="sbs-m4-lbl">وضعیت تحلیلی</span>
+      <span class="jh-metric__val" id="sbs-m4-val">Steady CV vs Moving CM</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="sbs-explain">
+    در <strong>سیستم بسته (چپ)</strong> مرز با پیستون جابه‌جا می‌شود تا جرم درون سیلندر ثابت بماند <span dir="ltr">(Δm = 0)</span> و تنها انرژی <span dir="ltr">(Q, W_b)</span> از مرز عبور کند؛ در <strong>حجم کنترل باز (راست)</strong> جرم به‌طور پیوسته از سطح کنترل خط‌چین وارد و خارج می‌شود.
+  </div>
+</div>
+
+<script>
+import {
+  createAnimController,
+  createParticleBox,
+  createViewport,
+  setThermometer,
+  tempToColor,
+} from '../../lib/liveSimKit';
+import { IDEAL_GASES, getWaterDome, waterSatByP, waterSatByT } from '../../lib/thermoProps';
+
+const root = document.getElementById('sys-boundary-state-lab');
+if (root) {
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  let mode: 'closed-open' | 'halving' | 'postulate' = 'closed-open';
+  let coSub: 'both' | 'closed' | 'open' = 'both';
+  let coRate = 1.2;
+  let coPhase = 0;
+
+  let halved = false;
+  let halfT = 300;
+  let halfP = 200;
+
+  let postPhase: 'air' | 'water' = 'air';
+  let postTC = 150;
+  let postPKpa = 476.16;
+  let postX = 0.40;
+
+  const ctrlCo = root.querySelector('#sbs-ctrl-co') as HTMLElement;
+  const ctrlHalf = root.querySelector('#sbs-ctrl-half') as HTMLElement;
+  const ctrlPost = root.querySelector('#sbs-ctrl-post') as HTMLElement;
+
+  const viewCo = root.querySelector('#sbs-view-co') as HTMLElement;
+  const viewHalf = root.querySelector('#sbs-view-half') as HTMLElement;
+  const viewPost = root.querySelector('#sbs-view-post') as HTMLElement;
+
+  const paneClosed = root.querySelector('#sbs-pane-closed') as HTMLElement;
+  const paneOpen = root.querySelector('#sbs-pane-open') as HTMLElement;
+  const paneLedger = root.querySelector('#sbs-pane-ledger') as HTMLElement;
+  const ledgerTag = root.querySelector('#sbs-ledger-tag') as HTMLElement;
+  const lgMbar = root.querySelector('#sbs-lg-mbar') as SVGRectElement;
+  const lgMval = root.querySelector('#sbs-lg-mval') as SVGTextElement;
+  const lgQbar = root.querySelector('#sbs-lg-qbar') as SVGRectElement;
+  const lgQval = root.querySelector('#sbs-lg-qval') as SVGTextElement;
+  const lgWbar = root.querySelector('#sbs-lg-wbar') as SVGRectElement;
+  const lgWval = root.querySelector('#sbs-lg-wval') as SVGTextElement;
+
+  const playBtn = root.querySelector('#sbs-play') as HTMLButtonElement;
+  const resetBtn = root.querySelector('#sbs-reset') as HTMLButtonElement;
+  const rateSlider = root.querySelector('#sbs-rate') as HTMLInputElement;
+  const rateLbl = root.querySelector('#sbs-rate-lbl') as HTMLElement;
+
+  const cGas = root.querySelector('#sbs-c-gas') as SVGRectElement;
+  const cBound = root.querySelector('#sbs-c-bound') as SVGRectElement;
+  const cPiston = root.querySelector('#sbs-c-piston') as SVGGElement;
+  const cBlbl = root.querySelector('#sbs-c-blbl') as SVGTextElement;
+  const cBlbl2 = root.querySelector('#sbs-c-blbl2') as SVGTextElement;
+  const oMinLbl = root.querySelector('#sbs-o-min') as SVGTextElement;
+  const oMoutLbl = root.querySelector('#sbs-o-mout') as SVGTextElement;
+
+  const halveBtn = root.querySelector('#sbs-halve-btn') as HTMLButtonElement;
+  const halfResetBtn = root.querySelector('#sbs-half-reset') as HTMLButtonElement;
+  const htSlider = root.querySelector('#sbs-ht') as HTMLInputElement;
+  const hpSlider = root.querySelector('#sbs-hp') as HTMLInputElement;
+  const htLbl = root.querySelector('#sbs-ht-lbl') as HTMLElement;
+  const hpLbl = root.querySelector('#sbs-hp-lbl') as HTMLElement;
+  const halfStateLbl = root.querySelector('#sbs-half-state') as HTMLElement;
+  const halfBadgeLbl = root.querySelector('#sbs-half-badge') as HTMLElement;
+  const htopWhole = root.querySelector('#sbs-htop-whole') as SVGTextElement;
+  const htopL = root.querySelector('#sbs-htop-l') as SVGTextElement;
+  const htopR = root.querySelector('#sbs-htop-r') as SVGTextElement;
+  const hRightBg = root.querySelector('#sbs-h-right-bg') as SVGRectElement;
+  const halfWall = root.querySelector('#sbs-half-wall') as SVGGElement;
+  const hbotLbl = root.querySelector('#sbs-hbot-lbl') as SVGTextElement;
+  const barsRows = root.querySelector('#sbs-bars-rows') as SVGGElement;
+
+  const ptSlider = root.querySelector('#sbs-pt') as HTMLInputElement;
+  const ppSlider = root.querySelector('#sbs-pp') as HTMLInputElement;
+  const pxSlider = root.querySelector('#sbs-px') as HTMLInputElement;
+  const pxWrap = root.querySelector('#sbs-px-wrap') as HTMLElement;
+  const ppLock = root.querySelector('#sbs-pp-lock') as HTMLElement;
+  const ptLbl = root.querySelector('#sbs-pt-lbl') as HTMLElement;
+  const ppLbl = root.querySelector('#sbs-pp-lbl') as HTMLElement;
+  const pxLbl = root.querySelector('#sbs-px-lbl') as HTMLElement;
+
+  const postPhaseTag = root.querySelector('#sbs-post-phase-tag') as HTMLElement;
+  const pStatus = root.querySelector('#sbs-p-status') as SVGTextElement;
+  const pVap = root.querySelector('#sbs-p-vap') as SVGRectElement;
+  const pLiq = root.querySelector('#sbs-p-liq') as SVGRectElement;
+  const pPiston = root.querySelector('#sbs-p-piston') as SVGGElement;
+  const pMerc = root.querySelector('#sbs-p-merc') as SVGRectElement;
+  const pTlbl = root.querySelector('#sbs-p-tlbl') as SVGTextElement;
+  const pPlbl = root.querySelector('#sbs-p-plbl') as SVGTextElement;
+  const pVlbl = root.querySelector('#sbs-p-vlbl') as SVGTextElement;
+  const pBot = root.querySelector('#sbs-p-bot') as SVGTextElement;
+
+  const diagTitle = root.querySelector('#sbs-diag-title') as HTMLElement;
+  const dofTag = root.querySelector('#sbs-dof-tag') as HTMLElement;
+  const axY = root.querySelector('#sbs-ax-y') as SVGTextElement;
+  const axX = root.querySelector('#sbs-ax-x') as SVGTextElement;
+  const diagAir = root.querySelector('#sbs-diag-air') as SVGGElement;
+  const airGx = root.querySelector('#sbs-air-gx') as SVGLineElement;
+  const airGy = root.querySelector('#sbs-air-gy') as SVGLineElement;
+  const airDot = root.querySelector('#sbs-air-dot') as SVGCircleElement;
+  const diagWater = root.querySelector('#sbs-diag-water') as SVGGElement;
+  const domeFill = root.querySelector('#sbs-dome-fill') as SVGPathElement;
+  const domeLiq = root.querySelector('#sbs-dome-liq') as SVGPathElement;
+  const domeVap = root.querySelector('#sbs-dome-vap') as SVGPathElement;
+  const wTie = root.querySelector('#sbs-w-tieline') as SVGLineElement;
+  const wVf = root.querySelector('#sbs-w-vf') as SVGCircleElement;
+  const wVg = root.querySelector('#sbs-w-vg') as SVGCircleElement;
+  const wDot = root.querySelector('#sbs-w-dot') as SVGCircleElement;
+
+  const m1Lbl = root.querySelector('#sbs-m1-lbl') as HTMLElement;
+  const m1Val = root.querySelector('#sbs-m1-val') as HTMLElement;
+  const m2Lbl = root.querySelector('#sbs-m2-lbl') as HTMLElement;
+  const m2Val = root.querySelector('#sbs-m2-val') as HTMLElement;
+  const m3Lbl = root.querySelector('#sbs-m3-lbl') as HTMLElement;
+  const m3Val = root.querySelector('#sbs-m3-val') as HTMLElement;
+  const m4Lbl = root.querySelector('#sbs-m4-lbl') as HTMLElement;
+  const m4Val = root.querySelector('#sbs-m4-val') as HTMLElement;
+  const explainEl = root.querySelector('#sbs-explain') as HTMLElement;
+
+  let currentPistonTop = 86;
+  const closedBox = createParticleBox(
+    root.querySelector('#sbs-closed-pts'),
+    12,
+    () => ({ minX: 84, maxX: 216, minY: currentPistonTop + 6, maxY: 170 }),
+    '#38bdf8',
+    2.6,
+    46
+  );
+
+  let currentPostPistonY = 88;
+  let currentLiqH = 0;
+  const postBox = createParticleBox(
+    root.querySelector('#sbs-post-pts'),
+    12,
+    () => ({
+      minX: 64,
+      maxX: 190,
+      minY: currentPostPistonY + 5,
+      maxY: Math.max(currentPostPistonY + 10, 176 - (postPhase === 'water' ? currentLiqH : 0)),
+    }),
+    '#38bdf8',
+    2.4,
+    44
+  );
+
+  // ۶ ذره چپ و ۶ ذره راست در آزمون نصف کردن
+  const halfPtsL = createParticleBox(
+    root.querySelector('#sbs-half-pts-l'),
+    6,
+    () => ({ minX: 42, maxX: halved ? 142 : 254, minY: 50, maxY: 174 }),
+    '#0284c7',
+    3.1,
+    42
+  );
+  const halfPtsR = createParticleBox(
+    root.querySelector('#sbs-half-pts-r'),
+    6,
+    () => ({ minX: halved ? 158 : 42, maxX: 256, minY: 50, maxY: 174 }),
+    '#d97706',
+    3.1,
+    42
+  );
+
+  // ذرات جریان پیوسته در حجم کنترل باز
+  const openPtsGrp = root.querySelector('#sbs-open-pts');
+  const openParticles: Array<{ x: number; lane: number; el: SVGCircleElement }> = [];
+  if (openPtsGrp) {
+    for (let i = 0; i < 16; i++) {
+      const el = document.createElementNS(SVG_NS, 'circle');
+      el.setAttribute('r', '2.8');
+      el.setAttribute('fill', '#38bdf8');
+      el.setAttribute('fill-opacity', '0.88');
+      openPtsGrp.appendChild(el);
+      openParticles.push({
+        x: 18 + (i / 16) * 264,
+        lane: ((i * 37) % 100) / 100 - 0.5, // -0.5 .. +0.5
+        el,
+      });
+    }
+  }
+
+  function stepOpenStream(dt: number) {
+    for (const pt of openParticles) {
+      let halfH = 36;
+      if (pt.x > 118 && pt.x < 184) {
+        const u = (pt.x - 118) / 66;
+        halfH = 36 - 15 * u;
+      } else if (pt.x >= 184) {
+        halfH = 21;
+      }
+      const speed = 55 * coRate * (36 / halfH);
+      pt.x += speed * dt;
+      if (pt.x > 282) pt.x = 18;
+      const cy = 114 + pt.lane * (2 * (halfH - 5));
+      pt.el.setAttribute('cx', pt.x.toFixed(1));
+      pt.el.setAttribute('cy', cy.toFixed(1));
+    }
+  }
+
+  function buildWaterDomeOnce() {
+    const dome = getWaterDome();
+    const vp = createViewport(-3.08, 0.25, 0, 385, 48, 294, 184, 48);
+    const liqPts: Array<[number, number]> = dome.map((d) => [Math.log10(d.vf), d.tC]);
+    const vapPts: Array<[number, number]> = dome.map((d) => [Math.log10(d.vg), d.tC]);
+    const critPt: [number, number] = [Math.log10(0.003106), 373.95];
+    const fullPts = [...liqPts, critPt, ...[...vapPts].reverse()];
+    domeLiq.setAttribute('d', vp.path([...liqPts, critPt]));
+    domeVap.setAttribute('d', vp.path([critPt, ...[...vapPts].reverse()]));
+    domeFill.setAttribute('d', vp.path(fullPts, true));
+  }
+  buildWaterDomeOnce();
+
+  function renderClosedOpen() {
+    rateLbl.textContent = `${coRate.toFixed(1)}×`;
+    paneClosed.style.display = coSub === 'open' ? 'none' : '';
+    paneOpen.style.display = coSub === 'closed' ? 'none' : '';
+    paneLedger.style.display = coSub === 'both' ? 'none' : '';
+
+    const offset = Math.sin(coPhase) * 14;
+    const pistonY = 76 + offset;
+    currentPistonTop = pistonY + 14;
+    cPiston.setAttribute('transform', `translate(0, ${offset.toFixed(1)})`);
+    cGas.setAttribute('y', currentPistonTop.toFixed(1));
+    cGas.setAttribute('height', Math.max(20, 174 - currentPistonTop).toFixed(1));
+    cBound.setAttribute('y', (currentPistonTop - 2).toFixed(1));
+    cBound.setAttribute('height', Math.max(24, 178 - currentPistonTop).toFixed(1));
+    const midY = (currentPistonTop + 174) / 2;
+    cBlbl.setAttribute('y', (midY - 3).toFixed(1));
+    cBlbl2.setAttribute('y', (midY + 9).toFixed(1));
+
+    const mDot = 1.25 * coRate;
+    oMinLbl.textContent = `ṁ=${mDot.toFixed(2)}`;
+    oMoutLbl.textContent = `ṁ=${mDot.toFixed(2)}`;
+
+    if (coSub !== 'both') {
+      const isOpen = coSub === 'open';
+      ledgerTag.textContent = isOpen ? 'Control Volume (Open)' : 'Control Mass (Closed)';
+      const mH = isOpen ? Math.min(130, mDot * 46) : 2;
+      lgMbar.setAttribute('y', (184 - mH).toFixed(1));
+      lgMbar.setAttribute('height', mH.toFixed(1));
+      lgMval.textContent = isOpen ? `${mDot.toFixed(2)} kg/s` : '0.00 kg/s';
+      lgMval.setAttribute('y', (176 - mH).toFixed(1));
+
+      const qH = Math.min(130, 52 * coRate);
+      lgQbar.setAttribute('y', (184 - qH).toFixed(1));
+      lgQbar.setAttribute('height', qH.toFixed(1));
+      lgQval.textContent = `${(25 * coRate).toFixed(0)} ${isOpen ? 'kW' : 'kJ'}`;
+      lgQval.setAttribute('y', (176 - qH).toFixed(1));
+
+      const wH = Math.min(130, (isOpen ? 70 : 38) * coRate);
+      lgWbar.setAttribute('y', (184 - wH).toFixed(1));
+      lgWbar.setAttribute('height', wH.toFixed(1));
+      lgWval.textContent = isOpen ? 'Flow E' : `${(18 * coRate).toFixed(0)} kJ`;
+      lgWval.setAttribute('y', (176 - wH).toFixed(1));
+    }
+
+    m1Lbl.textContent = 'نوع سیستم فعال';
+    m1Val.style.direction = 'rtl';
+    m1Val.style.textAlign = 'right';
+    m1Val.textContent =
+      coSub === 'both' ? 'مقایسه هم‌زمان بسته و باز' : coSub === 'closed' ? 'سیستم بسته (جرم کنترل)' : 'سیستم باز (حجم کنترل)';
+    m2Lbl.textContent = 'نرخ عبور جرم از مرز';
+    m2Val.textContent = coSub === 'closed' ? 'Δm = 0 (Impermeable)' : `Δm_CM = 0 | ṁ_CV = ${mDot.toFixed(2)} kg/s`;
+    m3Lbl.textContent = 'عبور انرژی از مرز';
+    m3Val.textContent = 'Q & W cross boundary';
+    m4Lbl.textContent = 'وضعیت هندسی مرز';
+    m4Val.textContent = coSub === 'open' ? 'Fixed Control Surface' : 'Moving Boundary (Piston)';
+
+    explainEl.innerHTML =
+      coSub === 'closed'
+        ? 'در <strong>سیستم بسته (جرم کنترل)</strong>، پیستون بالا و پایین می‌رود و مرز خط‌چین هم با آن جابه‌جا می‌شود؛ اما هیچ مولکولی از مرز عبور نمی‌کند <span dir="ltr">(Δm = 0)</span> و تنها گرما و کار از مرز می‌گذرند.'
+        : coSub === 'open'
+        ? 'در <strong>سیستم باز (حجم کنترل)</strong>—مانند نازل یا رادیاتور خودرو در تمرین ۱-۱۸—جرم سیال به‌طور پیوسته از سطح کنترل خط‌چین وارد <span dir="ltr">(ṁ_in)</span> و خارج <span dir="ltr">(ṁ_out)</span> می‌شود.'
+        : 'در <strong>سیستم بسته (چپ)</strong> مرز با پیستون جابه‌جا می‌شود تا جرم ثابت بماند <span dir="ltr">(Δm = 0)</span>؛ اما در <strong>حجم کنترل باز (راست)</strong> جرم و انرژی هر دو از سطح کنترل خط‌چین عبور می‌کنند.';
+  }
+
+  function renderHalving() {
+    htLbl.textContent = `${halfT.toFixed(0)} K`;
+    hpLbl.textContent = `${halfP.toFixed(0)} kPa`;
+
+    const air = IDEAL_GASES.air;
+    const rho = halfP / (air.R * halfT);
+    const Vtot = 1.0;
+    const mtot = rho * Vtot;
+    const Etot = mtot * air.cv * halfT;
+    const factor = halved ? 0.5 : 1.0;
+
+    halveBtn.textContent = halved ? '🔗 حذف دیوارهٔ فرضی (حالت کامل)' : '✂️ نصف کردن سیستم';
+    halfStateLbl.textContent = halved ? 'Halved: N = 6 + 6' : 'Whole: N = 12';
+    halfBadgeLbl.textContent = halved ? 'Intensive 100% | Extensive 50%' : 'Intensive 100% | Extensive 100%';
+
+    htopWhole.style.display = halved ? 'none' : '';
+    htopL.style.display = halved ? '' : 'none';
+    htopR.style.display = halved ? '' : 'none';
+    halfWall.style.display = halved ? '' : 'none';
+    hRightBg.setAttribute('fill', halved ? '#d97706' : '#0284c7');
+    hbotLbl.textContent = halved
+      ? 'T, P, ρ stayed 100% identical | m, V, E cut to 50%'
+      : 'Click "Halve System" to apply virtual partition';
+
+    const items = [
+      { sym: 'T', val: `${halfT.toFixed(0)} K`, ratio: 1, color: '#059669', y: 34 },
+      { sym: 'P', val: `${halfP.toFixed(0)} kPa`, ratio: 1, color: '#059669', y: 60 },
+      { sym: 'ρ', val: `${rho.toFixed(2)} kg/m³`, ratio: 1, color: '#059669', y: 86 },
+      { sym: 'm', val: `${(mtot * factor).toFixed(2)} kg`, ratio: factor, color: '#d97706', y: 144 },
+      { sym: 'V', val: `${(Vtot * factor).toFixed(2)} m³`, ratio: factor, color: '#d97706', y: 170 },
+      { sym: 'E', val: `${(Etot * factor).toFixed(1)} kJ`, ratio: factor, color: '#d97706', y: 196 },
+    ];
+
+    barsRows.innerHTML = '';
+    for (const it of items) {
+      const lbl = document.createElementNS(SVG_NS, 'text');
+      lbl.setAttribute('x', '46');
+      lbl.setAttribute('y', String(it.y + 12));
+      lbl.setAttribute('text-anchor', 'end');
+      lbl.setAttribute('fill', 'currentColor');
+      lbl.setAttribute('font-size', '11');
+      lbl.setAttribute('font-weight', '800');
+      lbl.textContent = it.sym;
+      barsRows.appendChild(lbl);
+
+      const track = document.createElementNS(SVG_NS, 'rect');
+      track.setAttribute('x', '54');
+      track.setAttribute('y', String(it.y));
+      track.setAttribute('width', '132');
+      track.setAttribute('height', '15');
+      track.setAttribute('rx', '4');
+      track.setAttribute('fill', 'currentColor');
+      track.setAttribute('fill-opacity', '0.09');
+      barsRows.appendChild(track);
+
+      const bar = document.createElementNS(SVG_NS, 'rect');
+      bar.setAttribute('x', '54');
+      bar.setAttribute('y', String(it.y));
+      bar.setAttribute('width', (132 * it.ratio).toFixed(1));
+      bar.setAttribute('height', '15');
+      bar.setAttribute('rx', '4');
+      bar.setAttribute('fill', it.color);
+      bar.setAttribute('fill-opacity', '0.88');
+      barsRows.appendChild(bar);
+
+      const valTxt = document.createElementNS(SVG_NS, 'text');
+      valTxt.setAttribute('x', '194');
+      valTxt.setAttribute('y', String(it.y + 11.5));
+      valTxt.setAttribute('fill', it.color);
+      valTxt.setAttribute('font-size', '9.6');
+      valTxt.setAttribute('font-weight', '800');
+      valTxt.textContent = `${it.val} (${Math.round(it.ratio * 100)}%)`;
+      barsRows.appendChild(valTxt);
+    }
+
+    m1Lbl.textContent = 'چگالی شدتی (ρ = P/RT)';
+    m1Val.style.direction = 'ltr';
+    m1Val.style.textAlign = 'left';
+    m1Val.textContent = `${rho.toFixed(2)} kg/m³ (100%)`;
+    m2Lbl.textContent = 'دما و فشار (شدتی)';
+    m2Val.textContent = `${halfT.toFixed(0)} K | ${halfP.toFixed(0)} kPa (100%)`;
+    m3Lbl.textContent = 'جرم و حجم هر بخش';
+    m3Val.textContent = `m=${(mtot * factor).toFixed(2)} kg | V=${(Vtot * factor).toFixed(2)} m³`;
+    m4Lbl.textContent = 'انرژی کل (E = m·c_v·T)';
+    m4Val.textContent = `${(Etot * factor).toFixed(1)} kJ (${halved ? '50%' : '100%'})`;
+
+    explainEl.innerHTML = halved
+      ? `با گذاشتن دیوارهٔ فرضی، تعداد ذرات از <span dir="ltr">12</span> به <span dir="ltr">6 + 6</span> تقسیم شد: <strong>خواص شدتی</strong> <span dir="ltr">(T = ${halfT} K, P = ${halfP} kPa, ρ = ${rho.toFixed(2)} kg/m³)</span> دقیقاً <strong>۱۰۰٪ ثابت</strong> ماندند، اما <strong>خواص مقداری</strong> <span dir="ltr">(m, V, E)</span> دقیقاً به <strong>۵۰٪ (نصف)</strong> کاهش یافتند.`
+      : `مخزن یکپارچه دارای <span dir="ltr">V = 1.00 m³</span> و جرم <span dir="ltr">m = ${mtot.toFixed(2)} kg</span> است. دکمهٔ <strong>✂️ نصف کردن سیستم</strong> را بزنید تا آزمون اسلاید ۱۵ را به‌صورت زنده ببینید!`;
+  }
+
+  function renderPostulate() {
+    const tK = postTC + 273.15;
+    ptLbl.textContent = `${postTC.toFixed(1)} °C (${tK.toFixed(1)} K)`;
+
+    if (postPhase === 'air') {
+      pxWrap.style.display = 'none';
+      ppLock.style.display = 'none';
+      postPhaseTag.textContent = 'Single-Phase Gas (Air)';
+      dofTag.textContent = '2 Independent (P, T)';
+      diagTitle.innerHTML = 'نقشهٔ تثبیت حالت تک‌فاز (<span dir="ltr">P-T</span> مستقل)';
+      pStatus.textContent = 'State Fixed: (P, T) Independent';
+      pStatus.setAttribute('fill', '#059669');
+      diagAir.style.display = '';
+      diagWater.style.display = 'none';
+      axY.textContent = 'P(kPa)';
+      axX.textContent = 'T(°C)';
+
+      const v = (IDEAL_GASES.air.R * tK) / postPKpa;
+      ppLbl.textContent = `${postPKpa.toFixed(0)} kPa`;
+      pTlbl.textContent = `${postTC.toFixed(0)} °C`;
+      pPlbl.textContent = `${postPKpa.toFixed(0)} kPa`;
+      pVlbl.textContent = `v=${v.toFixed(3)}`;
+      pBot.textContent = 'Air: changing T does NOT lock P';
+
+      // ارتفاع پیستون بر اساس v
+      const vNorm = Math.max(0.08, Math.min(1, v / 1.2));
+      const pistonY = 148 - vNorm * 92;
+      currentPostPistonY = pistonY + 14;
+      pPiston.setAttribute('transform', `translate(0, ${(pistonY - 74).toFixed(1)})`);
+      pVap.setAttribute('y', currentPostPistonY.toFixed(1));
+      pVap.setAttribute('height', Math.max(18, 182 - currentPostPistonY).toFixed(1));
+      pVap.setAttribute('fill', tempToColor(tK));
+      pVap.setAttribute('fill-opacity', '0.22');
+      pLiq.setAttribute('height', '0');
+
+      const vpAir = createViewport(100, 260, 100, 4700, 48, 294, 184, 48);
+      const cx = vpAir.x(postTC);
+      const cy = vpAir.y(postPKpa);
+      airGx.setAttribute('x1', cx.toFixed(1));
+      airGx.setAttribute('x2', cx.toFixed(1));
+      airGy.setAttribute('y1', cy.toFixed(1));
+      airGy.setAttribute('y2', cy.toFixed(1));
+      airDot.setAttribute('cx', cx.toFixed(1));
+      airDot.setAttribute('cy', cy.toFixed(1));
+      setThermometer(pMerc, postTC, 80, 280, 148, 86);
+
+      m1Lbl.textContent = 'فاز سیستم';
+      m1Val.style.direction = 'rtl';
+      m1Val.style.textAlign = 'right';
+      m1Val.textContent = 'تک‌فاز گاز (هوا)';
+      m2Lbl.textContent = 'رابطهٔ T و P';
+      m2Val.textContent = 'Independent (2 DOF)';
+      m3Lbl.textContent = 'حجم مخصوص تثبیت‌شده (v)';
+      m3Val.textContent = `${v.toFixed(4)} m³/kg`;
+      m4Lbl.textContent = 'تعداد خواص لازم';
+      m4Val.textContent = '(T, P) -> State Fixed';
+
+      explainEl.innerHTML = `در <strong>تک‌فاز هوا</strong>، <span dir="ltr">T = ${postTC.toFixed(0)} °C</span> و <span dir="ltr">P = ${postPKpa.toFixed(0)} kPa</span> کاملاً <strong>مستقل</strong> هستند؛ با تغییر هرکدام، خاصیت سوم (<span dir="ltr">v = RT/P = ${v.toFixed(4)} m³/kg</span>) به‌طور یکتا تثبیت می‌شود.`;
+    } else {
+      pxWrap.style.display = '';
+      ppLock.style.display = '';
+      postPhaseTag.textContent = 'Two-Phase H₂O (Sat Mixture)';
+      dofTag.textContent = 'P = P_sat(T) -> Need x';
+      diagTitle.innerHTML = 'گنبد اشباع آب (<span dir="ltr">T-v</span>) و خط قفل‌شدهٔ تغییر فاز';
+      pStatus.textContent = 'T & P Dependent! Quality x needed';
+      pStatus.setAttribute('fill', '#d97706');
+      diagAir.style.display = 'none';
+      diagWater.style.display = '';
+      axY.textContent = 'T(°C)';
+      axX.textContent = 'log(v)';
+
+      const sat = waterSatByT(postTC);
+      postPKpa = sat.pKpa;
+      ppSlider.value = String(Math.round(postPKpa));
+      ppLbl.textContent = `${postPKpa.toFixed(1)} kPa`;
+      pxLbl.textContent = postX.toFixed(2);
+
+      const v = sat.vf + postX * (sat.vg - sat.vf);
+      pTlbl.textContent = `${sat.tC.toFixed(1)} °C`;
+      pPlbl.textContent = `${sat.pKpa.toFixed(0)} kPa`;
+      pVlbl.textContent = `v=${v.toFixed(3)}`;
+      pBot.textContent = `x=${postX.toFixed(2)} fixes state between v_f & v_g`;
+
+      // ارتفاع مایع و کل محفظه در مخلوط دوفازی
+      const totalH = 38 + postX * 92;
+      const pistonY = 182 - totalH - 14;
+      currentPostPistonY = pistonY + 14;
+      const liqH = Math.max(4, (1 - postX) * 34);
+      currentLiqH = liqH;
+      pPiston.setAttribute('transform', `translate(0, ${(pistonY - 74).toFixed(1)})`);
+      pVap.setAttribute('y', currentPostPistonY.toFixed(1));
+      pVap.setAttribute('height', Math.max(8, 182 - currentPostPistonY - liqH).toFixed(1));
+      pVap.setAttribute('fill', '#38bdf8');
+      pVap.setAttribute('fill-opacity', '0.20');
+      pLiq.setAttribute('y', (182 - liqH).toFixed(1));
+      pLiq.setAttribute('height', liqH.toFixed(1));
+
+      const vp = createViewport(-3.08, 0.25, 0, 385, 48, 294, 184, 48);
+      const yT = vp.y(sat.tC);
+      const xF = vp.x(Math.log10(sat.vf));
+      const xG = vp.x(Math.log10(sat.vg));
+      const xV = vp.x(Math.log10(v));
+      wTie.setAttribute('x1', xF.toFixed(1));
+      wTie.setAttribute('x2', xG.toFixed(1));
+      wTie.setAttribute('y1', yT.toFixed(1));
+      wTie.setAttribute('y2', yT.toFixed(1));
+      wVf.setAttribute('cx', xF.toFixed(1));
+      wVf.setAttribute('cy', yT.toFixed(1));
+      wVg.setAttribute('cx', xG.toFixed(1));
+      wVg.setAttribute('cy', yT.toFixed(1));
+      wDot.setAttribute('cx', xV.toFixed(1));
+      wDot.setAttribute('cy', yT.toFixed(1));
+      setThermometer(pMerc, sat.tC, 80, 280, 148, 86);
+
+      m1Lbl.textContent = 'فاز سیستم';
+      m1Val.style.direction = 'rtl';
+      m1Val.style.textAlign = 'right';
+      m1Val.textContent = 'مخلوط دوفازی اشباع';
+      m2Lbl.textContent = 'فشار اشباع قفل‌شده';
+      m2Val.textContent = `P_sat = ${sat.pKpa.toFixed(1)} kPa`;
+      m3Lbl.textContent = 'حجم مخصوص با x';
+      m3Val.textContent = `${v.toFixed(4)} m³/kg`;
+      m4Lbl.textContent = 'تلهٔ اصل حالت';
+      m4Val.textContent = '(T, P) NOT independent!';
+
+      explainEl.innerHTML = `در <strong>مخلوط دوفازی آب و بخار</strong>، دما و فشار به هم قفل‌اند <span dir="ltr">(T = ${sat.tC.toFixed(1)} °C ⟺ P_sat = ${sat.pKpa.toFixed(1)} kPa)</span>؛ بنابراین <span dir="ltr">(T, P)</span> تنها یک خاصیت مستقل محسوب می‌شوند و بدون تعیین کیفیت <span dir="ltr">(x = ${postX.toFixed(2)})</span>، حالت سیستم روی خط افقی بین مایع اشباع و بخار اشباع نامشخص باقی می‌ماند!`;
+    }
+  }
+
+  function renderAll() {
+    ctrlCo.style.display = mode === 'closed-open' ? '' : 'none';
+    ctrlHalf.style.display = mode === 'halving' ? '' : 'none';
+    ctrlPost.style.display = mode === 'postulate' ? '' : 'none';
+
+    viewCo.style.display = mode === 'closed-open' ? '' : 'none';
+    viewHalf.style.display = mode === 'halving' ? '' : 'none';
+    viewPost.style.display = mode === 'postulate' ? '' : 'none';
+
+    if (mode === 'closed-open') renderClosedOpen();
+    else if (mode === 'halving') renderHalving();
+    else renderPostulate();
+  }
+
+  const anim = createAnimController(root, (dt) => {
+    if (mode === 'closed-open') {
+      coPhase += dt * 1.9 * coRate;
+      renderClosedOpen();
+      closedBox.step(dt, coRate);
+      stepOpenStream(dt);
+    } else if (mode === 'halving') {
+      halfPtsL.step(dt, Math.sqrt(halfT / 300));
+      halfPtsR.step(dt, Math.sqrt(halfT / 300));
+    } else if (mode === 'postulate') {
+      postBox.step(dt, 0.9);
+    }
+  });
+
+  // شروع خودکار حلقه (تنها در زمان مرئی بودن صفحه)
+  anim.start();
+
+  root.querySelectorAll('#sbs-modes button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#sbs-modes button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      mode = (btn.getAttribute('data-mode') as typeof mode) || 'closed-open';
+      renderAll();
+    });
+  });
+
+  root.querySelectorAll('#sbs-co-sub button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#sbs-co-sub button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      coSub = (btn.getAttribute('data-sub') as typeof coSub) || 'both';
+      renderClosedOpen();
+    });
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (anim.isPlaying()) {
+      anim.stop();
+      playBtn.textContent = '▶ پخش حرکت';
+    } else {
+      anim.start();
+      playBtn.textContent = '⏸ توقف حرکت';
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    coPhase = 0;
+    coRate = 1.2;
+    rateSlider.value = '1.2';
+    renderClosedOpen();
+  });
+
+  rateSlider.addEventListener('input', () => {
+    coRate = parseFloat(rateSlider.value);
+    renderClosedOpen();
+  });
+
+  halveBtn.addEventListener('click', () => {
+    halved = !halved;
+    // قرارگیری فوری ذرات در نیمه چپ و راست پس از تغییر وضعیت
+    halfPtsL.step(0, 1);
+    halfPtsR.step(0, 1);
+    renderHalving();
+  });
+
+  halfResetBtn.addEventListener('click', () => {
+    halved = false;
+    halfT = 300;
+    halfP = 200;
+    htSlider.value = '300';
+    hpSlider.value = '200';
+    renderHalving();
+  });
+
+  htSlider.addEventListener('input', () => {
+    halfT = parseFloat(htSlider.value);
+    renderHalving();
+  });
+
+  hpSlider.addEventListener('input', () => {
+    halfP = parseFloat(hpSlider.value);
+    renderHalving();
+  });
+
+  root.querySelectorAll('#sbs-post-sub button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#sbs-post-sub button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      postPhase = (btn.getAttribute('data-phase') as typeof postPhase) || 'air';
+      if (postPhase === 'water') {
+        const sat = waterSatByT(postTC);
+        postPKpa = sat.pKpa;
+        ppSlider.value = String(Math.round(postPKpa));
+      }
+      renderPostulate();
+    });
+  });
+
+  ptSlider.addEventListener('input', () => {
+    postTC = parseFloat(ptSlider.value);
+    if (postPhase === 'water') {
+      postPKpa = waterSatByT(postTC).pKpa;
+      ppSlider.value = String(Math.round(postPKpa));
+    }
+    renderPostulate();
+  });
+
+  ppSlider.addEventListener('input', () => {
+    postPKpa = parseFloat(ppSlider.value);
+    if (postPhase === 'water') {
+      const sat = waterSatByP(postPKpa);
+      postTC = Math.max(100, Math.min(260, sat.tC));
+      ptSlider.value = String(Math.round(postTC));
+      postPKpa = waterSatByT(postTC).pKpa;
+      ppSlider.value = String(Math.round(postPKpa));
+    }
+    renderPostulate();
+  });
+
+  pxSlider.addEventListener('input', () => {
+    postX = parseFloat(pxSlider.value);
+    renderPostulate();
+  });
+
+  renderAll();
+}
+</script>

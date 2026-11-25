@@ -1,11 +1,14 @@
 ---
-// آزمایشگر مفهومی مرز سیستم: گرماست یا کار؟ (برگرفته از اسلایدهای ۱۳ و ۱۴ فصل دوم)
+// آزمایشگر زنده مرز سیستم: گرماست یا کار؟ (برگرفته از اسلایدهای ۱۳ و ۱۴ فصل دوم)
 ---
 
 <div class="jh-widget not-content" id="boundary-hw-widget">
   <div class="jh-widget__head">
-    <span class="jh-widget__title">آزمایشگر انتخاب مرز: این انتقال انرژی گرماست یا کار؟</span>
-    <span class="jh-widget__sub">مثال‌های کلاسیک اسلایدهای ۱۳ و ۱۴ دکتر صفاری</span>
+    <span class="jh-widget__title">آزمایشگر زندهٔ انتخاب مرز: این انتقال انرژی گرماست یا کار؟</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مثال‌های کلاسیک اسلایدهای ۱۳ و ۱۴ دکتر صفاری: جابه‌جایی خط‌چین مرز سیستم و رصد انرژی عبوری از مرز
   </div>
 
   <div class="jh-widget__btns" id="bhw-cases">
@@ -15,72 +18,543 @@
     <button type="button" class="jh-widget__btn" data-case="paddle">۴) هم‌زن پره‌ای درون آب عایق</button>
   </div>
 
-  <div class="jh-widget__metrics" id="bhw-result">
-    <div class="jh-metric">
-      <span class="jh-metric__label">نوع انرژی عبوری از مرز</span>
-      <span class="jh-metric__val" id="bhw-type" style="direction:rtl;text-align:right">کار الکتریکی (W_e)</span>
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="bhw-play">⏸ توقف</button>
+    <button type="button" class="jh-widget__btn" id="bhw-reset">↺ بازنشانی و پخش از صفر</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>پیشرفت فرآیند <span dir="ltr">(t)</span>: <strong id="bhw-t-lbl" dir="ltr">100%</strong></span>
+      <input id="bhw-t" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱: برش زنده اتاق عایق و خط‌چین متحرک مرز سیستم -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>برش زنده و خط‌چین متحرک مرز سیستم</span>
+        <span dir="ltr" id="bhw-cross-tag" style="color:#0284c7">W_e,in crosses boundary</span>
+      </div>
+      <svg id="bhw-room-svg" viewBox="0 0 330 235" style="width:100%;height:auto;display:block;direction:ltr" aria-label="برش زنده مرز سیستم و عبور گرما یا کار">
+        <defs>
+          <marker id="bhw-arr-q" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#ef4444" />
+          </marker>
+          <marker id="bhw-arr-w" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#0284c7" />
+          </marker>
+        </defs>
+
+        <!-- برچسب دیواره عایق -->
+        <text x="164" y="16" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9" font-weight="700">INSULATED WALL (Q_wall = 0)</text>
+
+        <!-- دیواره ضخیم عایق و فضای داخلی اتاق -->
+        <rect x="36" y="26" width="256" height="174" rx="8" fill="currentColor" fill-opacity="0.09" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" />
+        <rect id="bhw-fluid-bg" x="46" y="36" width="236" height="154" rx="4" fill="#38bdf8" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.2" />
+        <!-- سطح آب (فقط در حالت هم‌زن) -->
+        <line id="bhw-water-line" x1="46" y1="64" x2="282" y2="64" stroke="#0284c7" stroke-width="1.6" stroke-opacity="0.65" style="display:none" />
+
+        <!-- مولکول‌های متحرک داخل سیستم -->
+        <g id="bhw-molecules"></g>
+
+        <!-- ۱) بخاری برقی و سیم‌ها (حالت ۱ و ۲) -->
+        <g id="bhw-heater-grp">
+          <!-- منبع برق بیرون اتاق -->
+          <rect x="4" y="92" width="24" height="42" rx="4" fill="currentColor" fill-opacity="0.1" stroke="#0284c7" stroke-width="1.6" />
+          <text x="16" y="116" text-anchor="middle" fill="#0284c7" font-size="9" font-weight="800">V,I</text>
+          <!-- سیم‌های ورودی از دیواره -->
+          <line x1="28" y1="103" x2="64" y2="103" stroke="#d97706" stroke-width="2.6" />
+          <line x1="28" y1="125" x2="64" y2="125" stroke="#d97706" stroke-width="2.6" />
+          <!-- الکترون‌های متحرک روی سیم -->
+          <g id="bhw-electrons">
+            <circle class="bhw-e-top" cx="38" cy="103" r="2.4" fill="#0284c7" />
+            <circle class="bhw-e-top" cx="52" cy="103" r="2.4" fill="#0284c7" />
+            <circle class="bhw-e-bot" cx="44" cy="125" r="2.4" fill="#0284c7" />
+            <circle class="bhw-e-bot" cx="58" cy="125" r="2.4" fill="#0284c7" />
+          </g>
+          <!-- المنت داغ -->
+          <rect id="bhw-coil-glow" x="62" y="84" width="44" height="60" rx="8" fill="#ef4444" fill-opacity="0.16" />
+          <path d="M 64 103 L 72 103 C 78 90, 86 90, 82 105 C 78 118, 92 118, 88 103 C 84 88, 98 88, 94 108 C 90 124, 100 125, 92 125 L 64 125" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+          <text x="84" y="156" text-anchor="middle" fill="#ef4444" font-size="8.5" font-weight="800">Heater</text>
+        </g>
+
+        <!-- امواج گرما (فقط در حالت ۲: مرز فقط دور هوا) -->
+        <g id="bhw-heat-waves" style="display:none">
+          <path d="M 106 98 Q 116 92 124 98 T 142 98" fill="none" stroke="#ef4444" stroke-width="2.2" marker-end="url(#bhw-arr-q)" />
+          <path d="M 106 118 Q 116 112 124 118 T 142 118" fill="none" stroke="#ef4444" stroke-width="2.2" marker-end="url(#bhw-arr-q)" />
+          <path d="M 106 138 Q 116 132 124 138 T 142 138" fill="none" stroke="#ef4444" stroke-width="2.2" marker-end="url(#bhw-arr-q)" />
+          <text x="134" y="76" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">Q_in (ΔT)</text>
+        </g>
+
+        <!-- ۲) شمع روشن (حالت ۳) -->
+        <g id="bhw-candle-grp" style="display:none">
+          <rect x="148" y="180" width="32" height="5" rx="2" fill="#64748b" />
+          <rect id="bhw-wax" x="154" y="132" width="20" height="48" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" />
+          <line id="bhw-wick" x1="164" y1="126" x2="164" y2="132" stroke="currentColor" stroke-width="1.8" />
+          <path id="bhw-flame-out" d="M 164 102 Q 173 116 164 127 Q 155 116 164 102 Z" fill="#ef4444" fill-opacity="0.88" />
+          <path id="bhw-flame-in" d="M 164 110 Q 169 119 164 126 Q 159 119 164 110 Z" fill="#fbbf24" />
+          <text x="164" y="94" text-anchor="middle" fill="#d97706" font-size="8.5" font-weight="800">Chem → Sens</text>
+        </g>
+
+        <!-- ۳) هم‌زن پره‌ای (حالت ۴) -->
+        <g id="bhw-paddle-grp" style="display:none">
+          <rect x="161" y="14" width="6" height="148" rx="2" fill="#64748b" stroke="currentColor" stroke-opacity="0.5" stroke-width="1" />
+          <!-- پره‌های دوار -->
+          <rect id="bhw-blade-1" x="132" y="114" width="64" height="8" rx="2" fill="#0284c7" stroke="currentColor" stroke-opacity="0.5" />
+          <rect id="bhw-blade-2" x="132" y="144" width="64" height="8" rx="2" fill="#0284c7" stroke="currentColor" stroke-opacity="0.5" />
+          <!-- فلش چرخش گشتاور شفت بالای دیواره -->
+          <path d="M 148 16 C 148 9, 180 9, 180 16" fill="none" stroke="#0284c7" stroke-width="2.2" marker-end="url(#bhw-arr-w)" />
+          <text x="206" y="19" fill="#0284c7" font-size="9" font-weight="800">W_sh,in</text>
+        </g>
+
+        <!-- خط‌چین متحرک مرز سیستم (System Boundary) -->
+        <path
+          id="bhw-boundary"
+          d="M 48 38 L 280 38 L 280 188 L 48 188 Z"
+          fill="none"
+          stroke="#059669"
+          stroke-width="2.8"
+          stroke-dasharray="7 4"
+          stroke-linejoin="round"
+        />
+        <text id="bhw-bnd-lbl" x="274" y="52" text-anchor="end" fill="#059669" font-size="9" font-weight="800">System Boundary</text>
+
+        <!-- نشانگر محل عبور انرژی از مرز -->
+        <g id="bhw-cross-pill">
+          <rect x="4" y="56" width="54" height="22" rx="6" fill="#0284c7" fill-opacity="0.16" stroke="#0284c7" stroke-width="1.3" />
+          <text id="bhw-cross-txt" x="31" y="70" text-anchor="middle" fill="#0284c7" font-size="9" font-weight="800">W_e,in</text>
+        </g>
+
+        <!-- دماسنج اتاق سمت راست -->
+        <rect x="303" y="46" width="10" height="118" rx="5" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.4" />
+        <circle cx="308" cy="170" r="8" fill="#ef4444" />
+        <rect id="bhw-therm-merc" x="305" y="100" width="6" height="66" rx="3" fill="#ef4444" />
+        <text id="bhw-temp-txt" x="308" y="192" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">45.0 °C</text>
+
+        <!-- برچسب زیرنویس مرز -->
+        <text id="bhw-room-footer" x="164" y="218" text-anchor="middle" fill="currentColor" fill-opacity="0.85" font-size="10" font-weight="700">Boundary includes Room + Heater (Q = 0)</text>
+      </svg>
     </div>
-    <div class="jh-metric">
-      <span class="jh-metric__label">انتقال حرارت (Q)</span>
-      <span class="jh-metric__val" id="bhw-q">Q = 0</span>
-    </div>
-    <div class="jh-metric">
-      <span class="jh-metric__label">تغییر انرژی سیستم (ΔU)</span>
-      <span class="jh-metric__val" id="bhw-du">ΔU &gt; 0</span>
+
+    <!-- پنل ۲: نمودار میله‌ای تراز عبور انرژی -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>تراز زندهٔ عبور انرژی از مرز <span dir="ltr">(ΔU = Q_in + W_in)</span></span>
+        <span dir="ltr" id="bhw-du-tag" style="color:#059669">ΔU_sys = +10.0 kJ</span>
+      </div>
+      <svg id="bhw-bar-svg" viewBox="0 0 300 235" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار میله‌ای گرما کار و انرژی درونی">
+        <!-- خط مبنای صفر (در y=132 تا تغییر منفی انرژی شیمیایی هم دیده شود) -->
+        <line x1="34" y1="132" x2="286" y2="132" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="34" y1="30" x2="34" y2="212" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4" />
+        <line x1="34" y1="57" x2="286" y2="57" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3" />
+        <line x1="34" y1="207" x2="286" y2="207" stroke="currentColor" stroke-opacity="0.1" stroke-dasharray="3 3" />
+        <text x="28" y="135" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+        <text x="28" y="60" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">+10</text>
+        <text x="28" y="210" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">-10</text>
+        <text x="12" y="22" fill="currentColor" fill-opacity="0.7" font-size="8.5" font-weight="700">kJ</text>
+
+        <!-- میله Q_in -->
+        <rect id="bhw-bar-q" x="48" y="130" width="38" height="2" rx="3" fill="#ef4444" fill-opacity="0.88" />
+        <text id="bhw-val-q" x="67" y="124" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="800">0.0</text>
+        <text x="67" y="226" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">Q_in</text>
+
+        <!-- میله W_in -->
+        <rect id="bhw-bar-w" x="104" y="57" width="38" height="75" rx="4" fill="#0284c7" fill-opacity="0.88" />
+        <text id="bhw-val-w" x="123" y="49" text-anchor="middle" fill="#0284c7" font-size="10" font-weight="800">+10.0</text>
+        <text x="123" y="226" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">W_in</text>
+
+        <!-- میله ΔU_sys -->
+        <rect id="bhw-bar-du" x="160" y="57" width="38" height="75" rx="4" fill="#059669" fill-opacity="0.88" />
+        <text id="bhw-val-du" x="179" y="49" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">+10.0</text>
+        <text x="179" y="226" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">ΔU_sys</text>
+
+        <!-- تفکیک داخلی ΔU_sens در برابر ΔU_chem (مخصوصاً برای روشن شدن پارادوکس شمع!) -->
+        <line x1="208" y1="30" x2="208" y2="212" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="3 3" />
+        <rect id="bhw-bar-sens" x="220" y="57" width="24" height="75" rx="3" fill="#f59e0b" fill-opacity="0.85" />
+        <text id="bhw-val-sens" x="232" y="49" text-anchor="middle" fill="#d97706" font-size="9" font-weight="800">+10</text>
+        <text x="232" y="226" text-anchor="middle" fill="currentColor" fill-opacity="0.75" font-size="8.5" font-weight="700">U_sens</text>
+
+        <rect id="bhw-bar-chem" x="254" y="132" width="24" height="2" rx="3" fill="#64748b" fill-opacity="0.85" />
+        <text id="bhw-val-chem" x="266" y="124" text-anchor="middle" fill="currentColor" fill-opacity="0.75" font-size="9" font-weight="800">0</text>
+        <text x="266" y="226" text-anchor="middle" fill="currentColor" fill-opacity="0.75" font-size="8.5" font-weight="700">U_chem</text>
+      </svg>
     </div>
   </div>
 
-  <p id="bhw-explain" style="margin:0.75rem 0 0;font-size:0.87rem;color:var(--sl-color-gray-2);line-height:1.7">
+  <div class="jh-widget__metrics" id="bhw-result">
+    <div class="jh-metric">
+      <span class="jh-metric__label">نوع انرژی عبوری از مرز</span>
+      <span class="jh-metric__val" id="bhw-type" style="direction:rtl;text-align:right">کار الکتریکی (W_e,in)</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">گرمای عبوری از مرز <span dir="ltr">(Q_in)</span></span>
+      <span class="jh-metric__val" id="bhw-q">0.0 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">کار عبوری از مرز <span dir="ltr">(W_in)</span></span>
+      <span class="jh-metric__val" id="bhw-w">+10.0 kJ</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">تغییر انرژی سیستم <span dir="ltr">(ΔU_sys)</span></span>
+      <span class="jh-metric__val" id="bhw-du">+10.0 kJ</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="bhw-explain">
     وقتی مرز کل اتاق عایق + المنت را در بر می‌گیرد، تنها انرژی عبوری از مرز، جریان الکترون‌های سیم برق است (اختلاف دما عامل عبور از مرز نیست)؛ پس <strong>کار الکتریکی وارد سیستم شده</strong> و <span dir="ltr">Q = 0</span> است.
-  </p>
+  </div>
 </div>
 
-<script is:inline>
-(() => {
-  const root = document.getElementById('boundary-hw-widget');
-  if (!root) return;
-  const CASES = {
-    'heater-room': {
-      type: 'کار الکتریکی (W_e,in)',
-      q: 'Q = 0 (مرز عایق)',
-      du: 'ΔU = +W_e > 0',
-      explain: 'وقتی مرز کل اتاق عایق + المنت را در بر می‌گیرد، تنها انرژی عبوری از مرز، جریان الکترون‌های سیم برق است (نه اختلاف دمای دو سوی مرز)؛ پس کار الکتریکی وارد سیستم شده و Q = 0 است.',
-    },
-    'heater-air': {
-      type: 'انتقال حرارت (Q_in)',
-      q: 'Q_in > 0',
-      du: 'ΔU_air = +Q_in > 0',
-      explain: 'اگر المنت را بیرون سیستم بگذاریم و مرز را دور هوای اتاق بکشیم، انرژی از سطح داغ المنت به هوای سردتر به‌خاطر اختلاف دما عبور می‌کند؛ پس همان پدیده این‌بار «گرما» محسوب می‌شود!',
-    },
-    candle: {
-      type: 'هیچ‌کدام (سیستم بستهٔ ایزوله)',
-      q: 'Q = 0',
-      du: 'ΔU = 0 (کل اتاق)',
-      explain: 'طبق مثال اسلاید ۱۳: مرز صلب و عایق است، بنابراین Q = 0 و W = 0 و طبق قانون اول ΔU = 0 می‌ماند! دمای اتاق بالا می‌رود اما صرفاً انرژی شیمیایی موم به انرژی محسوس تبدیل شده است.',
-    },
-    paddle: {
-      type: 'کار شفت / پره‌ای (W_sh,in)',
-      q: 'Q = 0',
-      du: 'ΔU = +W_sh > 0',
-      explain: 'چرخش محور مکانیکی از مرز می‌گذرد، پس عبور انرژی به شکل «کار» است؛ درون سیستم به‌دلیل اصطکاک داخلی و آشفتگی، دمای آب بالا می‌رود اما انتقال حرارت از مرز نداشته‌ایم.',
-    },
-  };
-  const typeEl = root.querySelector('#bhw-type');
-  const qEl = root.querySelector('#bhw-q');
-  const duEl = root.querySelector('#bhw-du');
-  const expEl = root.querySelector('#bhw-explain');
+<script>
+  import {
+    createAnimController,
+    createParticleBox,
+    setThermometer,
+    tempToColor,
+  } from '../../lib/liveSimKit';
 
-  root.querySelectorAll('#bhw-cases button').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      root.querySelectorAll('#bhw-cases button').forEach((b) => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
-      const d = CASES[btn.getAttribute('data-case')];
-      if (!d) return;
-      typeEl.textContent = d.type;
-      qEl.textContent = d.q;
-      duEl.textContent = d.du;
-      expEl.textContent = d.explain;
+  const root = document.getElementById('boundary-hw-widget');
+  if (root) {
+    type CaseKey = 'heater-room' | 'heater-air' | 'candle' | 'paddle';
+
+    const CASES: Record<
+      CaseKey,
+      {
+        type: string;
+        qMax: number;
+        wMax: number;
+        duMax: number;
+        sensMax: number;
+        chemMax: number;
+        crossTag: string;
+        crossPill: string;
+        crossColor: string;
+        footer: string;
+        boundaryPath: string;
+        explain: string;
+      }
+    > = {
+      'heater-room': {
+        type: 'کار الکتریکی (W_e,in)',
+        qMax: 0,
+        wMax: 10,
+        duMax: 10,
+        sensMax: 10,
+        chemMax: 0,
+        crossTag: 'W_e,in crosses boundary (wires)',
+        crossPill: 'W_e,in',
+        crossColor: '#0284c7',
+        footer: 'Boundary includes Room + Heater (Wire crosses → W_e,in)',
+        boundaryPath: 'M 48 38 L 280 38 L 280 188 L 48 188 Z',
+        explain:
+          'وقتی خط‌چین مرز کل اتاق عایق و المنت را در بر می‌گیرد، سیم برق مستقیماً از مرز سیستم می‌گذرد و جریان الکترون‌ها وارد سیستم می‌شود؛ پس انتقال انرژی از نوع <strong>کار الکتریکی <span dir="ltr">(W_e,in)</span></strong> است و <span dir="ltr">Q = 0</span> می‌باشد.',
+      },
+      'heater-air': {
+        type: 'انتقال حرارت (Q_in)',
+        qMax: 10,
+        wMax: 0,
+        duMax: 10,
+        sensMax: 10,
+        chemMax: 0,
+        crossTag: 'Q_in crosses boundary (ΔT)',
+        crossPill: 'Q_in',
+        crossColor: '#ef4444',
+        footer: 'Boundary excludes Heater (Heat waves cross due to ΔT → Q_in)',
+        boundaryPath: 'M 48 38 L 280 38 L 280 188 L 48 188 L 48 154 L 112 154 L 112 74 L 48 74 Z',
+        explain:
+          'کافی است مرز را دور <strong>فقط هوا</strong> بکشیم و المنت را بیرون بگذاریم! حالا سیم برق اصلاً از مرز عبور نمی‌کند <span dir="ltr">(W_e = 0)</span>، بلکه گرما به‌سبب اختلاف دما <span dir="ltr">(ΔT)</span> از سطح داغ المنت به هوا می‌جهد؛ پس دقیقاً همان پدیده این‌بار <strong>گرما <span dir="ltr">(Q_in)</span></strong> است!',
+      },
+      candle: {
+        type: 'هیچ‌کدام (سیستم بستهٔ ایزوله)',
+        qMax: 0,
+        wMax: 0,
+        duMax: 0,
+        sensMax: 10,
+        chemMax: -10,
+        crossTag: 'Isolated: Q = 0 & W = 0',
+        crossPill: 'Q=0, W=0',
+        crossColor: '#059669',
+        footer: 'Rigid Insulated Room: ΔU_chem + ΔU_sens = 0 → ΔU_total = 0',
+        boundaryPath: 'M 48 38 L 280 38 L 280 188 L 48 188 Z',
+        explain:
+          'طبق <strong>مثال ۲-۱ (اسلاید ۱۳)</strong>: مرز صلب و عایق است (<span dir="ltr">Q = 0</span> و <span dir="ltr">W = 0</span>) پس طبق قانون اول، تغییر انرژی کل <strong><span dir="ltr">ΔU_total = 0</span></strong> است! دمای اتاق بالا می‌رود چون انرژی شیمیایی موم <span dir="ltr">(ΔU_chem = -10 kJ)</span> دقیقاً به انرژی محسوس هوا <span dir="ltr">(ΔU_sens = +10 kJ)</span> تبدیل شده است.',
+      },
+      paddle: {
+        type: 'کار شفت / پره‌ای (W_sh,in)',
+        qMax: 0,
+        wMax: 10,
+        duMax: 10,
+        sensMax: 10,
+        chemMax: 0,
+        crossTag: 'W_sh,in crosses top boundary',
+        crossPill: 'W_sh,in',
+        crossColor: '#0284c7',
+        footer: 'Rotating shaft pierces insulated boundary → W_sh,in > 0, Q = 0',
+        boundaryPath: 'M 48 38 L 280 38 L 280 188 L 48 188 Z',
+        explain:
+          'در <strong>هم‌زن پره‌ای درون آب عایق</strong>، محور مکانیکی در حال چرخش از مرز عایق عبور می‌کند؛ پس انرژی به‌صورت <strong>کار شفت <span dir="ltr">(W_sh,in)</span></strong> وارد آب شده و با اصطکاک داخلی دمای آب را بالا می‌برد، بدون آنکه گرمایی از مرز بگذرد <span dir="ltr">(Q = 0)</span>.',
+      },
+    };
+
+    let activeCase: CaseKey = 'heater-room';
+    let progress = 1.0;
+    let phase = 0;
+
+    const playBtn = root.querySelector<HTMLButtonElement>('#bhw-play')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('#bhw-reset')!;
+    const tSlider = root.querySelector<HTMLInputElement>('#bhw-t')!;
+    const tLbl = root.querySelector<HTMLElement>('#bhw-t-lbl')!;
+
+    const crossTag = root.querySelector<HTMLElement>('#bhw-cross-tag')!;
+    const duTag = root.querySelector<HTMLElement>('#bhw-du-tag')!;
+    const fluidBg = root.querySelector<SVGRectElement>('#bhw-fluid-bg')!;
+    const waterLine = root.querySelector<SVGLineElement>('#bhw-water-line')!;
+    const molGrp = root.querySelector<SVGGElement>('#bhw-molecules')!;
+
+    const heaterGrp = root.querySelector<SVGGElement>('#bhw-heater-grp')!;
+    const coilGlow = root.querySelector<SVGRectElement>('#bhw-coil-glow')!;
+    const eTop = Array.from(root.querySelectorAll<SVGCircleElement>('.bhw-e-top'));
+    const eBot = Array.from(root.querySelectorAll<SVGCircleElement>('.bhw-e-bot'));
+    const heatWaves = root.querySelector<SVGGElement>('#bhw-heat-waves')!;
+
+    const candleGrp = root.querySelector<SVGGElement>('#bhw-candle-grp')!;
+    const waxRect = root.querySelector<SVGRectElement>('#bhw-wax')!;
+    const wickLine = root.querySelector<SVGLineElement>('#bhw-wick')!;
+    const flameOut = root.querySelector<SVGPathElement>('#bhw-flame-out')!;
+    const flameIn = root.querySelector<SVGPathElement>('#bhw-flame-in')!;
+
+    const paddleGrp = root.querySelector<SVGGElement>('#bhw-paddle-grp')!;
+    const blade1 = root.querySelector<SVGRectElement>('#bhw-blade-1')!;
+    const blade2 = root.querySelector<SVGRectElement>('#bhw-blade-2')!;
+
+    const boundaryPath = root.querySelector<SVGPathElement>('#bhw-boundary')!;
+    const bndLbl = root.querySelector<SVGTextElement>('#bhw-bnd-lbl')!;
+    const crossPill = root.querySelector<SVGGElement>('#bhw-cross-pill')!;
+    const crossPillRect = crossPill.querySelector<SVGRectElement>('rect')!;
+    const crossTxt = root.querySelector<SVGTextElement>('#bhw-cross-txt')!;
+    const thermMerc = root.querySelector<SVGRectElement>('#bhw-therm-merc')!;
+    const tempTxt = root.querySelector<SVGTextElement>('#bhw-temp-txt')!;
+    const roomFooter = root.querySelector<SVGTextElement>('#bhw-room-footer')!;
+
+    const barQ = root.querySelector<SVGRectElement>('#bhw-bar-q')!;
+    const valQ = root.querySelector<SVGTextElement>('#bhw-val-q')!;
+    const barW = root.querySelector<SVGRectElement>('#bhw-bar-w')!;
+    const valW = root.querySelector<SVGTextElement>('#bhw-val-w')!;
+    const barDu = root.querySelector<SVGRectElement>('#bhw-bar-du')!;
+    const valDu = root.querySelector<SVGTextElement>('#bhw-val-du')!;
+    const barSens = root.querySelector<SVGRectElement>('#bhw-bar-sens')!;
+    const valSens = root.querySelector<SVGTextElement>('#bhw-val-sens')!;
+    const barChem = root.querySelector<SVGRectElement>('#bhw-bar-chem')!;
+    const valChem = root.querySelector<SVGTextElement>('#bhw-val-chem')!;
+
+    const typeEl = root.querySelector<HTMLElement>('#bhw-type')!;
+    const qEl = root.querySelector<HTMLElement>('#bhw-q')!;
+    const wEl = root.querySelector<HTMLElement>('#bhw-w')!;
+    const duEl = root.querySelector<HTMLElement>('#bhw-du')!;
+    const expEl = root.querySelector<HTMLElement>('#bhw-explain')!;
+
+    const particles = createParticleBox(
+      molGrp,
+      20,
+      () => ({
+        minX: activeCase === 'heater-air' ? 118 : 54,
+        maxX: 274,
+        minY: activeCase === 'paddle' ? 70 : 46,
+        maxY: 182,
+      }),
+      'currentColor',
+      2.3,
+      46
+    );
+
+    function setSignedBar(
+      rectEl: SVGRectElement,
+      txtEl: SVGTextElement,
+      val: number,
+      maxAbs = 10
+    ) {
+      const yZero = 132;
+      const scale = 75 / maxAbs;
+      const h = Math.abs(val) * scale;
+      if (val >= 0) {
+        const barH = Math.max(2, h);
+        rectEl.setAttribute('y', (yZero - barH).toFixed(1));
+        rectEl.setAttribute('height', barH.toFixed(1));
+        txtEl.setAttribute('y', (yZero - barH - 7).toFixed(1));
+        txtEl.textContent = val > 0.05 ? `+${val.toFixed(1)}` : '0.0';
+      } else {
+        const barH = Math.max(2, h);
+        rectEl.setAttribute('y', yZero.toFixed(1));
+        rectEl.setAttribute('height', barH.toFixed(1));
+        txtEl.setAttribute('y', (yZero + barH + 12).toFixed(1));
+        txtEl.textContent = `${val.toFixed(1)}`;
+      }
+    }
+
+    function render(dt = 0) {
+      const spec = CASES[activeCase];
+      tLbl.textContent = `${Math.round(progress * 100)}%`;
+      tSlider.value = String(Math.round(progress * 100));
+
+      const qCur = spec.qMax * progress;
+      const wCur = spec.wMax * progress;
+      const duCur = spec.duMax * progress;
+      const sensCur = spec.sensMax * progress;
+      const chemCur = spec.chemMax * progress;
+
+      // دما از 25 °C تا 45 °C افزایش می‌یابد
+      const tempC = 25 + 20 * progress;
+      const tempK = tempC + 273.15;
+      setThermometer(thermMerc, tempC, 20, 50, 166, 114);
+      tempTxt.textContent = `${tempC.toFixed(1)} °C`;
+
+      // رنگ سیال داخل اتاق/مخزن
+      if (activeCase === 'paddle') {
+        fluidBg.setAttribute('y', '64');
+        fluidBg.setAttribute('height', '126');
+        fluidBg.setAttribute('fill', '#0284c7');
+        fluidBg.setAttribute('fill-opacity', (0.2 + 0.14 * progress).toFixed(2));
+        waterLine.style.display = '';
+      } else {
+        fluidBg.setAttribute('y', '36');
+        fluidBg.setAttribute('height', '154');
+        fluidBg.setAttribute('fill', tempToColor(tempK + 35 * progress));
+        fluidBg.setAttribute('fill-opacity', (0.12 + 0.16 * progress).toFixed(2));
+        waterLine.style.display = 'none';
+      }
+
+      // نمایش دستگاه فعال
+      const isHeater = activeCase === 'heater-room' || activeCase === 'heater-air';
+      heaterGrp.style.display = isHeater ? '' : 'none';
+      heatWaves.style.display = activeCase === 'heater-air' ? '' : 'none';
+      candleGrp.style.display = activeCase === 'candle' ? '' : 'none';
+      paddleGrp.style.display = activeCase === 'paddle' ? '' : 'none';
+
+      // انیمیشن جزئیات دستگاه‌ها
+      if (isHeater) {
+        const pulse = 0.16 + 0.1 * Math.sin(phase * 4);
+        coilGlow.setAttribute('fill-opacity', (pulse + 0.1 * progress).toFixed(2));
+        const shift = (phase * 18) % 28;
+        eTop.forEach((c, idx) => {
+          c.setAttribute('cx', (32 + ((shift + idx * 14) % 28)).toFixed(1));
+        });
+        eBot.forEach((c, idx) => {
+          c.setAttribute('cx', (60 - ((shift + idx * 14) % 28)).toFixed(1));
+        });
+      }
+      if (activeCase === 'heater-air') {
+        const waveShift = Math.sin(phase * 5) * 3.5;
+        heatWaves.setAttribute('transform', `translate(${waveShift.toFixed(1)}, 0)`);
+      }
+      if (activeCase === 'candle') {
+        const waxH = 48 - 10 * progress;
+        const waxY = 180 - waxH;
+        waxRect.setAttribute('y', waxY.toFixed(1));
+        waxRect.setAttribute('height', waxH.toFixed(1));
+        wickLine.setAttribute('y1', (waxY - 6).toFixed(1));
+        wickLine.setAttribute('y2', waxY.toFixed(1));
+        const sway = Math.sin(phase * 8) * 2.2;
+        const baseY = waxY - 5;
+        flameOut.setAttribute(
+          'd',
+          `M ${(164 + sway * 0.5).toFixed(1)} ${(baseY - 25).toFixed(1)} Q 173 ${(baseY - 11).toFixed(1)} 164 ${baseY.toFixed(1)} Q 155 ${(baseY - 11).toFixed(1)} ${(164 + sway * 0.5).toFixed(1)} ${(baseY - 25).toFixed(1)} Z`
+        );
+        flameIn.setAttribute(
+          'd',
+          `M ${(164 + sway * 0.35).toFixed(1)} ${(baseY - 17).toFixed(1)} Q 169 ${(baseY - 8).toFixed(1)} 164 ${(baseY - 1).toFixed(1)} Q 159 ${(baseY - 8).toFixed(1)} ${(164 + sway * 0.35).toFixed(1)} ${(baseY - 17).toFixed(1)} Z`
+        );
+      }
+      if (activeCase === 'paddle') {
+        const wFactor = Math.max(0.15, Math.abs(Math.cos(phase * 5)));
+        const bw = 64 * wFactor;
+        blade1.setAttribute('x', (164 - bw / 2).toFixed(1));
+        blade1.setAttribute('width', bw.toFixed(1));
+        blade2.setAttribute('x', (164 - bw / 2).toFixed(1));
+        blade2.setAttribute('width', bw.toFixed(1));
+      }
+
+      // مرز سیستم خط‌چین متحرک
+      boundaryPath.setAttribute('d', spec.boundaryPath);
+      boundaryPath.setAttribute('stroke', spec.crossColor);
+      boundaryPath.setAttribute('stroke-dashoffset', (-(phase * 22)).toFixed(1));
+      bndLbl.setAttribute('fill', spec.crossColor);
+
+      crossTag.textContent = spec.crossTag;
+      crossTag.style.color = spec.crossColor;
+      crossPillRect.setAttribute('stroke', spec.crossColor);
+      crossPillRect.setAttribute('fill', spec.crossColor);
+      crossTxt.setAttribute('fill', spec.crossColor);
+      crossTxt.textContent = spec.crossPill;
+      if (activeCase === 'heater-air') {
+        crossPill.setAttribute('transform', 'translate(106, -12)');
+      } else if (activeCase === 'paddle') {
+        crossPill.setAttribute('transform', 'translate(54, -14)');
+      } else if (activeCase === 'candle') {
+        crossPill.setAttribute('transform', 'translate(52, -10)');
+      } else {
+        crossPill.setAttribute('transform', 'translate(0, 0)');
+      }
+      roomFooter.textContent = spec.footer;
+
+      // مولکول‌ها
+      particles.step(dt, 0.75 + 1.15 * progress);
+
+      // نمودار میله‌ای
+      setSignedBar(barQ, valQ, qCur);
+      setSignedBar(barW, valW, wCur);
+      setSignedBar(barDu, valDu, duCur);
+      setSignedBar(barSens, valSens, sensCur);
+      setSignedBar(barChem, valChem, chemCur);
+
+      duTag.textContent = `ΔU_sys = ${duCur > 0.05 ? '+' : ''}${duCur.toFixed(1)} kJ`;
+
+      // کارت‌های متریک و توضیح
+      typeEl.textContent = spec.type;
+      qEl.textContent = `${qCur > 0.05 ? '+' : ''}${qCur.toFixed(1)} kJ`;
+      wEl.textContent = `${wCur > 0.05 ? '+' : ''}${wCur.toFixed(1)} kJ`;
+      duEl.textContent = `${duCur > 0.05 ? '+' : ''}${duCur.toFixed(1)} kJ`;
+      expEl.innerHTML = spec.explain;
+    }
+
+    const anim = createAnimController(root, (dt) => {
+      phase += dt;
+      if (progress < 1) {
+        progress = Math.min(1, progress + dt * 0.28);
+      }
+      render(dt);
     });
-  });
-})();
+
+    root.querySelectorAll<HTMLButtonElement>('#bhw-cases button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#bhw-cases button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        activeCase = (btn.getAttribute('data-case') as CaseKey) || 'heater-room';
+        render(0);
+      });
+    });
+
+    playBtn.addEventListener('click', () => {
+      if (anim.isPlaying()) {
+        anim.stop();
+        playBtn.textContent = '▶ پخش زنده';
+      } else {
+        anim.start();
+        playBtn.textContent = '⏸ توقف';
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      progress = 0;
+      anim.start();
+      playBtn.textContent = '⏸ توقف';
+      render(0);
+    });
+
+    tSlider.addEventListener('input', () => {
+      progress = parseFloat(tSlider.value) / 100;
+      render(0);
+    });
+
+    render(0);
+    anim.start();
+  }
 </script>

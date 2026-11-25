@@ -1,85 +1,687 @@
 ---
-// مقایسه‌گر پرکردن مخزن صلب عایق در برابر سیلندر متحرک هم‌فشار (فصل ۵ - اسلاید ۳۵)
+// شبیه‌ساز زنده جریان ناپایا (مخزن صلب در برابر سیلندر هم‌فشار، مثال ۵-۸ بخار و مثال ۵-۹ زودپز) (فصل ۵)
 ---
 
 <div class="jh-widget not-content" id="unsteady-tank-widget">
   <div class="jh-widget__head">
-    <span class="jh-widget__title">شبیه‌ساز پر کردن ناپایا: مخزن صلب در برابر سیلندر متحرک</span>
-    <span class="jh-widget__sub">مقایسه دمای نهایی گاز ایده‌آل (<span dir="ltr">T_line = 300 K</span>) هنگام پر شدن مخزن خالی اولیه</span>
+    <span class="jh-widget__title">شبیه‌ساز زندهٔ جریان ناپایا: پر کردن مخازن و زودپز (<span dir="ltr">IAPWS-IF97</span>)</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ هم‌زمان افزایش دمای مخزن صلب (<span dir="ltr">u₂ = h_in ⇒ T₂ = k·T_in</span>) با سیلندر هم‌فشار (<span dir="ltr">T₂ = T_in</span>)، خط بخار مثال ۵-۸ و زودپز مثال ۵-۹
   </div>
 
   <div class="jh-widget__btns" id="ut-cases">
-    <button type="button" class="jh-widget__btn is-active" data-mode="rigid">مخزن صلب عایق (<span dir="ltr">W_b = 0</span>)</button>
-    <button type="button" class="jh-widget__btn" data-mode="piston">سیلندر با پیستون آزاد هم‌فشار</button>
+    <button type="button" class="jh-widget__btn is-active" data-mode="gas-compare">مقایسهٔ هم‌زمان صلب در برابر پیستون (گاز ایده‌آل)</button>
+    <button type="button" class="jh-widget__btn" data-mode="steam-ex58">مثال ۵-۸: مخزن صلب بخار (<span dir="ltr">1 MPa, 300 °C</span>)</button>
+    <button type="button" class="jh-widget__btn" data-mode="cooker-ex59">مثال ۵-۹: زودپز <span dir="ltr">175 kPa</span> (<span dir="ltr">1.0 → 0.6 kg</span>)</button>
   </div>
 
   <div class="jh-widget__grid">
     <label class="jh-widget__ctrl">
-      <span>دمای خط تغذیه <span dir="ltr">T_in</span> (K): <strong id="ut-tin-lbl" dir="ltr">300</strong></span>
-      <input id="ut-tin" type="range" min="250" max="600" step="10" value="300" />
+      <span id="ut-s1-title">دمای خط تغذیه (<span dir="ltr">T_in</span>): <strong id="ut-s1-lbl" dir="ltr">300 K</strong></span>
+      <input id="ut-s1" type="range" min="250" max="600" step="10" value="300" />
     </label>
     <label class="jh-widget__ctrl">
-      <span>نسبت گرمای ویژه <span dir="ltr">k = c_p/c_v</span>: <strong id="ut-k-lbl" dir="ltr">1.40</strong></span>
-      <input id="ut-k" type="range" min="1.15" max="1.67" step="0.01" value="1.40" />
+      <span id="ut-s2-title">نسبت گرمای ویژه (<span dir="ltr">k = c_p/c_v</span>): <strong id="ut-s2-lbl" dir="ltr">1.40</strong></span>
+      <input id="ut-s2" type="range" min="1.15" max="1.67" step="0.01" value="1.40" />
     </label>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="ut-play">▶ پخش فرآیند</button>
+    <button type="button" class="jh-widget__btn" id="ut-reset">↺ بازنشانی (<span dir="ltr">t = 0</span>)</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>پیشرفت زمانی (<span dir="ltr">t</span>): <strong id="ut-t-lbl" dir="ltr">100%</strong></span>
+      <input id="ut-t" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱: شماتیک زنده مخزن(ها) و شیر -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>شماتیک زندهٔ حجم کنترل و شیر</span>
+        <span dir="ltr" id="ut-pane1-tag">Rigid: 420.0 K vs Piston: 300.0 K</span>
+      </div>
+      <svg id="ut-sim-svg" viewBox="0 0 320 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک زنده جریان ناپایا در مخزن و سیلندر">
+        <defs>
+          <marker id="ut-arr-b" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#0284c7" />
+          </marker>
+          <marker id="ut-arr-r" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#ef4444" />
+          </marker>
+        </defs>
+        <g id="ut-scene-bg"></g>
+        <g id="ut-scene-particles"></g>
+        <g id="ut-scene-fg"></g>
+      </svg>
+    </div>
+
+    <!-- پنل ۲: نمودار تاریخچه زمانی T_CV(t) و m_CV(t) -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>تاریخچهٔ زمانی دما <span dir="ltr">T_CV(t)</span> و جرم <span dir="ltr">m_CV(t)</span></span>
+        <span dir="ltr" id="ut-pane2-tag">0 → 100%</span>
+      </div>
+      <svg id="ut-chart-svg" viewBox="0 0 345 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تغییرات دما و جرم حجم کنترل با زمان">
+        <!-- شبکه -->
+        <g stroke="currentColor" stroke-opacity="0.11" stroke-width="1">
+          <line x1="50" y1="52" x2="296" y2="52" />
+          <line x1="50" y1="94" x2="296" y2="94" />
+          <line x1="50" y1="136" x2="296" y2="136" />
+          <line x1="112" y1="24" x2="112" y2="178" />
+          <line x1="173" y1="24" x2="173" y2="178" />
+          <line x1="234" y1="24" x2="234" y2="178" />
+        </g>
+
+        <!-- محورها -->
+        <line x1="50" y1="20" x2="50" y2="178" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="50" y1="178" x2="296" y2="178" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="296" y1="20" x2="296" y2="178" stroke="#059669" stroke-opacity="0.55" stroke-width="1.6" stroke-dasharray="3 3" />
+
+        <text id="ut-cy-lbl" x="10" y="18" fill="#ef4444" font-size="10.5" font-weight="800">T (K)</text>
+        <text id="ut-cm-lbl" x="336" y="18" text-anchor="end" fill="#059669" font-size="10.5" font-weight="800">m/m_ref</text>
+        <text id="ut-cx-lbl" x="173" y="212" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">Process Time t (%)</text>
+
+        <!-- برچسب‌های عددی محورها -->
+        <g id="ut-cticks-y" fill="currentColor" fill-opacity="0.68" font-size="9" text-anchor="end"></g>
+        <g id="ut-cticks-m" fill="#059669" fill-opacity="0.82" font-size="9" text-anchor="start"></g>
+        <g id="ut-cticks-x" fill="currentColor" fill-opacity="0.68" font-size="9" text-anchor="middle">
+          <text x="50" y="193">0%</text>
+          <text x="112" y="193">25%</text>
+          <text x="173" y="193">50%</text>
+          <text x="234" y="193">75%</text>
+          <text x="296" y="193">100%</text>
+        </g>
+
+        <!-- منحنی‌ها -->
+        <path id="ut-path-ref" d="" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-dasharray="5 4" />
+        <path id="ut-path-t" d="" fill="none" stroke="#ef4444" stroke-width="2.8" stroke-linecap="round" />
+        <path id="ut-path-m" d="" fill="none" stroke="#059669" stroke-width="2.2" stroke-dasharray="4 3" />
+
+        <!-- خط زمان فعلی و نقاط -->
+        <line id="ut-cur-line" x1="296" y1="22" x2="296" y2="178" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3" />
+        <circle id="ut-dot-t" cx="296" cy="52" r="5.5" fill="#ef4444" stroke="#ffffff" stroke-width="1.8" />
+        <circle id="ut-dot-ref" cx="296" cy="118" r="4.8" fill="#0284c7" stroke="#ffffff" stroke-width="1.5" />
+        <circle id="ut-dot-m" cx="296" cy="40" r="4.5" fill="#059669" stroke="#ffffff" stroke-width="1.5" />
+
+        <!-- راهنمای پایین -->
+        <g id="ut-legend" font-size="9" font-weight="700"></g>
+      </svg>
+    </div>
   </div>
 
   <div class="jh-widget__metrics">
     <div class="jh-metric">
-      <span class="jh-metric__label">رابطه قانون اول جریان یکنواخت</span>
-      <span class="jh-metric__val" id="ut-eq">u₂ = h_in</span>
+      <span class="jh-metric__label">رابطهٔ قانون اول ناپایا</span>
+      <span class="jh-metric__val" id="ut-eq">u₂ = h_in ⇒ T₂ = k·T_in</span>
     </div>
     <div class="jh-metric">
-      <span class="jh-metric__label">دمای نهایی داخل سیستم (<span dir="ltr">T₂</span>)</span>
+      <span class="jh-metric__label" id="ut-m2-lbl">دمای سیستم (مخزن صلب)</span>
       <span class="jh-metric__val" id="ut-t2">420.0 K</span>
     </div>
     <div class="jh-metric">
-      <span class="jh-metric__label">تفسیر فیزیکی</span>
-      <span class="jh-metric__val" id="ut-note" style="direction:rtl;text-align:right">افزایش k برابری دما به‌دلیل کار جریان</span>
+      <span class="jh-metric__label" id="ut-m3-lbl">مقایسه / جرم سیستم</span>
+      <span class="jh-metric__val" id="ut-m3">سیلندر هم‌فشار: 300.0 K</span>
+    </div>
+    <div class="jh-metric" id="ut-m4-card">
+      <span class="jh-metric__label">اختلاف / کار جریان</span>
+      <span class="jh-metric__val" id="ut-m4">+120.0 K (+40%)</span>
     </div>
   </div>
+
+  <div class="jh-widget__explain" id="ut-explain"></div>
 </div>
 
-<script is:inline>
-(() => {
-  const root = document.getElementById('unsteady-tank-widget');
-  if (!root) return;
-  let mode = 'rigid';
-  const tinEl = root.querySelector('#ut-tin');
-  const kEl = root.querySelector('#ut-k');
-  const tinLbl = root.querySelector('#ut-tin-lbl');
-  const kLbl = root.querySelector('#ut-k-lbl');
-  const eqEl = root.querySelector('#ut-eq');
-  const t2El = root.querySelector('#ut-t2');
-  const noteEl = root.querySelector('#ut-note');
+<script>
+import { waterPT, waterSatByP } from '../../lib/thermoProps';
+import {
+  createViewport,
+  tempToColor,
+  setThermometer,
+  createAnimController,
+} from '../../lib/liveSimKit';
 
-  function update() {
-    const tin = parseFloat(tinEl.value);
-    const k = parseFloat(kEl.value);
-    tinLbl.textContent = tin.toFixed(0);
-    kLbl.textContent = k.toFixed(2);
-    if (mode === 'rigid') {
-      const t2 = k * tin;
-      eqEl.textContent = 'u₂ = h_in  ⇒  T₂ = k · T_in';
-      t2El.textContent = `${t2.toFixed(1)} K`;
-      noteEl.textContent = `کل انرژی جریان (h_in = u_in + Pv) به انرژی درونی u₂ تبدیل شد (${k.toFixed(2)}× داغ‌تر!).`;
+const root = document.getElementById('unsteady-tank-widget');
+if (root) {
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  type ModeKey = 'gas-compare' | 'steam-ex58' | 'cooker-ex59';
+
+  let mode: ModeKey = 'gas-compare';
+  let s1Val = 300;
+  let s2Val = 1.4;
+  let progress = 1.0;
+  let clock = 0;
+
+  const s1Slider = root.querySelector('#ut-s1') as HTMLInputElement;
+  const s2Slider = root.querySelector('#ut-s2') as HTMLInputElement;
+  const s1Title = root.querySelector('#ut-s1-title')!;
+  const s2Title = root.querySelector('#ut-s2-title')!;
+  const playBtn = root.querySelector('#ut-play') as HTMLButtonElement;
+  const resetBtn = root.querySelector('#ut-reset') as HTMLButtonElement;
+  const tSlider = root.querySelector('#ut-t') as HTMLInputElement;
+  const tLbl = root.querySelector('#ut-t-lbl')!;
+
+  const pane1Tag = root.querySelector('#ut-pane1-tag')!;
+  const pane2Tag = root.querySelector('#ut-pane2-tag')!;
+  const sceneBg = root.querySelector('#ut-scene-bg')!;
+  const sceneParts = root.querySelector('#ut-scene-particles')!;
+  const sceneFg = root.querySelector('#ut-scene-fg')!;
+
+  const cyLbl = root.querySelector('#ut-cy-lbl')!;
+  const cmLbl = root.querySelector('#ut-cm-lbl')!;
+  const cxLbl = root.querySelector('#ut-cx-lbl')!;
+  const cTicksY = root.querySelector('#ut-cticks-y')!;
+  const cTicksM = root.querySelector('#ut-cticks-m')!;
+  const cTicksX = root.querySelector('#ut-cticks-x')!;
+  const pathRef = root.querySelector('#ut-path-ref')!;
+  const pathT = root.querySelector('#ut-path-t')!;
+  const pathM = root.querySelector('#ut-path-m')!;
+  const curLine = root.querySelector('#ut-cur-line')!;
+  const dotT = root.querySelector('#ut-dot-t')!;
+  const dotRef = root.querySelector('#ut-dot-ref')!;
+  const dotM = root.querySelector('#ut-dot-m')!;
+  const legendGrp = root.querySelector('#ut-legend')!;
+
+  const eqEl = root.querySelector('#ut-eq')!;
+  const m2Lbl = root.querySelector('#ut-m2-lbl')!;
+  const t2El = root.querySelector('#ut-t2')!;
+  const m3Lbl = root.querySelector('#ut-m3-lbl')!;
+  const m3El = root.querySelector('#ut-m3')!;
+  const m4Card = root.querySelector('#ut-m4-card')!;
+  const m4El = root.querySelector('#ut-m4')!;
+  const explainEl = root.querySelector('#ut-explain')!;
+
+  function svgEl(tag: string, attrs: Record<string, string | number>, text?: string): SVGElement {
+    const el = document.createElementNS(SVG_NS, tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      el.setAttribute(k, String(v));
+    }
+    if (text !== undefined) el.textContent = text;
+    return el;
+  }
+
+  /** حل عددی دمای نهایی T₂ در مثال ۵-۸ به‌طوری که u(P_line, T₂) = h_line */
+  function solveSteamTankT2(pKpa: number, tInC: number): { hIn: number; t2C: number } {
+    const stIn = waterPT(pKpa, tInC);
+    const hIn = stIn.h;
+    let lo = tInC;
+    let hi = Math.min(820, tInC + 340);
+    for (let i = 0; i < 36; i++) {
+      const mid = 0.5 * (lo + hi);
+      if (waterPT(pKpa, mid).u < hIn) lo = mid;
+      else hi = mid;
+    }
+    return { hIn, t2C: 0.5 * (lo + hi) };
+  }
+
+  const cookerSat = waterSatByP(175);
+
+  function configureSliders() {
+    if (mode === 'gas-compare') {
+      s1Slider.min = '250';
+      s1Slider.max = '600';
+      s1Slider.step = '10';
+      s1Val = 300;
+      s2Slider.min = '1.15';
+      s2Slider.max = '1.67';
+      s2Slider.step = '0.01';
+      s2Val = 1.4;
+    } else if (mode === 'steam-ex58') {
+      s1Slider.min = '500';
+      s1Slider.max = '3000';
+      s1Slider.step = '100';
+      s1Val = 1000;
+      s2Slider.min = '250';
+      s2Slider.max = '450';
+      s2Slider.step = '10';
+      s2Val = 300;
     } else {
-      eqEl.textContent = 'u₂ + P₂v₂ = h_in  ⇒  h₂ = h_in';
-      t2El.textContent = `${tin.toFixed(1)} K`;
-      noteEl.textContent = 'بخش Pv دقیقاً صرف کار مرزی عقب‌راندن پیستون شد؛ پس دما برابر T_in ماند.';
+      s1Slider.min = '300';
+      s1Slider.max = '1000';
+      s1Slider.step = '25';
+      s1Val = 500;
+      s2Slider.min = '10';
+      s2Slider.max = '45';
+      s2Slider.step = '1';
+      s2Val = 30;
+    }
+    s1Slider.value = String(s1Val);
+    s2Slider.value = String(s2Val);
+  }
+
+  function render() {
+    tLbl.textContent = `${Math.round(progress * 100)}%`;
+    tSlider.value = String(Math.round(progress * 100));
+    sceneBg.innerHTML = '';
+    sceneParts.innerHTML = '';
+    sceneFg.innerHTML = '';
+    m4Card.classList.remove('jh-metric--warn');
+
+    if (mode === 'gas-compare') {
+      const tIn = s1Val;
+      const k = s2Val;
+      const tFinalRigid = k * tIn;
+      s1Title.innerHTML = `دمای خط تغذیه (<span dir="ltr">T_in</span>): <strong dir="ltr">${tIn.toFixed(0)} K</strong>`;
+      s2Title.innerHTML = `نسبت گرمای ویژه (<span dir="ltr">k = c_p/c_v</span>): <strong dir="ltr">${k.toFixed(2)}</strong>`;
+
+      // منحنی نرم رسیدن مخزن خالی اولیه به دمای نهایی k·T_in
+      const evalTempRigid = (u: number) =>
+        u <= 0.001 ? tIn : tIn + (tFinalRigid - tIn) * ((1 - Math.exp(-3.6 * u)) / (1 - Math.exp(-3.6)));
+      const tCurRigid = evalTempRigid(progress);
+      const tCurPiston = tIn;
+      const mFrac = progress;
+
+      pane1Tag.textContent = `Rigid: ${tCurRigid.toFixed(1)} K vs Piston: ${tCurPiston.toFixed(1)} K`;
+      pane2Tag.textContent = `t = ${Math.round(progress * 100)}%`;
+
+      // لوله مشترک بالای هر دو مخزن
+      sceneBg.appendChild(svgEl('rect', { x: 18, y: 26, width: 284, height: 14, rx: 4, fill: '#0284c7', 'fill-opacity': 0.16, stroke: '#0284c7', 'stroke-width': 1.8 }));
+      sceneFg.appendChild(svgEl('text', { x: 160, y: 19, 'text-anchor': 'middle', fill: '#0284c7', 'font-size': 9.5, 'font-weight': 800 }, `Supply Header: T_in = ${tIn} K (P_line = const)`));
+
+      // لوله‌های انشعاب و شیرها به چپ (صلب) و راست (پیستون)
+      sceneBg.appendChild(svgEl('rect', { x: 66, y: 40, width: 10, height: 34, fill: '#0284c7', 'fill-opacity': 0.18, stroke: '#0284c7', 'stroke-width': 1.5 }));
+      sceneBg.appendChild(svgEl('rect', { x: 226, y: 40, width: 10, height: 42, fill: '#0284c7', 'fill-opacity': 0.18, stroke: '#0284c7', 'stroke-width': 1.5 }));
+      // شیرها
+      for (const vx of [71, 231]) {
+        sceneFg.appendChild(svgEl('circle', { cx: vx, cy: 55, r: 6.5, fill: '#d97706', stroke: '#ffffff', 'stroke-width': 1.3 }));
+        sceneFg.appendChild(svgEl('line', { x1: vx - 4, y1: 55, x2: vx + 4, y2: 55, stroke: '#ffffff', 'stroke-width': 1.8 }));
+      }
+
+      // مخزن چپ: مخزن صلب عایق
+      sceneBg.appendChild(svgEl('rect', { x: 22, y: 74, width: 98, height: 112, rx: 6, fill: 'none', stroke: 'currentColor', 'stroke-opacity': 0.45, 'stroke-width': 5, 'stroke-dasharray': '4 3' }));
+      sceneBg.appendChild(svgEl('rect', { x: 26, y: 78, width: 90, height: 104, rx: 3, fill: tempToColor(tCurRigid), 'fill-opacity': (0.06 + mFrac * 0.34).toFixed(2), stroke: 'currentColor', 'stroke-opacity': 0.72, 'stroke-width': 2.5 }));
+      sceneFg.appendChild(svgEl('text', { x: 71, y: 204, 'text-anchor': 'middle', fill: 'currentColor', 'font-size': 9.8, 'font-weight': 800 }, 'Rigid Tank (W_b=0)'));
+      sceneFg.appendChild(svgEl('text', { x: 71, y: 218, 'text-anchor': 'middle', fill: '#ef4444', 'font-size': 9.8, 'font-weight': 800 }, `T = ${tCurRigid.toFixed(1)} K`));
+
+      // دماسنج مخزن چپ
+      sceneFg.appendChild(svgEl('rect', { x: 128, y: 84, width: 8, height: 86, rx: 4, fill: 'currentColor', 'stroke-opacity': 0.4, 'fill-opacity': 0.1, stroke: 'currentColor', 'stroke-width': 1.2 }));
+      sceneFg.appendChild(svgEl('circle', { cx: 132, cy: 175, r: 7, fill: '#ef4444' }));
+      const mercL = svgEl('rect', { id: 'ut-merc-l', x: 130, y: 120, width: 4, height: 55, rx: 2, fill: '#ef4444' });
+      sceneFg.appendChild(mercL);
+      setThermometer(mercL, tCurRigid, 240, 960, 170, 82);
+
+      // مخزن راست: سیلندر پیستون آزاد هم‌فشار
+      const cavH = 12 + mFrac * 86; // 12..98 px
+      const pistTop = 182 - cavH;
+      sceneBg.appendChild(svgEl('rect', { x: 186, y: pistTop.toFixed(1), width: 90, height: cavH.toFixed(1), fill: tempToColor(tCurPiston), 'fill-opacity': (0.14 + mFrac * 0.2).toFixed(2) }));
+      sceneBg.appendChild(svgEl('path', { d: 'M 184 74 L 184 184 L 278 184 L 278 74', fill: 'none', stroke: 'currentColor', 'stroke-opacity': 0.72, 'stroke-width': 3 }));
+      // پیستون متحرک + فلش کار مرزی
+      sceneFg.appendChild(svgEl('rect', { x: 186, y: (pistTop - 10).toFixed(1), width: 90, height: 10, rx: 2, fill: '#64748b', stroke: 'currentColor', 'stroke-opacity': 0.6 }));
+      if (mFrac > 0.05) {
+        sceneFg.appendChild(svgEl('line', { x1: 256, y1: (pistTop - 14).toFixed(1), x2: 256, y2: Math.max(58, pistTop - 38).toFixed(1), stroke: '#0284c7', 'stroke-width': 2.2, 'marker-end': 'url(#ut-arr-b)' }));
+        sceneFg.appendChild(svgEl('text', { x: 263, y: Math.max(66, pistTop - 24).toFixed(1), fill: '#0284c7', 'font-size': 9, 'font-weight': 800 }, 'W_b'));
+      }
+      sceneFg.appendChild(svgEl('text', { x: 231, y: 204, 'text-anchor': 'middle', fill: 'currentColor', 'font-size': 9.8, 'font-weight': 800 }, 'Isobaric Piston'));
+      sceneFg.appendChild(svgEl('text', { x: 231, y: 218, 'text-anchor': 'middle', fill: '#0284c7', 'font-size': 9.8, 'font-weight': 800 }, `T = ${tCurPiston.toFixed(1)} K`));
+
+      // دماسنج مخزن راست
+      sceneFg.appendChild(svgEl('rect', { x: 288, y: 84, width: 8, height: 86, rx: 4, fill: 'currentColor', 'fill-opacity': 0.1, stroke: 'currentColor', 'stroke-opacity': 0.4, 'stroke-width': 1.2 }));
+      sceneFg.appendChild(svgEl('circle', { cx: 292, cy: 175, r: 7, fill: '#0284c7' }));
+      const mercR = svgEl('rect', { id: 'ut-merc-r', x: 290, y: 130, width: 4, height: 45, rx: 2, fill: '#0284c7' });
+      sceneFg.appendChild(mercR);
+      setThermometer(mercR, tCurPiston, 240, 960, 170, 82);
+
+      // ذرات پرشونده داخل لوله و مخازن
+      const nShow = Math.max(1, Math.round(mFrac * 10));
+      for (let i = 0; i < nShow; i++) {
+        const pxL = 36 + ((i * 23 + Math.round(clock * 45)) % 70);
+        const pyL = 88 + ((i * 31 + Math.round(clock * 35)) % 84);
+        sceneParts.appendChild(svgEl('circle', { cx: pxL, cy: pyL, r: 2.3, fill: '#ef4444', 'fill-opacity': 0.78 }));
+        if (cavH > 16) {
+          const pxR = 196 + ((i * 19 + Math.round(clock * 35)) % 70);
+          const pyR = pistTop + 6 + ((i * 17 + Math.round(clock * 25)) % Math.max(8, cavH - 12));
+          sceneParts.appendChild(svgEl('circle', { cx: pxR, cy: pyR.toFixed(1), r: 2.3, fill: '#0284c7', 'fill-opacity': 0.78 }));
+        }
+      }
+
+      // نمودار تاریخچه زمانی (پنل ۲)
+      const tMaxPlot = Math.max(550, Math.ceil((tFinalRigid + 60) / 100) * 100);
+      const tMinPlot = 200;
+      const vp = createViewport(0, 1, tMinPlot, tMaxPlot, 50, 296, 178, 22);
+      const vpM = createViewport(0, 1, 0, 1, 50, 296, 178, 22);
+
+      cyLbl.textContent = 'T (K)';
+      cmLbl.textContent = 'm / m_f';
+      cxLbl.textContent = 'Fill Progress t (%)';
+      cTicksX.innerHTML = '<text x="50" y="193">0%</text><text x="112" y="193">25%</text><text x="173" y="193">50%</text><text x="234" y="193">75%</text><text x="296" y="193">100%</text>';
+      cTicksY.innerHTML = '';
+      for (let i = 0; i <= 4; i++) {
+        const tv = tMinPlot + ((tMaxPlot - tMinPlot) * i) / 4;
+        cTicksY.appendChild(svgEl('text', { x: 44, y: (vp.y(tv) + 3.5).toFixed(1) }, tv.toFixed(0)));
+      }
+      cTicksM.innerHTML = '<text x="302" y="181">0%</text><text x="302" y="103">50%</text><text x="302" y="26">100%</text>';
+
+      const ptsR: Array<[number, number]> = [];
+      const ptsP: Array<[number, number]> = [];
+      const ptsM: Array<[number, number]> = [];
+      const steps = 36;
+      const nAct = Math.max(1, Math.round(progress * steps));
+      for (let i = 0; i <= nAct; i++) {
+        const u = (i / nAct) * progress;
+        ptsR.push([u, evalTempRigid(u)]);
+        ptsP.push([u, tIn]);
+        ptsM.push([u, u]);
+      }
+      pathT.setAttribute('d', vp.path(ptsR));
+      pathRef.setAttribute('d', vp.path(ptsP));
+      pathM.setAttribute('d', vpM.path(ptsM));
+
+      const xNow = vp.x(progress);
+      curLine.setAttribute('x1', xNow.toFixed(1));
+      curLine.setAttribute('x2', xNow.toFixed(1));
+      dotT.setAttribute('cx', xNow.toFixed(1));
+      dotT.setAttribute('cy', vp.y(tCurRigid).toFixed(1));
+      dotRef.style.display = '';
+      dotRef.setAttribute('cx', xNow.toFixed(1));
+      dotRef.setAttribute('cy', vp.y(tCurPiston).toFixed(1));
+      dotM.setAttribute('cx', xNow.toFixed(1));
+      dotM.setAttribute('cy', vpM.y(mFrac).toFixed(1));
+
+      legendGrp.innerHTML = `
+        <text x="54" y="224" fill="#ef4444">— Rigid T_CV(t)</text>
+        <text x="150" y="224" fill="#0284c7">-- Piston T_CV = T_in</text>
+        <text x="256" y="224" fill="#059669">·· Mass m(t)</text>
+      `;
+
+      eqEl.textContent = 'u₂ = h_in ⇒ T₂ = k·T_in';
+      m2Lbl.textContent = 'دمای نهایی مخزن صلب (W=0)';
+      t2El.textContent = `${tFinalRigid.toFixed(1)} K`;
+      m3Lbl.textContent = 'دمای نهایی سیلندر هم‌فشار';
+      m3El.textContent = `${tIn.toFixed(1)} K`;
+      m4El.textContent = `+${(tFinalRigid - tIn).toFixed(1)} K (+${((k - 1) * 100).toFixed(0)}%)`;
+      explainEl.innerHTML = `در خط تغذیه با دمای <span dir="ltr">${tIn.toFixed(0)} K</span> و <span dir="ltr">k = ${k.toFixed(2)}</span>، مخزن صلب تا دمای <strong><span dir="ltr">${tFinalRigid.toFixed(1)} K</span></strong> داغ می‌شود، زیرا کل کار جریان (<span dir="ltr">Pv</span>) درون دیوارهٔ صلب حبس شده و به انرژی درونی <span dir="ltr">u₂</span> تبدیل می‌گردد؛ اما در سیلندر متحرک هم‌فشار، کار جریان صرف عقب‌راندن پیستون (<span dir="ltr">W_b</span>) می‌شود و دما دقیقاً روی <strong><span dir="ltr">${tIn.toFixed(1)} K</span></strong> ثابت می‌ماند!`;
+    } else if (mode === 'steam-ex58') {
+      const pLine = s1Val;
+      const tLineC = s2Val;
+      s1Title.innerHTML = `فشار خط لولهٔ بخار (<span dir="ltr">P_line</span>): <strong dir="ltr">${(pLine / 1000).toFixed(2)} MPa</strong>`;
+      s2Title.innerHTML = `دمای خط لولهٔ بخار (<span dir="ltr">T_line</span>): <strong dir="ltr">${tLineC.toFixed(0)} °C</strong>`;
+
+      const { hIn, t2C } = solveSteamTankT2(pLine, tLineC);
+      const evalT = (u: number) =>
+        u <= 0.001 ? tLineC : tLineC + (t2C - tLineC) * ((1 - Math.exp(-3.5 * u)) / (1 - Math.exp(-3.5)));
+      const tCurC = evalT(progress);
+      const pCur = pLine * progress;
+
+      pane1Tag.textContent = `P = ${(pCur / 1000).toFixed(2)} MPa | T = ${tCurC.toFixed(1)} °C`;
+      pane2Tag.textContent = `T₂ = ${t2C.toFixed(1)} °C (h_i = ${hIn.toFixed(1)})`;
+
+      // خط بخار + شیر + تک‌مخزن صلب بزرگ
+      sceneBg.appendChild(svgEl('rect', { x: 18, y: 24, width: 284, height: 16, rx: 4, fill: '#ef4444', 'fill-opacity': 0.16, stroke: '#ef4444', 'stroke-width': 1.8 }));
+      sceneFg.appendChild(svgEl('text', { x: 160, y: 17, 'text-anchor': 'middle', fill: '#ef4444', 'font-size': 9.8, 'font-weight': 800 }, `Steam Line: ${(pLine / 1000).toFixed(2)} MPa, ${tLineC} °C (h_i=${hIn.toFixed(1)})`));
+      sceneBg.appendChild(svgEl('rect', { x: 144, y: 40, width: 12, height: 34, fill: '#ef4444', 'fill-opacity': 0.16, stroke: '#ef4444', 'stroke-width': 1.5 }));
+      sceneFg.appendChild(svgEl('circle', { cx: 150, cy: 56, r: 7.5, fill: '#d97706', stroke: '#ffffff', 'stroke-width': 1.5 }));
+
+      // مخزن عایق صلب بخار
+      sceneBg.appendChild(svgEl('rect', { x: 64, y: 74, width: 172, height: 122, rx: 8, fill: 'none', stroke: 'currentColor', 'stroke-opacity': 0.45, 'stroke-width': 5, 'stroke-dasharray': '5 3' }));
+      sceneBg.appendChild(svgEl('rect', { x: 69, y: 79, width: 162, height: 112, rx: 4, fill: tempToColor(tCurC + 273.15), 'fill-opacity': (0.06 + progress * 0.34).toFixed(2), stroke: 'currentColor', 'stroke-opacity': 0.72, 'stroke-width': 2.5 }));
+      sceneFg.appendChild(svgEl('text', { x: 150, y: 132, 'text-anchor': 'middle', fill: 'currentColor', 'font-size': 11, 'font-weight': 800 }, `P_CV = ${(pCur / 1000).toFixed(2)} MPa`));
+      sceneFg.appendChild(svgEl('text', { x: 150, y: 152, 'text-anchor': 'middle', fill: '#ef4444', 'font-size': 11.5, 'font-weight': 800 }, `T_CV = ${tCurC.toFixed(1)} °C`));
+      sceneFg.appendChild(svgEl('text', { x: 150, y: 214, 'text-anchor': 'middle', fill: 'currentColor', 'font-size': 10, 'font-weight': 700 }, 'Insulated Rigid Steam Tank (m₁ = 0)'));
+
+      // دماسنج
+      sceneFg.appendChild(svgEl('rect', { x: 258, y: 80, width: 10, height: 96, rx: 5, fill: 'currentColor', 'fill-opacity': 0.1, stroke: 'currentColor', 'stroke-opacity': 0.45, 'stroke-width': 1.4 }));
+      sceneFg.appendChild(svgEl('circle', { cx: 263, cy: 182, r: 8.5, fill: '#ef4444' }));
+      const mercL = svgEl('rect', { x: 260.5, y: 110, width: 5, height: 68, rx: 2.5, fill: '#ef4444' });
+      sceneFg.appendChild(mercL);
+      setThermometer(mercL, tCurC, 200, 650, 176, 92);
+      sceneFg.appendChild(svgEl('text', { x: 263, y: 74, 'text-anchor': 'middle', fill: '#ef4444', 'font-size': 9.5, 'font-weight': 800 }, `${tCurC.toFixed(0)}°C`));
+
+      const nShow = Math.max(1, Math.round(progress * 14));
+      for (let i = 0; i < nShow; i++) {
+        const px = 80 + ((i * 29 + Math.round(clock * 55)) % 140);
+        const py = 90 + ((i * 23 + Math.round(clock * 45)) % 88);
+        sceneParts.appendChild(svgEl('circle', { cx: px, cy: py, r: 2.4, fill: '#ef4444', 'fill-opacity': 0.72 }));
+      }
+
+      // نمودار تاریخچه زمانی
+      const tMinPlot = Math.floor((tLineC - 40) / 50) * 50;
+      const tMaxPlot = Math.ceil((t2C + 50) / 50) * 50;
+      const vp = createViewport(0, 1, tMinPlot, tMaxPlot, 50, 296, 178, 22);
+      const vpM = createViewport(0, 1, 0, 1, 50, 296, 178, 22);
+
+      cyLbl.textContent = 'T (°C)';
+      cmLbl.textContent = 'm / m₂';
+      cxLbl.textContent = 'Tank Pressurization Progress (%)';
+      cTicksX.innerHTML = '<text x="50" y="193">0%</text><text x="112" y="193">25%</text><text x="173" y="193">50%</text><text x="234" y="193">75%</text><text x="296" y="193">100%</text>';
+      cTicksY.innerHTML = '';
+      for (let i = 0; i <= 4; i++) {
+        const tv = tMinPlot + ((tMaxPlot - tMinPlot) * i) / 4;
+        cTicksY.appendChild(svgEl('text', { x: 44, y: (vp.y(tv) + 3.5).toFixed(1) }, tv.toFixed(0)));
+      }
+      cTicksM.innerHTML = '<text x="302" y="181">0%</text><text x="302" y="103">50%</text><text x="302" y="26">100%</text>';
+
+      const ptsT: Array<[number, number]> = [];
+      const ptsRef: Array<[number, number]> = [];
+      const ptsM: Array<[number, number]> = [];
+      const steps = 36;
+      const nAct = Math.max(1, Math.round(progress * steps));
+      for (let i = 0; i <= nAct; i++) {
+        const u = (i / nAct) * progress;
+        ptsT.push([u, evalT(u)]);
+        ptsRef.push([u, tLineC]);
+        ptsM.push([u, u]);
+      }
+      pathT.setAttribute('d', vp.path(ptsT));
+      pathRef.setAttribute('d', vp.path(ptsRef));
+      pathM.setAttribute('d', vpM.path(ptsM));
+
+      const xNow = vp.x(progress);
+      curLine.setAttribute('x1', xNow.toFixed(1));
+      curLine.setAttribute('x2', xNow.toFixed(1));
+      dotT.setAttribute('cx', xNow.toFixed(1));
+      dotT.setAttribute('cy', vp.y(tCurC).toFixed(1));
+      dotRef.style.display = '';
+      dotRef.setAttribute('cx', xNow.toFixed(1));
+      dotRef.setAttribute('cy', vp.y(tLineC).toFixed(1));
+      dotM.setAttribute('cx', xNow.toFixed(1));
+      dotM.setAttribute('cy', vpM.y(progress).toFixed(1));
+
+      legendGrp.innerHTML = `
+        <text x="54" y="224" fill="#ef4444">— Tank T_CV(t)</text>
+        <text x="150" y="224" fill="#0284c7">-- Line T_i=${tLineC}°C</text>
+        <text x="256" y="224" fill="#059669">·· Mass m(t)</text>
+      `;
+
+      eqEl.textContent = `u₂ = h_i = ${hIn.toFixed(1)} kJ/kg`;
+      m2Lbl.textContent = 'دمای نهایی بخار داخل مخزن';
+      t2El.textContent = `${t2C.toFixed(1)} °C`;
+      m3Lbl.textContent = 'دمای خط لوله بخار';
+      m3El.textContent = `${tLineC.toFixed(1)} °C`;
+      m4El.textContent = `+${(t2C - tLineC).toFixed(1)} °C داغ‌تر!`;
+      explainEl.innerHTML = `در <strong>مثال ۵-۸</strong> (محاسبهٔ دقیق <span dir="ltr">IAPWS-IF97</span>)، بخار با آنتالپی <span dir="ltr">h_i = ${hIn.toFixed(1)} kJ/kg</span> وارد مخزن خالی می‌شود. با مساوی قراردادن <span dir="ltr">u₂ = h_i</span> در فشار نهایی <span dir="ltr">${(pLine / 1000).toFixed(2)} MPa</span>، دمای بخار داخل مخزن به <strong><span dir="ltr">${t2C.toFixed(1)} °C</span></strong> می‌رسد (<span dir="ltr">+${(t2C - tLineC).toFixed(1)} °C</span> داغ‌تر از خط لوله؛ در جدول چاپی <span dir="ltr">A-6</span> با درونیابی <span dir="ltr">456.1 °C</span>)!`;
+    } else {
+      // مثال ۵-۹: زودپز 175 kPa
+      const qWatt = s1Val;
+      const dtMin = s2Val;
+      s1Title.innerHTML = `توان گرمایی شعله (<span dir="ltr">Q̇_in</span>): <strong dir="ltr">${qWatt.toFixed(0)} W</strong>`;
+      s2Title.innerHTML = `مدت پخت (<span dir="ltr">Δt</span>): <strong dir="ltr">${dtMin.toFixed(0)} min</strong>`;
+
+      const V = 0.006;
+      const m1 = 1.0;
+      const { vf, vg, uf, ug, hg, tC } = cookerSat;
+      const vfg = vg - vf;
+      const ufg = ug - uf;
+      const x1 = (V / m1 - vf) / vfg;
+      const u1 = uf + x1 * ufg;
+      const slope = ufg / vfg;
+      const alpha = uf - vf * slope;
+      const denom = hg - alpha;
+      const mDryMin = V / vg;
+
+      const evalMass = (u: number) => {
+        const tMin = u * dtMin;
+        const qKj = (qWatt / 1000) * (tMin * 60);
+        const raw = (m1 * hg - m1 * u1 + V * slope - qKj) / denom;
+        return Math.max(mDryMin, Math.min(m1, raw));
+      };
+
+      const mCur = evalMass(progress);
+      const mEnd = evalMass(1.0);
+      const isDry = mEnd <= mDryMin + 0.002;
+      const qTotalKj = (qWatt / 1000) * (dtMin * 60);
+      const tElapsed = progress * dtMin;
+
+      pane1Tag.textContent = `175 kPa (${tC.toFixed(1)} °C) | m = ${mCur.toFixed(3)} kg`;
+      pane2Tag.textContent = `t = ${tElapsed.toFixed(1)} / ${dtMin} min`;
+
+      // بدنه دیگ زودپز + سوپاپ اطمینان + شعله
+      sceneBg.appendChild(svgEl('rect', { x: 64, y: 78, width: 168, height: 114, rx: 10, fill: 'currentColor', 'fill-opacity': 0.04, stroke: 'currentColor', 'stroke-opacity': 0.72, 'stroke-width': 2.8 }));
+      // درب زودپز و سوپاپ خروجی بخار
+      sceneBg.appendChild(svgEl('rect', { x: 58, y: 70, width: 180, height: 10, rx: 4, fill: '#64748b', stroke: 'currentColor', 'stroke-opacity': 0.6 }));
+      sceneBg.appendChild(svgEl('rect', { x: 142, y: 52, width: 12, height: 18, fill: '#64748b' }));
+      const valveLift = progress > 0.02 && mCur > mDryMin + 0.001 ? 4 + Math.sin(clock * 8) * 1.5 : 0;
+      sceneFg.appendChild(svgEl('rect', { x: 138, y: (44 - valveLift).toFixed(1), width: 20, height: 8, rx: 2, fill: '#d97706' }));
+      sceneFg.appendChild(svgEl('text', { x: 148, y: 20, 'text-anchor': 'middle', fill: '#0284c7', 'font-size': 9.5, 'font-weight': 800 }, `Steam Escape: h_e = h_g (${hg.toFixed(0)} kJ/kg)`));
+
+      // سطح آب مایع در کف زودپز (متناسب با mCur)
+      const liqH = Math.max(4, (mCur / m1) * 62);
+      const liqY = 190 - liqH;
+      sceneBg.appendChild(svgEl('rect', { x: 66, y: 80, width: 164, height: (liqY - 80).toFixed(1), fill: '#38bdf8', 'fill-opacity': 0.14 }));
+      sceneBg.appendChild(svgEl('rect', { x: 66, y: liqY.toFixed(1), width: 164, height: liqH.toFixed(1), rx: 3, fill: '#0284c7', 'fill-opacity': 0.58 }));
+      sceneFg.appendChild(svgEl('text', { x: 148, y: 112, 'text-anchor': 'middle', fill: 'currentColor', 'font-size': 10.5, 'font-weight': 800 }, `m_CV = ${mCur.toFixed(3)} kg`));
+
+      // دماسنج قفل‌شده روی 116.04 °C
+      sceneFg.appendChild(svgEl('rect', { x: 258, y: 78, width: 10, height: 96, rx: 5, fill: 'currentColor', 'fill-opacity': 0.1, stroke: 'currentColor', 'stroke-opacity': 0.45, 'stroke-width': 1.4 }));
+      sceneFg.appendChild(svgEl('circle', { cx: 263, cy: 180, r: 8.5, fill: '#d97706' }));
+      const mercL = svgEl('rect', { x: 260.5, y: 118, width: 5, height: 60, rx: 2.5, fill: '#d97706' });
+      sceneFg.appendChild(mercL);
+      setThermometer(mercL, tC, 60, 160, 174, 92);
+      sceneFg.appendChild(svgEl('text', { x: 263, y: 70, 'text-anchor': 'middle', fill: '#d97706', 'font-size': 9.2, 'font-weight': 800 }, `${tC.toFixed(1)}°C`));
+
+      // شعله زیر زودپز
+      sceneFg.appendChild(svgEl('path', { d: 'M 118 214 Q 128 194 138 214 Q 148 192 158 214 Q 168 194 178 214', fill: 'none', stroke: '#ef4444', 'stroke-width': 2.5, 'stroke-linecap': 'round' }));
+      sceneFg.appendChild(svgEl('text', { x: 148, y: 226, 'text-anchor': 'middle', fill: '#ef4444', 'font-size': 9.5, 'font-weight': 800 }, `Q̇_in = ${qWatt} W`));
+
+      // حباب‌های جوش و بخار خروجی از سوپاپ
+      for (let i = 0; i < 8; i++) {
+        const bu = ((i * 0.23) + clock * 0.9) % 1;
+        sceneParts.appendChild(svgEl('circle', { cx: (82 + i * 18).toFixed(1), cy: (186 - bu * liqH).toFixed(1), r: 2.2, fill: '#e0f2fe', stroke: '#38bdf8', 'stroke-width': 0.8 }));
+        if (mCur > mDryMin + 0.001) {
+          const su = ((i * 0.31) + clock * 1.1) % 1;
+          sceneParts.appendChild(svgEl('circle', { cx: (148 + Math.sin(su * 6 + i) * 7).toFixed(1), cy: (42 - su * 22).toFixed(1), r: 2.5, fill: '#38bdf8', 'fill-opacity': (1 - su).toFixed(2) }));
+        }
+      }
+
+      // نمودار تاریخچه زمانی (T ثابت و m کاهشی)
+      const vpT = createViewport(0, 1, 80, 150, 50, 296, 178, 22);
+      const vpM = createViewport(0, 1, 0, 1.1, 50, 296, 178, 22);
+
+      cyLbl.textContent = 'T (°C)';
+      cmLbl.textContent = 'm_CV (kg)';
+      cxLbl.textContent = `Time (0 .. ${dtMin} min)`;
+      cTicksX.innerHTML = `<text x="50" y="193">0</text><text x="112" y="193">${(dtMin * 0.25).toFixed(0)}</text><text x="173" y="193">${(dtMin * 0.5).toFixed(0)}</text><text x="234" y="193">${(dtMin * 0.75).toFixed(0)}</text><text x="296" y="193">${dtMin}m</text>`;
+      cTicksY.innerHTML = '';
+      for (const tv of [80, 100, 120, 140]) {
+        cTicksY.appendChild(svgEl('text', { x: 44, y: (vpT.y(tv) + 3.5).toFixed(1) }, String(tv)));
+      }
+      cTicksM.innerHTML = '<text x="302" y="181">0.0</text><text x="302" y="109">0.5</text><text x="302" y="37">1.0 kg</text>';
+
+      const ptsT: Array<[number, number]> = [];
+      const ptsM: Array<[number, number]> = [];
+      const steps = 36;
+      const nAct = Math.max(1, Math.round(progress * steps));
+      for (let i = 0; i <= nAct; i++) {
+        const u = (i / nAct) * progress;
+        ptsT.push([u, tC]);
+        ptsM.push([u, evalMass(u)]);
+      }
+      pathT.setAttribute('d', vpT.path(ptsT));
+      pathRef.setAttribute('d', '');
+      pathM.setAttribute('d', vpM.path(ptsM));
+
+      const xNow = vpT.x(progress);
+      curLine.setAttribute('x1', xNow.toFixed(1));
+      curLine.setAttribute('x2', xNow.toFixed(1));
+      dotT.setAttribute('cx', xNow.toFixed(1));
+      dotT.setAttribute('cy', vpT.y(tC).toFixed(1));
+      dotRef.style.display = 'none';
+      dotM.setAttribute('cx', xNow.toFixed(1));
+      dotM.setAttribute('cy', vpM.y(mCur).toFixed(1));
+
+      legendGrp.innerHTML = `
+        <text x="64" y="224" fill="#ef4444">— T_sat = ${tC.toFixed(1)} °C (Const)</text>
+        <text x="214" y="224" fill="#059669">-- Remaining Mass m_CV(t)</text>
+      `;
+
+      eqEl.textContent = 'Q_in = m_e h_g + m₂u₂ - m₁u₁';
+      m2Lbl.textContent = 'دمای ثابت پخت (175 kPa)';
+      t2El.textContent = `${tC.toFixed(2)} °C`;
+      m3Lbl.textContent = 'آب باقی‌مانده در زودپز';
+      m3El.textContent = `${mEnd.toFixed(3)} kg`;
+      if (isDry) m4Card.classList.add('jh-metric--warn');
+      m4El.textContent = isDry ? 'هشدار: زودپز خشک شد!' : `خروج بخار: ${(m1 - mEnd).toFixed(3)} kg`;
+      explainEl.innerHTML = isDry
+        ? `<strong>هشدار خشک‌شدن زودپز (مقایسه با تمرین ۵-۱۱۷):</strong> با توان <span dir="ltr">${qWatt} W</span> طی <span dir="ltr">${dtMin} min</span> (<span dir="ltr">Q_in = ${qTotalKj.toFixed(0)} kJ</span>)، تمام آب مایع تبخیر شده و زودپز قبل از پایان زمان خشک می‌شود!`
+        : `در <strong>مثال ۵-۹</strong> (<span dir="ltr">P_abs = 175 kPa</span>)، دمای پخت روی <strong><span dir="ltr">${tC.toFixed(2)} °C</span></strong> ثابت می‌ماند. دریافت <span dir="ltr">${qTotalKj.toFixed(0)} kJ</span> گرما طی <span dir="ltr">${dtMin} min</span> باعث تبخیر و خروج <strong><span dir="ltr">${(m1 - mEnd).toFixed(3)} kg</span></strong> بخار اشباع (<span dir="ltr">h_e = ${hg.toFixed(1)} kJ/kg</span>) شده و <strong><span dir="ltr">${mEnd.toFixed(3)} kg</span></strong> آب در دیگ باقی می‌ماند.`;
     }
   }
+
+  const anim = createAnimController(root, (dt) => {
+    clock += dt;
+    progress += dt * 0.28;
+    if (progress >= 1) {
+      progress = 1;
+      playBtn.textContent = '▶ پخش فرآیند';
+      render();
+      return false;
+    }
+    render();
+    return true;
+  });
 
   root.querySelectorAll('#ut-cases button').forEach((btn) => {
     btn.addEventListener('click', () => {
       root.querySelectorAll('#ut-cases button').forEach((b) => b.classList.remove('is-active'));
       btn.classList.add('is-active');
-      mode = btn.getAttribute('data-mode') || 'rigid';
-      update();
+      mode = (btn.getAttribute('data-mode') as ModeKey) || 'gas-compare';
+      configureSliders();
+      progress = 1.0;
+      anim.stop();
+      playBtn.textContent = '▶ پخش فرآیند';
+      render();
     });
   });
-  tinEl.addEventListener('input', update);
-  kEl.addEventListener('input', update);
-  update();
-})();
+
+  s1Slider.addEventListener('input', () => {
+    s1Val = parseFloat(s1Slider.value);
+    render();
+  });
+
+  s2Slider.addEventListener('input', () => {
+    s2Val = parseFloat(s2Slider.value);
+    render();
+  });
+
+  tSlider.addEventListener('input', () => {
+    anim.stop();
+    playBtn.textContent = '▶ پخش فرآیند';
+    progress = parseFloat(tSlider.value) / 100;
+    clock += 0.05;
+    render();
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (anim.isPlaying()) {
+      anim.stop();
+      playBtn.textContent = '▶ پخش فرآیند';
+    } else {
+      if (progress >= 0.995) progress = 0;
+      playBtn.textContent = '⏸ توقف';
+      anim.start();
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    anim.stop();
+    playBtn.textContent = '▶ پخش فرآیند';
+    progress = 0;
+    render();
+  });
+
+  configureSliders();
+  render();
+}
 </script>

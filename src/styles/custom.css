@@ -1471,3 +1471,37 @@ mobile-starlight-toc nav {
   line-height: 1.7;
   color: var(--sl-color-gray-2);
 }
+
+.jh-widget__badge--amber {
+  background: rgba(217, 119, 6, 0.14);
+  color: #b45309;
+  border-color: rgba(217, 119, 6, 0.35);
+}
+
+:root[data-theme='dark'] .jh-widget__badge--amber {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.jh-metric--warn {
+  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.jh-metric--warn .jh-metric__val {
+  color: #dc2626;
+}
+
+:root[data-theme='dark'] .jh-metric--warn .jh-metric__val {
+  color: #f87171;
+}
+
+/* ایزوله‌سازی جهت LTR درون برچسب‌ها و دکمه‌های فارسی برای جلوگیری از جابه‌جایی پرانتزها */
+.jh-widget [dir='ltr'] {
+  unicode-bidi: isolate;
+}
+
+.jh-metric__label [dir='ltr'] {
+  display: inline-block;
+}

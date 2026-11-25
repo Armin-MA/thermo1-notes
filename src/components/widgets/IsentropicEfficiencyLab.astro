@@ -1,0 +1,960 @@
+---
+// آزمایشگر زنده بازده ایزنتروپیک توربین بخار، کمپرسور هوا، شیپوره و ترفند مرز گسترش‌یافته (فصل ۷ - بخش ۳)
+---
+
+<div class="jh-widget not-content" id="isentropic-eff-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ بازده ایزنتروپیک (<span dir="ltr">η_T, η_C, η_N</span>) و ترفند مرز گسترش‌یافته</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده · IAPWS-IF97</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ مسیر ایده‌آل <span dir="ltr">(1 → 2s)</span> با مسیر واقعی <span dir="ltr">(1 → 2a)</span> در مثال‌های ۷-۱۰ تا ۷-۱۲ و مکان تولید آنتروپی در اسلاید ۷۳
+  </div>
+
+  <div class="jh-widget__btns" id="iel-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="turbine">۱) توربین بخار (مثال ۷-۱۰)</button>
+    <button type="button" class="jh-widget__btn" data-mode="compressor">۲) کمپرسور هوا (مثال ۷-۱۱)</button>
+    <button type="button" class="jh-widget__btn" data-mode="nozzle">۳) شیپوره هوا (مثال ۷-۱۲)</button>
+    <button type="button" class="jh-widget__btn" data-mode="extended">۴) مرز گسترش‌یافته (اسلاید ۷۳)</button>
+  </div>
+
+  <!-- کنترل توربین -->
+  <div id="iel-turb-ctrls">
+    <div class="jh-widget__btns" id="iel-turb-plots">
+      <button type="button" class="jh-widget__btn is-active" data-plot="hs">نمودار مولیر (<span dir="ltr">h-s</span>)</button>
+      <button type="button" class="jh-widget__btn" data-plot="ts">نمودار <span dir="ltr">T-s</span> (دما–آنتروپی)</button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>بازده ایزنتروپیک توربین <span dir="ltr">(η_T = w_a / w_s)</span>: <strong id="iel-etat-lbl" dir="ltr">66.7%</strong></span>
+        <input id="iel-etat" type="range" min="55" max="100" step="0.5" value="66.7" />
+      </label>
+    </div>
+  </div>
+
+  <!-- کنترل کمپرسور -->
+  <div id="iel-comp-ctrls" style="display:none">
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>بازده ایزنتروپیک کمپرسور <span dir="ltr">(η_C = w_s / w_a)</span>: <strong id="iel-etac-lbl" dir="ltr">80%</strong></span>
+        <input id="iel-etac" type="range" min="60" max="100" step="1" value="80" />
+      </label>
+    </div>
+  </div>
+
+  <!-- کنترل شیپوره -->
+  <div id="iel-noz-ctrls" style="display:none">
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>بازده ایزنتروپیک شیپوره <span dir="ltr">(η_N = V²_2a / V²_2s)</span>: <strong id="iel-etan-lbl" dir="ltr">92%</strong></span>
+        <input id="iel-etan" type="range" min="70" max="100" step="1" value="92" />
+      </label>
+    </div>
+  </div>
+
+  <!-- کنترل مرز گسترش یافته -->
+  <div id="iel-ext-ctrls" style="display:none">
+    <div class="jh-widget__btns" id="iel-boundaries">
+      <button type="button" class="jh-widget__btn is-active" data-bnd="inner">مرز (a): چسبیده به دیوارهٔ داخلی <span dir="ltr">(T_b = T_sys)</span></button>
+      <button type="button" class="jh-widget__btn" data-bnd="wall">مرز (b): تا سطح بیرونی دیواره <span dir="ltr">(T_b = T_wall)</span></button>
+      <button type="button" class="jh-widget__btn" data-bnd="extended">مرز (c): گسترش‌یافته تا محیط <span dir="ltr">(T_b = T_surr)</span></button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>دمای سیستم (<span dir="ltr">T_sys</span>): <strong id="iel-ext-tsys-lbl" dir="ltr">400 K</strong></span>
+        <input id="iel-ext-tsys" type="range" min="340" max="500" step="10" value="400" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>دمای محیط (<span dir="ltr">T_surr</span>): <strong id="iel-ext-tsurr-lbl" dir="ltr">300 K</strong></span>
+        <input id="iel-ext-tsurr" type="range" min="280" max="320" step="5" value="300" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>گرمای خروجی (<span dir="ltr">Q_out</span>): <strong id="iel-ext-q-lbl" dir="ltr">1000 kJ</strong></span>
+        <input id="iel-ext-q" type="range" min="500" max="2000" step="100" value="1000" />
+      </label>
+    </div>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱ -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="iel-p1-title">نمودار مولیر (<span dir="ltr">h-s</span>) توربین بخار</span>
+        <span dir="ltr" id="iel-p1-tag">3 MPa, 400°C → 50 kPa</span>
+      </div>
+
+      <!-- SVG نمودار ترمودینامیکی برای توربین / کمپرسور / شیپوره -->
+      <svg id="iel-diag-svg" viewBox="0 0 350 242" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار حالت واقعی و ایزنتروپیک روی h-s یا T-s">
+        <defs>
+          <marker id="iel-arr-ideal" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="#059669" />
+          </marker>
+          <marker id="iel-arr-real" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="#d97706" />
+          </marker>
+        </defs>
+        <g id="iel-grid" stroke="currentColor" stroke-opacity="0.11" stroke-width="1"></g>
+        <line x1="50" y1="22" x2="50" y2="208" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="50" y1="208" x2="336" y2="208" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text id="iel-yaxis" x="54" y="14" fill="currentColor" font-size="10.5" font-weight="800">h (kJ/kg)</text>
+        <text x="334" y="230" text-anchor="end" fill="currentColor" font-size="10.5" font-weight="800">s (kJ/kg·K)</text>
+        <g id="iel-yticks" fill="currentColor" fill-opacity="0.65" font-size="9" text-anchor="end"></g>
+        <g id="iel-xticks" fill="currentColor" fill-opacity="0.65" font-size="9" text-anchor="middle"></g>
+
+        <!-- خط اشباع بخار (در حالت توربین) -->
+        <path id="iel-sat-curve" d="" fill="#38bdf8" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.8" />
+        <!-- خطوط فشار ثابت P1 و P2 -->
+        <path id="iel-iso-p1" d="" fill="none" stroke="#ef4444" stroke-opacity="0.5" stroke-width="1.6" />
+        <path id="iel-iso-p2" d="" fill="none" stroke="#0284c7" stroke-opacity="0.5" stroke-width="1.6" />
+        <text id="iel-p1-lbl" x="140" y="42" fill="#ef4444" font-size="9" font-weight="800">P₁</text>
+        <text id="iel-p2-lbl" x="280" y="162" fill="#0284c7" font-size="9" font-weight="800">P₂</text>
+
+        <!-- مسیر ایزنتروپیک (1 -> 2s) و مسیر واقعی (1 -> 2a) -->
+        <line id="iel-line-s" x1="150" y1="50" x2="150" y2="170" stroke="#059669" stroke-width="2.4" stroke-dasharray="5 3" marker-end="url(#iel-arr-ideal)" />
+        <path id="iel-line-a" d="" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#iel-arr-real)" />
+
+        <!-- براکت s_gen بین 2s و 2a -->
+        <line id="iel-sgen-line" x1="150" y1="186" x2="220" y2="186" stroke="#ef4444" stroke-width="1.8" />
+        <text id="iel-sgen-lbl" x="185" y="198" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">s_gen</text>
+
+        <!-- نقاط 1، 2s، 2a -->
+        <circle id="iel-pt1" cx="150" cy="50" r="4.5" fill="currentColor" />
+        <circle id="iel-pt2s" cx="150" cy="170" r="4.5" fill="#059669" />
+        <circle id="iel-pt2a" cx="220" cy="145" r="5.5" fill="#d97706" stroke="#ffffff" stroke-width="1.6" />
+        <text id="iel-lbl1" x="140" y="46" fill="currentColor" font-size="10" font-weight="800">1</text>
+        <text id="iel-lbl2s" x="136" y="176" fill="#059669" font-size="10" font-weight="800">2s</text>
+        <text id="iel-lbl2a" x="230" y="143" fill="#d97706" font-size="10" font-weight="800">2a</text>
+      </svg>
+
+      <!-- SVG حالت ۴: شماتیک مرز گسترش یافته -->
+      <svg id="iel-ext-schem-svg" viewBox="0 0 350 242" style="width:100%;height:auto;display:none;direction:ltr" aria-label="شماتیک مرز داخلی، دیواره و مرز گسترش یافته تا محیط">
+        <!-- ناحیه سیستم -->
+        <rect x="20" y="28" width="96" height="148" rx="6" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6" />
+        <text x="68" y="48" text-anchor="middle" fill="#ef4444" font-size="10.5" font-weight="800">System</text>
+        <text id="iel-ext-tsys-svg" x="68" y="64" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">T_sys = 400 K</text>
+
+        <!-- دیواره -->
+        <rect x="116" y="28" width="46" height="148" fill="#64748b" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.6" />
+        <text x="139" y="48" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="800">Wall</text>
+        <text x="139" y="108" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="800">S_gen</text>
+
+        <!-- لایه مرزی هوا -->
+        <rect x="162" y="28" width="76" height="148" fill="#38bdf8" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="3 3" />
+        <text x="200" y="48" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="700">Air Film</text>
+        <text x="200" y="108" text-anchor="middle" fill="#d97706" font-size="9" font-weight="800">S_gen</text>
+
+        <!-- محیط دوردست -->
+        <rect x="238" y="28" width="92" height="148" rx="6" fill="#0284c7" fill-opacity="0.12" />
+        <text x="284" y="48" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">Ambient</text>
+        <text id="iel-ext-tsurr-svg" x="284" y="64" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">T_surr = 300 K</text>
+
+        <!-- پروفیل افت دما T(x) -->
+        <path id="iel-ext-tprof" d="M 24 88 L 116 88 L 162 122 L 238 156 L 324 156" fill="none" stroke="#ef4444" stroke-width="2.6" />
+        <text x="28" y="82" fill="#ef4444" font-size="8.5" font-weight="800">T(x)</text>
+
+        <!-- کادر مرز انتخابی متحرک -->
+        <rect id="iel-ext-bndbox" x="14" y="20" width="106" height="164" rx="8" fill="none" stroke="#059669" stroke-width="3" stroke-dasharray="7 4" />
+        <text id="iel-ext-bndlbl" x="175" y="204" text-anchor="middle" fill="#059669" font-size="10.5" font-weight="800">Boundary: Inner Wall (T_b = 400 K)</text>
+        <text id="iel-ext-sub" x="175" y="224" text-anchor="middle" fill="currentColor" fill-opacity="0.72" font-size="9.5" font-weight="700">S_gen inside boundary = 0.00 kJ/K</text>
+      </svg>
+    </div>
+
+    <!-- پنل ۲ -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="iel-p2-title">شماتیک دستگاه و مقایسهٔ کار واقعی/ایزنتروپیک</span>
+        <span dir="ltr" id="iel-p2-tag">η_T = 66.7%</span>
+      </div>
+
+      <!-- SVG دستگاه + میله‌های انرژی -->
+      <svg id="iel-dev-svg" viewBox="0 0 300 242" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک توربین، کمپرسور یا شیپوره و مقایسه کار یا سرعت">
+        <!-- توربین / کمپرسور / شیپوره -->
+        <g id="iel-dev-shape">
+          <polygon id="iel-dev-poly" points="70,42 200,20 200,116 70,94" fill="#0284c7" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.65" stroke-width="2.4" stroke-linejoin="round" />
+          <line id="iel-dev-shaft" x1="200" y1="68" x2="255" y2="68" stroke="currentColor" stroke-opacity="0.65" stroke-width="4" />
+          <!-- پره های چرخان -->
+          <g id="iel-rotor" transform="translate(135, 68)">
+            <line x1="0" y1="-22" x2="0" y2="22" stroke="#0284c7" stroke-width="3" stroke-linecap="round" />
+            <line x1="-22" y1="0" x2="22" y2="0" stroke="#0284c7" stroke-width="3" stroke-linecap="round" />
+            <circle cx="0" cy="0" r="5" fill="#d97706" />
+          </g>
+          <!-- خطوط جریان متحرک -->
+          <line id="iel-flow-in" x1="20" y1="68" x2="66" y2="68" stroke="#ef4444" stroke-width="4" stroke-dasharray="6 5" />
+          <line id="iel-flow-out" x1="204" y1="68" x2="278" y2="68" stroke="#059669" stroke-width="5" stroke-dasharray="6 5" style="display:none" />
+          <text id="iel-dev-in-lbl" x="42" y="54" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">3 MPa, 400°C</text>
+          <text id="iel-dev-out-lbl" x="236" y="52" text-anchor="middle" fill="#059669" font-size="9.5" font-weight="800">Ẇ = 2.0 MW</text>
+        </g>
+
+        <!-- میله مقایسه ایزنتروپیک vs واقعی -->
+        <text id="iel-bar-head" x="20" y="142" fill="currentColor" font-size="10" font-weight="800">Isentropic vs Actual Output:</text>
+
+        <text id="iel-bs-lbl" x="20" y="162" fill="#059669" font-size="9.5" font-weight="700">Ideal (w_s): 823.7 kJ/kg</text>
+        <rect x="20" y="167" width="260" height="16" rx="4" fill="currentColor" fill-opacity="0.08" />
+        <rect id="iel-bs-bar" x="20" y="167" width="240" height="16" rx="4" fill="#059669" />
+
+        <text id="iel-ba-lbl" x="20" y="200" fill="#d97706" font-size="9.5" font-weight="700">Actual (w_a): 549.4 kJ/kg</text>
+        <rect x="20" y="205" width="260" height="16" rx="4" fill="currentColor" fill-opacity="0.08" />
+        <rect id="iel-ba-bar" x="20" y="205" width="160" height="16" rx="4" fill="#d97706" />
+
+        <text id="iel-sgen-bar-txt" x="150" y="236" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">s_gen = s₂a - s₁ = +0.771 kJ/kg·K</text>
+      </svg>
+
+      <!-- SVG تراز آنتروپی مرز گسترش یافته -->
+      <svg id="iel-ext-bars-svg" viewBox="0 0 300 242" style="width:100%;height:auto;display:none;direction:ltr" aria-label="تراز آنتروپی درون مرز انتخابی">
+        <line x1="20" y1="126" x2="280" y2="126" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" />
+        <text x="16" y="130" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+
+        <rect id="iel-eb-dsys" x="34" y="126" width="54" height="50" rx="4" fill="#0284c7" fill-opacity="0.86" />
+        <text id="iel-eb-dsys-v" x="61" y="192" text-anchor="middle" fill="#0284c7" font-size="10" font-weight="800">-2.50</text>
+        <text x="61" y="22" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="700">ΔS_sys</text>
+
+        <rect id="iel-eb-sout" x="122" y="76" width="54" height="50" rx="4" fill="#ef4444" fill-opacity="0.86" />
+        <text id="iel-eb-sout-v" x="149" y="69" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="800">+2.50</text>
+        <text x="149" y="22" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="700">Q / T_b</text>
+
+        <rect id="iel-eb-sgen" x="210" y="96" width="54" height="30" rx="4" fill="#059669" fill-opacity="0.88" />
+        <text id="iel-eb-sgen-v" x="237" y="89" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">0.00</text>
+        <text x="237" y="22" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="700">S_gen,in</text>
+
+        <rect x="20" y="204" width="260" height="28" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2" />
+        <text id="iel-eb-eq" x="150" y="222" text-anchor="middle" fill="currentColor" font-size="10" font-weight="800">S_gen,in = ΔS_sys + Q/T_b = 0.00 kJ/K</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="iel-m1-lbl">کار / سرعت ایده‌آل (<span dir="ltr">2s</span>)</span>
+      <span class="jh-metric__val" id="iel-m1-val">823.7 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="iel-m2-lbl">کار / سرعت واقعی (<span dir="ltr">2a</span>)</span>
+      <span class="jh-metric__val" id="iel-m2-val">549.4 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="iel-m3-lbl">حالت خروجی واقعی (<span dir="ltr">T₂a</span>)</span>
+      <span class="jh-metric__val" id="iel-m3-val">99.9 °C (فوق‌گرم)</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="iel-m4-lbl">تولید آنتروپی (<span dir="ltr">s_gen</span>)</span>
+      <span class="jh-metric__val" id="iel-m4-val">+0.771 kJ/kg·K</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="iel-explain">
+    در <strong>توربین بخار مثال ۷-۱۰</strong>، با <span dir="ltr">η_T = 66.7%</span>، کار خروجی واقعی به <span dir="ltr">549.4 kJ/kg</span> افت کرده و گرمایش اصطکاکی بخار را از داخل گنبد <span dir="ltr">(x₂s = 89.7%)</span> به ناحیهٔ فوق‌گرم <span dir="ltr">(~100 °C)</span> می‌کشاند.
+  </div>
+</div>
+
+<script>
+  import { createViewport, createAnimController } from '../../lib/liveSimKit';
+  import { waterPT, waterPS, waterPH, getWaterDome, IDEAL_GASES } from '../../lib/thermoProps';
+
+  (() => {
+    const root = document.getElementById('isentropic-eff-lab');
+    if (!root) return;
+
+    type LabMode = 'turbine' | 'compressor' | 'nozzle' | 'extended';
+    type TurbPlot = 'hs' | 'ts';
+    type BndType = 'inner' | 'wall' | 'extended';
+
+    let mode: LabMode = 'turbine';
+    let turbPlot: TurbPlot = 'hs';
+    let etaT = 0.667;
+    let etaC = 0.80;
+    let etaN = 0.92;
+
+    let extBnd: BndType = 'inner';
+    let extTsys = 400;
+    let extTsurr = 300;
+    let extQ = 1000;
+
+    let animAngle = 0;
+    let dashOffset = 0;
+
+    // داده‌های ثابت مثال ۷-۱۰ (IAPWS-IF97)
+    const dome = getWaterDome();
+    const tSt1 = waterPT(3000, 400);
+    const tSt2s = waterPS(50, tSt1.s);
+
+    // جدول A-17 سنجل برای کمپرسور هوا (مثال ۷-۱۱)
+    const AIR_A17: Array<{ T: number; h: number; s0: number }> = [
+      { T: 270, h: 270.11, s0: 1.5963 },
+      { T: 285, h: 285.14, s0: 1.6508 },
+      { T: 300, h: 300.19, s0: 1.7020 },
+      { T: 400, h: 400.98, s0: 1.9919 },
+      { T: 500, h: 503.02, s0: 2.2195 },
+      { T: 513.5, h: 517.05, s0: 2.2470 },
+      { T: 569.5, h: 575.03, s0: 2.3540 },
+      { T: 620, h: 628.07, s0: 2.4436 },
+      { T: 680, h: 691.82, s0: 2.5410 },
+      { T: 760, h: 778.18, s0: 2.6601 },
+    ];
+
+    function airPropsByT(T: number): { T: number; h: number; s0: number } {
+      if (T <= AIR_A17[0].T) return AIR_A17[0];
+      for (let i = 0; i < AIR_A17.length - 1; i++) {
+        const a = AIR_A17[i];
+        const b = AIR_A17[i + 1];
+        if (T >= a.T && T <= b.T) {
+          const f = (T - a.T) / (b.T - a.T);
+          return { T, h: a.h + f * (b.h - a.h), s0: a.s0 + f * (b.s0 - a.s0) };
+        }
+      }
+      return AIR_A17[AIR_A17.length - 1];
+    }
+
+    function airPropsByH(h: number): { T: number; h: number; s0: number } {
+      if (h <= AIR_A17[0].h) return AIR_A17[0];
+      for (let i = 0; i < AIR_A17.length - 1; i++) {
+        const a = AIR_A17[i];
+        const b = AIR_A17[i + 1];
+        if (h >= a.h && h <= b.h) {
+          const f = (h - a.h) / (b.h - a.h);
+          return { T: a.T + f * (b.T - a.T), h, s0: a.s0 + f * (b.s0 - a.s0) };
+        }
+      }
+      return AIR_A17[AIR_A17.length - 1];
+    }
+
+    // پیش‌محاسبه ایزوبارهای توربین 3 MPa و 50 kPa
+    function buildWaterIsobar(pKpa: number, sMin: number, sMax: number): Array<{ s: number; h: number; tC: number }> {
+      const pts: Array<{ s: number; h: number; tC: number }> = [];
+      for (let i = 0; i <= 18; i++) {
+        const s = sMin + (i / 18) * (sMax - sMin);
+        const st = waterPS(pKpa, s);
+        pts.push({ s: st.s, h: st.h, tC: st.tC });
+      }
+      return pts;
+    }
+    const iso3MPa = buildWaterIsobar(3000, 5.4, 7.6);
+    const iso50kPa = buildWaterIsobar(50, 5.2, 8.6);
+
+    // المان‌ها
+    const turbCtrls = root.querySelector<HTMLElement>('#iel-turb-ctrls')!;
+    const compCtrls = root.querySelector<HTMLElement>('#iel-comp-ctrls')!;
+    const nozCtrls = root.querySelector<HTMLElement>('#iel-noz-ctrls')!;
+    const extCtrls = root.querySelector<HTMLElement>('#iel-ext-ctrls')!;
+
+    const etaTSlider = root.querySelector<HTMLInputElement>('#iel-etat')!;
+    const etaTLbl = root.querySelector<HTMLElement>('#iel-etat-lbl')!;
+    const etaCSlider = root.querySelector<HTMLInputElement>('#iel-etac')!;
+    const etaCLbl = root.querySelector<HTMLElement>('#iel-etac-lbl')!;
+    const etaNSlider = root.querySelector<HTMLInputElement>('#iel-etan')!;
+    const etaNLbl = root.querySelector<HTMLElement>('#iel-etan-lbl')!;
+
+    const extTsysSlider = root.querySelector<HTMLInputElement>('#iel-ext-tsys')!;
+    const extTsurrSlider = root.querySelector<HTMLInputElement>('#iel-ext-tsurr')!;
+    const extQSlider = root.querySelector<HTMLInputElement>('#iel-ext-q')!;
+    const extTsysLbl = root.querySelector<HTMLElement>('#iel-ext-tsys-lbl')!;
+    const extTsurrLbl = root.querySelector<HTMLElement>('#iel-ext-tsurr-lbl')!;
+    const extQLbl = root.querySelector<HTMLElement>('#iel-ext-q-lbl')!;
+
+    const p1Title = root.querySelector<HTMLElement>('#iel-p1-title')!;
+    const p1Tag = root.querySelector<HTMLElement>('#iel-p1-tag')!;
+    const p2Title = root.querySelector<HTMLElement>('#iel-p2-title')!;
+    const p2Tag = root.querySelector<HTMLElement>('#iel-p2-tag')!;
+
+    const diagSvg = root.querySelector<SVGSVGElement>('#iel-diag-svg')!;
+    const devSvg = root.querySelector<SVGSVGElement>('#iel-dev-svg')!;
+    const extSchemSvg = root.querySelector<SVGSVGElement>('#iel-ext-schem-svg')!;
+    const extBarsSvg = root.querySelector<SVGSVGElement>('#iel-ext-bars-svg')!;
+
+    const gridGrp = root.querySelector<SVGGElement>('#iel-grid')!;
+    const yAxisLbl = root.querySelector<SVGTextElement>('#iel-yaxis')!;
+    const yTicksGrp = root.querySelector<SVGGElement>('#iel-yticks')!;
+    const xTicksGrp = root.querySelector<SVGGElement>('#iel-xticks')!;
+    const satCurve = root.querySelector<SVGPathElement>('#iel-sat-curve')!;
+    const isoP1 = root.querySelector<SVGPathElement>('#iel-iso-p1')!;
+    const isoP2 = root.querySelector<SVGPathElement>('#iel-iso-p2')!;
+    const p1Lbl = root.querySelector<SVGTextElement>('#iel-p1-lbl')!;
+    const p2Lbl = root.querySelector<SVGTextElement>('#iel-p2-lbl')!;
+    const lineS = root.querySelector<SVGLineElement>('#iel-line-s')!;
+    const lineA = root.querySelector<SVGPathElement>('#iel-line-a')!;
+    const sgenLine = root.querySelector<SVGLineElement>('#iel-sgen-line')!;
+    const sgenLbl = root.querySelector<SVGTextElement>('#iel-sgen-lbl')!;
+    const pt1El = root.querySelector<SVGCircleElement>('#iel-pt1')!;
+    const pt2sEl = root.querySelector<SVGCircleElement>('#iel-pt2s')!;
+    const pt2aEl = root.querySelector<SVGCircleElement>('#iel-pt2a')!;
+    const lbl1El = root.querySelector<SVGTextElement>('#iel-lbl1')!;
+    const lbl2sEl = root.querySelector<SVGTextElement>('#iel-lbl2s')!;
+    const lbl2aEl = root.querySelector<SVGTextElement>('#iel-lbl2a')!;
+
+    const devPoly = root.querySelector<SVGPolygonElement>('#iel-dev-poly')!;
+    const devShaft = root.querySelector<SVGLineElement>('#iel-dev-shaft')!;
+    const rotorEl = root.querySelector<SVGGElement>('#iel-rotor')!;
+    const flowIn = root.querySelector<SVGLineElement>('#iel-flow-in')!;
+    const flowOut = root.querySelector<SVGLineElement>('#iel-flow-out')!;
+    const devInLbl = root.querySelector<SVGTextElement>('#iel-dev-in-lbl')!;
+    const devOutLbl = root.querySelector<SVGTextElement>('#iel-dev-out-lbl')!;
+    const barHead = root.querySelector<SVGTextElement>('#iel-bar-head')!;
+    const bsLbl = root.querySelector<SVGTextElement>('#iel-bs-lbl')!;
+    const bsBar = root.querySelector<SVGRectElement>('#iel-bs-bar')!;
+    const baLbl = root.querySelector<SVGTextElement>('#iel-ba-lbl')!;
+    const baBar = root.querySelector<SVGRectElement>('#iel-ba-bar')!;
+    const sgenBarTxt = root.querySelector<SVGTextElement>('#iel-sgen-bar-txt')!;
+
+    const extTsysSvg = root.querySelector<SVGTextElement>('#iel-ext-tsys-svg')!;
+    const extTsurrSvg = root.querySelector<SVGTextElement>('#iel-ext-tsurr-svg')!;
+    const extBndBox = root.querySelector<SVGRectElement>('#iel-ext-bndbox')!;
+    const extBndLbl = root.querySelector<SVGTextElement>('#iel-ext-bndlbl')!;
+    const extSub = root.querySelector<SVGTextElement>('#iel-ext-sub')!;
+    const ebDsys = root.querySelector<SVGRectElement>('#iel-eb-dsys')!;
+    const ebDsysV = root.querySelector<SVGTextElement>('#iel-eb-dsys-v')!;
+    const ebSout = root.querySelector<SVGRectElement>('#iel-eb-sout')!;
+    const ebSoutV = root.querySelector<SVGTextElement>('#iel-eb-sout-v')!;
+    const ebSgen = root.querySelector<SVGRectElement>('#iel-eb-sgen')!;
+    const ebSgenV = root.querySelector<SVGTextElement>('#iel-eb-sgen-v')!;
+    const ebEq = root.querySelector<SVGTextElement>('#iel-eb-eq')!;
+
+    const m1Lbl = root.querySelector<HTMLElement>('#iel-m1-lbl')!;
+    const m2Lbl = root.querySelector<HTMLElement>('#iel-m2-lbl')!;
+    const m3Lbl = root.querySelector<HTMLElement>('#iel-m3-lbl')!;
+    const m4Lbl = root.querySelector<HTMLElement>('#iel-m4-lbl')!;
+    const m1Val = root.querySelector<HTMLElement>('#iel-m1-val')!;
+    const m2Val = root.querySelector<HTMLElement>('#iel-m2-val')!;
+    const m3Val = root.querySelector<HTMLElement>('#iel-m3-val')!;
+    const m4Val = root.querySelector<HTMLElement>('#iel-m4-val')!;
+    const explainEl = root.querySelector<HTMLElement>('#iel-explain')!;
+
+    function drawAxes(
+      vp: ReturnType<typeof createViewport>,
+      yTicks: number[],
+      xTicks: number[],
+      yTitle: string
+    ) {
+      yAxisLbl.textContent = yTitle;
+      let g = '';
+      let yt = '';
+      let xt = '';
+      for (const yv of yTicks) {
+        const y = vp.y(yv);
+        g += `<line x1="50" y1="${y.toFixed(1)}" x2="334" y2="${y.toFixed(1)}" />`;
+        yt += `<text x="44" y="${(y + 3).toFixed(1)}">${yv}</text>`;
+      }
+      for (const xv of xTicks) {
+        const x = vp.x(xv);
+        g += `<line x1="${x.toFixed(1)}" y1="18" x2="${x.toFixed(1)}" y2="208" />`;
+        xt += `<text x="${x.toFixed(1)}" y="220">${xv.toFixed(1)}</text>`;
+      }
+      gridGrp.innerHTML = g;
+      yTicksGrp.innerHTML = yt;
+      xTicksGrp.innerHTML = xt;
+    }
+
+    function renderTurbine() {
+      etaTLbl.textContent = `${(etaT * 100).toFixed(1)}%`;
+      const isHS = turbPlot === 'hs';
+      const ws = tSt1.h - tSt2s.h;
+      const wa = etaT * ws;
+      const h2a = tSt1.h - wa;
+      const st2a = waterPH(50, h2a);
+      const sGen = st2a.s - tSt1.s;
+      const mDot = 2000 / wa;
+
+      p1Title.innerHTML = isHS
+        ? 'نمودار مولیر (<span dir="ltr">h-s</span>) توربین بخار'
+        : 'نمودار <span dir="ltr">T-s</span> توربین بخار';
+      p1Tag.textContent = '3 MPa, 400°C → 50 kPa';
+      p2Title.innerHTML = 'شماتیک توربین و توان واقعی';
+      p2Tag.textContent = `η_T = ${(etaT * 100).toFixed(1)}%`;
+
+      const vp = isHS
+        ? createViewport(5.2, 8.6, 2100, 3450, 50, 334, 208, 26)
+        : createViewport(5.2, 8.6, 20, 440, 50, 334, 208, 26);
+
+      drawAxes(
+        vp,
+        isHS ? [2200, 2600, 3000, 3400] : [100, 200, 300, 400],
+        [5.5, 6.5, 7.5, 8.5],
+        isHS ? 'h (kJ/kg)' : 'T (°C)'
+      );
+
+      const yGet = (pt: { h: number; tC: number }) => (isHS ? pt.h : pt.tC);
+
+      // منحنی اشباع بخار درون پنجره
+      satCurve.style.display = '';
+      const domePts: Array<[number, number]> = dome
+        .filter((d) => d.sg >= 5.0 && d.sg <= 8.8)
+        .map((d) => [d.sg, isHS ? d.hg : d.tC]);
+      satCurve.setAttribute('d', vp.path(domePts));
+
+      isoP1.setAttribute('d', vp.path(iso3MPa.map((p) => [p.s, yGet(p)])));
+      isoP2.setAttribute('d', vp.path(iso50kPa.map((p) => [p.s, yGet(p)])));
+      p1Lbl.setAttribute('x', vp.x(6.2).toFixed(1));
+      p1Lbl.setAttribute('y', (vp.y(yGet(iso3MPa[5])) - 6).toFixed(1));
+      p1Lbl.textContent = '3 MPa';
+      p2Lbl.setAttribute('x', vp.x(8.15).toFixed(1));
+      p2Lbl.setAttribute('y', (vp.y(yGet(iso50kPa[15])) - 6).toFixed(1));
+      p2Lbl.textContent = '50 kPa';
+
+      const x1 = vp.x(tSt1.s);
+      const y1 = vp.y(yGet(tSt1));
+      const x2s = vp.x(tSt2s.s);
+      const y2s = vp.y(yGet(tSt2s));
+      const x2a = vp.x(st2a.s);
+      const y2a = vp.y(yGet(st2a));
+
+      lineS.setAttribute('x1', x1.toFixed(1));
+      lineS.setAttribute('y1', y1.toFixed(1));
+      lineS.setAttribute('x2', x2s.toFixed(1));
+      lineS.setAttribute('y2', y2s.toFixed(1));
+
+      const xm = (x1 + x2a) / 2 - 4;
+      const ym = (y1 + y2a) / 2 + 6;
+      lineA.setAttribute('d', `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${xm.toFixed(1)} ${ym.toFixed(1)} ${x2a.toFixed(1)} ${y2a.toFixed(1)}`);
+
+      sgenLine.style.display = sGen > 0.01 ? '' : 'none';
+      sgenLbl.style.display = sGen > 0.01 ? '' : 'none';
+      const sgY = Math.min(200, Math.max(y2s, y2a) + 14);
+      sgenLine.setAttribute('x1', x2s.toFixed(1));
+      sgenLine.setAttribute('x2', x2a.toFixed(1));
+      sgenLine.setAttribute('y1', sgY.toFixed(1));
+      sgenLine.setAttribute('y2', sgY.toFixed(1));
+      sgenLbl.setAttribute('x', ((x2s + x2a) / 2).toFixed(1));
+      sgenLbl.setAttribute('y', (sgY + 11).toFixed(1));
+      sgenLbl.textContent = `s_gen=+${sGen.toFixed(3)}`;
+
+      pt1El.setAttribute('cx', x1.toFixed(1));
+      pt1El.setAttribute('cy', y1.toFixed(1));
+      lbl1El.setAttribute('x', (x1 - 12).toFixed(1));
+      lbl1El.setAttribute('y', (y1 - 4).toFixed(1));
+
+      pt2sEl.setAttribute('cx', x2s.toFixed(1));
+      pt2sEl.setAttribute('cy', y2s.toFixed(1));
+      lbl2sEl.setAttribute('x', (x2s - 18).toFixed(1));
+      lbl2sEl.setAttribute('y', (y2s + 10).toFixed(1));
+
+      pt2aEl.setAttribute('cx', x2a.toFixed(1));
+      pt2aEl.setAttribute('cy', y2a.toFixed(1));
+      lbl2aEl.setAttribute('x', (x2a + 9).toFixed(1));
+      lbl2aEl.setAttribute('y', (y2a - 4).toFixed(1));
+
+      // شماتیک توربین واگرا
+      devPoly.setAttribute('points', '72,44 198,20 198,116 72,92');
+      devShaft.setAttribute('x1', '198');
+      devShaft.setAttribute('x2', '255');
+      devShaft.style.display = '';
+      rotorEl.style.display = '';
+      flowOut.style.display = 'none';
+      devInLbl.textContent = '3 MPa, 400°C';
+      devOutLbl.textContent = `ṁ = ${mDot.toFixed(2)} kg/s (2 MW)`;
+
+      barHead.textContent = 'Turbine Work (Δh):';
+      bsLbl.textContent = `Ideal (w_s = h₁-h₂s): ${ws.toFixed(1)} kJ/kg`;
+      baLbl.textContent = `Actual (w_a = η_T·w_s): ${wa.toFixed(1)} kJ/kg`;
+      bsBar.setAttribute('width', '250');
+      baBar.setAttribute('width', (250 * etaT).toFixed(1));
+      sgenBarTxt.textContent = `s_gen = s₂a - s₁ = +${sGen.toFixed(3)} kJ/kg·K`;
+
+      const phaseStr = st2a.x !== null ? `دوفازی x=${(st2a.x * 100).toFixed(1)}%` : 'فوق‌گرم';
+      m1Lbl.innerHTML = 'کار ایزنتروپیک (<span dir="ltr">w_s</span>)';
+      m2Lbl.innerHTML = 'کار واقعی (<span dir="ltr">w_a</span>)';
+      m3Lbl.innerHTML = 'خروجی واقعی (<span dir="ltr">T₂a</span>) و دبی برای <span dir="ltr">2 MW</span>';
+      m4Lbl.innerHTML = 'تولید آنتروپی (<span dir="ltr">s_gen</span>)';
+
+      m1Val.textContent = `${ws.toFixed(1)} kJ/kg`;
+      m2Val.textContent = `${wa.toFixed(1)} kJ/kg`;
+      m3Val.textContent = `${st2a.tC.toFixed(1)} °C (${phaseStr}) | ${mDot.toFixed(2)} kg/s`;
+      m4Val.textContent = `+${sGen.toFixed(3)} kJ/kg·K`;
+
+      explainEl.innerHTML = `در <strong>توربین بخار مثال ۷-۱۰</strong>، با <span dir="ltr">η_T = ${(etaT * 100).toFixed(1)}%</span>، کار واقعی برابر <span dir="ltr">w_a = ${wa.toFixed(1)} kJ/kg</span> است و برای تولید <span dir="ltr">2 MW</span> توان به دبی <span dir="ltr">${mDot.toFixed(2)} kg/s</span> نیاز داریم. اصطکاک پره‌ها آنتروپی را <span dir="ltr">+${sGen.toFixed(3)} kJ/kg·K</span> به سمت راست جابه‌جا کرده و بخار خروجی را از <span dir="ltr">81.3 °C (x₂s = 89.7%)</span> تا <span dir="ltr">${st2a.tC.toFixed(1)} °C</span> گرم نگه می‌دارد.`;
+    }
+
+    function renderCompressor() {
+      etaCLbl.textContent = `${Math.round(etaC * 100)}%`;
+      const air = IDEAL_GASES.air;
+      const p1 = 100;
+      const p2 = 800;
+      const mDot = 0.2;
+
+      const st1 = airPropsByT(285);
+      const st2s = airPropsByT(513.5);
+      const ws = st2s.h - st1.h; // 231.91 kJ/kg
+      const wa = ws / etaC;
+      const h2a = st1.h + wa;
+      const st2a = airPropsByH(h2a);
+      const sGen = st2a.s0 - st2s.s0; // چون P2s = P2a = 800 kPa، پس s2a - s2s = s0(2a) - s0(2s)!
+
+      p1Title.innerHTML = 'نمودار <span dir="ltr">T-s</span> کمپرسور هوا (<span dir="ltr">Table A-17</span>)';
+      p1Tag.textContent = '100 kPa, 285 K → 800 kPa';
+      p2Title.innerHTML = 'شماتیک کمپرسور و توان مصرفی';
+      p2Tag.textContent = `η_C = ${Math.round(etaC * 100)}%`;
+
+      const vp = createViewport(-0.08, 0.30, 260, 720, 50, 334, 208, 18);
+      drawAxes(vp, [300, 400, 500, 600, 700], [0.0, 0.1, 0.2, 0.3], 'T (K)');
+      satCurve.style.display = 'none';
+
+      // خطوط هم‌فشار s_rel(T) = s0(T) - s0(285) - R ln(P/100)
+      const p1Pts: Array<[number, number]> = [];
+      const p2Pts: Array<[number, number]> = [];
+      for (let t = 270; t <= 700; t += 20) {
+        const pr = airPropsByT(t);
+        p1Pts.push([pr.s0 - st1.s0, t]);
+        p2Pts.push([pr.s0 - st1.s0 - air.R * Math.log(p2 / p1), t]);
+      }
+      isoP1.setAttribute('d', vp.path(p1Pts));
+      isoP2.setAttribute('d', vp.path(p2Pts));
+      p1Lbl.setAttribute('x', vp.x(0.18).toFixed(1));
+      p1Lbl.setAttribute('y', (vp.y(350) + 12).toFixed(1));
+      p1Lbl.textContent = '100 kPa';
+      p2Lbl.setAttribute('x', vp.x(0.08).toFixed(1));
+      p2Lbl.setAttribute('y', (vp.y(640) - 6).toFixed(1));
+      p2Lbl.textContent = '800 kPa';
+
+      const s1 = 0;
+      const s2s = 0;
+      const s2a = sGen;
+
+      const x1 = vp.x(s1);
+      const y1 = vp.y(st1.T);
+      const x2s = vp.x(s2s);
+      const y2s = vp.y(st2s.T);
+      const x2a = vp.x(s2a);
+      const y2a = vp.y(st2a.T);
+
+      lineS.setAttribute('x1', x1.toFixed(1));
+      lineS.setAttribute('y1', y1.toFixed(1));
+      lineS.setAttribute('x2', x2s.toFixed(1));
+      lineS.setAttribute('y2', y2s.toFixed(1));
+
+      const xm = (x1 + x2a) / 2 + 4;
+      const ym = (y1 + y2a) / 2 + 4;
+      lineA.setAttribute('d', `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${xm.toFixed(1)} ${ym.toFixed(1)} ${x2a.toFixed(1)} ${y2a.toFixed(1)}`);
+
+      sgenLine.style.display = sGen > 0.005 ? '' : 'none';
+      sgenLbl.style.display = sGen > 0.005 ? '' : 'none';
+      sgenLine.setAttribute('x1', x2s.toFixed(1));
+      sgenLine.setAttribute('x2', x2a.toFixed(1));
+      sgenLine.setAttribute('y1', (y2s - 18).toFixed(1));
+      sgenLine.setAttribute('y2', (y2s - 18).toFixed(1));
+      sgenLbl.setAttribute('x', ((x2s + x2a) / 2).toFixed(1));
+      sgenLbl.setAttribute('y', (y2s - 23).toFixed(1));
+      sgenLbl.textContent = `s_gen=+${sGen.toFixed(3)}`;
+
+      pt1El.setAttribute('cx', x1.toFixed(1));
+      pt1El.setAttribute('cy', y1.toFixed(1));
+      lbl1El.setAttribute('x', (x1 - 12).toFixed(1));
+      lbl1El.setAttribute('y', (y1 + 8).toFixed(1));
+
+      pt2sEl.setAttribute('cx', x2s.toFixed(1));
+      pt2sEl.setAttribute('cy', y2s.toFixed(1));
+      lbl2sEl.setAttribute('x', (x2s - 18).toFixed(1));
+      lbl2sEl.setAttribute('y', (y2s + 4).toFixed(1));
+
+      pt2aEl.setAttribute('cx', x2a.toFixed(1));
+      pt2aEl.setAttribute('cy', y2a.toFixed(1));
+      lbl2aEl.setAttribute('x', (x2a + 9).toFixed(1));
+      lbl2aEl.setAttribute('y', (y2a - 4).toFixed(1));
+
+      // شماتیک کمپرسور همگرا
+      devPoly.setAttribute('points', '72,22 198,42 198,94 72,114');
+      devShaft.style.display = '';
+      rotorEl.style.display = '';
+      flowOut.style.display = 'none';
+      devInLbl.textContent = '100 kPa, 285 K';
+      devOutLbl.textContent = `Ẇ_in = ${(mDot * wa).toFixed(1)} kW`;
+
+      barHead.textContent = 'Compressor Power Input (ṁ·Δh):';
+      const maxW = ws / 0.6;
+      bsLbl.textContent = `Ideal (Ẇ_s): ${(mDot * ws).toFixed(1)} kW (${ws.toFixed(1)} kJ/kg)`;
+      baLbl.textContent = `Actual (Ẇ_a = Ẇ_s / η_C): ${(mDot * wa).toFixed(1)} kW (${wa.toFixed(1)} kJ/kg)`;
+      bsBar.setAttribute('width', (250 * (ws / maxW)).toFixed(1));
+      baBar.setAttribute('width', (250 * (wa / maxW)).toFixed(1));
+      sgenBarTxt.textContent = `T₂a = ${st2a.T.toFixed(1)} K > T₂s = ${st2s.T.toFixed(1)} K  |  s_gen = +${sGen.toFixed(3)} kJ/kg·K`;
+
+      m1Lbl.innerHTML = 'توان ایده‌آل (<span dir="ltr">Ẇ_s</span>)';
+      m2Lbl.innerHTML = 'توان واقعی <span dir="ltr">(Ẇ_a = Ẇ_s / η_C)</span>';
+      m3Lbl.innerHTML = 'دمای واقعی خروجی <span dir="ltr">(T₂a > T₂s)</span>';
+      m4Lbl.innerHTML = 'تولید آنتروپی (<span dir="ltr">s_gen</span>)';
+
+      m1Val.textContent = `${(mDot * ws).toFixed(1)} kW (${ws.toFixed(1)} kJ/kg)`;
+      m2Val.textContent = `${(mDot * wa).toFixed(1)} kW (${wa.toFixed(1)} kJ/kg)`;
+      m3Val.textContent = `${st2a.T.toFixed(1)} K (vs ${st2s.T.toFixed(1)} K)`;
+      m4Val.textContent = `+${sGen.toFixed(3)} kJ/kg·K`;
+
+      explainEl.innerHTML = `در <strong>کمپرسور هوا مثال ۷-۱۱</strong> با <span dir="ltr">η_C = ${Math.round(etaC * 100)}%</span>، کار واقعی <strong><span dir="ltr">${((1 / etaC - 1) * 100).toFixed(0)}%</span> بیشتر</strong> از حالت ایده‌آل است (<span dir="ltr">${(mDot * wa).toFixed(1)} kW</span> در برابر <span dir="ltr">${(mDot * ws).toFixed(1)} kW</span>) و اصطکاک باعث بالا رفتن دمای هوای خروجی از <span dir="ltr">513.5 K</span> به <strong><span dir="ltr">${st2a.T.toFixed(1)} K</span></strong> می‌شود.`;
+    }
+
+    function renderNozzle() {
+      etaNLbl.textContent = `${Math.round(etaN * 100)}%`;
+      const cp = 1.099;
+      const k = 1.354;
+      const R = 0.287;
+      const T1 = 950;
+      const p1 = 200;
+      const p2 = 80;
+
+      const T2s = T1 * Math.pow(p2 / p1, (k - 1) / k); // 747.8 K -> 748 K
+      const V2s = Math.sqrt(2 * cp * 1000 * (T1 - T2s)); // ~666.7 m/s
+      const T2a = T1 - etaN * (T1 - T2s); // 764.0 K at 92%
+      const V2a = Math.sqrt(etaN) * V2s; // ~639.5 m/s
+      const sGen = cp * Math.log(T2a / T2s);
+
+      p1Title.innerHTML = 'نمودار <span dir="ltr">T-s</span> انبساط در شیپوره هوا';
+      p1Tag.textContent = '200 kPa, 950 K → 80 kPa';
+      p2Title.innerHTML = 'شماتیک شیپوره و سرعت خروجی';
+      p2Tag.textContent = `η_N = ${Math.round(etaN * 100)}%`;
+
+      const vp = createViewport(-0.08, 0.14, 700, 990, 50, 334, 208, 18);
+      drawAxes(vp, [740, 800, 880, 950], [-0.05, 0.0, 0.05, 0.10], 'T (K)');
+      satCurve.style.display = 'none';
+
+      const p1Pts: Array<[number, number]> = [];
+      const p2Pts: Array<[number, number]> = [];
+      for (let t = 710; t <= 980; t += 20) {
+        p1Pts.push([cp * Math.log(t / T1), t]);
+        p2Pts.push([cp * Math.log(t / T1) - R * Math.log(p2 / p1), t]);
+      }
+      isoP1.setAttribute('d', vp.path(p1Pts));
+      isoP2.setAttribute('d', vp.path(p2Pts));
+      p1Lbl.setAttribute('x', vp.x(-0.06).toFixed(1));
+      p1Lbl.setAttribute('y', (vp.y(890) - 6).toFixed(1));
+      p1Lbl.textContent = '200 kPa';
+      p2Lbl.setAttribute('x', vp.x(0.08).toFixed(1));
+      p2Lbl.setAttribute('y', (vp.y(800) - 6).toFixed(1));
+      p2Lbl.textContent = '80 kPa';
+
+      const x1 = vp.x(0);
+      const y1 = vp.y(T1);
+      const x2s = vp.x(0);
+      const y2s = vp.y(T2s);
+      const x2a = vp.x(sGen);
+      const y2a = vp.y(T2a);
+
+      lineS.setAttribute('x1', x1.toFixed(1));
+      lineS.setAttribute('y1', y1.toFixed(1));
+      lineS.setAttribute('x2', x2s.toFixed(1));
+      lineS.setAttribute('y2', y2s.toFixed(1));
+
+      const xm = (x1 + x2a) / 2 - 4;
+      const ym = (y1 + y2a) / 2 + 4;
+      lineA.setAttribute('d', `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${xm.toFixed(1)} ${ym.toFixed(1)} ${x2a.toFixed(1)} ${y2a.toFixed(1)}`);
+
+      sgenLine.style.display = sGen > 0.002 ? '' : 'none';
+      sgenLbl.style.display = sGen > 0.002 ? '' : 'none';
+      sgenLine.setAttribute('x1', x2s.toFixed(1));
+      sgenLine.setAttribute('x2', x2a.toFixed(1));
+      sgenLine.setAttribute('y1', (y2s + 14).toFixed(1));
+      sgenLine.setAttribute('y2', (y2s + 14).toFixed(1));
+      sgenLbl.setAttribute('x', ((x2s + x2a) / 2).toFixed(1));
+      sgenLbl.setAttribute('y', (y2s + 26).toFixed(1));
+      sgenLbl.textContent = `s_gen=+${sGen.toFixed(4)}`;
+
+      pt1El.setAttribute('cx', x1.toFixed(1));
+      pt1El.setAttribute('cy', y1.toFixed(1));
+      lbl1El.setAttribute('x', (x1 - 12).toFixed(1));
+      lbl1El.setAttribute('y', (y1 - 4).toFixed(1));
+
+      pt2sEl.setAttribute('cx', x2s.toFixed(1));
+      pt2sEl.setAttribute('cy', y2s.toFixed(1));
+      lbl2sEl.setAttribute('x', (x2s - 18).toFixed(1));
+      lbl2sEl.setAttribute('y', (y2s + 4).toFixed(1));
+
+      pt2aEl.setAttribute('cx', x2a.toFixed(1));
+      pt2aEl.setAttribute('cy', y2a.toFixed(1));
+      lbl2aEl.setAttribute('x', (x2a + 9).toFixed(1));
+      lbl2aEl.setAttribute('y', (y2a - 4).toFixed(1));
+
+      // شماتیک شیپوره همگرا
+      devPoly.setAttribute('points', '72,22 198,48 198,88 72,114');
+      devShaft.style.display = 'none';
+      rotorEl.style.display = 'none';
+      flowOut.style.display = '';
+      devInLbl.textContent = '200 kPa, 950 K';
+      devOutLbl.textContent = `V₂a = ${V2a.toFixed(0)} m/s`;
+
+      barHead.textContent = 'Exit Velocity (V = √η_N · V_2s):';
+      bsLbl.textContent = `Ideal Speed (V₂s): ${V2s.toFixed(0)} m/s (T₂s=${T2s.toFixed(0)} K)`;
+      baLbl.textContent = `Actual Speed (V₂a): ${V2a.toFixed(0)} m/s (T₂a=${T2a.toFixed(0)} K)`;
+      bsBar.setAttribute('width', '250');
+      baBar.setAttribute('width', (250 * Math.sqrt(etaN)).toFixed(1));
+      sgenBarTxt.textContent = `KE₂a / KE₂s = ${(etaN * 100).toFixed(0)}%  |  V₂a / V₂s = ${(Math.sqrt(etaN) * 100).toFixed(1)}%`;
+
+      m1Lbl.innerHTML = 'سرعت بیشینه (<span dir="ltr">V₂s</span>)';
+      m2Lbl.innerHTML = 'سرعت واقعی <span dir="ltr">(V₂a = √η_N · V₂s)</span>';
+      m3Lbl.innerHTML = 'دمای واقعی خروجی (<span dir="ltr">T₂a</span>)';
+      m4Lbl.innerHTML = 'تولید آنتروپی (<span dir="ltr">s_gen</span>)';
+
+      m1Val.textContent = `${V2s.toFixed(0)} m/s`;
+      m2Val.textContent = `${V2a.toFixed(0)} m/s (${(Math.sqrt(etaN) * 100).toFixed(1)}%)`;
+      m3Val.textContent = `${T2a.toFixed(0)} K (vs ${T2s.toFixed(0)} K)`;
+      m4Val.textContent = `+${sGen.toFixed(4)} kJ/kg·K`;
+
+      explainEl.innerHTML = `در <strong>شیپوره هوا مثال ۷-۱۲</strong>، بازده ایزنتروپیک <span dir="ltr">η_N = ${Math.round(etaN * 100)}%</span> نسبت انرژی‌های جنبشی (<span dir="ltr">V²</span>) است؛ پس سرعت واقعی خروجی برابر <strong><span dir="ltr">√${etaN.toFixed(2)} = ${(Math.sqrt(etaN) * 100).toFixed(1)}%</span></strong> سرعت ایده‌آل یعنی <strong><span dir="ltr">${V2a.toFixed(0)} m/s</span></strong> (در برابر <span dir="ltr">${V2s.toFixed(0)} m/s</span>) است!`;
+    }
+
+    function renderExtended() {
+      if (extTsurr >= extTsys - 10) {
+        extTsurr = extTsys - 10;
+        extTsurrSlider.value = String(extTsurr);
+      }
+      extTsysLbl.textContent = `${extTsys.toFixed(0)} K`;
+      extTsurrLbl.textContent = `${extTsurr.toFixed(0)} K`;
+      extQLbl.textContent = `${extQ.toFixed(0)} kJ`;
+
+      const tWallOut = extTsurr + 0.5 * (extTsys - extTsurr);
+      const Tb = extBnd === 'inner' ? extTsys : extBnd === 'wall' ? tWallOut : extTsurr;
+
+      const dSsys = -extQ / extTsys;
+      const sOut = extQ / Tb;
+      const sGenIn = dSsys + sOut;
+      const sGenTot = dSsys + extQ / extTsurr;
+
+      p1Title.innerHTML = 'مکان فیزیکی مرز انتخابی و افت دما';
+      p1Tag.textContent = `T_b = ${Tb.toFixed(0)} K`;
+      p2Title.innerHTML = 'تراز آنتروپی درون مرز انتخابی';
+      p2Tag.textContent = `S_gen,in = ${sGenIn.toFixed(2)} kJ/K`;
+
+      extTsysSvg.textContent = `T_sys = ${extTsys} K`;
+      extTsurrSvg.textContent = `T_surr = ${extTsurr} K`;
+
+      if (extBnd === 'inner') {
+        extBndBox.setAttribute('width', '106');
+        extBndBox.setAttribute('stroke', '#059669');
+        extBndLbl.setAttribute('fill', '#059669');
+        extBndLbl.textContent = `Boundary (a): Inner Wall (T_b = ${extTsys} K)`;
+      } else if (extBnd === 'wall') {
+        extBndBox.setAttribute('width', '152');
+        extBndBox.setAttribute('stroke', '#d97706');
+        extBndLbl.setAttribute('fill', '#d97706');
+        extBndLbl.textContent = `Boundary (b): Includes Wall (T_b = ${tWallOut.toFixed(0)} K)`;
+      } else {
+        extBndBox.setAttribute('width', '228');
+        extBndBox.setAttribute('stroke', '#0284c7');
+        extBndLbl.setAttribute('fill', '#0284c7');
+        extBndLbl.textContent = `Boundary (c): Extended to Ambient (T_b = ${extTsurr} K)`;
+      }
+      extSub.textContent = `S_gen inside boundary = ${sGenIn.toFixed(2)} kJ/K (Total = ${sGenTot.toFixed(2)})`;
+
+      const maxS = Math.max(4, extQ / extTsurr);
+      const pxPerS = 84 / maxS;
+      const zeroY = 126;
+
+      const hSys = Math.min(72, Math.abs(dSsys) * pxPerS);
+      ebDsys.setAttribute('y', String(zeroY));
+      ebDsys.setAttribute('height', Math.max(2, hSys).toFixed(1));
+      ebDsysV.setAttribute('y', (zeroY + hSys + 13).toFixed(1));
+      ebDsysV.textContent = dSsys.toFixed(2);
+
+      const hOut = Math.min(88, sOut * pxPerS);
+      ebSout.setAttribute('y', (zeroY - hOut).toFixed(1));
+      ebSout.setAttribute('height', Math.max(2, hOut).toFixed(1));
+      ebSoutV.setAttribute('y', Math.max(36, zeroY - hOut - 6).toFixed(1));
+      ebSoutV.textContent = `+${sOut.toFixed(2)}`;
+
+      const hGen = Math.min(88, sGenIn * pxPerS);
+      ebSgen.setAttribute('y', (zeroY - Math.max(2, hGen)).toFixed(1));
+      ebSgen.setAttribute('height', Math.max(2, hGen).toFixed(1));
+      ebSgenV.setAttribute('y', Math.max(36, zeroY - Math.max(2, hGen) - 6).toFixed(1));
+      ebSgenV.textContent = `+${sGenIn.toFixed(2)}`;
+
+      ebEq.textContent = `S_gen,in = ${dSsys.toFixed(2)} + ${sOut.toFixed(2)} = +${sGenIn.toFixed(2)} kJ/K`;
+
+      m1Lbl.innerHTML = 'تغییر آنتروپی سیستم (<span dir="ltr">ΔS_sys</span>)';
+      m2Lbl.innerHTML = 'آنتروپی خروجی با گرما <span dir="ltr">(Q / T_b)</span>';
+      m3Lbl.innerHTML = 'آنتروپی تولیدی درون مرز (<span dir="ltr">S_gen,in</span>)';
+      m4Lbl.innerHTML = 'آنتروپی تولیدی کل جهان (<span dir="ltr">S_gen,total</span>)';
+
+      m1Val.textContent = `${dSsys.toFixed(2)} kJ/K`;
+      m2Val.textContent = `+${sOut.toFixed(2)} kJ/K`;
+      m3Val.textContent = `+${sGenIn.toFixed(2)} kJ/K`;
+      m4Val.textContent = `+${sGenTot.toFixed(2)} kJ/K`;
+
+      explainEl.innerHTML = extBnd === 'inner'
+        ? `وقتی <strong>مرز روی دیوارهٔ داخلی</strong> است <span dir="ltr">(T_b = T_sys = ${extTsys} K)</span>، درون سیستم هیچ افت دمایی نیست و <strong><span dir="ltr">S_gen,in = 0.00 kJ/K</span></strong> می‌شود؛ یعنی تمام تولید آنتروپی بیرون از مرز (درون دیواره و لایهٔ مرزی هوا) رخ می‌دهد.`
+        : extBnd === 'wall'
+          ? `با گسترش مرز تا <strong>سطح بیرونی دیواره</strong> <span dir="ltr">(T_b = ${tWallOut.toFixed(0)} K)</span>، بخشی از تولید آنتروپی <span dir="ltr">(+${sGenIn.toFixed(2)} kJ/K)</span> داخل مرز دیده می‌شود، ولی تولید آنتروپی لایهٔ هوا هنوز بیرون مرز مانده است.`
+          : `با <strong>ترفند مرز گسترش‌یافته تا دمای محیط</strong> <span dir="ltr">(T_b = T_surr = ${extTsurr} K)</span>، تمام افت دما درون مرز قرار می‌گیرد و کل آنتروپی تولیدی فرآیند یعنی <strong><span dir="ltr">S_gen,total = +${sGenTot.toFixed(2)} kJ/K</span></strong> یکجا محاسبه می‌شود!`;
+    }
+
+    function renderAll() {
+      if (mode === 'turbine') renderTurbine();
+      else if (mode === 'compressor') renderCompressor();
+      else if (mode === 'nozzle') renderNozzle();
+      else renderExtended();
+    }
+
+    const anim = createAnimController(root, (dt) => {
+      if (mode === 'extended') return false;
+      dashOffset = (dashOffset + dt * 30) % 22;
+      flowIn.setAttribute('stroke-dashoffset', (-dashOffset).toFixed(1));
+      flowOut.setAttribute('stroke-dashoffset', (-dashOffset).toFixed(1));
+      if (mode === 'turbine' || mode === 'compressor') {
+        const dir = mode === 'turbine' ? 1 : -1;
+        animAngle = (animAngle + dir * dt * 160) % 360;
+        rotorEl.setAttribute('transform', `translate(135, 68) rotate(${animAngle.toFixed(1)})`);
+      }
+    });
+
+    root.querySelectorAll('#iel-modes button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#iel-modes button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        mode = (btn.getAttribute('data-mode') as LabMode) || 'turbine';
+
+        turbCtrls.style.display = mode === 'turbine' ? '' : 'none';
+        compCtrls.style.display = mode === 'compressor' ? '' : 'none';
+        nozCtrls.style.display = mode === 'nozzle' ? '' : 'none';
+        extCtrls.style.display = mode === 'extended' ? '' : 'none';
+
+        const isExt = mode === 'extended';
+        diagSvg.style.display = isExt ? 'none' : 'block';
+        devSvg.style.display = isExt ? 'none' : 'block';
+        extSchemSvg.style.display = isExt ? 'block' : 'none';
+        extBarsSvg.style.display = isExt ? 'block' : 'none';
+
+        if (isExt) anim.stop();
+        else anim.start();
+        renderAll();
+      });
+    });
+
+    root.querySelectorAll('#iel-turb-plots button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#iel-turb-plots button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        turbPlot = (btn.getAttribute('data-plot') as TurbPlot) || 'hs';
+        renderTurbine();
+      });
+    });
+
+    root.querySelectorAll('#iel-boundaries button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#iel-boundaries button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        extBnd = (btn.getAttribute('data-bnd') as BndType) || 'inner';
+        renderExtended();
+      });
+    });
+
+    etaTSlider.addEventListener('input', () => {
+      etaT = parseFloat(etaTSlider.value) / 100;
+      renderTurbine();
+    });
+    etaCSlider.addEventListener('input', () => {
+      etaC = parseFloat(etaCSlider.value) / 100;
+      renderCompressor();
+    });
+    etaNSlider.addEventListener('input', () => {
+      etaN = parseFloat(etaNSlider.value) / 100;
+      renderNozzle();
+    });
+
+    extTsysSlider.addEventListener('input', () => {
+      extTsys = parseFloat(extTsysSlider.value);
+      renderExtended();
+    });
+    extTsurrSlider.addEventListener('input', () => {
+      extTsurr = parseFloat(extTsurrSlider.value);
+      renderExtended();
+    });
+    extQSlider.addEventListener('input', () => {
+      extQ = parseFloat(extQSlider.value);
+      renderExtended();
+    });
+
+    renderAll();
+    anim.start();
+  })();
+</script>

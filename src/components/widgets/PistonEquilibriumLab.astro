@@ -1,0 +1,578 @@
+---
+// آزمایشگاه زنده موازنه نیروی پیستون تک‌قطری و پیستون پله‌ای دوسیلندره (فصل ۱ - بخش ۳)
+---
+
+<div class="jh-widget not-content" id="piston-eq-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگاه زندهٔ موازنهٔ نیروی پیستون و تقویت فشار <span dir="ltr">(ΣF = 0)</span></span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    رسم زندهٔ نمودار جسم آزاد <span dir="ltr">(FBD)</span>، تراز نیروهای بالابر و پایین‌بر بر حسب <span dir="ltr">kN</span> و کنترل تلهٔ تبدیل <span dir="ltr">N → kN</span>
+  </div>
+
+  <div class="jh-widget__btns" id="peq-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="stepped">مثال ۱-۲ (اسلاید ۲۵): پیستون پله‌ای دوسیلندره</button>
+    <button type="button" class="jh-widget__btn" data-mode="single">تمرین ۱-۶۲: پیستون تک‌قطری با فنر</button>
+  </div>
+
+  <!-- لغزنده‌های پیستون پله‌ای (مثال ۱-۲) -->
+  <div class="jh-widget__grid" id="peq-ctrl-stepped">
+    <label class="jh-widget__ctrl">
+      <span>فشار روغن در سیلندر <span dir="ltr">A</span> (<span dir="ltr">P_A</span>): <strong id="peq-pa-lbl" dir="ltr">500 kPa</strong></span>
+      <input id="peq-pa" type="range" min="200" max="800" step="20" value="500" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>قطر سیلندر گاز <span dir="ltr">B</span> (<span dir="ltr">D_B</span>): <strong id="peq-db-lbl" dir="ltr">0.025 m</strong></span>
+      <input id="peq-db" type="range" min="0.020" max="0.060" step="0.005" value="0.025" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>جرم پیستون (<span dir="ltr">m_p</span>): <strong id="peq-mps-lbl" dir="ltr">25 kg</strong></span>
+      <input id="peq-mps" type="range" min="0" max="80" step="5" value="25" />
+    </label>
+  </div>
+
+  <!-- لغزنده‌های پیستون تک‌قطری (تمرین ۱-۶۲) -->
+  <div id="peq-ctrl-single-wrap" style="display:none">
+    <div class="jh-widget__btns" style="margin-bottom:0.55rem">
+      <button type="button" class="jh-widget__btn" id="peq-load-162">🎯 بارگذاری اعداد دقیق تمرین ۱-۶۲ <span dir="ltr">(A = 35 cm², P_atm = 95 kPa)</span></button>
+      <button type="button" class="jh-widget__btn" id="peq-reset-single">↺ مقادیر پایه <span dir="ltr">(D = 0.10 m, P_atm = 100 kPa)</span></button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>قطر پیستون (<span dir="ltr">D</span>): <strong id="peq-d-lbl" dir="ltr">0.100 m</strong></span>
+        <input id="peq-d" type="range" min="0.050" max="0.200" step="0.0002" value="0.1000" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>جرم پیستون (<span dir="ltr">m_p</span>): <strong id="peq-mp1-lbl" dir="ltr">20.0 kg</strong></span>
+        <input id="peq-mp1" type="range" min="0" max="100" step="0.2" value="20" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>نیروی فنر فشرده (<span dir="ltr">F_s</span>): <strong id="peq-fs-lbl" dir="ltr">150 N</strong></span>
+        <input id="peq-fs" type="range" min="0" max="500" step="10" value="150" />
+      </label>
+    </div>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱: برش سیلندر و بردارهای زنده FBD -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>برش مکانیکی و بردارهای <span dir="ltr">FBD</span> متناسب</span>
+        <span dir="ltr" id="peq-ratio-tag" style="color:#0284c7">A_A / A_B = 16.0×</span>
+      </div>
+      <svg id="peq-fbd-svg" viewBox="0 0 300 245" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار جسم آزاد پیستون تک قطری و پیستون پله ای">
+        <defs>
+          <marker id="peq-arr-up" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#059669" />
+          </marker>
+          <marker id="peq-arr-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#0284c7" />
+          </marker>
+          <marker id="peq-arr-amb" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#d97706" />
+          </marker>
+          <marker id="peq-arr-red" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#ef4444" />
+          </marker>
+          <marker id="peq-arr-pur" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#7c3aed" />
+          </marker>
+        </defs>
+
+        <!-- حالت ۱: پیستون پله‌ای دوسیلندره (مثال ۱-۲) -->
+        <g id="peq-g-stepped">
+          <!-- محفظه گاز B بالا -->
+          <rect id="peq-st-gas" x="122" y="26" width="36" height="58" fill="#0284c7" fill-opacity="0.22" />
+          <!-- محفظه روغن A پایین -->
+          <rect x="76" y="160" width="128" height="44" fill="#f59e0b" fill-opacity="0.22" />
+          <!-- دیواره سیلندر پله‌ای -->
+          <path id="peq-st-walls" d="" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" stroke-linejoin="round" />
+
+          <!-- پیستون Tشکل -->
+          <rect id="peq-st-stem" x="124" y="84" width="32" height="58" rx="2" fill="#64748b" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.3" />
+          <rect x="76" y="142" width="128" height="18" rx="2" fill="#64748b" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.4" />
+
+          <!-- برچسب‌های مخزن -->
+          <text x="140" y="20" text-anchor="middle" fill="#0284c7" font-size="9.5" font-weight="800">Gas B (P_B)</text>
+          <text x="140" y="218" text-anchor="middle" fill="#d97706" font-size="9.5" font-weight="800">Oil A (P_A, D_A = 0.10 m)</text>
+
+          <!-- فلش‌های FBD متناسب -->
+          <line id="peq-st-fa" x1="140" y1="196" x2="140" y2="162" stroke="#059669" stroke-width="3" marker-end="url(#peq-arr-up)" />
+          <line id="peq-st-fb" x1="140" y1="42" x2="140" y2="82" stroke="#0284c7" stroke-width="2.8" marker-end="url(#peq-arr-blue)" />
+          <line id="peq-st-f0l" x1="94" y1="116" x2="94" y2="140" stroke="#d97706" stroke-width="2.2" marker-end="url(#peq-arr-amb)" />
+          <line id="peq-st-f0r" x1="186" y1="116" x2="186" y2="140" stroke="#d97706" stroke-width="2.2" marker-end="url(#peq-arr-amb)" />
+          <line id="peq-st-fw" x1="140" y1="114" x2="140" y2="142" stroke="#ef4444" stroke-width="2.5" marker-end="url(#peq-arr-red)" />
+
+          <!-- برچسب نیروهای FBD چپ و راست با فاصله امن -->
+          <text x="64" y="124" text-anchor="end" fill="#d97706" font-size="9.2" font-weight="800">P₀ (Vented)</text>
+          <text id="peq-st-wlbl" x="64" y="148" text-anchor="end" fill="#ef4444" font-size="9.5" font-weight="800">m_p·g ↓</text>
+          <text id="peq-st-wval" x="64" y="160" text-anchor="end" fill="#ef4444" font-size="9" font-weight="700">0.245 kN</text>
+
+          <text x="215" y="54" fill="#0284c7" font-size="9.5" font-weight="800">P_B·A_B ↓</text>
+          <text id="peq-st-fbval" x="215" y="66" fill="#0284c7" font-size="9.2" font-weight="700">2.946 kN</text>
+
+          <text x="215" y="124" fill="#d97706" font-size="9.2" font-weight="800">P₀(A_A−A_B) ↓</text>
+          <text id="peq-st-f0val" x="215" y="136" fill="#d97706" font-size="9.2" font-weight="700">0.736 kN</text>
+
+          <text x="215" y="178" fill="#059669" font-size="9.5" font-weight="800">P_A·A_A ↑</text>
+          <text id="peq-st-faval" x="215" y="190" fill="#059669" font-size="9.2" font-weight="700">3.927 kN</text>
+        </g>
+
+        <!-- حالت ۲: پیستون تک‌قطری با فنر (تمرین ۱-۶۲) -->
+        <g id="peq-g-single" style="display:none">
+          <rect id="peq-1-ceil" x="80" y="24" width="112" height="7" rx="3" fill="currentColor" fill-opacity="0.55" />
+          <rect id="peq-1-gas" x="88" y="124" width="96" height="80" fill="#0284c7" fill-opacity="0.20" />
+          <path id="peq-1-walls" d="" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" stroke-linejoin="round" />
+          <path id="peq-1-spring" d="" fill="none" stroke="#7c3aed" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+          <rect id="peq-1-piston" x="88" y="108" width="96" height="16" rx="2" fill="#64748b" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.4" />
+
+          <text x="136" y="218" text-anchor="middle" fill="#0284c7" font-size="9.5" font-weight="800">Confined Gas (P)</text>
+
+          <!-- فلش‌های FBD -->
+          <line id="peq-1-fgas" x1="136" y1="192" x2="136" y2="128" stroke="#059669" stroke-width="3" marker-end="url(#peq-arr-up)" />
+          <line id="peq-1-fatm" x1="104" y1="74" x2="104" y2="106" stroke="#d97706" stroke-width="2.4" marker-end="url(#peq-arr-amb)" />
+          <line id="peq-1-fspr" x1="166" y1="74" x2="166" y2="106" stroke="#7c3aed" stroke-width="2.4" marker-end="url(#peq-arr-pur)" />
+          <line id="peq-1-fw" x1="136" y1="108" x2="136" y2="132" stroke="#ef4444" stroke-width="2.4" marker-end="url(#peq-arr-red)" />
+
+          <!-- برچسب‌ها -->
+          <text x="58" y="114" text-anchor="end" fill="#ef4444" font-size="9.5" font-weight="800">m_p·g ↓</text>
+          <text id="peq-1-wval" x="58" y="126" text-anchor="end" fill="#ef4444" font-size="9.2" font-weight="700">0.196 kN</text>
+
+          <text x="215" y="62" fill="#7c3aed" font-size="9.5" font-weight="800">F_s ↓</text>
+          <text id="peq-1-fsval" x="215" y="74" fill="#7c3aed" font-size="9.2" font-weight="700">0.150 kN</text>
+
+          <text x="215" y="100" fill="#d97706" font-size="9.5" font-weight="800">P_atm·A ↓</text>
+          <text id="peq-1-fatmval" x="215" y="112" fill="#d97706" font-size="9.2" font-weight="700">0.785 kN</text>
+
+          <text x="215" y="170" fill="#059669" font-size="9.5" font-weight="800">P·A ↑</text>
+          <text id="peq-1-fgasval" x="215" y="182" fill="#059669" font-size="9.2" font-weight="700">1.132 kN</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- پنل ۲: نمودار میله‌ای تراز نیروها (ΣF↑ = ΣF↓) + هشدار N به kN -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>تراز نیروهای عمودی (<span dir="ltr">ΣF↑ = ΣF↓</span> به <span dir="ltr">kN</span>)</span>
+        <span dir="ltr" id="peq-bal-tag" style="color:#059669">ΣF = 0 (Balanced)</span>
+      </div>
+      <svg id="peq-bar-svg" viewBox="0 0 320 245" style="width:100%;height:auto;display:block;direction:ltr" aria-label="تراز نیروهای رو به بالا و رو به پایین در پیستون">
+        <line x1="36" y1="184" x2="206" y2="184" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="36" y1="28" x2="36" y2="184" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4" />
+        <text x="14" y="24" fill="currentColor" font-size="10.2" font-weight="700">F(kN)</text>
+        <text x="30" y="188" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+
+        <!-- خط هم‌ترازی ΣF↑ = ΣF↓ -->
+        <line id="peq-eq-top" x1="36" y1="48" x2="200" y2="48" stroke="#059669" stroke-opacity="0.55" stroke-dasharray="4 3" stroke-width="1.4" />
+
+        <!-- میله چپ: مجموع نیروهای رو به بالا -->
+        <rect id="peq-bar-up" x="56" y="48" width="52" height="136" rx="4" fill="#059669" fill-opacity="0.88" />
+        <text id="peq-up-top" x="82" y="41" text-anchor="middle" fill="#059669" font-size="10.2" font-weight="800">3.927</text>
+        <text x="82" y="201" text-anchor="middle" fill="currentColor" font-size="10" font-weight="800">ΣF↑</text>
+
+        <!-- میله راست: مجموع نیروهای رو به پایین (۳ لایه) -->
+        <rect id="peq-bar-d1" x="132" y="82" width="52" height="102" rx="3" fill="#0284c7" fill-opacity="0.88" />
+        <rect id="peq-bar-d2" x="132" y="56" width="52" height="26" rx="3" fill="#d97706" fill-opacity="0.88" />
+        <rect id="peq-bar-d3" x="132" y="48" width="52" height="8" rx="3" fill="#ef4444" fill-opacity="0.90" />
+        <text id="peq-dn-top" x="158" y="41" text-anchor="middle" fill="currentColor" font-size="10.2" font-weight="800">3.927</text>
+        <text x="158" y="201" text-anchor="middle" fill="currentColor" font-size="10" font-weight="800">ΣF↓</text>
+
+        <!-- ستون راهنمای مقادیر دقیق سمت راست -->
+        <g id="peq-legend" transform="translate(206, 46)">
+          <rect x="0" y="-12" width="108" height="132" rx="8" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.14" />
+          <circle cx="10" cy="4" r="4" fill="#059669" />
+          <text id="peq-lg-up" x="19" y="7" fill="currentColor" font-size="9.2" font-weight="800">Up: 3.927 kN</text>
+
+          <circle cx="10" cy="34" r="4" fill="#0284c7" />
+          <text id="peq-lg-d1" x="19" y="37" fill="currentColor" font-size="9.2" font-weight="700">Gas: 2.946 kN</text>
+
+          <circle cx="10" cy="64" r="4" fill="#d97706" />
+          <text id="peq-lg-d2" x="19" y="67" fill="currentColor" font-size="9.2" font-weight="700">Atm: 0.736 kN</text>
+
+          <circle cx="10" cy="94" r="4" fill="#ef4444" />
+          <text id="peq-lg-d3" x="19" y="97" fill="currentColor" font-size="9.2" font-weight="700">mg: 0.245 kN</text>
+        </g>
+
+        <!-- تله تبدیل N به kN -->
+        <rect x="14" y="213" width="292" height="24" rx="6" fill="#ef4444" fill-opacity="0.10" stroke="#ef4444" stroke-opacity="0.35" />
+        <text id="peq-trap-txt" x="160" y="228.5" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">N→kN Trap: m_p·g = 245.2 N = 0.245 kN (÷1000!)</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric" id="peq-pout-card">
+      <span class="jh-metric__label" id="peq-pout-lbl">فشار گاز خروجی (<span dir="ltr">P_B</span>)</span>
+      <span class="jh-metric__val" id="peq-pout-val">6000.5 kPa (6.00 MPa)</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">مساحت مؤثر (<span dir="ltr">A</span>)</span>
+      <span class="jh-metric__val" id="peq-area-val">A_A=78.5 | A_B=4.91 cm²</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">وزن پیستون (<span dir="ltr">m_p·g</span>)</span>
+      <span class="jh-metric__val" id="peq-wp-val">245.2 N = 0.245 kN</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">نسبت تقویت فشار</span>
+      <span class="jh-metric__val" id="peq-gain-val">P_B / P_A = 12.0×</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="peq-explain">
+    در <strong>مثال ۱-۲ (اسلاید ۲۵)</strong>، به‌دلیل کوچک‌تر بودن سطح مقطع <span dir="ltr">B</span> نسبت به <span dir="ltr">A</span> به اندازهٔ <span dir="ltr">16</span> برابر، فشار روغن <span dir="ltr">500 kPa</span> پس از کسر وزن پیستون <span dir="ltr">(0.245 kN)</span> و نیروی جو روی شانهٔ میانی <span dir="ltr">(0.736 kN)</span>، به فشار عظیم <span dir="ltr">6.00 MPa</span> در سیلندر گاز تقویت می‌شود.
+  </div>
+</div>
+
+<script>
+import { buildSpringPath } from '../../lib/liveSimKit';
+
+const root = document.getElementById('piston-eq-lab');
+if (root) {
+  let mode: 'stepped' | 'single' = 'stepped';
+
+  // مثال ۱-۲ (اسلاید ۲۵)
+  let pA = 500;
+  let dB = 0.025;
+  let mpS = 25;
+  const dA = 0.10;
+  const p0 = 100;
+  const gStd = 9.807;
+
+  // تک‌قطری (تمرین ۱-۶۲)
+  let d1 = 0.1000;
+  let mp1 = 20.0;
+  let fs = 150;
+  let pAtmSingle = 100;
+
+  const ctrlStepped = root.querySelector('#peq-ctrl-stepped') as HTMLElement;
+  const ctrlSingleWrap = root.querySelector('#peq-ctrl-single-wrap') as HTMLElement;
+  const gStepped = root.querySelector('#peq-g-stepped') as SVGGElement;
+  const gSingle = root.querySelector('#peq-g-single') as SVGGElement;
+
+  const paSlider = root.querySelector('#peq-pa') as HTMLInputElement;
+  const dbSlider = root.querySelector('#peq-db') as HTMLInputElement;
+  const mpsSlider = root.querySelector('#peq-mps') as HTMLInputElement;
+  const paLbl = root.querySelector('#peq-pa-lbl') as HTMLElement;
+  const dbLbl = root.querySelector('#peq-db-lbl') as HTMLElement;
+  const mpsLbl = root.querySelector('#peq-mps-lbl') as HTMLElement;
+
+  const dSlider = root.querySelector('#peq-d') as HTMLInputElement;
+  const mp1Slider = root.querySelector('#peq-mp1') as HTMLInputElement;
+  const fsSlider = root.querySelector('#peq-fs') as HTMLInputElement;
+  const dLbl = root.querySelector('#peq-d-lbl') as HTMLElement;
+  const mp1Lbl = root.querySelector('#peq-mp1-lbl') as HTMLElement;
+  const fsLbl = root.querySelector('#peq-fs-lbl') as HTMLElement;
+  const load162Btn = root.querySelector('#peq-load-162') as HTMLButtonElement;
+  const resetSingleBtn = root.querySelector('#peq-reset-single') as HTMLButtonElement;
+
+  const ratioTag = root.querySelector('#peq-ratio-tag') as HTMLElement;
+  const balTag = root.querySelector('#peq-bal-tag') as HTMLElement;
+
+  // عناصر SVG حالت پله‌ای
+  const stGas = root.querySelector('#peq-st-gas') as SVGRectElement;
+  const stWalls = root.querySelector('#peq-st-walls') as SVGPathElement;
+  const stStem = root.querySelector('#peq-st-stem') as SVGRectElement;
+  const stFa = root.querySelector('#peq-st-fa') as SVGLineElement;
+  const stFb = root.querySelector('#peq-st-fb') as SVGLineElement;
+  const stFw = root.querySelector('#peq-st-fw') as SVGLineElement;
+  const stWval = root.querySelector('#peq-st-wval') as SVGTextElement;
+  const stFbval = root.querySelector('#peq-st-fbval') as SVGTextElement;
+  const stF0val = root.querySelector('#peq-st-f0val') as SVGTextElement;
+  const stFaval = root.querySelector('#peq-st-faval') as SVGTextElement;
+
+  // عناصر SVG حالت تک‌قطری
+  const sCeil = root.querySelector('#peq-1-ceil') as SVGRectElement;
+  const sGas = root.querySelector('#peq-1-gas') as SVGRectElement;
+  const sWalls = root.querySelector('#peq-1-walls') as SVGPathElement;
+  const sSpring = root.querySelector('#peq-1-spring') as SVGPathElement;
+  const sPiston = root.querySelector('#peq-1-piston') as SVGRectElement;
+  const sFgas = root.querySelector('#peq-1-fgas') as SVGLineElement;
+  const sFatm = root.querySelector('#peq-1-fatm') as SVGLineElement;
+  const sFspr = root.querySelector('#peq-1-fspr') as SVGLineElement;
+  const sFw = root.querySelector('#peq-1-fw') as SVGLineElement;
+  const sWval = root.querySelector('#peq-1-wval') as SVGTextElement;
+  const sFsval = root.querySelector('#peq-1-fsval') as SVGTextElement;
+  const sFatmval = root.querySelector('#peq-1-fatmval') as SVGTextElement;
+  const sFgasval = root.querySelector('#peq-1-fgasval') as SVGTextElement;
+
+  // عناصر پنل ۲ تراز نیروها
+  const eqTop = root.querySelector('#peq-eq-top') as SVGLineElement;
+  const barUp = root.querySelector('#peq-bar-up') as SVGRectElement;
+  const upTop = root.querySelector('#peq-up-top') as SVGTextElement;
+  const barD1 = root.querySelector('#peq-bar-d1') as SVGRectElement;
+  const barD2 = root.querySelector('#peq-bar-d2') as SVGRectElement;
+  const barD3 = root.querySelector('#peq-bar-d3') as SVGRectElement;
+  const dnTop = root.querySelector('#peq-dn-top') as SVGTextElement;
+  const lgUp = root.querySelector('#peq-lg-up') as SVGTextElement;
+  const lgD1 = root.querySelector('#peq-lg-d1') as SVGTextElement;
+  const lgD2 = root.querySelector('#peq-lg-d2') as SVGTextElement;
+  const lgD3 = root.querySelector('#peq-lg-d3') as SVGTextElement;
+  const trapTxt = root.querySelector('#peq-trap-txt') as SVGTextElement;
+
+  const poutCard = root.querySelector('#peq-pout-card') as HTMLElement;
+  const poutLbl = root.querySelector('#peq-pout-lbl') as HTMLElement;
+  const poutVal = root.querySelector('#peq-pout-val') as HTMLElement;
+  const areaVal = root.querySelector('#peq-area-val') as HTMLElement;
+  const wpVal = root.querySelector('#peq-wp-val') as HTMLElement;
+  const gainVal = root.querySelector('#peq-gain-val') as HTMLElement;
+  const explainEl = root.querySelector('#peq-explain') as HTMLElement;
+
+  function render() {
+    ctrlStepped.style.display = mode === 'stepped' ? '' : 'none';
+    ctrlSingleWrap.style.display = mode === 'single' ? '' : 'none';
+    gStepped.style.display = mode === 'stepped' ? '' : 'none';
+    gSingle.style.display = mode === 'single' ? '' : 'none';
+
+    const baseY = 184;
+    const maxBarH = 136;
+
+    if (mode === 'stepped') {
+      paLbl.textContent = `${pA.toFixed(0)} kPa`;
+      dbLbl.textContent = `${dB.toFixed(3)} m`;
+      mpsLbl.textContent = `${mpS.toFixed(0)} kg`;
+
+      const A_A = (Math.PI / 4) * dA * dA;
+      const A_B = (Math.PI / 4) * dB * dB;
+      const fA = pA * A_A; // kN
+      const wN = mpS * gStd; // N
+      const wKn = wN / 1000;
+      const f0 = p0 * (A_A - A_B); // kN
+      const fB = fA - wKn - f0; // kN
+      const pB = fB / A_B; // kPa
+      const areaRatio = A_A / A_B;
+      const invalid = fB <= 0;
+
+      // هندسه پله‌ای متناسب با D_B
+      const wB = Math.max(28, Math.min(76, 128 * (dB / dA)));
+      const xBL = 140 - wB / 2;
+      const xBR = 140 + wB / 2;
+      stGas.setAttribute('x', xBL.toFixed(1));
+      stGas.setAttribute('width', wB.toFixed(1));
+      stStem.setAttribute('x', xBL.toFixed(1));
+      stStem.setAttribute('width', wB.toFixed(1));
+      stWalls.setAttribute(
+        'd',
+        `M ${xBL.toFixed(1)} 26 L ${xBL.toFixed(1)} 110 L 74 110 L 74 204 L 206 204 L 206 110 L ${xBR.toFixed(1)} 110 L ${xBR.toFixed(1)} 26`
+      );
+
+      const fRef = Math.max(fA, 1);
+      const lenA = 14 + 24 * Math.min(1, fA / fRef);
+      const lenB = 14 + 26 * Math.min(1, Math.max(0, fB) / fRef);
+      const lenW = 10 + 18 * Math.min(1, wKn / fRef);
+      stFa.setAttribute('y1', (162 + lenA).toFixed(1));
+      stFb.setAttribute('y1', (82 - lenB).toFixed(1));
+      stFw.setAttribute('y2', (114 + lenW).toFixed(1));
+
+      stWval.textContent = `${wKn.toFixed(3)} kN`;
+      stFbval.textContent = `${Math.max(0, fB).toFixed(3)} kN`;
+      stF0val.textContent = `${f0.toFixed(3)} kN`;
+      stFaval.textContent = `${fA.toFixed(3)} kN`;
+
+      ratioTag.textContent = `A_A / A_B = ${areaRatio.toFixed(1)}×`;
+      balTag.textContent = invalid ? '⚠️ Unbalanced!' : 'ΣF = 0 (Equilibrium)';
+
+      // نمودار میله‌ای تراز
+      const totalUp = fA;
+      const scaleMax = Math.max(6.5, totalUp * 1.05);
+      const hUp = (totalUp / scaleMax) * maxBarH;
+      const h1 = (Math.max(0, fB) / scaleMax) * maxBarH;
+      const h2 = (f0 / scaleMax) * maxBarH;
+      const h3 = (wKn / scaleMax) * maxBarH;
+      const yTop = baseY - hUp;
+
+      eqTop.setAttribute('y1', yTop.toFixed(1));
+      eqTop.setAttribute('y2', yTop.toFixed(1));
+      barUp.setAttribute('y', yTop.toFixed(1));
+      barUp.setAttribute('height', Math.max(2, hUp).toFixed(1));
+      upTop.setAttribute('y', (yTop - 7).toFixed(1));
+      upTop.textContent = totalUp.toFixed(3);
+
+      barD1.setAttribute('fill', '#0284c7');
+      barD1.setAttribute('y', (baseY - h1).toFixed(1));
+      barD1.setAttribute('height', Math.max(1, h1).toFixed(1));
+      barD2.setAttribute('fill', '#d97706');
+      barD2.setAttribute('y', (baseY - h1 - h2).toFixed(1));
+      barD2.setAttribute('height', Math.max(1, h2).toFixed(1));
+      barD3.setAttribute('y', (baseY - h1 - h2 - h3).toFixed(1));
+      barD3.setAttribute('height', Math.max(wKn > 0 ? 2 : 0, h3).toFixed(1));
+      dnTop.setAttribute('y', (yTop - 7).toFixed(1));
+      dnTop.textContent = (Math.max(0, fB) + f0 + wKn).toFixed(3);
+
+      lgUp.textContent = `P_A·A_A: ${fA.toFixed(3)} kN`;
+      lgD1.textContent = `P_B·A_B: ${Math.max(0, fB).toFixed(3)} kN`;
+      lgD2.textContent = `P₀·ΔA: ${f0.toFixed(3)} kN`;
+      lgD3.textContent = `m_p·g: ${wKn.toFixed(3)} kN`;
+      trapTxt.textContent = `N→kN Trap: m_p·g = ${wN.toFixed(1)} N = ${wKn.toFixed(3)} kN (÷1000!)`;
+
+      poutCard.classList.toggle('jh-metric--warn', invalid);
+      poutLbl.innerHTML = 'فشار گاز خروجی (<span dir="ltr">P_B</span>)';
+      poutVal.textContent = invalid
+        ? '⚠️ نیروی روغن کافی نیست'
+        : `${pB.toFixed(1)} kPa (${(pB / 1000).toFixed(2)} MPa)`;
+      areaVal.textContent = `A_A=${(A_A * 1e4).toFixed(2)} | A_B=${(A_B * 1e4).toFixed(2)} cm²`;
+      wpVal.textContent = `${wN.toFixed(1)} N = ${wKn.toFixed(3)} kN`;
+      gainVal.textContent = `P_B / P_A = ${invalid ? '0' : (pB / pA).toFixed(2)}×`;
+
+      const isDefault12 = pA === 500 && Math.abs(dB - 0.025) < 1e-4 && mpS === 25;
+      explainEl.innerHTML = isDefault12
+        ? `در <strong>مثال ۱-۲ (اسلاید ۲۵)</strong>، به‌دلیل نسبت مساحت <span dir="ltr">(A_A / A_B = 16)</span>، فشار روغن <span dir="ltr">500 kPa</span> پس از کسر وزن پیستون <span dir="ltr">(245.2 N = 0.245 kN)</span> و نیروی جو روی شانه <span dir="ltr">(0.736 kN)</span> به <strong><span dir="ltr">${(pB / 1000).toFixed(2)} MPa</span></strong> <span dir="ltr">(${pB.toFixed(1)} kPa)</span> تقویت می‌شود (عدد <span dir="ltr">5996 kPa</span> در متن مثال به‌دلیل گردکردن سه‌رقمی مساحت‌هاست).`
+        : `با <span dir="ltr">P_A = ${pA} kPa</span> و <span dir="ltr">D_B = ${dB.toFixed(3)} m</span> (نسبت مساحت <span dir="ltr">${areaRatio.toFixed(1)}×</span>)، فشار گاز <span dir="ltr">P_B = ${pB.toFixed(1)} kPa</span> به دست می‌آید. تغییر <span dir="ltr">D_B</span> با توان دوم بر <span dir="ltr">A_B</span> اثر گذاشته و فشار را به‌شدت تغییر می‌دهد!`;
+    } else {
+      // پیستون تک‌قطری با فنر
+      dLbl.textContent = `${d1.toFixed(4)} m`;
+      mp1Lbl.textContent = `${mp1.toFixed(1)} kg`;
+      fsLbl.textContent = `${fs.toFixed(0)} N`;
+
+      const A = (Math.PI / 4) * d1 * d1;
+      const gUse = 9.81;
+      const wN = mp1 * gUse;
+      const wKn = wN / 1000;
+      const fsKn = fs / 1000;
+      const fAtm = pAtmSingle * A; // kN
+      const fGas = fAtm + wKn + fsKn; // kN
+      const pGas = fGas / A; // kPa
+
+      // هندسه تک‌قطری متناسب با D
+      const wC = 52 + ((d1 - 0.05) / 0.15) * 78;
+      const xL = 136 - wC / 2;
+      const xR = 136 + wC / 2;
+      sCeil.setAttribute('x', (xL - 6).toFixed(1));
+      sCeil.setAttribute('width', (wC + 12).toFixed(1));
+      sGas.setAttribute('x', xL.toFixed(1));
+      sGas.setAttribute('width', wC.toFixed(1));
+      sPiston.setAttribute('x', xL.toFixed(1));
+      sPiston.setAttribute('width', wC.toFixed(1));
+      sWalls.setAttribute('d', `M ${xL.toFixed(1)} 30 L ${xL.toFixed(1)} 204 L ${xR.toFixed(1)} 204 L ${xR.toFixed(1)} 30`);
+      sSpring.setAttribute('d', buildSpringPath(136, 31, 108, 7, 10));
+      sSpring.setAttribute('stroke-width', (2.0 + (fs / 500) * 1.6).toFixed(1));
+
+      const fRef = Math.max(fGas, 0.5);
+      const lenGas = 16 + 44 * Math.min(1, fGas / fRef);
+      const lenAtm = 10 + 26 * Math.min(1, fAtm / fRef);
+      const lenSpr = 8 + 26 * Math.min(1, fsKn / fRef);
+      const lenW = 8 + 22 * Math.min(1, wKn / fRef);
+
+      sFgas.setAttribute('y1', (126 + lenGas).toFixed(1));
+      sFatm.setAttribute('x1', (xL + 12).toFixed(1));
+      sFatm.setAttribute('x2', (xL + 12).toFixed(1));
+      sFatm.setAttribute('y1', (106 - lenAtm).toFixed(1));
+      sFspr.setAttribute('x1', (xR - 12).toFixed(1));
+      sFspr.setAttribute('x2', (xR - 12).toFixed(1));
+      sFspr.setAttribute('y1', (106 - lenSpr).toFixed(1));
+      sFspr.style.opacity = fs > 0 ? '1' : '0.2';
+      sFw.setAttribute('y2', (108 + lenW).toFixed(1));
+      sFw.style.opacity = mp1 > 0 ? '1' : '0.2';
+
+      sWval.textContent = `${wKn.toFixed(3)} kN`;
+      sFsval.textContent = `${fsKn.toFixed(3)} kN`;
+      sFatmval.textContent = `${fAtm.toFixed(3)} kN`;
+      sFgasval.textContent = `${fGas.toFixed(3)} kN`;
+
+      ratioTag.textContent = `A = ${(A * 1e4).toFixed(1)} cm² | P_atm=${pAtmSingle}`;
+      balTag.textContent = 'ΣF = 0 (Equilibrium)';
+
+      // نمودار میله‌ای تراز
+      const scaleMax = Math.max(2.0, fGas * 1.15);
+      const hUp = (fGas / scaleMax) * maxBarH;
+      const h1 = (fAtm / scaleMax) * maxBarH;
+      const h2 = (fsKn / scaleMax) * maxBarH;
+      const h3 = (wKn / scaleMax) * maxBarH;
+      const yTop = baseY - hUp;
+
+      eqTop.setAttribute('y1', yTop.toFixed(1));
+      eqTop.setAttribute('y2', yTop.toFixed(1));
+      barUp.setAttribute('y', yTop.toFixed(1));
+      barUp.setAttribute('height', Math.max(2, hUp).toFixed(1));
+      upTop.setAttribute('y', (yTop - 7).toFixed(1));
+      upTop.textContent = fGas.toFixed(3);
+
+      barD1.setAttribute('fill', '#d97706');
+      barD1.setAttribute('y', (baseY - h1).toFixed(1));
+      barD1.setAttribute('height', Math.max(1, h1).toFixed(1));
+      barD2.setAttribute('fill', '#7c3aed');
+      barD2.setAttribute('y', (baseY - h1 - h2).toFixed(1));
+      barD2.setAttribute('height', Math.max(fsKn > 0 ? 2 : 0, h2).toFixed(1));
+      barD3.setAttribute('y', (baseY - h1 - h2 - h3).toFixed(1));
+      barD3.setAttribute('height', Math.max(wKn > 0 ? 2 : 0, h3).toFixed(1));
+      dnTop.setAttribute('y', (yTop - 7).toFixed(1));
+      dnTop.textContent = fGas.toFixed(3);
+
+      lgUp.textContent = `P·A: ${fGas.toFixed(3)} kN`;
+      lgD1.textContent = `P_atm·A: ${fAtm.toFixed(3)} kN`;
+      lgD2.textContent = `F_s: ${fsKn.toFixed(3)} kN`;
+      lgD3.textContent = `m_p·g: ${wKn.toFixed(3)} kN`;
+      trapTxt.textContent = `N→kN Trap: (mg+F_s) = ${(wN + fs).toFixed(1)} N = ${(wKn + fsKn).toFixed(3)} kN`;
+
+      poutCard.classList.remove('jh-metric--warn');
+      poutLbl.innerHTML = 'فشار مطلق گاز (<span dir="ltr">P_abs</span>)';
+      poutVal.textContent = `${pGas.toFixed(2)} kPa`;
+      areaVal.textContent = `${(A * 1e4).toFixed(2)} cm² (${A.toFixed(5)} m²)`;
+      wpVal.textContent = `${wN.toFixed(1)} N = ${wKn.toFixed(3)} kN`;
+      gainVal.textContent = `P_gage = ${(pGas - pAtmSingle).toFixed(2)} kPa`;
+
+      explainEl.innerHTML = `در <strong>پیستون تک‌قطری با فنر</strong>، مساحت پیستون <span dir="ltr">A = ${(A * 1e4).toFixed(2)} cm²</span> است. مجموع وزن پیستون و نیروی فنر <span dir="ltr">(${(wN + fs).toFixed(1)} N = ${(wKn + fsKn).toFixed(3)} kN)</span> پس از تقسیم بر مساحت، فشار گاز را <span dir="ltr">+${(pGas - pAtmSingle).toFixed(2)} kPa</span> بالاتر از فشار جو <span dir="ltr">(${pAtmSingle} kPa)</span> نگه می‌دارد و فشار مطلق <span dir="ltr">P = ${pGas.toFixed(2)} kPa</span> حاصل می‌شود.`;
+    }
+  }
+
+  root.querySelectorAll('#peq-modes button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#peq-modes button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      mode = (btn.getAttribute('data-mode') as typeof mode) || 'stepped';
+      render();
+    });
+  });
+
+  paSlider.addEventListener('input', () => {
+    pA = parseFloat(paSlider.value);
+    render();
+  });
+  dbSlider.addEventListener('input', () => {
+    dB = parseFloat(dbSlider.value);
+    render();
+  });
+  mpsSlider.addEventListener('input', () => {
+    mpS = parseFloat(mpsSlider.value);
+    render();
+  });
+
+  dSlider.addEventListener('input', () => {
+    d1 = parseFloat(dSlider.value);
+    render();
+  });
+  mp1Slider.addEventListener('input', () => {
+    mp1 = parseFloat(mp1Slider.value);
+    render();
+  });
+  fsSlider.addEventListener('input', () => {
+    fs = parseFloat(fsSlider.value);
+    render();
+  });
+
+  load162Btn.addEventListener('click', () => {
+    d1 = 0.0668; // π/4 * 0.0668² ≈ 35.0 cm²
+    mp1 = 3.2;
+    fs = 150;
+    pAtmSingle = 95;
+    dSlider.value = String(d1);
+    mp1Slider.value = String(mp1);
+    fsSlider.value = String(fs);
+    render();
+  });
+
+  resetSingleBtn.addEventListener('click', () => {
+    d1 = 0.10;
+    mp1 = 20.0;
+    fs = 150;
+    pAtmSingle = 100;
+    dSlider.value = String(d1);
+    mp1Slider.value = String(mp1);
+    fsSlider.value = String(fs);
+    render();
+  });
+
+  render();
+}
+</script>

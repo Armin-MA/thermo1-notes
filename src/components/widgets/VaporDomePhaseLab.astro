@@ -1,0 +1,765 @@
+---
+// آزمایشگر زندهٔ تغییر فاز آب واقعی، گنبد اشباع (T-v / P-v) و رفتار فوق‌بحرانی با موتور IAPWS-IF97 (فصل ۳)
+---
+
+<div class="jh-widget not-content" id="vapor-dome-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ تغییر فاز آب واقعی و گنبد اشباع (<span dir="ltr">IAPWS-IF97</span>)</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    گرمایش هم‌فشار آب از مایع مادون‌سرد (<span dir="ltr">20 °C</span>) تا بخار فوق‌گرم (<span dir="ltr">550 °C</span>)، مقایسهٔ <span dir="ltr">v_f</span> با <span dir="ltr">v_g</span> و پدیدهٔ فوق‌بحرانی بدون جوشش
+  </div>
+
+  <div class="jh-widget__btns" id="vdl-diagrams">
+    <button type="button" class="jh-widget__btn is-active" data-diag="Tv">نمودار <span dir="ltr">T-v</span> (آب واقعی)</button>
+    <button type="button" class="jh-widget__btn" data-diag="Pv">نمودار <span dir="ltr">P-v</span> (آب واقعی)</button>
+  </div>
+
+  <div class="jh-widget__btns" id="vdl-presets">
+    <button type="button" class="jh-widget__btn" data-p="10">خلأ (<span dir="ltr">10 kPa</span>، جوش در <span dir="ltr">45.8 °C</span>)</button>
+    <button type="button" class="jh-widget__btn is-active" data-p="101.325">اتمسفر (<span dir="ltr">101.3 kPa</span>، مثال <span dir="ltr">1 atm</span>)</button>
+    <button type="button" class="jh-widget__btn" data-p="4000">بویلر نیروگاه (<span dir="ltr">4 MPa</span>)</button>
+    <button type="button" class="jh-widget__btn" data-p="25000">فوق‌بحرانی (<span dir="ltr">25 MPa</span> — بدون حباب!)</button>
+  </div>
+
+  <div class="jh-widget__grid">
+    <label class="jh-widget__ctrl">
+      <span>فشار هم‌فشار (<span dir="ltr">P</span>): <strong id="vdl-p-lbl" dir="ltr">101.3 kPa</strong></span>
+      <input id="vdl-p" type="range" min="0" max="1000" step="1" value="292" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>پیشرفت گرمایش / آنتالپی (<span dir="ltr">q</span>): <strong id="vdl-q-lbl" dir="ltr">22%</strong></span>
+      <input id="vdl-q" type="range" min="0" max="100" step="0.5" value="22" />
+    </label>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="vdl-play">▶ پخش گرمایش</button>
+    <button type="button" class="jh-widget__btn" id="vdl-reset">↺ بازنشانی (<span dir="ltr">20 °C</span>)</button>
+    <span class="jh-widget__sub" id="vdl-tsat-pill" style="margin-inline-start:auto">نقطهٔ جوش: <strong dir="ltr">100.0 °C</strong></span>
+  </div>
+
+  <div class="jh-widget__split">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>سیلندر-پیستون هم‌فشار + دماسنج</span>
+        <span dir="ltr" id="vdl-cyl-tag">x = 0.19 | T = 100.0 °C</span>
+      </div>
+      <svg id="vdl-cyl-svg" viewBox="0 0 270 242" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک زنده تغییر فاز آب درون سیلندر پیستون">
+        <defs>
+          <clipPath id="vdl-cav-clip">
+            <rect x="38" y="24" width="102" height="164" />
+          </clipPath>
+          <marker id="vdl-arr-h" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#ef4444" />
+          </marker>
+        </defs>
+
+        <!-- محفظه سیال داخل سیلندر -->
+        <g clip-path="url(#vdl-cav-clip)">
+          <rect id="vdl-vap-fill" x="38" y="88" width="102" height="100" fill="#38bdf8" fill-opacity="0.18" />
+          <rect id="vdl-liq-fill" x="38" y="164" width="102" height="24" fill="#0284c7" fill-opacity="0.58" />
+          <line id="vdl-meniscus" x1="38" y1="164" x2="140" y2="164" stroke="#0284c7" stroke-width="2" />
+          <g id="vdl-bubbles"></g>
+          <g id="vdl-shimmer"></g>
+        </g>
+
+        <!-- دیواره U شکل سیلندر -->
+        <path d="M 35 22 L 35 190 L 143 190 L 143 22" fill="none" stroke="currentColor" stroke-opacity="0.76" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round" />
+
+        <!-- پیستون و وزنه فشار ثابت -->
+        <g id="vdl-piston-grp" transform="translate(0,0)">
+          <rect x="74" y="6" width="30" height="14" rx="3" fill="#64748b" stroke="currentColor" stroke-opacity="0.5" stroke-width="1" />
+          <text x="89" y="16" text-anchor="middle" fill="#ffffff" font-size="8.5" font-weight="700">P=const</text>
+          <rect x="85" y="20" width="8" height="28" rx="2" fill="currentColor" fill-opacity="0.45" />
+          <rect x="38" y="46" width="102" height="14" rx="2.5" fill="#64748b" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" />
+          <line x1="46" y1="53" x2="132" y2="53" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.4" />
+        </g>
+
+        <!-- نشانگر نسبت انبساط حجمی روی سیلندر -->
+        <rect id="vdl-exp-bg" x="44" y="96" width="90" height="20" rx="10" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.22" />
+        <text id="vdl-exp-txt" x="89" y="109" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="800">v/vf = 322x</text>
+
+        <!-- مشعل حرارتی زیر سیلندر -->
+        <g id="vdl-flame">
+          <path d="M 65 218 Q 73 195 84 218 Q 95 193 106 218 Q 115 198 122 218" fill="none" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round" />
+          <path d="M 71 218 Q 79 201 86 218 Q 95 199 104 218 Q 111 203 117 218" fill="#f59e0b" fill-opacity="0.72" />
+          <line x1="58" y1="221" x2="128" y2="221" stroke="currentColor" stroke-opacity="0.45" stroke-width="2.8" stroke-linecap="round" />
+          <text x="93" y="234" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">Q_in (+)</text>
+        </g>
+
+        <!-- دماسنج جیوه‌ای زنده -->
+        <g id="vdl-therm">
+          <rect x="160" y="34" width="12" height="122" rx="6" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+          <circle cx="166" cy="162" r="10.5" fill="#ef4444" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+          <rect id="vdl-merc" x="163" y="128" width="6" height="34" rx="3" fill="#ef4444" />
+          <line id="vdl-tsat-tick" x1="152" y1="138" x2="180" y2="138" stroke="#0284c7" stroke-width="1.8" stroke-dasharray="3 2" />
+          <text id="vdl-tsat-lbl" x="166" y="26" text-anchor="middle" fill="#0284c7" font-size="8.5" font-weight="700">Tsat=100°C</text>
+          <text id="vdl-t-val" x="166" y="187" text-anchor="middle" fill="#ef4444" font-size="10.5" font-weight="800">100.0 °C</text>
+        </g>
+
+        <!-- کارت وضعیت زنده سمت راست -->
+        <rect x="190" y="34" width="74" height="148" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" />
+        <text x="227" y="52" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="8.5" font-weight="700">PHASE</text>
+        <rect id="vdl-phase-pill" x="196" y="58" width="62" height="19" rx="9" fill="#0284c7" fill-opacity="0.16" />
+        <text id="vdl-phase-en" x="227" y="71" text-anchor="middle" fill="#0284c7" font-size="8.8" font-weight="800">2-Phase</text>
+
+        <text x="227" y="94" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="8.5" font-weight="700">v (m³/kg)</text>
+        <text id="vdl-g-v" x="227" y="109" text-anchor="middle" fill="#059669" font-size="10.5" font-weight="800">0.335</text>
+
+        <text x="227" y="129" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="8.5" font-weight="700">h (kJ/kg)</text>
+        <text id="vdl-g-h" x="227" y="144" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800">856.6</text>
+
+        <text id="vdl-g-x-title" x="227" y="162" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="8.5" font-weight="700">Quality x</text>
+        <text id="vdl-g-x" x="227" y="176" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">0.194</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="vdl-plot-title">گنبد اشباع آب (<span dir="ltr">T-log v</span>)</span>
+        <span dir="ltr" id="vdl-cp-tag">CP: 373.95°C, 22.06 MPa</span>
+      </div>
+      <svg id="vdl-dome-svg" viewBox="0 0 385 212" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار گنبد اشباع واقعی آب">
+        <!-- شبکه -->
+        <g stroke="currentColor" stroke-opacity="0.11" stroke-width="1">
+          <line x1="56" y1="48" x2="365" y2="48" />
+          <line x1="56" y1="92" x2="365" y2="92" />
+          <line x1="56" y1="136" x2="365" y2="136" />
+          <line x1="128" y1="16" x2="128" y2="180" />
+          <line x1="191" y1="16" x2="191" y2="180" />
+          <line x1="254" y1="16" x2="254" y2="180" />
+          <line x1="317" y1="16" x2="317" y2="180" />
+        </g>
+
+        <!-- محورها -->
+        <line x1="56" y1="14" x2="56" y2="180" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="56" y1="180" x2="368" y2="180" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text id="vdl-y-lbl" x="12" y="22" fill="currentColor" font-size="11" font-weight="800">T (°C)</text>
+        <text x="366" y="203" text-anchor="end" fill="currentColor" font-size="10.5" font-weight="700">v (m³/kg, log)</text>
+
+        <!-- برچسب‌های محورها -->
+        <g id="vdl-y-ticks" fill="currentColor" fill-opacity="0.68" font-size="9.5" text-anchor="end"></g>
+        <g fill="currentColor" fill-opacity="0.68" font-size="9.5" text-anchor="middle">
+          <text x="65" y="194">10⁻³</text>
+          <text x="128" y="194">10⁻²</text>
+          <text x="191" y="194">10⁻¹</text>
+          <text x="254" y="194">1</text>
+          <text x="317" y="194">10</text>
+        </g>
+
+        <!-- پرشدگی داخل گنبد و منحنی اشباع -->
+        <path id="vdl-dome-fill" d="" fill="#0284c7" fill-opacity="0.11" />
+        <path id="vdl-dome-liq" d="" fill="none" stroke="#0284c7" stroke-width="2.4" />
+        <path id="vdl-dome-vap" d="" fill="none" stroke="#059669" stroke-width="2.4" />
+
+        <!-- نقطه بحرانی CP -->
+        <circle id="vdl-cp-dot" cx="97" cy="60" r="4.5" fill="#ef4444" stroke="#ffffff" stroke-width="1.3" />
+        <text id="vdl-cp-lbl" x="104" y="54" fill="#ef4444" font-size="9.5" font-weight="800">CP</text>
+
+        <!-- مسیر هم‌فشار کامل و بخش پیموده‌شده -->
+        <path id="vdl-iso-full" d="" fill="none" stroke="currentColor" stroke-opacity="0.34" stroke-width="1.8" stroke-dasharray="4 3" />
+        <path id="vdl-iso-act" d="" fill="none" stroke="#d97706" stroke-width="2.8" stroke-linecap="round" />
+
+        <!-- نقاط اهرم A, B, C در ناحیه دوفازی -->
+        <g id="vdl-lever-pts">
+          <line id="vdl-ab-seg" x1="65" y1="145" x2="220" y2="145" stroke="#ef4444" stroke-width="3.2" />
+          <circle id="vdl-ptA" cx="65" cy="145" r="3.8" fill="#0284c7" />
+          <text id="vdl-lblA" x="62" y="137" fill="#0284c7" font-size="9.5" font-weight="800">A(f)</text>
+          <circle id="vdl-ptC" cx="268" cy="145" r="3.8" fill="#059669" />
+          <text id="vdl-lblC" x="272" y="137" fill="#059669" font-size="9.5" font-weight="800">C(g)</text>
+        </g>
+
+        <!-- خط‌چین راهنما و نقطه جاری -->
+        <line id="vdl-gx" x1="220" y1="145" x2="220" y2="180" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 3" stroke-width="1.2" />
+        <line id="vdl-gy" x1="56" y1="145" x2="220" y2="145" stroke="#ef4444" stroke-opacity="0.6" stroke-dasharray="3 3" stroke-width="1.2" />
+        <circle id="vdl-dot" cx="220" cy="145" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+      </svg>
+
+      <!-- نوار زنده قاعده اهرم و نسبت حجمی بخار -->
+      <div style="margin-top:0.25rem;padding:0.45rem 0.6rem;border-radius:9px;border:1px solid var(--sl-color-gray-5);background:var(--sl-color-bg-sidebar);font-size:0.78rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.3rem">
+          <span>قاعدهٔ اهرم <span dir="ltr">(x = m_g/m_t = AB/AC)</span>:</span>
+          <strong dir="ltr" id="vdl-lever-x" style="color:#0284c7">x = 0.194 (19.4% جرم بخار)</strong>
+        </div>
+        <div style="height:8px;border-radius:999px;background:var(--sl-color-gray-5);overflow:hidden;margin-bottom:0.45rem">
+          <div id="vdl-bar-mass" style="height:100%;width:19.4%;background:#0284c7;transition:width 0.12s ease"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:0.4rem;margin-bottom:0.3rem">
+          <span>سهم حجمی بخار در سیلندر <span dir="ltr">(V_g / V_total)</span>:</span>
+          <strong dir="ltr" id="vdl-lever-vol" style="color:#059669">99.7% حجم بخار</strong>
+        </div>
+        <div style="height:8px;border-radius:999px;background:var(--sl-color-gray-5);overflow:hidden">
+          <div id="vdl-bar-vol" style="height:100%;width:99.7%;background:#059669;transition:width 0.12s ease"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">دما و ناحیهٔ فازی</span>
+      <span class="jh-metric__val" id="vdl-m-phase" style="direction:rtl;text-align:right">100.0 °C · مخلوط اشباع</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">حجم مخصوص (<span dir="ltr">v</span>) و نسبت انبساط</span>
+      <span class="jh-metric__val" id="vdl-m-v">0.335 m³/kg (322×)</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">آنتالپی ویژه (<span dir="ltr">h</span>)</span>
+      <span class="jh-metric__val" id="vdl-m-h">856.6 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">کیفیت (<span dir="ltr">x</span>) / گرمای نهان</span>
+      <span class="jh-metric__val" id="vdl-m-x">x = 0.194</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="vdl-explain"></div>
+</div>
+
+<script>
+import {
+  getWaterDome,
+  waterSatByP,
+  waterPT,
+  waterPH,
+  WATER_CRIT,
+  waterTsatC,
+} from '../../lib/thermoProps';
+import {
+  createViewport,
+  tempToColor,
+  setThermometer,
+  createAnimController,
+} from '../../lib/liveSimKit';
+
+const root = document.getElementById('vapor-dome-lab');
+if (root) {
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const P_MIN = 10;
+  const P_MAX = 28000;
+  const LOG_RATIO = Math.log(P_MAX / P_MIN);
+
+  let diagMode: 'Tv' | 'Pv' = 'Tv';
+  let pKpa = 101.325;
+  let qPct = 22;
+  let bubbleClock = 0;
+
+  const pSlider = root.querySelector('#vdl-p') as HTMLInputElement;
+  const qSlider = root.querySelector('#vdl-q') as HTMLInputElement;
+  const pLbl = root.querySelector('#vdl-p-lbl')!;
+  const qLbl = root.querySelector('#vdl-q-lbl')!;
+  const playBtn = root.querySelector('#vdl-play') as HTMLButtonElement;
+  const resetBtn = root.querySelector('#vdl-reset') as HTMLButtonElement;
+  const tsatPill = root.querySelector('#vdl-tsat-pill')!;
+
+  const cylTag = root.querySelector('#vdl-cyl-tag')!;
+  const vapFill = root.querySelector('#vdl-vap-fill')!;
+  const liqFill = root.querySelector('#vdl-liq-fill')!;
+  const meniscus = root.querySelector('#vdl-meniscus')!;
+  const bubblesGrp = root.querySelector('#vdl-bubbles')!;
+  const shimmerGrp = root.querySelector('#vdl-shimmer')!;
+  const pistonGrp = root.querySelector('#vdl-piston-grp')!;
+  const expBg = root.querySelector('#vdl-exp-bg')!;
+  const expTxt = root.querySelector('#vdl-exp-txt')!;
+  const flame = root.querySelector('#vdl-flame') as SVGGElement;
+  const mercEl = root.querySelector('#vdl-merc');
+  const tsatTick = root.querySelector('#vdl-tsat-tick') as SVGLineElement;
+  const tsatLbl = root.querySelector('#vdl-tsat-lbl') as SVGTextElement;
+  const tVal = root.querySelector('#vdl-t-val')!;
+  const phasePill = root.querySelector('#vdl-phase-pill')!;
+  const phaseEn = root.querySelector('#vdl-phase-en')!;
+  const gV = root.querySelector('#vdl-g-v')!;
+  const gH = root.querySelector('#vdl-g-h')!;
+  const gXTitle = root.querySelector('#vdl-g-x-title')!;
+  const gX = root.querySelector('#vdl-g-x')!;
+
+  const plotTitle = root.querySelector('#vdl-plot-title')!;
+  const yLbl = root.querySelector('#vdl-y-lbl')!;
+  const yTicksGrp = root.querySelector('#vdl-y-ticks')!;
+  const domeFill = root.querySelector('#vdl-dome-fill')!;
+  const domeLiq = root.querySelector('#vdl-dome-liq')!;
+  const domeVap = root.querySelector('#vdl-dome-vap')!;
+  const cpDot = root.querySelector('#vdl-cp-dot')!;
+  const cpLbl = root.querySelector('#vdl-cp-lbl')!;
+  const isoFull = root.querySelector('#vdl-iso-full')!;
+  const isoAct = root.querySelector('#vdl-iso-act')!;
+  const leverPts = root.querySelector('#vdl-lever-pts') as SVGGElement;
+  const abSeg = root.querySelector('#vdl-ab-seg')!;
+  const ptA = root.querySelector('#vdl-ptA')!;
+  const lblA = root.querySelector('#vdl-lblA')!;
+  const ptC = root.querySelector('#vdl-ptC')!;
+  const lblC = root.querySelector('#vdl-lblC')!;
+  const gx = root.querySelector('#vdl-gx')!;
+  const gy = root.querySelector('#vdl-gy')!;
+  const dot = root.querySelector('#vdl-dot')!;
+
+  const leverX = root.querySelector('#vdl-lever-x')!;
+  const barMass = root.querySelector('#vdl-bar-mass') as HTMLElement;
+  const leverVol = root.querySelector('#vdl-lever-vol')!;
+  const barVol = root.querySelector('#vdl-bar-vol') as HTMLElement;
+
+  const mPhase = root.querySelector('#vdl-m-phase')!;
+  const mV = root.querySelector('#vdl-m-v')!;
+  const mH = root.querySelector('#vdl-m-h')!;
+  const mX = root.querySelector('#vdl-m-x')!;
+  const explainEl = root.querySelector('#vdl-explain')!;
+
+  // ساخت حباب‌های بخار و ذرات حرارتی
+  const bubbles: Array<{ x0: number; phase: number; r: number; el: SVGCircleElement }> = [];
+  for (let i = 0; i < 11; i++) {
+    const el = document.createElementNS(SVG_NS, 'circle');
+    const r = 2 + (i % 3) * 0.9;
+    el.setAttribute('r', r.toFixed(1));
+    el.setAttribute('fill', '#e0f2fe');
+    el.setAttribute('stroke', '#38bdf8');
+    el.setAttribute('stroke-width', '1');
+    bubblesGrp.appendChild(el);
+    bubbles.push({ x0: 46 + (i * 8.4) % 86, phase: (i * 0.23) % 1, r, el });
+  }
+
+  const shimmers: Array<{ x0: number; yFrac: number; el: SVGCircleElement }> = [];
+  for (let i = 0; i < 12; i++) {
+    const el = document.createElementNS(SVG_NS, 'circle');
+    el.setAttribute('r', '2');
+    el.setAttribute('fill', 'currentColor');
+    el.setAttribute('fill-opacity', '0.3');
+    shimmerGrp.appendChild(el);
+    shimmers.push({ x0: 45 + ((i * 19) % 88), yFrac: ((i * 29 + 11) % 90) / 100, el });
+  }
+
+  const domeData = getWaterDome().filter((pt) => pt.tC >= 25);
+
+  const vpTv = createViewport(-3.15, 1.75, 0, 580, 56, 365, 180, 16);
+  const vpPv = createViewport(-3.15, 1.75, 0.6, 4.6, 56, 365, 180, 16);
+
+  function mapX(v: number): number {
+    return vpTv.x(Math.max(-3.14, Math.min(1.74, Math.log10(Math.max(1e-4, v)))));
+  }
+
+  function mapY(tC: number, pValKpa: number): number {
+    if (diagMode === 'Tv') {
+      return vpTv.y(Math.max(0, Math.min(580, tC)));
+    }
+    return vpPv.y(Math.max(0.6, Math.min(4.6, Math.log10(Math.max(4, pValKpa)))));
+  }
+
+  function formatP(p: number): string {
+    if (p >= 1000) return `${(p / 1000).toFixed(p >= 10000 ? 1 : 2)} MPa`;
+    if (p < 105 && Math.abs(p - 101.325) < 0.5) return '101.3 kPa';
+    return `${p.toFixed(p < 100 ? 1 : 0)} kPa`;
+  }
+
+  function formatV(v: number): string {
+    if (v >= 1) return v.toFixed(3);
+    if (v >= 0.05) return v.toFixed(4);
+    return v.toFixed(5);
+  }
+
+  function pToSlider(p: number): number {
+    const u = Math.log(Math.max(P_MIN, Math.min(P_MAX, p)) / P_MIN) / LOG_RATIO;
+    return Math.round(u * 1000);
+  }
+
+  function sliderToP(val: number): number {
+    const raw = P_MIN * Math.pow(P_MAX / P_MIN, val / 1000);
+    if (raw < 30) return Math.round(raw * 2) / 2;
+    if (raw < 200) return Math.round(raw);
+    if (raw < 2000) return Math.round(raw / 10) * 10;
+    return Math.round(raw / 100) * 100;
+  }
+
+  function renderDomeBackdrop() {
+    const liqPts: Array<[number, number]> = [];
+    const vapPts: Array<[number, number]> = [];
+
+    for (const pt of domeData) {
+      const y = mapY(pt.tC, pt.pKpa);
+      liqPts.push([mapX(pt.vf), y]);
+      vapPts.push([mapX(pt.vg), y]);
+    }
+    const cpX = mapX(WATER_CRIT.v_CR);
+    const cpY = mapY(WATER_CRIT.T_C, WATER_CRIT.P_KPA);
+    liqPts.push([cpX, cpY]);
+    vapPts.push([cpX, cpY]);
+
+    const dLiq = liqPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' ');
+    const dVap = vapPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' ');
+    const revVap = [...vapPts].reverse();
+    const dFill =
+      dLiq +
+      ' ' +
+      revVap.map((pt) => `L ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' ') +
+      ' Z';
+
+    domeLiq.setAttribute('d', dLiq);
+    domeVap.setAttribute('d', dVap);
+    domeFill.setAttribute('d', dFill);
+    cpDot.setAttribute('cx', cpX.toFixed(1));
+    cpDot.setAttribute('cy', cpY.toFixed(1));
+    cpLbl.setAttribute('x', (cpX + 7).toFixed(1));
+    cpLbl.setAttribute('y', (cpY - 4).toFixed(1));
+
+    yTicksGrp.innerHTML = '';
+    if (diagMode === 'Tv') {
+      plotTitle.innerHTML = 'گنبد اشباع آب (<span dir="ltr">T-log v</span>)';
+      yLbl.textContent = 'T (°C)';
+      for (const tTick of [0, 100, 200, 300, 400, 500]) {
+        const ty = vpTv.y(tTick);
+        const txt = document.createElementNS(SVG_NS, 'text');
+        txt.setAttribute('x', '50');
+        txt.setAttribute('y', (ty + 3.5).toFixed(1));
+        txt.textContent = String(tTick);
+        yTicksGrp.appendChild(txt);
+      }
+    } else {
+      plotTitle.innerHTML = 'گنبد اشباع آب (<span dir="ltr">log P - log v</span>)';
+      yLbl.textContent = 'P (kPa)';
+      const pTicks: Array<[number, string]> = [
+        [10, '10 k'],
+        [100, '100 k'],
+        [1000, '1 M'],
+        [10000, '10 M'],
+      ];
+      for (const [pv, lbl] of pTicks) {
+        const py = vpPv.y(Math.log10(pv));
+        const txt = document.createElementNS(SVG_NS, 'text');
+        txt.setAttribute('x', '50');
+        txt.setAttribute('y', (py + 3.5).toFixed(1));
+        txt.textContent = lbl;
+        yTicksGrp.appendChild(txt);
+      }
+    }
+  }
+
+  function render() {
+    pLbl.textContent = formatP(pKpa);
+    qLbl.textContent = `${qPct.toFixed(0)}%`;
+    qSlider.value = String(qPct);
+
+    const isSupercrit = pKpa >= WATER_CRIT.P_KPA;
+    const stMin = waterPT(pKpa, 20);
+    const stMax = waterPT(pKpa, 550);
+    const hTarget = stMin.h + (qPct / 100) * (stMax.h - stMin.h);
+    const st = waterPH(pKpa, hTarget);
+
+    const tSat = isSupercrit ? null : waterTsatC(pKpa);
+    const sat = isSupercrit ? null : waterSatByP(pKpa);
+
+    if (tSat !== null) {
+      tsatPill.innerHTML = `نقطهٔ جوش: <strong dir="ltr">${tSat.toFixed(1)} °C</strong>`;
+      tsatTick.style.display = '';
+      tsatLbl.style.display = '';
+      const yTick = 152 - Math.max(0.06, Math.min(1, (tSat - 20) / 530)) * 112;
+      tsatTick.setAttribute('y1', yTick.toFixed(1));
+      tsatTick.setAttribute('y2', yTick.toFixed(1));
+      tsatLbl.textContent = `Tsat=${tSat.toFixed(0)}°C`;
+    } else {
+      tsatPill.innerHTML = 'فشار فوق‌بحرانی: <strong dir="ltr">بدون نقطهٔ جوش!</strong>';
+      tsatTick.style.display = 'none';
+      tsatLbl.style.display = 'none';
+    }
+
+    // موقعیت پیستون (مقیاس لگاریتمی برای پوشش 1× تا 14500×)
+    const expRatio = st.v / stMin.v;
+    const logExp = Math.log10(Math.max(1, st.v / 0.001));
+    const cavityH = 34 + Math.min(1, logExp / 4.62) * 124; // 34..158 px
+    const pistonBottom = 188 - cavityH;
+    pistonGrp.setAttribute('transform', `translate(0, ${(pistonBottom - 60).toFixed(1)})`);
+
+    const tColor = tempToColor(st.tK);
+    const isTwoPhase = !isSupercrit && st.x !== null && st.x > 0 && st.x < 1;
+
+    if (isSupercrit) {
+      liqFill.style.display = 'none';
+      meniscus.style.display = 'none';
+      bubblesGrp.style.display = 'none';
+      shimmerGrp.style.display = '';
+      const densityAlpha = Math.max(0.18, Math.min(0.56, 0.0022 / st.v));
+      vapFill.setAttribute('y', pistonBottom.toFixed(1));
+      vapFill.setAttribute('height', cavityH.toFixed(1));
+      vapFill.setAttribute('fill', tColor);
+      vapFill.setAttribute('fill-opacity', densityAlpha.toFixed(2));
+    } else if (isTwoPhase && sat) {
+      const xVal = st.x!;
+      const liqH = Math.max(7, (1 - xVal) * Math.min(36, cavityH * 0.48));
+      const menY = 188 - liqH;
+      vapFill.setAttribute('y', pistonBottom.toFixed(1));
+      vapFill.setAttribute('height', Math.max(4, menY - pistonBottom).toFixed(1));
+      vapFill.setAttribute('fill', '#38bdf8');
+      vapFill.setAttribute('fill-opacity', '0.20');
+
+      liqFill.style.display = '';
+      liqFill.setAttribute('y', menY.toFixed(1));
+      liqFill.setAttribute('height', liqH.toFixed(1));
+      liqFill.setAttribute('fill', '#0284c7');
+      liqFill.setAttribute('fill-opacity', '0.62');
+
+      meniscus.style.display = '';
+      meniscus.setAttribute('y1', menY.toFixed(1));
+      meniscus.setAttribute('y2', menY.toFixed(1));
+
+      bubblesGrp.style.display = '';
+      shimmerGrp.style.display = 'none';
+      const intensity = Math.max(0.25, Math.sin(Math.PI * xVal));
+      for (const b of bubbles) {
+        const u = (b.phase + bubbleClock * 0.85 + qPct * 0.03) % 1;
+        const bx = b.x0 + Math.sin(u * 8 + b.phase * 10) * 2.5;
+        const by = 186 - u * Math.max(10, liqH + 22);
+        b.el.setAttribute('cx', bx.toFixed(1));
+        b.el.setAttribute('cy', Math.max(pistonBottom + 4, by).toFixed(1));
+        b.el.setAttribute('fill-opacity', (intensity * (1 - u * 0.55)).toFixed(2));
+        b.el.setAttribute('stroke-opacity', (intensity * (1 - u * 0.45)).toFixed(2));
+      }
+    } else if (!isSupercrit && st.tC < (tSat ?? 0)) {
+      // مایع متراکم
+      liqFill.style.display = '';
+      liqFill.setAttribute('y', pistonBottom.toFixed(1));
+      liqFill.setAttribute('height', cavityH.toFixed(1));
+      liqFill.setAttribute('fill', tColor);
+      liqFill.setAttribute('fill-opacity', '0.58');
+      vapFill.setAttribute('height', '0');
+      meniscus.style.display = 'none';
+      bubblesGrp.style.display = 'none';
+      shimmerGrp.style.display = 'none';
+    } else {
+      // بخار فوق‌گرم
+      liqFill.style.display = 'none';
+      meniscus.style.display = 'none';
+      bubblesGrp.style.display = 'none';
+      shimmerGrp.style.display = '';
+      vapFill.setAttribute('y', pistonBottom.toFixed(1));
+      vapFill.setAttribute('height', cavityH.toFixed(1));
+      vapFill.setAttribute('fill', tColor);
+      vapFill.setAttribute('fill-opacity', '0.24');
+    }
+
+    if (shimmerGrp.style.display !== 'none') {
+      shimmers.forEach((s, idx) => {
+        const sx = s.x0 + Math.sin(bubbleClock * 3 + idx) * 4;
+        const sy = pistonBottom + 6 + ((s.yFrac + bubbleClock * 0.25) % 0.86) * Math.max(10, cavityH - 12);
+        s.el.setAttribute('cx', sx.toFixed(1));
+        s.el.setAttribute('cy', sy.toFixed(1));
+      });
+    }
+
+    // برچسب نسبت انبساط داخل/بالای محفظه بدون تداخل با پیستون
+    const expY = cavityH >= 52 ? pistonBottom + cavityH * 0.52 - 10 : Math.max(24, pistonBottom - 26);
+    expBg.setAttribute('y', expY.toFixed(1));
+    expTxt.setAttribute('y', (expY + 13).toFixed(1));
+    expTxt.textContent = expRatio >= 100 ? `v/v₀ = ${Math.round(expRatio)}x` : `v/v₀ = ${expRatio.toFixed(1)}x`;
+
+    flame.style.opacity = qPct > 0.5 ? '1' : '0.35';
+
+    // دماسنج و کارت دیجیتال سمت راست
+    setThermometer(mercEl, st.tC, 20, 550, 152, 112);
+    tVal.textContent = `${st.tC.toFixed(1)} °C`;
+    gV.textContent = formatV(st.v);
+    gH.textContent = st.h.toFixed(1);
+
+    let phaseEnStr = 'Subcooled';
+    let phaseColor = '#0284c7';
+    if (isSupercrit) {
+      phaseEnStr = st.tC > WATER_CRIT.T_C ? 'Supercrit' : 'Dense Fluid';
+      phaseColor = st.tC > WATER_CRIT.T_C ? '#ef4444' : '#0284c7';
+    } else if (isTwoPhase) {
+      phaseEnStr = '2-Phase';
+      phaseColor = '#059669';
+    } else if (st.phase === 'بخار فوق‌گرم') {
+      phaseEnStr = 'Superheat';
+      phaseColor = '#d97706';
+    }
+    phasePill.setAttribute('fill', phaseColor);
+    phaseEn.setAttribute('fill', phaseColor);
+    phaseEn.textContent = phaseEnStr;
+
+    if (isTwoPhase && st.x !== null) {
+      gXTitle.textContent = 'Quality x';
+      gX.textContent = st.x.toFixed(3);
+      cylTag.textContent = `x = ${st.x.toFixed(2)} | T = ${st.tC.toFixed(1)} °C`;
+    } else if (isSupercrit) {
+      gXTitle.textContent = 'P / Pcr';
+      gX.textContent = `${(pKpa / WATER_CRIT.P_KPA).toFixed(2)}x`;
+      cylTag.textContent = `No Boiling | T = ${st.tC.toFixed(1)} °C`;
+    } else {
+      gXTitle.textContent = 'ΔT_sat';
+      const dT = tSat !== null ? st.tC - tSat : 0;
+      gX.textContent = `${dT >= 0 ? '+' : ''}${dT.toFixed(0)} °C`;
+      cylTag.textContent = `${phaseEnStr} | T = ${st.tC.toFixed(1)} °C`;
+    }
+
+    // رسم مسیر هم‌فشار روی گنبد
+    renderDomeBackdrop();
+    const N = 46;
+    const fullPts: Array<[number, number]> = [];
+    const actPts: Array<[number, number]> = [];
+    const nAct = Math.max(1, Math.round((qPct / 100) * N));
+    for (let i = 0; i <= N; i++) {
+      const hi = stMin.h + (i / N) * (stMax.h - stMin.h);
+      const si = waterPH(pKpa, hi);
+      fullPts.push([mapX(si.v), mapY(si.tC, si.pKpa)]);
+    }
+    for (let i = 0; i <= nAct; i++) {
+      const hi = stMin.h + ((i / nAct) * (qPct / 100)) * (stMax.h - stMin.h);
+      const si = waterPH(pKpa, hi);
+      actPts.push([mapX(si.v), mapY(si.tC, si.pKpa)]);
+    }
+
+    isoFull.setAttribute('d', fullPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' '));
+    isoAct.setAttribute('d', actPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' '));
+
+    const cx = mapX(st.v);
+    const cy = mapY(st.tC, st.pKpa);
+    dot.setAttribute('cx', cx.toFixed(1));
+    dot.setAttribute('cy', cy.toFixed(1));
+    dot.setAttribute('fill', tColor);
+    gx.setAttribute('x1', cx.toFixed(1));
+    gx.setAttribute('x2', cx.toFixed(1));
+    gx.setAttribute('y1', cy.toFixed(1));
+    gy.setAttribute('y1', cy.toFixed(1));
+    gy.setAttribute('y2', cy.toFixed(1));
+    gy.setAttribute('x2', cx.toFixed(1));
+
+    // قاعده اهرم و سهم حجمی بخار
+    if (isTwoPhase && sat && st.x !== null) {
+      leverPts.style.display = '';
+      const xA = mapX(sat.vf);
+      const xC = mapX(sat.vg);
+      const yL = mapY(sat.tC, sat.pKpa);
+      abSeg.setAttribute('x1', xA.toFixed(1));
+      abSeg.setAttribute('x2', cx.toFixed(1));
+      abSeg.setAttribute('y1', yL.toFixed(1));
+      abSeg.setAttribute('y2', yL.toFixed(1));
+      ptA.setAttribute('cx', xA.toFixed(1));
+      ptA.setAttribute('cy', yL.toFixed(1));
+      lblA.setAttribute('x', (xA - 16).toFixed(1));
+      lblA.setAttribute('y', (yL - 6).toFixed(1));
+      ptC.setAttribute('cx', xC.toFixed(1));
+      ptC.setAttribute('cy', yL.toFixed(1));
+      lblC.setAttribute('x', (xC + 6).toFixed(1));
+      lblC.setAttribute('y', (yL - 6).toFixed(1));
+
+      const massPct = st.x * 100;
+      const volFrac = ((st.x * sat.vg) / st.v) * 100;
+      leverX.textContent = `x = ${st.x.toFixed(3)} (${massPct.toFixed(1)}% جرم بخار)`;
+      barMass.style.width = `${massPct.toFixed(1)}%`;
+      leverVol.textContent = `${volFrac.toFixed(1)}% حجم بخار`;
+      barVol.style.width = `${volFrac.toFixed(1)}%`;
+
+      mX.textContent = `x = ${st.x.toFixed(3)} (${volFrac.toFixed(1)}% V)`;
+    } else {
+      leverPts.style.display = 'none';
+      if (isSupercrit) {
+        leverX.textContent = 'فوق‌بحرانی: x تعریف‌نشده';
+        barMass.style.width = '0%';
+        leverVol.textContent = 'تبدیل پیوسته تک‌فاز';
+        barVol.style.width = '100%';
+        mX.textContent = 'h_fg = 0 (بدون مرز فاز)';
+      } else if (st.phase === 'مایع متراکم') {
+        leverX.textContent = 'مایع متراکم (پیش از اشباع)';
+        barMass.style.width = '0%';
+        leverVol.textContent = '0.0% حجم بخار';
+        barVol.style.width = '0%';
+        mX.textContent = `h_fg = ${sat ? (sat.hg - sat.hf).toFixed(0) : '—'} kJ/kg`;
+      } else {
+        leverX.textContent = 'بخار فوق‌گرم (پس از تبخیر کامل)';
+        barMass.style.width = '100%';
+        leverVol.textContent = '100.0% حجم بخار';
+        barVol.style.width = '100%';
+        mX.textContent = `h_fg = ${sat ? (sat.hg - sat.hf).toFixed(0) : '—'} kJ/kg`;
+      }
+    }
+
+    mPhase.textContent = `${st.tC.toFixed(1)} °C · ${st.phase}`;
+    mV.textContent = `${formatV(st.v)} m³/kg (${expRatio >= 100 ? Math.round(expRatio) : expRatio.toFixed(1)}×)`;
+    mH.textContent = `${st.h.toFixed(1)} kJ/kg`;
+
+    // متن تحلیلی زنده
+    if (isSupercrit) {
+      explainEl.innerHTML = `در فشار <strong><span dir="ltr">${formatP(pKpa)} &gt; P_cr (22.06 MPa)</span></strong> خط افقی تبخیر به صفر رسیده است! سیال بدون هیچ حباب یا خط جدایش مایع–بخار، به‌صورت پیوسته از چگالی بالا به سیال فوق‌بحرانی کم‌چگالی تبدیل می‌شود (<span dir="ltr">h_fg = 0</span>).`;
+    } else if (isTwoPhase && sat && st.x !== null) {
+      const volFrac = ((st.x * sat.vg) / st.v) * 100;
+      explainEl.innerHTML = `در ناحیهٔ <strong>مخلوط اشباع</strong> (<span dir="ltr">T_sat = ${sat.tC.toFixed(1)} °C</span>)، گرمای ورودی صرف شکستن پیوندهای بین‌مولکولی می‌شود و دما ثابت می‌ماند. با آنکه کیفیت جرمی <strong><span dir="ltr">x = ${st.x.toFixed(3)}</span></strong> است، چون <span dir="ltr">v_g = ${(sat.vg / sat.vf).toFixed(0)} · v_f</span>، بخار هم‌اکنون <strong><span dir="ltr">${volFrac.toFixed(1)}%</span></strong> حجم سیلندر را پر کرده است!`;
+    } else if (st.phase === 'مایع متراکم') {
+      explainEl.innerHTML = `آب در دمای <strong><span dir="ltr">${st.tC.toFixed(1)} °C</span></strong> پایین‌تر از دمای جوش (<span dir="ltr">${tSat?.toFixed(1)} °C</span>) و در حالت <strong>مایع متراکم</strong> است؛ حجم مخصوص آن نزدیک <span dir="ltr">0.001 m³/kg</span> بوده و پیستون تقریباً حرکت نکرده است.`;
+    } else {
+      explainEl.innerHTML = `تمام مایع تبخیر شده و سیال اکنون <strong>بخار فوق‌گرم</strong> (<span dir="ltr">T = ${st.tC.toFixed(1)} °C &gt; T_sat</span>) است. حجم مخصوص به <strong><span dir="ltr">${formatV(st.v)} m³/kg</span></strong> (<span dir="ltr">${Math.round(expRatio)}×</span> مایع اولیه) رسیده و با گرمایش بیشتر دوباره دما افزایش می‌یابد.`;
+    }
+  }
+
+  const anim = createAnimController(root, (dt) => {
+    bubbleClock += dt;
+    qPct += dt * 11;
+    if (qPct >= 100) {
+      qPct = 100;
+      playBtn.textContent = '▶ پخش گرمایش';
+      render();
+      return false;
+    }
+    render();
+    return true;
+  });
+
+  function syncPresetBtns() {
+    root.querySelectorAll('#vdl-presets button').forEach((btn) => {
+      const bp = parseFloat(btn.getAttribute('data-p') || '0');
+      btn.classList.toggle('is-active', Math.abs(bp - pKpa) / Math.max(1, bp) < 0.015);
+    });
+  }
+
+  root.querySelectorAll('#vdl-diagrams button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#vdl-diagrams button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      diagMode = (btn.getAttribute('data-diag') as 'Tv' | 'Pv') || 'Tv';
+      render();
+    });
+  });
+
+  root.querySelectorAll('#vdl-presets button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      pKpa = parseFloat(btn.getAttribute('data-p') || '101.325');
+      pSlider.value = String(pToSlider(pKpa));
+      syncPresetBtns();
+      render();
+    });
+  });
+
+  pSlider.addEventListener('input', () => {
+    pKpa = sliderToP(parseFloat(pSlider.value));
+    syncPresetBtns();
+    render();
+  });
+
+  qSlider.addEventListener('input', () => {
+    anim.stop();
+    playBtn.textContent = '▶ پخش گرمایش';
+    qPct = parseFloat(qSlider.value);
+    bubbleClock += 0.08;
+    render();
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (anim.isPlaying()) {
+      anim.stop();
+      playBtn.textContent = '▶ پخش گرمایش';
+    } else {
+      if (qPct >= 99.5) qPct = 0;
+      playBtn.textContent = '⏸ توقف';
+      anim.start();
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    anim.stop();
+    playBtn.textContent = '▶ پخش گرمایش';
+    qPct = 0;
+    render();
+  });
+
+  pSlider.value = String(pToSlider(pKpa));
+  render();
+}
+</script>

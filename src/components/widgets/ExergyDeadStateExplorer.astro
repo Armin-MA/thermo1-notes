@@ -1,76 +1,841 @@
 ---
-// آزمایشگر اگزرژی، کار محیط و بازده قانون دوم (فصل ۸)
+// آزمایشگر زنده اگزرژی، کار محیط، تخریب اگزرژی و کیفیت گرما (فصل ۸ - بخش‌های ۱ تا ۴)
 ---
 
 <div class="jh-widget not-content" id="exergy-widget">
   <div class="jh-widget__head">
-    <span class="jh-widget__title">تجزیهٔ کار برگشت‌پذیر و تخریب اگزرژی <span dir="ltr" style="display:inline-block">(X_dest = T₀ · S_gen)</span></span>
-    <span class="jh-widget__sub">مقایسهٔ <span dir="ltr">W_u</span>، کار محیط <span dir="ltr">W_surr</span> و تلفات برگشت‌ناپذیری در حالت مردهٔ <span dir="ltr">T₀</span></span>
+    <span class="jh-widget__title">آزمایشگر زندهٔ آبشار اگزرژی، کار محیط و کیفیت گرما</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ تفکیک کار مفید <span dir="ltr">(W_u)</span>، کار محیط <span dir="ltr">(W_surr = P₀ΔV)</span> و تخریب اگزرژی <span dir="ltr">(X_dest = T₀ S_gen)</span> در برابر کیفیت گرما
+  </div>
+
+  <div class="jh-widget__btns" id="ex-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="piston-exergy">۱) کار محیط <span dir="ltr">(P₀ΔV)</span>، کار مفید و تخریب اگزرژی</button>
+    <button type="button" class="jh-widget__btn" data-mode="heat-quality">۲) کیفیت گرما و مثال ۸-۲ <span dir="ltr">(Q̇_in = 500 kW)</span></button>
+  </div>
+
+  <div class="jh-widget__grid" id="ex-piston-ctrls">
+    <label class="jh-widget__ctrl">
+      <span>کار مفید برگشت‌پذیر <span dir="ltr">(W_rev,out)</span>: <strong id="ex-wrev-lbl" dir="ltr">120 kJ</strong></span>
+      <input id="ex-wrev" type="range" min="40" max="200" step="5" value="120" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>تولید آنتروپی <span dir="ltr">(S_gen)</span>: <strong id="ex-sgen-lbl" dir="ltr">0.12 kJ/K</strong></span>
+      <input id="ex-sgen" type="range" min="0" max="0.35" step="0.01" value="0.12" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>انبساط حجم در <span dir="ltr">P₀ = 100 kPa (ΔV)</span>: <strong id="ex-dv-lbl" dir="ltr">0.25 m³</strong></span>
+      <input id="ex-dv" type="range" min="0" max="0.50" step="0.02" value="0.25" />
+    </label>
+  </div>
+
+  <div class="jh-widget__grid" id="ex-heat-ctrls" style="display:none">
+    <label class="jh-widget__ctrl">
+      <span>دمای منبع گرم <span dir="ltr">(T_source)</span>: <strong id="ex-tsrc-lbl" dir="ltr">1200 K</strong></span>
+      <input id="ex-tsrc" type="range" min="350" max="1500" step="25" value="1200" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>توان خروجی واقعی <span dir="ltr">(Ẇ_u,out)</span>: <strong id="ex-wu-in-lbl" dir="ltr">180 kW</strong></span>
+      <input id="ex-wu-in" type="range" min="0" max="420" step="5" value="180" />
+    </label>
   </div>
 
   <div class="jh-widget__grid">
     <label class="jh-widget__ctrl">
-      <span>کار برگشت‌پذیر کل <span dir="ltr">W_rev,out</span> (kJ): <strong id="ex-wrev-lbl" dir="ltr">120</strong></span>
-      <input id="ex-wrev" type="range" min="40" max="200" step="5" value="120" />
-    </label>
-    <label class="jh-widget__ctrl">
-      <span>تولید آنتروپی <span dir="ltr">S_gen</span> (kJ/K): <strong id="ex-sgen-lbl" dir="ltr">0.12</strong></span>
-      <input id="ex-sgen" type="range" min="0" max="0.35" step="0.01" value="0.12" />
-    </label>
-    <label class="jh-widget__ctrl">
-      <span>دمای محیط <span dir="ltr">T₀</span> (K): <strong id="ex-t0-lbl" dir="ltr">298</strong></span>
+      <span>دمای محیط / حالت مرده <span dir="ltr">(T₀)</span>: <strong id="ex-t0-lbl" dir="ltr">298 K</strong></span>
       <input id="ex-t0" type="range" min="260" max="320" step="2" value="298" />
     </label>
   </div>
 
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="ex-play">▶ پخش زنده</button>
+    <button type="button" class="jh-widget__btn" id="ex-reset">↺ بازنشانی</button>
+    <label class="jh-widget__ctrl" id="ex-prog-wrap" style="flex:1;min-width:180px">
+      <span>پیشرفت فرآیند <span dir="ltr">(t)</span>: <strong id="ex-prog-lbl" dir="ltr">100%</strong></span>
+      <input id="ex-prog" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱: شماتیک فیزیکی (پیستون با فشار محیط یا موتور حرارتی مثال ۸-۲) -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="ex-sys-title">شماتیک سیلندر-پیستون در محیط <span dir="ltr">P₀</span></span>
+        <span dir="ltr" id="ex-sys-tag">ΔV = 0.25 m³</span>
+      </div>
+      <svg id="ex-sys-svg" viewBox="0 0 320 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک فیزیکی پیستون در محیط P0 و موتور حرارتی مثال ۸-۲">
+        <defs>
+          <marker id="ex-arr-em" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#059669" />
+          </marker>
+          <marker id="ex-arr-bl" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#0284c7" />
+          </marker>
+          <marker id="ex-arr-rd" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#ef4444" />
+          </marker>
+          <marker id="ex-arr-sl" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#64748b" />
+          </marker>
+        </defs>
+
+        <!-- لایه ۱: پیستون در محیط P0 -->
+        <g id="ex-scene-piston">
+          <!-- ناحیه هوای اتمسفر P0 -->
+          <rect x="108" y="34" width="198" height="148" rx="8" fill="#0284c7" fill-opacity="0.06" stroke="#0284c7" stroke-opacity="0.25" stroke-dasharray="4 3" />
+          <text x="298" y="48" text-anchor="end" fill="#0284c7" font-size="9.5" font-weight="800">ATMOSPHERE</text>
+          <text id="ex-p-amblbl" x="298" y="61" text-anchor="end" fill="currentColor" fill-opacity="0.68" font-size="8.8" font-weight="700">P₀ = 100 kPa, T₀ = 298 K</text>
+
+          <!-- محفظه گاز و ناحیه جاروب‌شده ΔV -->
+          <rect id="ex-p-gas" x="24" y="68" width="76" height="96" fill="#f59e0b" fill-opacity="0.2" rx="2" />
+          <rect id="ex-p-swept" x="100" y="68" width="38" height="96" fill="#0284c7" fill-opacity="0.16" />
+          <line x1="100" y1="68" x2="100" y2="164" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3" stroke-width="1.2" />
+          <text id="ex-p-dvlbl" x="119" y="120" text-anchor="middle" fill="#0284c7" font-size="9" font-weight="800">ΔV</text>
+
+          <!-- ذرات گاز متحرک -->
+          <g id="ex-p-particles"></g>
+
+          <!-- دیواره سیلندر -->
+          <path d="M 206 66 L 22 66 L 22 166 L 206 166" fill="none" stroke="currentColor" stroke-opacity="0.76" stroke-width="4" stroke-linejoin="round" />
+
+          <!-- تلفات اصطکاک / تخریب اگزرژی روی جداره بالایی -->
+          <g id="ex-p-friction">
+            <path id="ex-p-fwave1" d="M 120 62 Q 125 53 120 44 Q 115 35 120 28" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#ex-arr-rd)" />
+            <path id="ex-p-fwave2" d="M 140 62 Q 145 53 140 44 Q 135 35 140 28" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#ex-arr-rd)" />
+            <text id="ex-p-xdlbl" x="130" y="19" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">X_dest = 35.8 kJ</text>
+          </g>
+
+          <!-- پیستون متحرک، میله کار مفید و فلش کار محیط -->
+          <g id="ex-p-piston" transform="translate(0, 0)">
+            <rect x="0" y="68" width="14" height="96" rx="2" fill="#64748b" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.4" />
+            <line x1="7" y1="76" x2="7" y2="156" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.5" />
+            <!-- میله شفت خروجی کار مفید -->
+            <rect x="14" y="110" width="52" height="12" rx="3" fill="#475569" stroke="currentColor" stroke-opacity="0.45" />
+            <!-- فلش W_u -->
+            <g id="ex-p-wu-grp">
+              <line x1="68" y1="116" x2="112" y2="116" stroke="#059669" stroke-width="3" marker-end="url(#ex-arr-em)" />
+              <text id="ex-p-wulbl" x="92" y="104" text-anchor="middle" fill="#059669" font-size="9.5" font-weight="800">W_u = 84.2 kJ</text>
+            </g>
+            <!-- فلش W_surr عقب راندن اتمسفر P0 -->
+            <g id="ex-p-ws-grp">
+              <line x1="16" y1="146" x2="64" y2="146" stroke="#0284c7" stroke-width="2.4" marker-end="url(#ex-arr-bl)" />
+              <text id="ex-p-wslbl" x="48" y="138" text-anchor="middle" fill="#0284c7" font-size="8.8" font-weight="800">W_surr</text>
+            </g>
+          </g>
+
+          <!-- خلاصه پایین شماتیک -->
+          <rect x="18" y="188" width="286" height="30" rx="8" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.16" />
+          <text id="ex-p-sum1" x="68" y="207" text-anchor="middle" fill="#059669" font-size="9.5" font-weight="800">W_u: 84.2 kJ</text>
+          <text id="ex-p-sum2" x="162" y="207" text-anchor="middle" fill="#0284c7" font-size="9.5" font-weight="800">W_surr: 25.0 kJ</text>
+          <text id="ex-p-sum3" x="256" y="207" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">X_dest: 35.8 kJ</text>
+        </g>
+
+        <!-- لایه ۲: موتور حرارتی و کیفیت گرما (مثال ۸-۲) -->
+        <g id="ex-scene-heat" style="display:none">
+          <!-- منبع گرم T_source -->
+          <rect x="60" y="12" width="180" height="36" rx="8" fill="#ef4444" fill-opacity="0.15" stroke="#ef4444" stroke-opacity="0.65" stroke-width="1.8" />
+          <text id="ex-h-tsrc" x="150" y="34" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="800">T_source = 1200 K</text>
+
+          <!-- جریان گرمای ورودی Q_in -->
+          <line x1="150" y1="48" x2="150" y2="83" stroke="#ef4444" stroke-width="4" marker-end="url(#ex-arr-rd)" />
+          <text x="162" y="70" fill="#ef4444" font-size="10" font-weight="800">Q̇_in = 500 kW</text>
+
+          <!-- موتور حرارتی HE -->
+          <circle cx="150" cy="116" r="28" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.65" stroke-width="2.4" />
+          <g id="ex-h-rotor" transform="translate(150, 116)">
+            <line x1="-18" y1="0" x2="18" y2="0" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" />
+            <line x1="0" y1="-18" x2="0" y2="18" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" />
+          </g>
+          <text x="150" y="120" text-anchor="middle" fill="currentColor" font-size="12" font-weight="800">HE</text>
+
+          <!-- فلش توان خروجی W_u -->
+          <line id="ex-h-wu-line" x1="178" y1="116" x2="262" y2="116" stroke="#059669" stroke-width="3.5" marker-end="url(#ex-arr-em)" />
+          <text id="ex-h-wulbl" x="224" y="102" text-anchor="middle" fill="#059669" font-size="10.5" font-weight="800">Ẇ_u = 180 kW</text>
+          <text id="ex-h-wrevlbl" x="224" y="135" text-anchor="middle" fill="currentColor" fill-opacity="0.72" font-size="9.2" font-weight="700">Ẇ_rev = 375 kW</text>
+
+          <!-- گرمای دفعی: تفکیک کارنو (X=0) در برابر برگشت‌ناپذیری I -->
+          <line x1="126" y1="143" x2="126" y2="178" stroke="#64748b" stroke-width="3" marker-end="url(#ex-arr-sl)" />
+          <text id="ex-h-qcarnot" x="116" y="164" text-anchor="end" fill="#64748b" font-size="9.2" font-weight="800">Carnot: 125 kW</text>
+          <text x="116" y="175" text-anchor="end" fill="currentColor" fill-opacity="0.6" font-size="8.2">(X = 0, unavoidable)</text>
+
+          <line id="ex-h-iloss-line" x1="174" y1="143" x2="174" y2="178" stroke="#ef4444" stroke-width="3" marker-end="url(#ex-arr-rd)" />
+          <text id="ex-h-iloss" x="184" y="164" text-anchor="start" fill="#ef4444" font-size="9.2" font-weight="800">İ loss: 195 kW</text>
+          <text id="ex-h-iloss-sub" x="184" y="175" text-anchor="start" fill="#ef4444" fill-opacity="0.8" font-size="8.2">(destroyed exergy)</text>
+
+          <!-- بسته متحرک جریان انرژی -->
+          <circle id="ex-h-pkt-in" cx="150" cy="66" r="3.5" fill="#ef4444" />
+          <circle id="ex-h-pkt-w" cx="215" cy="116" r="3.5" fill="#059669" />
+
+          <!-- چاه سرد / حالت مرده T0 -->
+          <rect x="60" y="185" width="180" height="34" rx="8" fill="#0284c7" fill-opacity="0.14" stroke="#0284c7" stroke-opacity="0.6" stroke-width="1.8" />
+          <text id="ex-h-t0" x="150" y="206" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">Sink / Dead State: T₀ = 300 K</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- پنل ۲: نمودار آبشاری گراسمن (Waterfall) و عقربه بازده قانون دوم η_II -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="ex-bar-title">نمودار آبشاری تفکیک کار و بازده <span dir="ltr">η_II</span></span>
+        <span dir="ltr" id="ex-bar-tag" style="color:#059669">η_II = 70.2%</span>
+      </div>
+      <svg id="ex-bar-svg" viewBox="0 0 340 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار آبشاری اگزرژی و گیج بازده قانون دوم">
+        <!-- محورها -->
+        <g stroke="currentColor" stroke-opacity="0.1" stroke-width="1">
+          <line x1="36" y1="36" x2="220" y2="36" />
+          <line x1="36" y1="88" x2="220" y2="88" />
+          <line x1="36" y1="140" x2="220" y2="140" />
+        </g>
+        <line x1="36" y1="26" x2="36" y2="192" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+        <line x1="36" y1="192" x2="222" y2="192" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <text x="30" y="195" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+        <text id="ex-y-max" x="30" y="40" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">145</text>
+
+        <!-- ستون چپ: کل ایده‌آل یا کل انرژی ورودی (قانون اول) -->
+        <rect id="ex-b1-base" x="54" y="36" width="54" height="156" rx="4" fill="#0284c7" fill-opacity="0.15" stroke="#0284c7" stroke-opacity="0.55" stroke-width="1.4" />
+        <!-- زیربخش‌های ستون چپ در حالت کیفیت گرما -->
+        <rect id="ex-b1-qcar" x="54" y="153" width="54" height="39" rx="2" fill="#64748b" fill-opacity="0.72" style="display:none" />
+        <rect id="ex-b1-irej" x="54" y="92" width="54" height="61" rx="2" fill="#ef4444" fill-opacity="0.78" style="display:none" />
+        <rect id="ex-b1-wu" x="54" y="36" width="54" height="56" rx="2" fill="#059669" fill-opacity="0.88" style="display:none" />
+
+        <text id="ex-b1-in1" x="81" y="114" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="800">145.0</text>
+        <text id="ex-b1-top" x="81" y="29" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="800">145.0 kJ</text>
+        <text id="ex-b1-xlbl" x="81" y="206" text-anchor="middle" fill="currentColor" font-size="9.2" font-weight="700">W_act+X_dest</text>
+
+        <!-- خط مرجع کف اَنرژی / مرز تفکیک -->
+        <line id="ex-split-ref" x1="54" y1="153" x2="196" y2="153" stroke="#64748b" stroke-dasharray="4 3" stroke-width="1.2" style="display:none" />
+
+        <!-- ستون راست: تفکیک آبشاری اگزرژی (W_u, W_surr, X_dest) -->
+        <rect id="ex-b2-anergy" x="142" y="153" width="54" height="39" rx="2" fill="currentColor" fill-opacity="0.04" stroke="#64748b" stroke-opacity="0.55" stroke-dasharray="4 3" style="display:none" />
+        <text id="ex-b2-anergy-txt" x="169" y="176" text-anchor="middle" fill="#64748b" font-size="8.5" font-weight="700" style="display:none">X = 0</text>
+
+        <rect id="ex-b2-bot" x="142" y="102" width="54" height="90" rx="3" fill="#059669" fill-opacity="0.9" />
+        <rect id="ex-b2-mid" x="142" y="75" width="54" height="27" rx="3" fill="#0284c7" fill-opacity="0.88" />
+        <rect id="ex-b2-top" x="142" y="36" width="54" height="39" rx="3" fill="#ef4444" fill-opacity="0.88" />
+
+        <text id="ex-b2-tbot" x="169" y="150" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="800">W_u</text>
+        <text id="ex-b2-tmid" x="169" y="92" text-anchor="middle" fill="#ffffff" font-size="8.8" font-weight="800">W_surr</text>
+        <text id="ex-b2-ttop" x="169" y="59" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="800">X_dest</text>
+
+        <text id="ex-b2-cap" x="169" y="29" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="800">Breakdown</text>
+        <text id="ex-b2-xlbl" x="169" y="206" text-anchor="middle" fill="currentColor" font-size="9.2" font-weight="700">Waterfall</text>
+
+        <!-- راهنمای رنگ‌ها -->
+        <g id="ex-legend" transform="translate(36, 222)" font-size="8.5" font-weight="700">
+          <rect x="0" y="-7" width="8" height="8" rx="1.5" fill="#059669" />
+          <text id="ex-leg1" x="11" y="0" fill="currentColor">W_u</text>
+          <rect x="64" y="-7" width="8" height="8" rx="1.5" fill="#0284c7" />
+          <text id="ex-leg2" x="75" y="0" fill="currentColor">W_surr</text>
+          <rect x="134" y="-7" width="8" height="8" rx="1.5" fill="#ef4444" />
+          <text id="ex-leg3" x="145" y="0" fill="currentColor">X_dest</text>
+        </g>
+
+        <!-- گیج عقربه‌ای بازده قانون دوم η_II در سمت راست -->
+        <g transform="translate(282, 88)">
+          <circle cx="0" cy="0" r="42" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.16" stroke-width="1.5" />
+          <path d="M -22.6 22.6 A 32 32 0 1 1 22.6 22.6" fill="none" stroke="currentColor" stroke-opacity="0.18" stroke-width="5.5" stroke-linecap="round" />
+          <path id="ex-g-arc" d="M -22.6 22.6 A 32 32 0 1 1 22.6 22.6" fill="none" stroke="#059669" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="106 160" />
+          <circle cx="0" cy="0" r="3.5" fill="currentColor" />
+          <line id="ex-g-needle" x1="0" y1="0" x2="12" y2="-20" stroke="#d97706" stroke-width="2.4" stroke-linecap="round" />
+          <text id="ex-g-val" x="0" y="34" text-anchor="middle" fill="#059669" font-size="11.5" font-weight="800">70.2%</text>
+          <text x="0" y="56" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="700">η_II = W_u / W_rev</text>
+          <text id="ex-g-note" x="0" y="72" text-anchor="middle" fill="currentColor" fill-opacity="0.7" font-size="8.6" font-weight="700">Irreversible</text>
+        </g>
+
+        <!-- کادر هشدار در صورت تخریب بیشتر یا نقض قانون دوم -->
+        <rect id="ex-warn-box" x="230" y="172" width="102" height="36" rx="7" fill="#ef4444" fill-opacity="0.14" stroke="#ef4444" stroke-opacity="0.6" style="display:none" />
+        <text id="ex-warn-txt" x="281" y="194" text-anchor="middle" fill="#ef4444" font-size="8.8" font-weight="800" style="display:none">2nd Law Alert!</text>
+      </svg>
+    </div>
+  </div>
+
   <div class="jh-widget__metrics">
-    <div class="jh-metric">
-      <span class="jh-metric__label">تخریب اگزرژی (<span dir="ltr">X_dest = I</span>)</span>
-      <span class="jh-metric__val" id="ex-xdest">35.8 kJ</span>
+    <div class="jh-metric" id="ex-m1-card">
+      <span class="jh-metric__label" id="ex-m1-lbl">کار محیط <span dir="ltr">(W_surr = P₀ΔV)</span></span>
+      <span class="jh-metric__val" id="ex-m1-val">25.0 kJ</span>
     </div>
-    <div class="jh-metric">
-      <span class="jh-metric__label">کار مفید واقعی (<span dir="ltr">W_u,out</span>)</span>
-      <span class="jh-metric__val" id="ex-wu">84.2 kJ</span>
+    <div class="jh-metric" id="ex-m2-card">
+      <span class="jh-metric__label" id="ex-m2-lbl">تخریب اگزرژی <span dir="ltr">(X_dest = T₀ S_gen)</span></span>
+      <span class="jh-metric__val" id="ex-m2-val">35.8 kJ</span>
     </div>
-    <div class="jh-metric">
-      <span class="jh-metric__label">بازده قانون دوم (<span dir="ltr">η_II = W_u/W_rev</span>)</span>
-      <span class="jh-metric__val" id="ex-eta2">70.2%</span>
+    <div class="jh-metric" id="ex-m3-card">
+      <span class="jh-metric__label" id="ex-m3-lbl">کار مفید واقعی <span dir="ltr">(W_u,out)</span></span>
+      <span class="jh-metric__val" id="ex-m3-val">84.2 kJ</span>
     </div>
+    <div class="jh-metric" id="ex-m4-card">
+      <span class="jh-metric__label" id="ex-m4-lbl">بازده قانون دوم <span dir="ltr">(η_II = W_u/W_rev)</span></span>
+      <span class="jh-metric__val" id="ex-m4-val">70.2%</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="ex-explain">
+    بارگذاری شبیه‌سازی زنده...
   </div>
 </div>
 
-<script is:inline>
+<script>
+import { createAnimController, createParticleBox, setDialNeedle, tempToColor } from '../../lib/liveSimKit';
+
 (() => {
   const root = document.getElementById('exergy-widget');
   if (!root) return;
-  const wrevEl = root.querySelector('#ex-wrev');
-  const sgenEl = root.querySelector('#ex-sgen');
-  const t0El = root.querySelector('#ex-t0');
-  const wrevLbl = root.querySelector('#ex-wrev-lbl');
-  const sgenLbl = root.querySelector('#ex-sgen-lbl');
-  const t0Lbl = root.querySelector('#ex-t0-lbl');
-  const xdestEl = root.querySelector('#ex-xdest');
-  const wuEl = root.querySelector('#ex-wu');
-  const eta2El = root.querySelector('#ex-eta2');
 
-  function update() {
-    const wrev = parseFloat(wrevEl.value);
-    const sgen = parseFloat(sgenEl.value);
-    const t0 = parseFloat(t0El.value);
-    wrevLbl.textContent = wrev.toFixed(0);
-    sgenLbl.textContent = sgen.toFixed(2);
-    t0Lbl.textContent = t0.toFixed(0);
-    const xdest = Math.min(wrev, t0 * sgen);
-    const wu = Math.max(0, wrev - xdest);
-    const eta2 = (wu / wrev) * 100;
-    xdestEl.textContent = `${xdest.toFixed(1)} kJ`;
-    wuEl.textContent = `${wu.toFixed(1)} kJ`;
-    eta2El.textContent = `${eta2.toFixed(1)}%`;
+  type Mode = 'piston-exergy' | 'heat-quality';
+  let mode: Mode = 'piston-exergy';
+  let wrev = 120;
+  let sgen = 0.12;
+  let dv = 0.25;
+  let t0 = 298;
+  let tsrc = 1200;
+  let wuHeat = 180;
+  let progress = 1.0;
+  let rotorAngle = 0;
+  let flowPhase = 0;
+
+  const P0_KPA = 100;
+  const Q_IN_KW = 500;
+
+  const pistonCtrls = root.querySelector<HTMLElement>('#ex-piston-ctrls')!;
+  const heatCtrls = root.querySelector<HTMLElement>('#ex-heat-ctrls')!;
+  const wrevEl = root.querySelector<HTMLInputElement>('#ex-wrev')!;
+  const sgenEl = root.querySelector<HTMLInputElement>('#ex-sgen')!;
+  const dvEl = root.querySelector<HTMLInputElement>('#ex-dv')!;
+  const tsrcEl = root.querySelector<HTMLInputElement>('#ex-tsrc')!;
+  const wuInEl = root.querySelector<HTMLInputElement>('#ex-wu-in')!;
+  const t0El = root.querySelector<HTMLInputElement>('#ex-t0')!;
+  const progEl = root.querySelector<HTMLInputElement>('#ex-prog')!;
+  const progWrap = root.querySelector<HTMLElement>('#ex-prog-wrap')!;
+  const playBtn = root.querySelector<HTMLButtonElement>('#ex-play')!;
+  const resetBtn = root.querySelector<HTMLButtonElement>('#ex-reset')!;
+
+  const wrevLbl = root.querySelector('#ex-wrev-lbl')!;
+  const sgenLbl = root.querySelector('#ex-sgen-lbl')!;
+  const dvLbl = root.querySelector('#ex-dv-lbl')!;
+  const tsrcLbl = root.querySelector('#ex-tsrc-lbl')!;
+  const wuInLbl = root.querySelector('#ex-wu-in-lbl')!;
+  const t0Lbl = root.querySelector('#ex-t0-lbl')!;
+  const progLbl = root.querySelector('#ex-prog-lbl')!;
+
+  const sysTitle = root.querySelector('#ex-sys-title')!;
+  const sysTag = root.querySelector('#ex-sys-tag')!;
+  const scenePiston = root.querySelector<SVGGElement>('#ex-scene-piston')!;
+  const sceneHeat = root.querySelector<SVGGElement>('#ex-scene-heat')!;
+
+  const pAmbLbl = root.querySelector('#ex-p-amblbl')!;
+  const pGas = root.querySelector<SVGRectElement>('#ex-p-gas')!;
+  const pSwept = root.querySelector<SVGRectElement>('#ex-p-swept')!;
+  const pDvLbl = root.querySelector<SVGTextElement>('#ex-p-dvlbl')!;
+  const pParticlesGrp = root.querySelector('#ex-p-particles');
+  const pFriction = root.querySelector<SVGGElement>('#ex-p-friction')!;
+  const pXdLbl = root.querySelector('#ex-p-xdlbl')!;
+  const pPiston = root.querySelector<SVGGElement>('#ex-p-piston')!;
+  const pWuGrp = root.querySelector<SVGGElement>('#ex-p-wu-grp')!;
+  const pWuLbl = root.querySelector('#ex-p-wulbl')!;
+  const pWsGrp = root.querySelector<SVGGElement>('#ex-p-ws-grp')!;
+  const pWsLbl = root.querySelector('#ex-p-wslbl')!;
+  const pSum1 = root.querySelector('#ex-p-sum1')!;
+  const pSum2 = root.querySelector('#ex-p-sum2')!;
+  const pSum3 = root.querySelector('#ex-p-sum3')!;
+
+  const hTsrc = root.querySelector('#ex-h-tsrc')!;
+  const hRotor = root.querySelector('#ex-h-rotor')!;
+  const hWuLine = root.querySelector('#ex-h-wu-line')!;
+  const hWuLbl = root.querySelector('#ex-h-wulbl')!;
+  const hWrevLbl = root.querySelector('#ex-h-wrevlbl')!;
+  const hQcarnot = root.querySelector('#ex-h-qcarnot')!;
+  const hIlossLine = root.querySelector('#ex-h-iloss-line')!;
+  const hIloss = root.querySelector('#ex-h-iloss')!;
+  const hIlossSub = root.querySelector('#ex-h-iloss-sub')!;
+  const hPktIn = root.querySelector('#ex-h-pkt-in')!;
+  const hPktW = root.querySelector('#ex-h-pkt-w')!;
+  const hT0 = root.querySelector('#ex-h-t0')!;
+
+  const barTitle = root.querySelector('#ex-bar-title')!;
+  const barTag = root.querySelector<HTMLElement>('#ex-bar-tag')!;
+  const yMaxLbl = root.querySelector('#ex-y-max')!;
+  const b1Base = root.querySelector<SVGRectElement>('#ex-b1-base')!;
+  const b1Qcar = root.querySelector<SVGRectElement>('#ex-b1-qcar')!;
+  const b1Irej = root.querySelector<SVGRectElement>('#ex-b1-irej')!;
+  const b1Wu = root.querySelector<SVGRectElement>('#ex-b1-wu')!;
+  const b1In1 = root.querySelector<SVGTextElement>('#ex-b1-in1')!;
+  const b1Top = root.querySelector('#ex-b1-top')!;
+  const b1Xlbl = root.querySelector('#ex-b1-xlbl')!;
+  const splitRef = root.querySelector<SVGLineElement>('#ex-split-ref')!;
+
+  const b2Anergy = root.querySelector<SVGRectElement>('#ex-b2-anergy')!;
+  const b2AnergyTxt = root.querySelector<SVGTextElement>('#ex-b2-anergy-txt')!;
+  const b2Bot = root.querySelector<SVGRectElement>('#ex-b2-bot')!;
+  const b2Mid = root.querySelector<SVGRectElement>('#ex-b2-mid')!;
+  const b2Top = root.querySelector<SVGRectElement>('#ex-b2-top')!;
+  const b2Tbot = root.querySelector<SVGTextElement>('#ex-b2-tbot')!;
+  const b2Tmid = root.querySelector<SVGTextElement>('#ex-b2-tmid')!;
+  const b2Ttop = root.querySelector<SVGTextElement>('#ex-b2-ttop')!;
+  const b2Cap = root.querySelector('#ex-b2-cap')!;
+  const b2Xlbl = root.querySelector('#ex-b2-xlbl')!;
+
+  const leg1 = root.querySelector('#ex-leg1')!;
+  const leg2 = root.querySelector('#ex-leg2')!;
+  const leg3 = root.querySelector('#ex-leg3')!;
+
+  const gArc = root.querySelector('#ex-g-arc')!;
+  const gNeedle = root.querySelector('#ex-g-needle')!;
+  const gVal = root.querySelector('#ex-g-val')!;
+  const gNote = root.querySelector('#ex-g-note')!;
+  const warnBox = root.querySelector<SVGRectElement>('#ex-warn-box')!;
+  const warnTxt = root.querySelector<SVGTextElement>('#ex-warn-txt')!;
+
+  const m1Card = root.querySelector('#ex-m1-card')!;
+  const m2Card = root.querySelector('#ex-m2-card')!;
+  const m3Card = root.querySelector('#ex-m3-card')!;
+  const m4Card = root.querySelector('#ex-m4-card')!;
+  const m1Lbl = root.querySelector('#ex-m1-lbl')!;
+  const m2Lbl = root.querySelector('#ex-m2-lbl')!;
+  const m3Lbl = root.querySelector('#ex-m3-lbl')!;
+  const m4Lbl = root.querySelector('#ex-m4-lbl')!;
+  const m1Val = root.querySelector('#ex-m1-val')!;
+  const m2Val = root.querySelector('#ex-m2-val')!;
+  const m3Val = root.querySelector('#ex-m3-val')!;
+  const m4Val = root.querySelector('#ex-m4-val')!;
+  const explainEl = root.querySelector('#ex-explain')!;
+
+  let currentPistonX = 138;
+  const particleBox = createParticleBox(
+    pParticlesGrp,
+    18,
+    () => ({ minX: 28, maxX: Math.max(46, currentPistonX - 4), minY: 72, maxY: 160 }),
+    '#d97706',
+    2.2,
+    56
+  );
+
+  function setBarRect(el: SVGRectElement, yBottom: number, h: number) {
+    const clampedH = Math.max(0, h);
+    el.setAttribute('y', (yBottom - clampedH).toFixed(1));
+    el.setAttribute('height', clampedH.toFixed(1));
+    el.style.display = clampedH > 0.5 ? '' : 'none';
   }
 
-  wrevEl.addEventListener('input', update);
-  sgenEl.addEventListener('input', update);
-  t0El.addEventListener('input', update);
-  update();
+  function render() {
+    wrevLbl.textContent = `${wrev.toFixed(0)} kJ`;
+    sgenLbl.textContent = `${sgen.toFixed(2)} kJ/K`;
+    dvLbl.textContent = `${dv.toFixed(2)} m³`;
+    tsrcLbl.textContent = `${tsrc.toFixed(0)} K`;
+    wuInLbl.textContent = `${wuHeat.toFixed(0)} kW`;
+    t0Lbl.textContent = `${t0.toFixed(0)} K`;
+    progLbl.textContent = `${Math.round(progress * 100)}%`;
+    progEl.value = String(Math.round(progress * 100));
+
+    // Clear warning flags first
+    [m1Card, m2Card, m3Card, m4Card].forEach((c) => c.classList.remove('jh-metric--warn'));
+
+    const baseY = 192;
+    const maxH = 152;
+
+    if (mode === 'piston-exergy') {
+      scenePiston.style.display = '';
+      sceneHeat.style.display = 'none';
+      sysTitle.innerHTML = 'شماتیک سیلندر-پیستون در محیط <span dir="ltr">P₀ = 100 kPa</span>';
+      sysTag.textContent = `ΔV = ${(dv * progress).toFixed(2)} m³`;
+      barTitle.innerHTML = 'آبشار کار کل <span dir="ltr">(W_actual + X_dest)</span> و بازده <span dir="ltr">η_II</span>';
+
+      const wRevCur = wrev * progress;
+      const xDestRaw = t0 * sgen * progress;
+      const wSurrCur = P0_KPA * dv * progress;
+      const overDestroyed = xDestRaw > wRevCur + 1e-6;
+      const xDestBar = Math.min(wRevCur, xDestRaw);
+      const wUCur = Math.max(0, wRevCur - xDestRaw);
+      const wActualCur = wUCur + wSurrCur;
+      const totalIdealCur = wActualCur + xDestBar;
+
+      const xDestFull = t0 * sgen;
+      const wSurrFull = P0_KPA * dv;
+      const overFull = xDestFull > wrev;
+      const wUFull = Math.max(0, wrev - xDestFull);
+      const eta2Full = (wUFull / wrev) * 100;
+      const eta2Cur = wRevCur > 0.1 ? (wUCur / wRevCur) * 100 : eta2Full;
+
+      // Piston cutaway update
+      const basePistonX = 100;
+      const strokePx = (dv / 0.5) * 78 * progress;
+      currentPistonX = basePistonX + strokePx;
+      pPiston.setAttribute('transform', `translate(${currentPistonX.toFixed(1)}, 0)`);
+      pGas.setAttribute('width', (currentPistonX - 24).toFixed(1));
+      pGas.setAttribute('fill', tempToColor(t0 + 130));
+      pSwept.setAttribute('width', strokePx.toFixed(1));
+      pSwept.style.display = strokePx > 2 ? '' : 'none';
+      pDvLbl.setAttribute('x', (basePistonX + strokePx / 2).toFixed(1));
+      pDvLbl.style.display = strokePx > 22 ? '' : 'none';
+
+      pAmbLbl.textContent = `P₀ = 100 kPa, T₀ = ${t0} K`;
+      pFriction.style.opacity = sgen > 0.005 ? String(Math.min(1, 0.35 + (sgen / 0.35) * 0.65)) : '0.12';
+      pXdLbl.textContent = `X_dest = ${xDestCurText(xDestRaw)}`;
+      pWuGrp.style.opacity = wUCur > 0.5 ? '1' : '0.28';
+      pWuLbl.textContent = `W_u = ${wUCur.toFixed(1)} kJ`;
+      pWsGrp.style.display = wSurrCur > 0.4 ? '' : 'none';
+      pWsLbl.textContent = `W_surr=${wSurrCur.toFixed(1)}`;
+      pSum1.textContent = `W_u: ${wUCur.toFixed(1)} kJ`;
+      pSum2.textContent = `W_surr: ${wSurrCur.toFixed(1)} kJ`;
+      pSum3.textContent = `X_dest: ${xDestRaw.toFixed(1)} kJ`;
+
+      // Waterfall chart
+      const scaleMax = Math.max(40, wrev + wSurrFull);
+      yMaxLbl.textContent = scaleMax.toFixed(0);
+
+      b1Qcar.style.display = 'none';
+      b1Irej.style.display = 'none';
+      b1Wu.style.display = 'none';
+      splitRef.style.display = 'none';
+      b2Anergy.style.display = 'none';
+      b2AnergyTxt.style.display = 'none';
+
+      const hTotal = (totalIdealCur / scaleMax) * maxH;
+      setBarRect(b1Base, baseY, Math.max(2, hTotal));
+      b1In1.style.display = hTotal > 22 ? '' : 'none';
+      b1In1.setAttribute('y', (baseY - hTotal / 2 + 4).toFixed(1));
+      b1In1.textContent = totalIdealCur.toFixed(1);
+      b1Top.setAttribute('y', (baseY - hTotal - 7).toFixed(1));
+      b1Top.textContent = `${totalIdealCur.toFixed(1)} kJ`;
+      b1Xlbl.textContent = 'W_act + X_dest';
+
+      const hWu = (wUCur / scaleMax) * maxH;
+      const hWs = (wSurrCur / scaleMax) * maxH;
+      const hXd = (xDestBar / scaleMax) * maxH;
+
+      b2Bot.setAttribute('fill', '#059669');
+      b2Mid.setAttribute('fill', '#0284c7');
+      b2Top.setAttribute('fill', '#ef4444');
+      setBarRect(b2Bot, baseY, hWu);
+      setBarRect(b2Mid, baseY - hWu, hWs);
+      setBarRect(b2Top, baseY - hWu - hWs, hXd);
+
+      b2Tbot.style.display = hWu >= 16 ? '' : 'none';
+      b2Tbot.setAttribute('y', (baseY - hWu / 2 + 3.5).toFixed(1));
+      b2Tbot.textContent = `W_u ${wUCur.toFixed(0)}`;
+
+      b2Tmid.style.display = hWs >= 15 ? '' : 'none';
+      b2Tmid.setAttribute('y', (baseY - hWu - hWs / 2 + 3.5).toFixed(1));
+      b2Tmid.textContent = `P₀ΔV ${wSurrCur.toFixed(0)}`;
+
+      b2Ttop.style.display = hXd >= 15 ? '' : 'none';
+      b2Ttop.setAttribute('y', (baseY - hWu - hWs - hXd / 2 + 3.5).toFixed(1));
+      b2Ttop.textContent = `I ${xDestBar.toFixed(0)}`;
+
+      b2Cap.setAttribute('y', (baseY - (hWu + hWs + hXd) - 7).toFixed(1));
+      b2Cap.textContent = overDestroyed ? 'W_u = 0!' : `W_act=${wActualCur.toFixed(1)}`;
+      b2Xlbl.textContent = 'Waterfall';
+
+      leg1.textContent = 'W_u,out';
+      leg2.textContent = 'W_surr';
+      leg3.textContent = 'X_dest';
+
+      // Gauge
+      const arcLen = 150.8;
+      const ratio = Math.max(0, Math.min(1, eta2Cur / 100));
+      const gaugeColor = overDestroyed ? '#ef4444' : eta2Cur >= 75 ? '#059669' : eta2Cur >= 45 ? '#d97706' : '#ef4444';
+      gArc.setAttribute('stroke', gaugeColor);
+      gArc.setAttribute('stroke-dasharray', `${(ratio * arcLen).toFixed(1)} 160`);
+      setDialNeedle(gNeedle, eta2Cur, 0, 100, 24);
+      gVal.textContent = `${eta2Cur.toFixed(1)}%`;
+      gVal.setAttribute('fill', gaugeColor);
+      gNote.textContent = overDestroyed ? 'X_dest > W_rev!' : sgen === 0 ? 'Reversible!' : 'Irreversible';
+      barTag.textContent = `η_II = ${eta2Full.toFixed(1)}%`;
+      barTag.style.color = gaugeColor;
+
+      warnBox.style.display = overDestroyed ? '' : 'none';
+      warnTxt.style.display = overDestroyed ? '' : 'none';
+      warnTxt.textContent = 'X_dest > W_rev!';
+
+      // Metrics
+      m1Lbl.innerHTML = 'کار غلبه بر محیط <span dir="ltr">(W_surr = P₀ΔV)</span>';
+      m2Lbl.innerHTML = 'تخریب اگزرژی <span dir="ltr">(X_dest = T₀ S_gen)</span>';
+      m3Lbl.innerHTML = 'کار مفید واقعی <span dir="ltr">(W_u,out)</span>';
+      m4Lbl.innerHTML = 'بازده قانون دوم <span dir="ltr">(η_II = W_u/W_rev)</span>';
+
+      m1Val.textContent = `${wSurrFull.toFixed(1)} kJ`;
+      m2Val.textContent = `${xDestFull.toFixed(1)} kJ`;
+      m3Val.textContent = overFull ? '0.0 kJ (تخریب کامل!)' : `${wUFull.toFixed(1)} kJ`;
+      m4Val.textContent = `${eta2Full.toFixed(1)}%`;
+
+      if (overFull) {
+        m2Card.classList.add('jh-metric--warn');
+        m3Card.classList.add('jh-metric--warn');
+        explainEl.innerHTML = `<strong>هشدار برگشت‌ناپذیری بیش از حد:</strong> حاصل‌ضرب <span dir="ltr">T₀·S_gen = ${xDestFull.toFixed(1)} kJ</span> از کل پتانسیل کار برگشت‌پذیر <span dir="ltr">(W_rev = ${wrev.toFixed(0)} kJ)</span> فراتر رفته است؛ بنابراین هیچ کار مفیدی <span dir="ltr">(W_u = 0)</span> تولید نمی‌شود و ادامهٔ فرآیند نیازمند کار ورودی است.`;
+      } else {
+        explainEl.innerHTML = `در انبساط تا <span dir="ltr">ΔV = ${dv.toFixed(2)} m³</span> درون هوای اتمسفر <span dir="ltr">(P₀ = 100 kPa)</span>، پیستون ابتدا <strong><span dir="ltr">W_surr = ${wSurrFull.toFixed(1)} kJ</span></strong> را صرف عقب‌راندن هوای محیط می‌کند که اصلاً کار مفید نیست. از <strong><span dir="ltr">W_rev = ${wrev.toFixed(0)} kJ</span></strong> پتانسیل کار مفید، مقدار <strong><span dir="ltr">X_dest = ${xDestFull.toFixed(1)} kJ</span></strong> بر اثر تولید آنتروپی تلف شده و خروجی خالص به <strong><span dir="ltr">W_u = ${wUFull.toFixed(1)} kJ</span></strong> با بازده قانون دوم <strong><span dir="ltr">η_II = ${eta2Full.toFixed(1)}%</span></strong> می‌رسد.`;
+      }
+    } else {
+      // Mode 2: Heat Quality & Example 8-2
+      scenePiston.style.display = 'none';
+      sceneHeat.style.display = '';
+      sysTitle.innerHTML = 'مدل موتور حرارتی مثال ۸-۲ <span dir="ltr">(Q̇_in = 500 kW)</span>';
+      sysTag.textContent = `${tsrc} K → ${t0} K`;
+      barTitle.innerHTML = 'قانون اول (انرژی) در برابر قانون دوم (اگزرژی)';
+
+      const etaCarnot = Math.max(0.01, 1 - t0 / tsrc);
+      const wRev = etaCarnot * Q_IN_KW;
+      const qCarnotRej = Q_IN_KW - wRev; // Unavoidable Carnot heat rejected to T0 (X = 0)
+      const iLoss = wRev - wuHeat; // Negative if violating 2nd law!
+      const isViolation = wuHeat > wRev + 0.05;
+      const qOutActual = Q_IN_KW - wuHeat;
+      const eta1 = (wuHeat / Q_IN_KW) * 100;
+      const eta2 = (wuHeat / wRev) * 100;
+
+      // Update schematic
+      hTsrc.textContent = `T_source = ${tsrc.toFixed(0)} K`;
+      hT0.textContent = `Sink / Dead State: T₀ = ${t0.toFixed(0)} K`;
+      hWuLbl.textContent = `Ẇ_u = ${wuHeat.toFixed(0)} kW`;
+      hWuLbl.setAttribute('fill', isViolation ? '#ef4444' : '#059669');
+      hWuLine.setAttribute('stroke', isViolation ? '#ef4444' : '#059669');
+      hWrevLbl.textContent = `Ẇ_rev = ${wRev.toFixed(1)} kW (${(etaCarnot * 100).toFixed(1)}%)`;
+      hQcarnot.textContent = `Carnot: ${qCarnotRej.toFixed(1)} kW`;
+
+      if (isViolation) {
+        hIloss.textContent = `Violation: ${Math.abs(iLoss).toFixed(1)} kW`;
+        hIlossSub.textContent = '(Ẇ_u > Ẇ_rev impossible!)';
+        hIlossLine.setAttribute('stroke', '#ef4444');
+      } else {
+        hIloss.textContent = `İ loss: ${iLoss.toFixed(1)} kW`;
+        hIlossSub.textContent = '(destroyed exergy)';
+        hIlossLine.setAttribute('stroke', iLoss < 0.5 ? '#94a3b8' : '#ef4444');
+      }
+
+      // Rotor + packets animation
+      hRotor.setAttribute('transform', `translate(150, 116) rotate(${rotorAngle.toFixed(1)})`);
+      const pInY = 50 + ((flowPhase * 32) % 32);
+      const pWX = 182 + ((flowPhase * 75) % 75);
+      hPktIn.setAttribute('cy', pInY.toFixed(1));
+      hPktW.setAttribute('cx', pWX.toFixed(1));
+
+      // Waterfall: Energy (Col 1) vs Exergy (Col 2)
+      const scaleMax = Math.max(Q_IN_KW, wuHeat + qCarnotRej);
+      yMaxLbl.textContent = scaleMax.toFixed(0);
+
+      b1Base.style.display = 'none';
+      b1In1.style.display = 'none';
+      b1Qcar.style.display = '';
+      b1Irej.style.display = '';
+      b1Wu.style.display = '';
+      splitRef.style.display = '';
+      b2Anergy.style.display = '';
+      b2AnergyTxt.style.display = '';
+
+      const hQcar = (qCarnotRej / scaleMax) * maxH;
+      const hWu = (wuHeat / scaleMax) * maxH;
+      const hI = Math.max(0, (iLoss / scaleMax) * maxH);
+
+      // Column 1: 1st Law Energy = 500 kW = Q_carnot + I_loss + W_u (or if violation, Q_out + W_u)
+      const qExtra = Math.max(0, qOutActual - qCarnotRej);
+      const hQcarActual = Math.min(hQcar, (Math.max(0, qOutActual) / scaleMax) * maxH);
+      const hExtra = (qExtra / scaleMax) * maxH;
+      setBarRect(b1Qcar, baseY, hQcarActual);
+      setBarRect(b1Irej, baseY - hQcarActual, hExtra);
+      setBarRect(b1Wu, baseY - hQcarActual - hExtra, hWu);
+      b1Top.setAttribute('y', (baseY - (hQcarActual + hExtra + hWu) - 7).toFixed(1));
+      b1Top.textContent = '500 kW';
+      b1Xlbl.textContent = 'Energy (Q̇_in)';
+
+      // Baseline reference separating Zero-Exergy Carnot Floor from Available Exergy W_rev
+      const anergyTopY = baseY - hQcar;
+      splitRef.setAttribute('y1', anergyTopY.toFixed(1));
+      splitRef.setAttribute('y2', anergyTopY.toFixed(1));
+
+      setBarRect(b2Anergy, baseY, hQcar);
+      b2AnergyTxt.style.display = hQcar >= 16 ? '' : 'none';
+      b2AnergyTxt.setAttribute('y', (baseY - hQcar / 2 + 3).toFixed(1));
+      b2AnergyTxt.textContent = `X=0 (${qCarnotRej.toFixed(0)})`;
+
+      // Column 2 above anergy floor: W_u + I_loss = W_rev
+      b2Mid.style.display = 'none';
+      b2Tmid.style.display = 'none';
+      b2Bot.setAttribute('fill', isViolation ? '#ef4444' : '#059669');
+      b2Top.setAttribute('fill', '#ef4444');
+      setBarRect(b2Bot, anergyTopY, hWu);
+      setBarRect(b2Top, anergyTopY - hWu, hI);
+
+      b2Tbot.style.display = hWu >= 15 ? '' : 'none';
+      b2Tbot.setAttribute('y', (anergyTopY - hWu / 2 + 3.5).toFixed(1));
+      b2Tbot.textContent = `Ẇ_u ${wuHeat.toFixed(0)}`;
+
+      b2Ttop.style.display = !isViolation && hI >= 15 ? '' : 'none';
+      b2Ttop.setAttribute('y', (anergyTopY - hWu - hI / 2 + 3.5).toFixed(1));
+      b2Ttop.textContent = `İ ${iLoss.toFixed(0)}`;
+
+      b2Cap.setAttribute('y', (anergyTopY - hWu - hI - 7).toFixed(1));
+      b2Cap.textContent = `Ẇ_rev=${wRev.toFixed(1)}`;
+      b2Xlbl.textContent = 'Exergy (2nd Law)';
+
+      leg1.textContent = 'Ẇ_u,out';
+      leg2.textContent = 'Carnot (X=0)';
+      leg3.textContent = 'İ = Ẋ_dest';
+
+      // Gauge
+      const arcLen = 150.8;
+      const ratio = Math.max(0, Math.min(1, eta2 / 100));
+      const gaugeColor = isViolation ? '#ef4444' : eta2 >= 75 ? '#059669' : eta2 >= 45 ? '#d97706' : '#ef4444';
+      gArc.setAttribute('stroke', gaugeColor);
+      gArc.setAttribute('stroke-dasharray', `${(ratio * arcLen).toFixed(1)} 160`);
+      setDialNeedle(gNeedle, Math.min(100, eta2), 0, 100, 24);
+      gVal.textContent = isViolation ? `${eta2.toFixed(0)}% (!)` : `${eta2.toFixed(1)}%`;
+      gVal.setAttribute('fill', gaugeColor);
+      gNote.textContent = isViolation ? 'Violates Carnot!' : iLoss < 0.5 ? 'Carnot Limit!' : 'Irreversible';
+      barTag.textContent = isViolation ? 'نقض قانون دوم!' : `η_II = ${eta2.toFixed(1)}%`;
+      barTag.style.color = gaugeColor;
+
+      warnBox.style.display = isViolation ? '' : 'none';
+      warnTxt.style.display = isViolation ? '' : 'none';
+      warnTxt.textContent = 'Ẇ_u > Ẇ_rev!';
+
+      // Metrics
+      m1Lbl.innerHTML = 'دفع اجتناب‌ناپذیر کارنو <span dir="ltr">(X = 0)</span>';
+      m2Lbl.innerHTML = 'شدت بازگشت‌ناپذیری <span dir="ltr">(İ = Ẇ_rev - Ẇ_u)</span>';
+      m3Lbl.innerHTML = 'توان برگشت‌پذیر کارنو <span dir="ltr">(Ẇ_rev)</span>';
+      m4Lbl.innerHTML = 'بازده قانون دوم و اول <span dir="ltr">(η_II | η_I)</span>';
+
+      m1Val.textContent = `${qCarnotRej.toFixed(1)} kW`;
+      m2Val.textContent = isViolation ? `${iLoss.toFixed(1)} kW (ناممکن!)` : `${iLoss.toFixed(1)} kW`;
+      m3Val.textContent = `${wRev.toFixed(1)} kW (${(etaCarnot * 100).toFixed(1)}%)`;
+      m4Val.textContent = `${eta2.toFixed(1)}% | ${eta1.toFixed(1)}%`;
+
+      if (isViolation) {
+        m2Card.classList.add('jh-metric--warn');
+        m4Card.classList.add('jh-metric--warn');
+        explainEl.innerHTML = `<strong>نقض قانون دوم (کلوین-پلانک):</strong> با دمای منبع <span dir="ltr">T_source = ${tsrc} K</span> و محیط <span dir="ltr">T₀ = ${t0} K</span>، سقف کارنو تنها <strong><span dir="ltr">Ẇ_rev = ${wRev.toFixed(1)} kW</span></strong> است؛ پس توان خروجی <span dir="ltr">Ẇ_u = ${wuHeat.toFixed(0)} kW</span> در عالم فیزیکی غیرممکن است!`;
+      } else {
+        explainEl.innerHTML = `<strong>تفکیک کلیدی مثال ۸-۲:</strong> از <span dir="ltr">500 kW</span> گرمای ورودی در <span dir="ltr">${tsrc} K</span>، تنها <strong><span dir="ltr">${(etaCarnot * 100).toFixed(1)}%</span></strong> یعنی <strong><span dir="ltr">Ẇ_rev = ${wRev.toFixed(1)} kW</span></strong> قابلیت تبدیل به کار (اگزرژی) دارد. گرمای <strong><span dir="ltr">${qCarnotRej.toFixed(1)} kW</span></strong> که حتی موتور کارنو هم ناچار به دفع آن به <span dir="ltr">T₀ = ${t0} K</span> است <strong>اگزرژی صفر دارد و تلفات نیست</strong>؛ اتلاف واقعی فرصت کار همان <strong><span dir="ltr">İ = ${iLoss.toFixed(1)} kW</span></strong> است!`;
+      }
+    }
+  }
+
+  function xDestCurText(val: number) {
+    return `${val.toFixed(1)} kJ`;
+  }
+
+  const anim = createAnimController(root, (dt) => {
+    if (mode === 'piston-exergy') {
+      progress += dt * 0.34;
+      if (progress >= 1) {
+        progress = 1;
+        particleBox.step(dt, 1);
+        render();
+        playBtn.textContent = '▶ پخش زنده';
+        return false;
+      }
+      particleBox.step(dt, 1);
+      render();
+      return true;
+    } else {
+      rotorAngle = (rotorAngle + dt * 130) % 360;
+      flowPhase = (flowPhase + dt * 0.9) % 1;
+      render();
+      return true;
+    }
+  });
+
+  function stopAnim() {
+    anim.stop();
+    playBtn.textContent = '▶ پخش زنده';
+  }
+
+  root.querySelectorAll<HTMLButtonElement>('#ex-modes button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const m = (btn.getAttribute('data-mode') || 'piston-exergy') as Mode;
+      mode = m;
+      root.querySelectorAll('#ex-modes button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      stopAnim();
+
+      if (mode === 'piston-exergy') {
+        pistonCtrls.style.display = '';
+        heatCtrls.style.display = 'none';
+        progWrap.style.display = '';
+        t0 = 298;
+        t0El.value = '298';
+        progress = 1.0;
+      } else {
+        pistonCtrls.style.display = 'none';
+        heatCtrls.style.display = '';
+        progWrap.style.display = 'none';
+        t0 = 300;
+        t0El.value = '300';
+        tsrc = 1200;
+        tsrcEl.value = '1200';
+        wuHeat = 180;
+        wuInEl.value = '180';
+        progress = 1.0;
+      }
+      render();
+    });
+  });
+
+  wrevEl.addEventListener('input', () => {
+    wrev = parseFloat(wrevEl.value);
+    render();
+  });
+  sgenEl.addEventListener('input', () => {
+    sgen = parseFloat(sgenEl.value);
+    render();
+  });
+  dvEl.addEventListener('input', () => {
+    dv = parseFloat(dvEl.value);
+    render();
+  });
+  tsrcEl.addEventListener('input', () => {
+    tsrc = parseFloat(tsrcEl.value);
+    render();
+  });
+  wuInEl.addEventListener('input', () => {
+    wuHeat = parseFloat(wuInEl.value);
+    render();
+  });
+  t0El.addEventListener('input', () => {
+    t0 = parseFloat(t0El.value);
+    render();
+  });
+
+  progEl.addEventListener('input', () => {
+    stopAnim();
+    progress = parseFloat(progEl.value) / 100;
+    render();
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (anim.isPlaying()) {
+      stopAnim();
+    } else {
+      if (mode === 'piston-exergy' && progress >= 0.995) {
+        progress = 0;
+      }
+      playBtn.textContent = '⏸ توقف';
+      anim.start();
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    stopAnim();
+    if (mode === 'piston-exergy') {
+      wrev = 120;
+      sgen = 0.12;
+      dv = 0.25;
+      t0 = 298;
+      wrevEl.value = '120';
+      sgenEl.value = '0.12';
+      dvEl.value = '0.25';
+      t0El.value = '298';
+      progress = 0;
+    } else {
+      tsrc = 1200;
+      wuHeat = 180;
+      t0 = 300;
+      tsrcEl.value = '1200';
+      wuInEl.value = '180';
+      t0El.value = '300';
+      progress = 1.0;
+    }
+    render();
+  });
+
+  render();
 })();
 </script>

@@ -14,6 +14,7 @@ import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
+import VaporDomePhaseLab from '../../../components/widgets/VaporDomePhaseLab.astro';
 
 <TopicDependencyMap
   prerequisites={[
@@ -357,6 +358,8 @@ $$
     کیفیت <span dir="ltr">x</span> منحصراً <strong>نسبت جرمی</strong> است، نه حجمی! اگر در صورت مسئله بگویند «یک‌سوم حجم مخزن را مایع و دوسوم را بخار اشغال کرده» (مانند <a href="/thermo1-notes/exercises/ch3/#prob-3-28">تمرین ۳-۲۸</a>)، کیفیت برابر <span dir="ltr">2/3</span> <strong>نیست</strong>! باید ابتدا از روی <span dir="ltr">m_f = V_f / v_f</span> و <span dir="ltr">m_g = V_g / v_g</span> جرم هر فاز را بیابید و سپس <span dir="ltr">x = m_g / (m_f + m_g)</span> را حساب کنید.
   </p>
 </div>
+
+<VaporDomePhaseLab />
 
 ---
 

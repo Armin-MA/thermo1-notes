@@ -13,6 +13,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import MacroMicroEnergyLab from '../../../components/widgets/MacroMicroEnergyLab.astro';
 
 <TopicDependencyMap
   prerequisites={[
@@ -179,5 +180,9 @@ $$
 تفسیر فیزیکی در ماشین‌های سیالاتی (کاربرد مستقیم در [تمرین ۲-۶۹](/thermo1-notes/exercises/ch2/#prob-2-69) و [تمرین ۲-۷۲](/thermo1-notes/exercises/ch2/#prob-2-72)):
 - **پمپ ($\text{Pump}$):** انرژی مکانیکی را به سیال می‌دهد ($\Delta \dot{E}_{\text{mech}} > 0$)؛ اما به‌علت اصطکاک، توان محور ورودی پمپ بیشتر از افزایش انرژی مکانیکی سیال است: $\dot{W}_{\text{pump,in}} = \Delta \dot{E}_{\text{mech}} + \dot{W}_{\text{frict}}$.
 - **توربین ($\text{Turbine}$):** انرژی مکانیکی را از سیال می‌گیرد ($\Delta \dot{E}_{\text{mech}} < 0$)؛ توان خروجی واقعی محور توربین از $|\Delta \dot{E}_{\text{mech}}|$ کمتر است.
+
+در آزمایشگر تعاملی زیر، اجزای انرژی مکانیکی سیال جاری و تلهٔ تقسیم بر $1000$ در انرژی جنبشی را به‌صورت زنده بررسی کنید:
+
+<MacroMicroEnergyLab />
 
 *(در بخش بعدی با سازوکارهای عبور انرژی از مرز—یعنی گرما و کار—و فرمول‌های انواع کار و بازده آشنا می‌شویم.)*

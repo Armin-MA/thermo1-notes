@@ -1,0 +1,596 @@
+---
+// آزمایشگر زنده موتور گرمایی، یخچال، پمپ حرارتی و تخلف‌های قانون دوم (فصل ۶ - بخش ۱)
+---
+
+<div class="jh-widget not-content" id="he-ref-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ موتور گرمایی، یخچال، پمپ حرارتی و تخلف قانون دوم</span>
+    <span class="jh-widget__badge" id="her-status-badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ مثال‌های ۶-۱ تا ۶-۳ جزوه، رابطهٔ <span dir="ltr">(COP_HP = COP_R + 1)</span> و آزمایش تخلف کلوین–پلانک (<span dir="ltr">PMM2</span>) و کلازیوس
+  </div>
+
+  <div class="jh-widget__btns" id="her-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="engine">۱) موتور گرمایی (مثال ۶-۱)</button>
+    <button type="button" class="jh-widget__btn" data-mode="fridge">۲) یخچال (مثال ۶-۲)</button>
+    <button type="button" class="jh-widget__btn" data-mode="hp">۳) پمپ حرارتی (مثال ۶-۳)</button>
+  </div>
+
+  <div class="jh-widget__grid" id="her-engine-ctrls">
+    <label class="jh-widget__ctrl">
+      <span>گرمای ورودی از کوره (<span dir="ltr">Q̇_H</span>): <strong id="her-eqh-lbl" dir="ltr">80 MW</strong></span>
+      <input id="her-eqh" type="range" min="20" max="120" step="5" value="80" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>گرمای دفعی به رودخانه (<span dir="ltr">Q̇_L</span>): <strong id="her-eql-lbl" dir="ltr">50 MW</strong></span>
+      <input id="her-eql" type="range" min="5" max="110" step="5" value="50" />
+    </label>
+  </div>
+
+  <div class="jh-widget__grid" id="her-fridge-ctrls" style="display:none">
+    <label class="jh-widget__ctrl">
+      <span>سرمای کشیده‌شده (<span dir="ltr">Q̇_L</span>): <strong id="her-fql-lbl" dir="ltr">6.0 kW (360 kJ/min)</strong></span>
+      <input id="her-fql" type="range" min="2.0" max="18.0" step="0.5" value="6.0" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>توان کمپرسور (<span dir="ltr">Ẇ_in</span>): <strong id="her-fwin-lbl" dir="ltr">2.00 kW</strong></span>
+      <input id="her-fwin" type="range" min="0.5" max="8.0" step="0.25" value="2.0" />
+    </label>
+  </div>
+
+  <div class="jh-widget__grid" id="her-hp-ctrls" style="display:none">
+    <label class="jh-widget__ctrl">
+      <span>گرمای تحویلی به خانه (<span dir="ltr">Q̇_H</span>): <strong id="her-hqh-lbl" dir="ltr">22.2 kW (80,000 kJ/h)</strong></span>
+      <input id="her-hqh" type="range" min="10.0" max="40.0" step="0.2" value="22.2" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>ضریب عملکرد پمپ (<span dir="ltr">COP_HP</span>): <strong id="her-hcop-lbl" dir="ltr">2.50</strong></span>
+      <input id="her-hcop" type="range" min="1.2" max="6.0" step="0.1" value="2.5" />
+    </label>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="her-play">⏸ توقف جریان</button>
+    <button type="button" class="jh-widget__btn" id="her-violate">⚠ تخلف کلوین–پلانک (PMM2: Q_L = 0)</button>
+    <button type="button" class="jh-widget__btn" id="her-preset">↺ بازنشانی به مثال کتاب</button>
+  </div>
+
+  <div class="jh-widget__split">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>شماتیک جریان انرژی و مخازن</span>
+        <span dir="ltr" id="her-device-tag">Heat Engine (η = 37.5%)</span>
+      </div>
+      <svg id="her-flow-svg" viewBox="0 0 320 236" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک زنده جریان گرما و کار بین مخازن دما">
+        <defs>
+          <marker id="her-arr-red" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="#ef4444" />
+          </marker>
+          <marker id="her-arr-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="#0284c7" />
+          </marker>
+          <marker id="her-arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="#059669" />
+          </marker>
+          <marker id="her-arr-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="#d97706" />
+          </marker>
+        </defs>
+
+        <!-- منبع گرم T_H -->
+        <rect x="44" y="10" width="172" height="38" rx="8" fill="#ef4444" fill-opacity="0.16" stroke="#ef4444" stroke-width="2" />
+        <text id="her-th-title" x="130" y="33" text-anchor="middle" fill="#ef4444" font-size="11.5" font-weight="800">T_H Reservoir (Hot)</text>
+
+        <!-- مسیر جریان Q_H -->
+        <line id="her-qh-base" x1="130" y1="50" x2="130" y2="82" stroke="#ef4444" stroke-opacity="0.25" stroke-width="8" />
+        <line id="her-qh-flow" x1="130" y1="50" x2="130" y2="82" stroke="#ef4444" stroke-width="5" stroke-dasharray="6 6" marker-end="url(#her-arr-red)" />
+        <text id="her-qh-lbl" x="150" y="70" text-anchor="start" fill="#ef4444" font-size="11" font-weight="800">Q_H = 80 MW</text>
+
+        <!-- مسیر جریان Q_L -->
+        <line id="her-ql-base" x1="130" y1="154" x2="130" y2="186" stroke="#0284c7" stroke-opacity="0.25" stroke-width="6" />
+        <line id="her-ql-flow" x1="130" y1="154" x2="130" y2="186" stroke="#0284c7" stroke-width="4" stroke-dasharray="6 6" marker-end="url(#her-arr-blue)" />
+        <text id="her-ql-lbl" x="150" y="174" text-anchor="start" fill="#0284c7" font-size="11" font-weight="800">Q_L = 50 MW</text>
+
+        <!-- علامت تخلف Q_L = 0 -->
+        <g id="her-ql-cross" style="display:none">
+          <circle cx="130" cy="170" r="11" fill="#ef4444" fill-opacity="0.18" stroke="#ef4444" stroke-width="2" />
+          <path d="M 124 164 L 136 176 M 136 164 L 124 176" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round" />
+        </g>
+
+        <!-- مسیر جریان کار W -->
+        <line id="her-w-base" x1="164" y1="118" x2="256" y2="118" stroke="#059669" stroke-opacity="0.25" stroke-width="6" />
+        <line id="her-w-flow" x1="164" y1="118" x2="256" y2="118" stroke="#059669" stroke-width="4" stroke-dasharray="6 6" marker-end="url(#her-arr-green)" />
+        <text id="her-w-lbl" x="240" y="99" text-anchor="middle" fill="#059669" font-size="11" font-weight="800">W_net,out = 30 MW</text>
+        <text id="her-w-sub" x="240" y="140" text-anchor="middle" fill="currentColor" fill-opacity="0.68" font-size="9.5" font-weight="700">Desired Output</text>
+
+        <!-- علامت تخلف W_in = 0 -->
+        <g id="her-w-cross" style="display:none">
+          <circle cx="206" cy="118" r="11" fill="#ef4444" fill-opacity="0.18" stroke="#ef4444" stroke-width="2" />
+          <path d="M 200 112 L 212 124 M 212 112 L 200 124" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round" />
+        </g>
+
+        <!-- حلقه چرخه مرکزی -->
+        <circle id="her-warn-ring" cx="130" cy="118" r="36" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-dasharray="4 3" style="display:none" />
+        <circle id="her-cycle-bg" cx="130" cy="118" r="30" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.55" stroke-width="2.2" />
+        <g id="her-spin-grp" transform="rotate(0 130 118)">
+          <path d="M 130 93 A 25 25 0 1 1 107 128" fill="none" stroke="#0284c7" stroke-width="2.4" stroke-linecap="round" />
+          <path d="M 103 125 L 107 132 L 113 126" fill="none" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        <text id="her-cycle-lbl" x="130" y="122" text-anchor="middle" fill="currentColor" font-size="12.5" font-weight="800">HE</text>
+
+        <!-- منبع سرد T_L -->
+        <rect x="44" y="190" width="172" height="38" rx="8" fill="#0284c7" fill-opacity="0.16" stroke="#0284c7" stroke-width="2" />
+        <text id="her-tl-title" x="130" y="213" text-anchor="middle" fill="#0284c7" font-size="11.5" font-weight="800">T_L Reservoir (Cold)</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>نوار تقسیم انرژی <span dir="ltr">(Q_H = W + Q_L)</span> و قضاوت قوانین</span>
+        <span dir="ltr" id="her-law-tag" style="color:#059669">✓ 1st &amp; 2nd Law OK</span>
+      </div>
+      <svg id="her-bar-svg" viewBox="0 0 320 236" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تقسیم انرژی Q_H به W و Q_L و بررسی قانون اول و دوم">
+        <text x="16" y="20" fill="currentColor" fill-opacity="0.7" font-size="10.5" font-weight="700">Total Energy Balance: Q_H = W + Q_L</text>
+
+        <!-- نوار کل Q_H -->
+        <text id="her-bar-qh-txt" x="16" y="42" fill="#ef4444" font-size="10.5" font-weight="800">Q_H = 80.0 MW (100%)</text>
+        <rect x="16" y="48" width="288" height="26" rx="6" fill="#ef4444" fill-opacity="0.82" />
+        <text id="her-bar-qh-in" x="160" y="65" text-anchor="middle" fill="#ffffff" font-size="10.5" font-weight="800">Q_H = 80.0 MW</text>
+
+        <!-- نوار دو تکه W + Q_L -->
+        <text x="16" y="94" fill="currentColor" fill-opacity="0.7" font-size="10" font-weight="700">Partition: W_net + Q_L</text>
+        <rect id="her-bar-w" x="16" y="100" width="108" height="26" rx="5" fill="#059669" fill-opacity="0.88" />
+        <rect id="her-bar-ql" x="124" y="100" width="180" height="26" rx="5" fill="#0284c7" fill-opacity="0.88" />
+        <text id="her-bar-w-txt" x="70" y="117" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="800">W: 37.5%</text>
+        <text id="her-bar-ql-txt" x="214" y="117" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="800">Q_L: 62.5%</text>
+
+        <!-- نسبت فرمولی -->
+        <text id="her-formula-txt" x="160" y="144" text-anchor="middle" fill="currentColor" font-size="11" font-weight="800">η_th = W_net / Q_H = 30.0 / 80.0 = 37.5%</text>
+
+        <!-- بررسی قانون اول -->
+        <rect x="16" y="156" width="288" height="32" rx="8" fill="#059669" fill-opacity="0.1" stroke="#059669" stroke-opacity="0.45" stroke-width="1.4" />
+        <text x="26" y="176" fill="currentColor" font-size="10.5" font-weight="700">1st Law (Conservation):</text>
+        <text id="her-law1-res" x="294" y="176" text-anchor="end" fill="#059669" font-size="10.5" font-weight="800">✓ Q_H = W + Q_L</text>
+
+        <!-- بررسی قانون دوم -->
+        <rect id="her-law2-box" x="16" y="195" width="288" height="34" rx="8" fill="#059669" fill-opacity="0.1" stroke="#059669" stroke-opacity="0.45" stroke-width="1.4" />
+        <text id="her-law2-name" x="26" y="216" fill="currentColor" font-size="10.5" font-weight="700">2nd Law (Kelvin-Planck):</text>
+        <text id="her-law2-res" x="294" y="216" text-anchor="end" fill="#059669" font-size="10.5" font-weight="800">✓ Q_L &gt; 0 (Feasible)</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label">گرمای منبع گرم (<span dir="ltr">Q_H</span>)</span>
+      <span class="jh-metric__val" id="her-m-qh">80.0 MW</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">گرمای منبع سرد (<span dir="ltr">Q_L</span>)</span>
+      <span class="jh-metric__val" id="her-m-ql">50.0 MW</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">کار خالص (<span dir="ltr">W_net</span>)</span>
+      <span class="jh-metric__val" id="her-m-w">30.0 MW</span>
+    </div>
+    <div class="jh-metric" id="her-m-eff-card">
+      <span class="jh-metric__label" id="her-m-eff-lbl">بازده حرارتی <span dir="ltr">(η_th)</span></span>
+      <span class="jh-metric__val" id="her-m-eff">37.5% (ممکن)</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="her-explain">
+    در <strong>موتور گرمایی مثال ۶-۱</strong>، از <span dir="ltr">80 MW</span> حرارت کوره، تنها <span dir="ltr">30 MW</span> به کار خالص تبدیل شده <span dir="ltr">(η = 37.5%)</span> و <span dir="ltr">50 MW</span> ناگزیر به رودخانه دفع می‌شود.
+  </div>
+</div>
+
+<style>
+  #he-ref-lab .her-btn-warn {
+    border-color: rgba(239, 68, 68, 0.65);
+    background: rgba(239, 68, 68, 0.14);
+    color: #dc2626;
+    font-weight: 700;
+  }
+  :root[data-theme='dark'] #he-ref-lab .her-btn-warn {
+    color: #f87171;
+  }
+</style>
+
+<script>
+  import { createAnimController } from '../../lib/liveSimKit';
+
+  (() => {
+    const root = document.getElementById('he-ref-lab');
+    if (!root) return;
+
+    type DeviceMode = 'engine' | 'fridge' | 'hp';
+    let mode: DeviceMode = 'engine';
+    let violate = false;
+    let phaseOffset = 0;
+    let spinAngle = 0;
+
+    // پارامترها
+    let engQH = 80;
+    let engQL = 50;
+    let frQL = 6.0;
+    let frWin = 2.0;
+    let hpQH = 22.2;
+    let hpCOP = 2.5;
+
+    const statusBadge = root.querySelector<HTMLElement>('#her-status-badge')!;
+    const engCtrls = root.querySelector<HTMLElement>('#her-engine-ctrls')!;
+    const frCtrls = root.querySelector<HTMLElement>('#her-fridge-ctrls')!;
+    const hpCtrls = root.querySelector<HTMLElement>('#her-hp-ctrls')!;
+
+    const eqhSlider = root.querySelector<HTMLInputElement>('#her-eqh')!;
+    const eqlSlider = root.querySelector<HTMLInputElement>('#her-eql')!;
+    const eqhLbl = root.querySelector<HTMLElement>('#her-eqh-lbl')!;
+    const eqlLbl = root.querySelector<HTMLElement>('#her-eql-lbl')!;
+
+    const fqlSlider = root.querySelector<HTMLInputElement>('#her-fql')!;
+    const fwinSlider = root.querySelector<HTMLInputElement>('#her-fwin')!;
+    const fqlLbl = root.querySelector<HTMLElement>('#her-fql-lbl')!;
+    const fwinLbl = root.querySelector<HTMLElement>('#her-fwin-lbl')!;
+
+    const hqhSlider = root.querySelector<HTMLInputElement>('#her-hqh')!;
+    const hcopSlider = root.querySelector<HTMLInputElement>('#her-hcop')!;
+    const hqhLbl = root.querySelector<HTMLElement>('#her-hqh-lbl')!;
+    const hcopLbl = root.querySelector<HTMLElement>('#her-hcop-lbl')!;
+
+    const playBtn = root.querySelector<HTMLButtonElement>('#her-play')!;
+    const violateBtn = root.querySelector<HTMLButtonElement>('#her-violate')!;
+    const presetBtn = root.querySelector<HTMLButtonElement>('#her-preset')!;
+
+    const deviceTag = root.querySelector<HTMLElement>('#her-device-tag')!;
+    const lawTag = root.querySelector<HTMLElement>('#her-law-tag')!;
+
+    const thTitle = root.querySelector<SVGTextElement>('#her-th-title')!;
+    const tlTitle = root.querySelector<SVGTextElement>('#her-tl-title')!;
+    const qhBase = root.querySelector<SVGLineElement>('#her-qh-base')!;
+    const qhFlow = root.querySelector<SVGLineElement>('#her-qh-flow')!;
+    const qhLbl = root.querySelector<SVGTextElement>('#her-qh-lbl')!;
+    const qlBase = root.querySelector<SVGLineElement>('#her-ql-base')!;
+    const qlFlow = root.querySelector<SVGLineElement>('#her-ql-flow')!;
+    const qlLbl = root.querySelector<SVGTextElement>('#her-ql-lbl')!;
+    const qlCross = root.querySelector<SVGGElement>('#her-ql-cross')!;
+
+    const wBase = root.querySelector<SVGLineElement>('#her-w-base')!;
+    const wFlow = root.querySelector<SVGLineElement>('#her-w-flow')!;
+    const wLbl = root.querySelector<SVGTextElement>('#her-w-lbl')!;
+    const wSub = root.querySelector<SVGTextElement>('#her-w-sub')!;
+    const wCross = root.querySelector<SVGGElement>('#her-w-cross')!;
+
+    const warnRing = root.querySelector<SVGCircleElement>('#her-warn-ring')!;
+    const spinGrp = root.querySelector<SVGGElement>('#her-spin-grp')!;
+    const cycleLbl = root.querySelector<SVGTextElement>('#her-cycle-lbl')!;
+
+    const barQhTxt = root.querySelector<SVGTextElement>('#her-bar-qh-txt')!;
+    const barQhIn = root.querySelector<SVGTextElement>('#her-bar-qh-in')!;
+    const barW = root.querySelector<SVGRectElement>('#her-bar-w')!;
+    const barQl = root.querySelector<SVGRectElement>('#her-bar-ql')!;
+    const barWTxt = root.querySelector<SVGTextElement>('#her-bar-w-txt')!;
+    const barQlTxt = root.querySelector<SVGTextElement>('#her-bar-ql-txt')!;
+    const formulaTxt = root.querySelector<SVGTextElement>('#her-formula-txt')!;
+    const law1Res = root.querySelector<SVGTextElement>('#her-law1-res')!;
+    const law2Box = root.querySelector<SVGRectElement>('#her-law2-box')!;
+    const law2Name = root.querySelector<SVGTextElement>('#her-law2-name')!;
+    const law2Res = root.querySelector<SVGTextElement>('#her-law2-res')!;
+
+    const mQh = root.querySelector<HTMLElement>('#her-m-qh')!;
+    const mQl = root.querySelector<HTMLElement>('#her-m-ql')!;
+    const mW = root.querySelector<HTMLElement>('#her-m-w')!;
+    const mEffCard = root.querySelector<HTMLElement>('#her-m-eff-card')!;
+    const mEffLbl = root.querySelector<HTMLElement>('#her-m-eff-lbl')!;
+    const mEff = root.querySelector<HTMLElement>('#her-m-eff')!;
+    const explainEl = root.querySelector<HTMLElement>('#her-explain')!;
+
+    function pipeWidth(val: number, maxVal: number): number {
+      if (val <= 0.001) return 1.5;
+      return 2.5 + 8.5 * Math.min(1, val / (maxVal || 1));
+    }
+
+    function render() {
+      let qH = 0;
+      let qL = 0;
+      let w = 0;
+      let unit = 'MW';
+      let isEngine = mode === 'engine';
+
+      if (mode === 'engine') {
+        unit = 'MW';
+        if (engQL >= engQH) engQL = Math.max(5, engQH - 5);
+        eqlSlider.max = String(Math.max(5, engQH - 5));
+        eqlSlider.value = String(engQL);
+        qH = engQH;
+        qL = violate ? 0 : engQL;
+        w = qH - qL;
+        eqhLbl.textContent = `${qH.toFixed(0)} MW`;
+        eqlLbl.textContent = `${qL.toFixed(0)} MW`;
+        violateBtn.textContent = '⚠ تخلف کلوین–پلانک (PMM2: Q_L = 0)';
+      } else if (mode === 'fridge') {
+        unit = 'kW';
+        qL = frQL;
+        w = violate ? 0 : frWin;
+        qH = qL + w;
+        fqlLbl.textContent = `${qL.toFixed(1)} kW (${Math.round(qL * 60)} kJ/min)`;
+        fwinLbl.textContent = `${w.toFixed(2)} kW`;
+        violateBtn.textContent = '⚠ تخلف کلازیوس (W_in = 0)';
+      } else {
+        unit = 'kW';
+        qH = hpQH;
+        if (violate) {
+          w = 0;
+          qL = qH;
+        } else {
+          w = qH / hpCOP;
+          qL = qH - w;
+        }
+        hqhLbl.textContent = `${qH.toFixed(1)} kW (${Math.round(qH * 3600).toLocaleString('en-US')} kJ/h)`;
+        hcopLbl.textContent = hpCOP.toFixed(2);
+        violateBtn.textContent = '⚠ تخلف کلازیوس (W_in = 0)';
+      }
+
+      violateBtn.classList.toggle('her-btn-warn', violate);
+      warnRing.style.display = violate ? '' : 'none';
+      mEffCard.classList.toggle('jh-metric--warn', violate);
+
+      // جهت‌دهی و ضخامت لوله‌های انرژی
+      if (isEngine) {
+        thTitle.textContent = 'T_H Furnace (Hot Source)';
+        tlTitle.textContent = 'T_L River (Cold Sink)';
+        cycleLbl.textContent = 'HE';
+
+        // Q_H به پایین (50 -> 82)
+        qhFlow.setAttribute('y1', '50');
+        qhFlow.setAttribute('y2', '82');
+        qhFlow.setAttribute('stroke-width', pipeWidth(qH, qH).toFixed(1));
+        qhBase.setAttribute('stroke-width', (pipeWidth(qH, qH) + 3).toFixed(1));
+        qhLbl.textContent = `Q_H = ${qH.toFixed(0)} ${unit}`;
+
+        // Q_L به پایین (154 -> 186)
+        qlFlow.setAttribute('y1', '154');
+        qlFlow.setAttribute('y2', '186');
+        qlFlow.setAttribute('stroke-width', pipeWidth(qL, qH).toFixed(1));
+        qlBase.setAttribute('stroke-width', (pipeWidth(qL, qH) + 3).toFixed(1));
+        qlFlow.style.opacity = violate ? '0.2' : '1';
+        qlCross.style.display = violate ? '' : 'none';
+        qlLbl.textContent = `Q_L = ${qL.toFixed(0)} ${unit}`;
+        qlLbl.setAttribute('fill', violate ? '#ef4444' : '#0284c7');
+
+        // W خروجی به راست (164 -> 256)
+        wFlow.setAttribute('x1', '164');
+        wFlow.setAttribute('x2', '256');
+        wFlow.setAttribute('stroke', '#059669');
+        wBase.setAttribute('stroke', '#059669');
+        wFlow.setAttribute('marker-end', 'url(#her-arr-green)');
+        wFlow.setAttribute('stroke-width', pipeWidth(w, qH).toFixed(1));
+        wBase.setAttribute('stroke-width', (pipeWidth(w, qH) + 3).toFixed(1));
+        wFlow.style.opacity = '1';
+        wCross.style.display = 'none';
+        wLbl.setAttribute('fill', '#059669');
+        wLbl.textContent = `W_out = ${w.toFixed(1)} ${unit}`;
+        wSub.textContent = 'Desired Output (CW)';
+      } else {
+        const isFridge = mode === 'fridge';
+        thTitle.textContent = isFridge ? 'T_H Kitchen Air' : 'T_H Warm House (20°C)';
+        tlTitle.textContent = isFridge ? 'T_L Freezer (4°C)' : 'T_L Cold Outside (-2°C)';
+        cycleLbl.textContent = isFridge ? 'R' : 'HP';
+
+        // Q_H به بالا (86 -> 52)
+        qhFlow.setAttribute('y1', '86');
+        qhFlow.setAttribute('y2', '52');
+        qhFlow.setAttribute('stroke-width', pipeWidth(qH, qH).toFixed(1));
+        qhBase.setAttribute('stroke-width', (pipeWidth(qH, qH) + 3).toFixed(1));
+        qhLbl.textContent = `Q_H = ${qH.toFixed(1)} ${unit}`;
+
+        // Q_L به بالا (188 -> 156)
+        qlFlow.setAttribute('y1', '188');
+        qlFlow.setAttribute('y2', '156');
+        qlFlow.setAttribute('stroke-width', pipeWidth(qL, qH).toFixed(1));
+        qlBase.setAttribute('stroke-width', (pipeWidth(qL, qH) + 3).toFixed(1));
+        qlFlow.style.opacity = '1';
+        qlCross.style.display = 'none';
+        qlLbl.setAttribute('fill', '#0284c7');
+        qlLbl.textContent = `Q_L = ${qL.toFixed(1)} ${unit}`;
+
+        // W ورودی به چپ (256 -> 166)
+        wFlow.setAttribute('x1', '256');
+        wFlow.setAttribute('x2', '166');
+        wFlow.setAttribute('stroke', violate ? '#ef4444' : '#d97706');
+        wBase.setAttribute('stroke', violate ? '#ef4444' : '#d97706');
+        wFlow.setAttribute('marker-end', violate ? 'url(#her-arr-red)' : 'url(#her-arr-amber)');
+        wFlow.setAttribute('stroke-width', pipeWidth(w, qH).toFixed(1));
+        wBase.setAttribute('stroke-width', (pipeWidth(w, qH) + 3).toFixed(1));
+        wFlow.style.opacity = violate ? '0.2' : '1';
+        wCross.style.display = violate ? '' : 'none';
+        wLbl.setAttribute('fill', violate ? '#ef4444' : '#d97706');
+        wLbl.textContent = `W_in = ${w.toFixed(2)} ${unit}`;
+        wSub.textContent = isFridge ? 'Target: Q_L (CCW)' : 'Target: Q_H (CCW)';
+      }
+
+      // نمودار تقسیم انرژی Q_H = W + Q_L
+      const totalPx = 288;
+      const wFrac = qH > 0 ? w / qH : 0;
+      const qlFrac = qH > 0 ? qL / qH : 0;
+      const wPx = Math.max(0, totalPx * wFrac);
+      const qlPx = Math.max(0, totalPx - wPx);
+
+      barQhTxt.textContent = `Q_H = ${qH.toFixed(1)} ${unit} (100%)`;
+      barQhIn.textContent = `Q_H = ${qH.toFixed(1)} ${unit}`;
+
+      barW.setAttribute('x', '16');
+      barW.setAttribute('width', Math.max(2, wPx).toFixed(1));
+      barW.setAttribute('fill', isEngine ? '#059669' : '#d97706');
+      barW.style.opacity = w <= 0.001 ? '0.15' : '0.88';
+
+      barQl.setAttribute('x', (16 + wPx).toFixed(1));
+      barQl.setAttribute('width', Math.max(2, qlPx).toFixed(1));
+      barQl.style.opacity = qL <= 0.001 ? '0.15' : '0.88';
+
+      barWTxt.textContent = wPx >= 52 ? `W: ${(wFrac * 100).toFixed(0)}%` : '';
+      barQlTxt.textContent = qlPx >= 56 ? `Q_L: ${(qlFrac * 100).toFixed(0)}%` : '';
+      barWTxt.setAttribute('x', (16 + wPx / 2).toFixed(1));
+      barQlTxt.setAttribute('x', (16 + wPx + qlPx / 2).toFixed(1));
+
+      // بررسی قانون اول و دوم
+      law1Res.textContent = `✓ ${qH.toFixed(1)} = ${w.toFixed(1)} + ${qL.toFixed(1)} ${unit}`;
+      if (violate) {
+        statusBadge.textContent = 'تخلف قانون دوم!';
+        statusBadge.classList.add('jh-widget__badge--amber');
+        lawTag.textContent = '✕ 2nd Law VIOLATION';
+        lawTag.style.color = '#ef4444';
+        law2Box.setAttribute('fill', '#ef4444');
+        law2Box.setAttribute('fill-opacity', '0.14');
+        law2Box.setAttribute('stroke', '#ef4444');
+        law2Name.textContent = isEngine ? '2nd Law (Kelvin-Planck):' : '2nd Law (Clausius):';
+        law2Res.textContent = isEngine ? '✕ PMM2 (Q_L = 0, η=100%)' : '✕ W_in = 0 (Impossible)';
+        law2Res.setAttribute('fill', '#ef4444');
+      } else {
+        statusBadge.textContent = 'شبیه‌سازی زنده';
+        statusBadge.classList.remove('jh-widget__badge--amber');
+        lawTag.textContent = '✓ 1st & 2nd Law OK';
+        lawTag.style.color = '#059669';
+        law2Box.setAttribute('fill', '#059669');
+        law2Box.setAttribute('fill-opacity', '0.1');
+        law2Box.setAttribute('stroke', '#059669');
+        law2Name.textContent = isEngine ? '2nd Law (Kelvin-Planck):' : '2nd Law (Clausius):';
+        law2Res.textContent = isEngine ? '✓ Q_L > 0 (Feasible)' : '✓ W_in > 0 (Feasible)';
+        law2Res.setAttribute('fill', '#059669');
+      }
+
+      // معیارها و توضیح
+      mQh.textContent = `${qH.toFixed(1)} ${unit}`;
+      mQl.textContent = `${qL.toFixed(1)} ${unit}`;
+      mW.textContent = `${w.toFixed(2)} ${unit}`;
+
+      if (isEngine) {
+        const eta = (w / qH) * 100;
+        deviceTag.textContent = violate ? 'PMM2 (Violation!)' : `Heat Engine (η = ${eta.toFixed(1)}%)`;
+        formulaTxt.textContent = `η_th = W_net / Q_H = ${w.toFixed(1)} / ${qH.toFixed(1)} = ${eta.toFixed(1)}%`;
+        mEffLbl.innerHTML = 'بازده حرارتی <span dir="ltr">(η_th)</span>';
+        mEff.textContent = violate ? '100.0% — PMM2 (ناممکن!)' : `${eta.toFixed(1)}% (ممکن)`;
+        explainEl.innerHTML = violate
+          ? `<strong>تخلف از بیان کلوین–پلانک (<span dir="ltr">PMM2</span>):</strong> گرچه قانون اول <span dir="ltr">(Q_H = W = ${qH.toFixed(0)} ${unit})</span> برقرار است، اما حذف کامل دفع حرارت به منبع سرد <span dir="ltr">(Q_L = 0)</span> در یک چرخه ناممکن است و هیچ نیروگاهی نمی‌تواند بازده <span dir="ltr">100%</span> داشته باشد.`
+          : `در این <strong>موتور گرمایی</strong>، تنها <strong><span dir="ltr">${eta.toFixed(1)}%</span></strong> از حرارت منبع گرم به کار خالص <span dir="ltr">(${w.toFixed(1)} ${unit})</span> تبدیل شده و <strong><span dir="ltr">${((qL / qH) * 100).toFixed(1)}%</span></strong> به چاه سرد دفع می‌شود <span dir="ltr">(Q_H = W + Q_L)</span>.`;
+      } else if (mode === 'fridge') {
+        const copR = w > 0 ? qL / w : Infinity;
+        const copHP = copR + 1;
+        deviceTag.textContent = violate ? 'Clausius Violation!' : `Refrigerator (COP_R = ${copR.toFixed(2)})`;
+        formulaTxt.textContent = violate
+          ? 'COP_R = Q_L / 0 = ∞  (Clausius Violation)'
+          : `COP_R = ${qL.toFixed(1)} / ${w.toFixed(2)} = ${copR.toFixed(2)}  |  COP_HP = ${copHP.toFixed(2)}`;
+        mEffLbl.innerHTML = 'ضریب عملکرد <span dir="ltr">(COP_R / COP_HP)</span>';
+        mEff.textContent = violate ? '∞ — نقض کلازیوس!' : `COP_R=${copR.toFixed(2)} | HP=${copHP.toFixed(2)}`;
+        explainEl.innerHTML = violate
+          ? `<strong>تخلف از بیان کلازیوس:</strong> انتقال گرما از فضای سرد <span dir="ltr">4°C</span> به آشپزخانه گرم‌تر بدون مصرف کار خارجی <span dir="ltr">(W_in = 0)</span> هرگز خودبه‌خود در یک چرخه رخ نمی‌دهد.`
+          : `در این <strong>یخچال</strong> به ازای هر <span dir="ltr">1 kJ</span> کار کمپرسور، <strong><span dir="ltr">${copR.toFixed(2)} kJ</span></strong> گرما از محفظه سرد کشیده شده و مجموع <strong><span dir="ltr">${copHP.toFixed(2)} kJ</span></strong> به آشپزخانه دفع می‌شود <span dir="ltr">(COP_HP = COP_R + 1)</span>. همین دلیل است که بازگذاشتن درِ یخچال اتاق را گرم‌تر می‌کند!`;
+      } else {
+        const copHP = w > 0 ? qH / w : Infinity;
+        const copR = copHP - 1;
+        deviceTag.textContent = violate ? 'Clausius Violation!' : `Heat Pump (COP_HP = ${copHP.toFixed(2)})`;
+        formulaTxt.textContent = violate
+          ? 'COP_HP = Q_H / 0 = ∞  (Clausius Violation)'
+          : `COP_HP = ${qH.toFixed(1)} / ${w.toFixed(2)} = ${copHP.toFixed(2)} = COP_R(${copR.toFixed(2)}) + 1`;
+        mEffLbl.innerHTML = 'ضریب عملکرد <span dir="ltr">(COP_HP = COP_R + 1)</span>';
+        mEff.textContent = violate ? '∞ — نقض کلازیوس!' : `COP_HP=${copHP.toFixed(2)} | R=${copR.toFixed(2)}`;
+        explainEl.innerHTML = violate
+          ? `<strong>تخلف از بیان کلازیوس:</strong> پمپاژ گرما از هوای سرد بیرون <span dir="ltr">(-2°C)</span> به داخل خانه گرم <span dir="ltr">(20°C)</span> بدون کار کمپرسور <span dir="ltr">(W_in = 0)</span> غیرممکن است.`
+          : `در این <strong>پمپ حرارتی</strong>، به جای مصرف <span dir="ltr">${qH.toFixed(1)} kW</span> برق در بخاری برقی، تنها <strong><span dir="ltr">${w.toFixed(2)} kW</span></strong> برق مصرف شده و <strong><span dir="ltr">${qL.toFixed(1)} kW</span></strong> گرمای رایگان از هوای سرد بیرون به داخل خانه پمپاژ می‌شود <span dir="ltr">(COP_HP = ${copHP.toFixed(2)} > 1)</span>.`;
+      }
+    }
+
+    const anim = createAnimController(root, (dt) => {
+      phaseOffset = (phaseOffset + dt * 28) % 24;
+      const dirSign = mode === 'engine' ? 1 : -1;
+      spinAngle = (spinAngle + dirSign * dt * 75) % 360;
+      qhFlow.setAttribute('stroke-dashoffset', (-phaseOffset).toFixed(1));
+      qlFlow.setAttribute('stroke-dashoffset', (-phaseOffset).toFixed(1));
+      wFlow.setAttribute('stroke-dashoffset', (-phaseOffset).toFixed(1));
+      spinGrp.setAttribute('transform', `rotate(${spinAngle.toFixed(1)} 130 118)`);
+    });
+
+    root.querySelectorAll('#her-modes button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#her-modes button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        mode = (btn.getAttribute('data-mode') as DeviceMode) || 'engine';
+        violate = false;
+        engCtrls.style.display = mode === 'engine' ? '' : 'none';
+        frCtrls.style.display = mode === 'fridge' ? '' : 'none';
+        hpCtrls.style.display = mode === 'hp' ? '' : 'none';
+        render();
+      });
+    });
+
+    eqhSlider.addEventListener('input', () => {
+      engQH = parseFloat(eqhSlider.value);
+      violate = false;
+      render();
+    });
+    eqlSlider.addEventListener('input', () => {
+      engQL = parseFloat(eqlSlider.value);
+      violate = false;
+      render();
+    });
+    fqlSlider.addEventListener('input', () => {
+      frQL = parseFloat(fqlSlider.value);
+      violate = false;
+      render();
+    });
+    fwinSlider.addEventListener('input', () => {
+      frWin = parseFloat(fwinSlider.value);
+      violate = false;
+      render();
+    });
+    hqhSlider.addEventListener('input', () => {
+      hpQH = parseFloat(hqhSlider.value);
+      violate = false;
+      render();
+    });
+    hcopSlider.addEventListener('input', () => {
+      hpCOP = parseFloat(hcopSlider.value);
+      violate = false;
+      render();
+    });
+
+    violateBtn.addEventListener('click', () => {
+      violate = !violate;
+      render();
+    });
+
+    presetBtn.addEventListener('click', () => {
+      violate = false;
+      if (mode === 'engine') {
+        engQH = 80;
+        engQL = 50;
+        eqhSlider.value = '80';
+        eqlSlider.value = '50';
+      } else if (mode === 'fridge') {
+        frQL = 6.0;
+        frWin = 2.0;
+        fqlSlider.value = '6';
+        fwinSlider.value = '2';
+      } else {
+        hpQH = 22.2;
+        hpCOP = 2.5;
+        hqhSlider.value = '22.2';
+        hcopSlider.value = '2.5';
+      }
+      render();
+    });
+
+    playBtn.addEventListener('click', () => {
+      if (anim.isPlaying()) {
+        anim.stop();
+        playBtn.textContent = '▶ ادامه جریان';
+      } else {
+        anim.start();
+        playBtn.textContent = '⏸ توقف جریان';
+      }
+    });
+
+    render();
+    anim.start();
+  })();
+</script>

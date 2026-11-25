@@ -1,0 +1,754 @@
+---
+// آزمایشگر زنده انرژی کل، انرژی مکانیکی جریان و تله تبدیل واحد ÷1000 (فصل ۲)
+---
+
+<div class="jh-widget not-content" id="macro-micro-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ انرژی مکانیکی جریان <span dir="ltr">(e_mech)</span> و تلهٔ تبدیل واحد <span dir="ltr">(÷ 1000)</span></span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ سهم انرژی جریان <span dir="ltr">(P/ρ)</span>، جنبشی <span dir="ltr">(V²/2000)</span> و پتانسیل <span dir="ltr">(gz/1000)</span> در برابر دام جمع مستقیم <span dir="ltr">J/kg</span> با <span dir="ltr">kJ/kg</span>
+  </div>
+
+  <div class="jh-widget__btns" id="mml-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="wind-hydro">۱) انرژی مکانیکی جریان و توان <span dir="ltr">(e_mech)</span></button>
+    <button type="button" class="jh-widget__btn" data-mode="unit-trap">۲) تلهٔ بزرگ تبدیل واحد <span dir="ltr">(÷ 1000)</span></button>
+  </div>
+
+  <!-- کنترل‌های حالت ۱: جریان و انرژی مکانیکی -->
+  <div id="mml-wh-panel">
+    <div class="jh-widget__btns" id="mml-wh-presets">
+      <button type="button" class="jh-widget__btn is-active" data-preset="hydro">💧 جریان آب در لوله/توربین</button>
+      <button type="button" class="jh-widget__btn" data-preset="prob272">🏗️ پمپاژ آب (تمرین ۲-۷۲: <span dir="ltr">z = 45 m</span>)</button>
+      <button type="button" class="jh-widget__btn" data-preset="prob269">🌬️ توربین بادی (تمرین ۲-۶۹: <span dir="ltr">V = 8 m/s</span>)</button>
+    </div>
+
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>فشار نسبی جریان <span dir="ltr">(P)</span>: <strong id="mml-p-lbl" dir="ltr">200 kPa</strong></span>
+        <input id="mml-p" type="range" min="0" max="500" step="10" value="200" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>سرعت جریان <span dir="ltr">(V)</span>: <strong id="mml-v-lbl" dir="ltr">14 m/s</strong></span>
+        <input id="mml-v" type="range" min="0" max="40" step="1" value="14" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>ارتفاع از مبنا <span dir="ltr">(z)</span>: <strong id="mml-z-lbl" dir="ltr">30 m</strong></span>
+        <input id="mml-z" type="range" min="0" max="60" step="1" value="30" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>دبی جرمی <span dir="ltr">(ṁ)</span>: <strong id="mml-mdot-lbl" dir="ltr">30 kg/s</strong></span>
+        <input id="mml-mdot" type="range" min="5" max="100" step="5" value="30" />
+      </label>
+    </div>
+
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="mml-play">⏸ توقف جریان</button>
+      <button type="button" class="jh-widget__btn" id="mml-reset">↺ بازنشانی</button>
+      <span class="jh-widget__sub" id="mml-fluid-tag" dir="ltr">Water: ρ = 1000 kg/m³</span>
+    </div>
+  </div>
+
+  <!-- کنترل‌های حالت ۲: تله تبدیل واحد -->
+  <div id="mml-trap-panel" style="display:none">
+    <div class="jh-widget__btns" id="mml-trap-presets">
+      <button type="button" class="jh-widget__btn is-active" data-tpreset="wind8">🌬️ باد (تمرین ۲-۶۹: <span dir="ltr">V = 8 m/s</span>)</button>
+      <button type="button" class="jh-widget__btn" data-tpreset="jet200">🚀 جت پرسرعت <span dir="ltr">(V = 200 m/s)</span></button>
+    </div>
+    <div class="jh-widget__btns" id="mml-trap-error-btns">
+      <button type="button" class="jh-widget__btn is-active" data-forget="yes">⚠️ خطای دانشجو: فراموش کردن <span dir="ltr">÷ 1000</span></button>
+      <button type="button" class="jh-widget__btn" data-forget="no">✅ محاسبهٔ صحیح با <span dir="ltr">÷ 1000</span></button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>انرژی داخلی مخصوص <span dir="ltr">(u)</span>: <strong id="mml-tu-lbl" dir="ltr">104.8 kJ/kg</strong></span>
+        <input id="mml-tu" type="range" min="50" max="2600" step="0.2" value="104.8" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>سرعت ماکروسکوپی <span dir="ltr">(V)</span>: <strong id="mml-tv-lbl" dir="ltr">8 m/s</strong></span>
+        <input id="mml-tv" type="range" min="1" max="300" step="1" value="8" />
+      </label>
+    </div>
+  </div>
+
+  <!-- دو پنل بصری زنده -->
+  <div class="jh-widget__split" id="mml-split-wh">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>برش زندهٔ جریان سیال و ارتفاع <span dir="ltr">z</span></span>
+        <span dir="ltr" id="mml-pane1-tag">e_mech = 0.592 kJ/kg</span>
+      </div>
+      <svg id="mml-flow-svg" viewBox="0 0 340 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="برش زنده لوله سیال جاری با ارتفاع و گیج فشار">
+        <!-- خط مرجع ارتفاع z = 0 (هم‌سطح مرکز توربین) -->
+        <line x1="12" y1="162" x2="328" y2="162" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.2" stroke-dasharray="5 4" />
+        <text x="326" y="198" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5" font-weight="700">Datum z = 0</text>
+
+        <!-- دیواره بیرونی لوله (منحنی پویا) -->
+        <path id="mml-pipe-outer" d="M 46 107 C 136 107, 176 162, 256 162" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="26" stroke-linecap="butt" />
+        <!-- جریان سیال درون لوله -->
+        <path id="mml-pipe-inner" d="M 46 107 C 136 107, 176 162, 256 162" fill="none" stroke="#0284c7" stroke-opacity="0.28" stroke-width="19" stroke-linecap="butt" />
+
+        <!-- مخزن ورودی سمت چپ -->
+        <g id="mml-inlet-grp">
+          <rect id="mml-res-fill" x="22" y="89" width="26" height="36" rx="3" fill="#0284c7" fill-opacity="0.32" />
+          <rect id="mml-res-box" x="20" y="87" width="30" height="40" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.65" stroke-width="2.5" />
+          <text id="mml-z-txt" x="35" y="79" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">z = 30 m</text>
+        </g>
+
+        <!-- خط‌کش عمودی ارتفاع z -->
+        <line id="mml-z-dim" x1="13" y1="107" x2="13" y2="162" stroke="#059669" stroke-width="1.8" />
+        <line id="mml-z-top" x1="9" y1="107" x2="17" y2="107" stroke="#059669" stroke-width="1.8" />
+        <line x1="9" y1="162" x2="17" y2="162" stroke="#059669" stroke-width="1.8" />
+
+        <!-- ذرات متحرک جریان -->
+        <g id="mml-stream-pts"></g>
+
+        <!-- چرخ توربین خروجی -->
+        <g id="mml-turbine-grp">
+          <circle cx="258" cy="162" r="24" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.6" stroke-width="2.4" />
+          <g id="mml-turbine-rotor" transform="rotate(0, 258, 162)">
+            <line x1="238" y1="162" x2="278" y2="162" stroke="#d97706" stroke-width="2.4" stroke-linecap="round" />
+            <line x1="248" y1="145" x2="268" y2="179" stroke="#d97706" stroke-width="2.4" stroke-linecap="round" />
+            <line x1="268" y1="145" x2="248" y2="179" stroke="#d97706" stroke-width="2.4" stroke-linecap="round" />
+            <circle cx="258" cy="162" r="5" fill="#d97706" />
+          </g>
+          <line x1="283" y1="162" x2="322" y2="162" stroke="#d97706" stroke-width="2.6" stroke-linecap="round" />
+          <polygon points="326,162 318,158 318,166" fill="#d97706" />
+          <text x="304" y="152" text-anchor="middle" fill="#d97706" font-size="9.5" font-weight="800">Ė_mech</text>
+        </g>
+
+        <!-- پنل گیج فشار و سرعت در گوشه بالا-راست -->
+        <g transform="translate(284, 52)">
+          <circle cx="0" cy="0" r="28" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.45" stroke-width="2" />
+          <path d="M -18 13 A 22 22 0 1 1 18 13" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="2.6" stroke-linecap="round" />
+          <circle cx="0" cy="0" r="3" fill="currentColor" />
+          <line id="mml-p-needle" x1="0" y1="0" x2="0" y2="-20" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" />
+          <text x="0" y="-11" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="8" font-weight="700">kPa</text>
+          <text id="mml-p-dial" x="0" y="19" text-anchor="middle" fill="#0284c7" font-size="9.5" font-weight="800">200</text>
+        </g>
+
+        <rect x="148" y="20" width="96" height="44" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" />
+        <text id="mml-v-pill" x="196" y="38" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800">V = 14 m/s</text>
+        <text id="mml-m-pill" x="196" y="55" text-anchor="middle" fill="currentColor" fill-opacity="0.8" font-size="9.5" font-weight="700">ṁ = 30 kg/s</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>نمودار پشته‌ای اجزای <span dir="ltr">e_mech</span> و توان <span dir="ltr">Ė_mech</span></span>
+        <span dir="ltr" id="mml-edot-tag" style="color:#059669">17.8 kW</span>
+      </div>
+      <svg id="mml-bar-svg" viewBox="0 0 300 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار پشته‌ای انرژی مکانیکی جریان">
+        <line x1="36" y1="186" x2="132" y2="186" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="36" y1="30" x2="36" y2="186" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4" />
+        <text x="30" y="190" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+        <text id="mml-axis-max" x="30" y="42" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0.70</text>
+        <text x="12" y="24" fill="currentColor" fill-opacity="0.7" font-size="8.5" font-weight="700">kJ/kg</text>
+
+        <!-- میله پشته‌ای e_mech -->
+        <rect id="mml-seg-flow" x="56" y="140" width="54" height="46" rx="2" fill="#0284c7" fill-opacity="0.88" />
+        <rect id="mml-seg-ke" x="56" y="118" width="54" height="22" rx="2" fill="#d97706" fill-opacity="0.9" />
+        <rect id="mml-seg-pe" x="56" y="54" width="54" height="64" rx="2" fill="#059669" fill-opacity="0.88" />
+        <text id="mml-bar-top" x="83" y="46" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">0.592</text>
+        <text x="83" y="204" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">e_mech</text>
+
+        <!-- پنل راهنما و مقادیر دقیق -->
+        <g transform="translate(142, 26)">
+          <rect x="0" y="0" width="146" height="114" rx="8" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.2" />
+          <circle cx="13" cy="22" r="5" fill="#059669" />
+          <text x="23" y="25" fill="currentColor" font-size="9.5" font-weight="700">PE (gz/1000)</text>
+          <text id="mml-lg-pe" x="138" y="25" text-anchor="end" fill="#059669" font-size="9.5" font-weight="800">0.294</text>
+
+          <circle cx="13" cy="50" r="5" fill="#d97706" />
+          <text x="23" y="53" fill="currentColor" font-size="9.5" font-weight="700">KE (V²/2000)</text>
+          <text id="mml-lg-ke" x="138" y="53" text-anchor="end" fill="#d97706" font-size="9.5" font-weight="800">0.098</text>
+
+          <circle cx="13" cy="78" r="5" fill="#0284c7" />
+          <text x="23" y="81" fill="currentColor" font-size="9.5" font-weight="700">Flow (P/ρ)</text>
+          <text id="mml-lg-fl" x="138" y="81" text-anchor="end" fill="#0284c7" font-size="9.5" font-weight="800">0.200</text>
+
+          <line x1="10" y1="92" x2="136" y2="92" stroke="currentColor" stroke-opacity="0.2" />
+          <text x="12" y="106" fill="currentColor" font-size="9.5" font-weight="800">Total e_mech</text>
+          <text id="mml-lg-tot" x="138" y="106" text-anchor="end" fill="currentColor" font-size="9.5" font-weight="800">0.592</text>
+        </g>
+
+        <!-- کارت توان کل Ė_mech = ṁ · e_mech -->
+        <g transform="translate(142, 150)">
+          <rect x="0" y="0" width="146" height="58" rx="8" fill="#059669" fill-opacity="0.1" stroke="#059669" stroke-opacity="0.4" />
+          <text x="73" y="20" text-anchor="middle" fill="currentColor" fill-opacity="0.8" font-size="9.5" font-weight="700">Ė_mech = ṁ · e_mech</text>
+          <text id="mml-pwr-val" x="73" y="43" text-anchor="middle" fill="#059669" font-size="14" font-weight="800">17.8 kW</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- دو پنل حالت ۲: تله تبدیل واحد -->
+  <div class="jh-widget__split" id="mml-split-trap" style="display:none">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>تبدیل واحد <span dir="ltr">J/kg → kJ/kg</span> در مقایسه با <span dir="ltr">u</span></span>
+        <span dir="ltr" id="mml-trap-ratio">ke / u = 0.03%</span>
+      </div>
+      <svg id="mml-trap-svg" viewBox="0 0 340 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تبدیل واحد انرژی جنبشی و داخلی">
+        <!-- بسته سیال با حرکت ماکروسکوپی و مولکول‌های میکروسکوپی -->
+        <rect x="20" y="22" width="170" height="86" rx="10" fill="#0284c7" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" />
+        <g id="mml-trap-mol"></g>
+        <text x="105" y="16" text-anchor="middle" fill="#0284c7" font-size="9.5" font-weight="800">Microscopic: u (kJ/kg)</text>
+
+        <!-- فلش سرعت ماکروسکوپی -->
+        <line x1="202" y1="65" x2="305" y2="65" stroke="#d97706" stroke-width="4" stroke-linecap="round" />
+        <polygon points="315,65 301,58 301,72" fill="#d97706" />
+        <text id="mml-trap-vtxt" x="256" y="50" text-anchor="middle" fill="#d97706" font-size="11" font-weight="800">V = 8 m/s</text>
+        <text x="256" y="88" text-anchor="middle" fill="currentColor" fill-opacity="0.7" font-size="9" font-weight="700">Macroscopic Flow</text>
+
+        <!-- خط لوله تبدیل واحد -->
+        <rect x="20" y="128" width="90" height="66" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25" />
+        <text x="65" y="148" text-anchor="middle" fill="currentColor" fill-opacity="0.7" font-size="9" font-weight="700">Raw V²/2</text>
+        <text id="mml-pipe-raw" x="65" y="169" text-anchor="middle" fill="currentColor" font-size="11.5" font-weight="800">32.0</text>
+        <text x="65" y="185" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="8.5">m²/s² = J/kg</text>
+
+        <line x1="112" y1="161" x2="132" y2="161" stroke="currentColor" stroke-opacity="0.5" stroke-width="2" />
+        <rect id="mml-div-box" x="134" y="141" width="72" height="40" rx="8" fill="#ef4444" fill-opacity="0.16" stroke="#ef4444" stroke-width="2" />
+        <text id="mml-div-txt" x="170" y="165" text-anchor="middle" fill="#ef4444" font-size="10.5" font-weight="800">NO ÷1000!</text>
+        <line x1="208" y1="161" x2="226" y2="161" stroke="currentColor" stroke-opacity="0.5" stroke-width="2" />
+
+        <rect id="mml-res-unit-box" x="228" y="128" width="92" height="66" rx="8" fill="#ef4444" fill-opacity="0.1" stroke="#ef4444" stroke-width="1.8" />
+        <text x="274" y="148" text-anchor="middle" fill="currentColor" fill-opacity="0.7" font-size="9" font-weight="700">Added to u</text>
+        <text id="mml-pipe-out" x="274" y="169" text-anchor="middle" fill="#ef4444" font-size="11.5" font-weight="800">+32.0</text>
+        <text id="mml-pipe-unit" x="274" y="185" text-anchor="middle" fill="#ef4444" font-size="8.5" font-weight="700">1000× TOO BIG!</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>مقایسهٔ مقیاس (<span dir="ltr">u</span>، مقدار صحیح و خطای <span dir="ltr">1000×</span>)</span>
+        <span dir="ltr" id="mml-err-tag" style="color:#ef4444">+30.5% Error!</span>
+      </div>
+      <svg id="mml-trap-bar-svg" viewBox="0 0 300 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار خطای هزار برابری واحد">
+        <line x1="36" y1="184" x2="278" y2="184" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="36" y1="30" x2="36" y2="184" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.4" />
+        <text x="30" y="188" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+        <text id="mml-t-ymax" x="30" y="42" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">120</text>
+
+        <!-- میله u -->
+        <rect id="mml-tb-u" x="54" y="54" width="46" height="130" rx="4" fill="#0284c7" fill-opacity="0.88" />
+        <text id="mml-tv-u" x="77" y="46" text-anchor="middle" fill="currentColor" font-size="10" font-weight="800">104.8</text>
+        <text x="77" y="203" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">u</text>
+
+        <!-- میله ke صحیح -->
+        <rect id="mml-tb-ok" x="128" y="181" width="46" height="3" rx="2" fill="#059669" fill-opacity="0.92" />
+        <text id="mml-tv-ok" x="151" y="173" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">0.032</text>
+        <text x="151" y="203" text-anchor="middle" fill="#059669" font-size="10" font-weight="700">V²/2000</text>
+
+        <!-- میله خطای 1000× -->
+        <rect id="mml-tb-bad" x="202" y="144" width="46" height="40" rx="4" fill="#ef4444" fill-opacity="0.88" />
+        <text id="mml-tv-bad" x="225" y="136" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="800">32.0</text>
+        <text id="mml-tl-bad" x="225" y="203" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="700">Raw V²/2</text>
+        <rect id="mml-cap-badge" x="180" y="16" width="90" height="18" rx="9" fill="#ef4444" style="display:none" />
+        <text id="mml-cap-txt" x="225" y="28" text-anchor="middle" fill="#ffffff" font-size="8.5" font-weight="800" style="display:none">1000× OFF SCALE!</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- کارت‌های عددی زنده -->
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="mml-m1-lbl">کار جریان <span dir="ltr">(P/ρ)</span></span>
+      <span class="jh-metric__val" id="mml-m1-val">0.200 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="mml-m2-lbl">انرژی جنبشی <span dir="ltr">(V²/2000)</span></span>
+      <span class="jh-metric__val" id="mml-m2-val">0.098 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="mml-m3-lbl">انرژی پتانسیل <span dir="ltr">(gz/1000)</span></span>
+      <span class="jh-metric__val" id="mml-m3-val">0.294 kJ/kg</span>
+    </div>
+    <div class="jh-metric" id="mml-m4-card">
+      <span class="jh-metric__label" id="mml-m4-lbl">توان مکانیکی کل <span dir="ltr">(Ė_mech)</span></span>
+      <span class="jh-metric__val" id="mml-m4-val">17.8 kW</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="mml-explain">
+    برای آب با سرعت <span dir="ltr">V = 14 m/s</span> و ارتفاع <span dir="ltr">z = 30 m</span>، انرژی پتانسیل و کار جریان سهم اصلی را دارند و توان مکانیکی کل برابر <span dir="ltr">Ė_mech = 17.8 kW</span> است.
+  </div>
+</div>
+
+<script>
+  import { createAnimController, createParticleBox, setDialNeedle } from '../../lib/liveSimKit';
+
+  const root = document.getElementById('macro-micro-lab');
+  if (root) {
+    let mode: 'wind-hydro' | 'unit-trap' = 'wind-hydro';
+    let rho = 1000;
+    let pVal = 200;
+    let vVal = 14;
+    let zVal = 30;
+    let mdot = 30;
+
+    let trapU = 104.8;
+    let trapV = 8;
+    let forgetDiv = true;
+
+    let turbineAngle = 0;
+    const particlePhases = Array.from({ length: 16 }, (_, i) => i / 16);
+
+    const whPanel = root.querySelector<HTMLElement>('#mml-wh-panel')!;
+    const trapPanel = root.querySelector<HTMLElement>('#mml-trap-panel')!;
+    const splitWh = root.querySelector<HTMLElement>('#mml-split-wh')!;
+    const splitTrap = root.querySelector<HTMLElement>('#mml-split-trap')!;
+
+    const pSlider = root.querySelector<HTMLInputElement>('#mml-p')!;
+    const vSlider = root.querySelector<HTMLInputElement>('#mml-v')!;
+    const zSlider = root.querySelector<HTMLInputElement>('#mml-z')!;
+    const mdotSlider = root.querySelector<HTMLInputElement>('#mml-mdot')!;
+    const pLbl = root.querySelector<HTMLElement>('#mml-p-lbl')!;
+    const vLbl = root.querySelector<HTMLElement>('#mml-v-lbl')!;
+    const zLbl = root.querySelector<HTMLElement>('#mml-z-lbl')!;
+    const mdotLbl = root.querySelector<HTMLElement>('#mml-mdot-lbl')!;
+    const fluidTag = root.querySelector<HTMLElement>('#mml-fluid-tag')!;
+    const playBtn = root.querySelector<HTMLButtonElement>('#mml-play')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('#mml-reset')!;
+
+    const tuSlider = root.querySelector<HTMLInputElement>('#mml-tu')!;
+    const tvSlider = root.querySelector<HTMLInputElement>('#mml-tv')!;
+    const tuLbl = root.querySelector<HTMLElement>('#mml-tu-lbl')!;
+    const tvLbl = root.querySelector<HTMLElement>('#mml-tv-lbl')!;
+
+    const pane1Tag = root.querySelector<HTMLElement>('#mml-pane1-tag')!;
+    const edotTag = root.querySelector<HTMLElement>('#mml-edot-tag')!;
+    const pipeOuter = root.querySelector<SVGPathElement>('#mml-pipe-outer')!;
+    const pipeInner = root.querySelector<SVGPathElement>('#mml-pipe-inner')!;
+    const resFill = root.querySelector<SVGRectElement>('#mml-res-fill')!;
+    const resBox = root.querySelector<SVGRectElement>('#mml-res-box')!;
+    const zTxt = root.querySelector<SVGTextElement>('#mml-z-txt')!;
+    const zDim = root.querySelector<SVGLineElement>('#mml-z-dim')!;
+    const zTop = root.querySelector<SVGLineElement>('#mml-z-top')!;
+    const streamPtsGrp = root.querySelector<SVGGElement>('#mml-stream-pts')!;
+    const turbineRotor = root.querySelector<SVGGElement>('#mml-turbine-rotor')!;
+    const pNeedle = root.querySelector<SVGLineElement>('#mml-p-needle')!;
+    const pDial = root.querySelector<SVGTextElement>('#mml-p-dial')!;
+    const vPill = root.querySelector<SVGTextElement>('#mml-v-pill')!;
+    const mPill = root.querySelector<SVGTextElement>('#mml-m-pill')!;
+
+    const axisMax = root.querySelector<SVGTextElement>('#mml-axis-max')!;
+    const segFlow = root.querySelector<SVGRectElement>('#mml-seg-flow')!;
+    const segKe = root.querySelector<SVGRectElement>('#mml-seg-ke')!;
+    const segPe = root.querySelector<SVGRectElement>('#mml-seg-pe')!;
+    const barTop = root.querySelector<SVGTextElement>('#mml-bar-top')!;
+    const lgPe = root.querySelector<SVGTextElement>('#mml-lg-pe')!;
+    const lgKe = root.querySelector<SVGTextElement>('#mml-lg-ke')!;
+    const lgFl = root.querySelector<SVGTextElement>('#mml-lg-fl')!;
+    const lgTot = root.querySelector<SVGTextElement>('#mml-lg-tot')!;
+    const pwrVal = root.querySelector<SVGTextElement>('#mml-pwr-val')!;
+
+    const trapRatio = root.querySelector<HTMLElement>('#mml-trap-ratio')!;
+    const trapMolGrp = root.querySelector<SVGGElement>('#mml-trap-mol')!;
+    const trapVtxt = root.querySelector<SVGTextElement>('#mml-trap-vtxt')!;
+    const pipeRaw = root.querySelector<SVGTextElement>('#mml-pipe-raw')!;
+    const divBox = root.querySelector<SVGRectElement>('#mml-div-box')!;
+    const divTxt = root.querySelector<SVGTextElement>('#mml-div-txt')!;
+    const resUnitBox = root.querySelector<SVGRectElement>('#mml-res-unit-box')!;
+    const pipeOut = root.querySelector<SVGTextElement>('#mml-pipe-out')!;
+    const pipeUnit = root.querySelector<SVGTextElement>('#mml-pipe-unit')!;
+    const errTag = root.querySelector<HTMLElement>('#mml-err-tag')!;
+    const tYmax = root.querySelector<SVGTextElement>('#mml-t-ymax')!;
+    const tbU = root.querySelector<SVGRectElement>('#mml-tb-u')!;
+    const tvU = root.querySelector<SVGTextElement>('#mml-tv-u')!;
+    const tbOk = root.querySelector<SVGRectElement>('#mml-tb-ok')!;
+    const tvOk = root.querySelector<SVGTextElement>('#mml-tv-ok')!;
+    const tbBad = root.querySelector<SVGRectElement>('#mml-tb-bad')!;
+    const tvBad = root.querySelector<SVGTextElement>('#mml-tv-bad')!;
+    const tlBad = root.querySelector<SVGTextElement>('#mml-tl-bad')!;
+    const capBadge = root.querySelector<SVGRectElement>('#mml-cap-badge')!;
+    const capTxt = root.querySelector<SVGTextElement>('#mml-cap-txt')!;
+
+    const m1Lbl = root.querySelector<HTMLElement>('#mml-m1-lbl')!;
+    const m1Val = root.querySelector<HTMLElement>('#mml-m1-val')!;
+    const m2Lbl = root.querySelector<HTMLElement>('#mml-m2-lbl')!;
+    const m2Val = root.querySelector<HTMLElement>('#mml-m2-val')!;
+    const m3Lbl = root.querySelector<HTMLElement>('#mml-m3-lbl')!;
+    const m3Val = root.querySelector<HTMLElement>('#mml-m3-val')!;
+    const m4Card = root.querySelector<HTMLElement>('#mml-m4-card')!;
+    const m4Lbl = root.querySelector<HTMLElement>('#mml-m4-lbl')!;
+    const m4Val = root.querySelector<HTMLElement>('#mml-m4-val')!;
+    const explainEl = root.querySelector<HTMLElement>('#mml-explain')!;
+
+    // ذرات جریان درون لوله
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const streamCircles: SVGCircleElement[] = [];
+    streamPtsGrp.innerHTML = '';
+    for (let i = 0; i < particlePhases.length; i++) {
+      const c = document.createElementNS(SVG_NS, 'circle');
+      c.setAttribute('r', i % 2 === 0 ? '3' : '2.2');
+      c.setAttribute('fill', '#38bdf8');
+      c.setAttribute('fill-opacity', '0.9');
+      streamPtsGrp.appendChild(c);
+      streamCircles.push(c);
+    }
+
+    // ذرات مولکولی انرژی داخلی در حالت دوم
+    const trapParticles = createParticleBox(
+      trapMolGrp,
+      16,
+      () => ({ minX: 28, maxX: 182, minY: 30, maxY: 100 }),
+      '#0284c7',
+      2.5,
+      54
+    );
+
+    function bezierPoint(u: number, yInlet: number): { x: number; y: number } {
+      const t = u;
+      const omt = 1 - t;
+      const x0 = 46, x1 = 136, x2 = 176, x3 = 256;
+      const y0 = yInlet, y1 = yInlet, y2 = 162, y3 = 162;
+      const x = omt * omt * omt * x0 + 3 * omt * omt * t * x1 + 3 * omt * t * t * x2 + t * t * t * x3;
+      const y = omt * omt * omt * y0 + 3 * omt * omt * t * y1 + 3 * omt * t * t * y2 + t * t * t * y3;
+      return { x, y };
+    }
+
+    function fmtKJ(val: number): string {
+      if (val === 0) return '0.000';
+      if (val < 0.1) return val.toFixed(3);
+      if (val < 10) return val.toFixed(3);
+      return val.toFixed(1);
+    }
+
+    function renderWindHydro() {
+      pLbl.textContent = `${pVal.toFixed(rho < 10 ? 1 : 0)} kPa`;
+      vLbl.textContent = `${vVal.toFixed(0)} m/s`;
+      zLbl.textContent = `${zVal.toFixed(0)} m`;
+      mdotLbl.textContent = `${mdot.toLocaleString('en-US')} kg/s`;
+      fluidTag.textContent = rho < 10 ? 'Air: ρ = 1.25 kg/m³' : 'Water: ρ = 1000 kg/m³';
+
+      const eFlow = pVal / rho;
+      const eKe = (vVal * vVal) / 2000;
+      const ePe = (9.81 * zVal) / 1000;
+      const eTot = eFlow + eKe + ePe;
+      const edot = mdot * eTot;
+
+      pane1Tag.textContent = `e_mech = ${fmtKJ(eTot)} kJ/kg`;
+      edotTag.textContent = `${edot >= 100 ? edot.toFixed(0) : edot.toFixed(1)} kW`;
+
+      // هندسه لوله و ارتفاع
+      const zNorm = Math.min(1, zVal / 60);
+      const yInlet = 162 - zNorm * 110;
+      const pipeD = `M 46 ${yInlet.toFixed(1)} C 136 ${yInlet.toFixed(1)}, 176 162, 256 162`;
+      pipeOuter.setAttribute('d', pipeD);
+      pipeInner.setAttribute('d', pipeD);
+      pipeInner.setAttribute('stroke', rho < 10 ? '#38bdf8' : '#0284c7');
+
+      resFill.setAttribute('y', (yInlet - 18).toFixed(1));
+      resFill.setAttribute('fill', rho < 10 ? '#38bdf8' : '#0284c7');
+      resBox.setAttribute('y', (yInlet - 20).toFixed(1));
+      zTxt.setAttribute('y', (yInlet - 26).toFixed(1));
+      zTxt.textContent = `z = ${zVal.toFixed(0)} m`;
+      zDim.setAttribute('y1', yInlet.toFixed(1));
+      zDim.style.display = zVal > 0 ? '' : 'none';
+      zTop.setAttribute('y1', yInlet.toFixed(1));
+      zTop.setAttribute('y2', yInlet.toFixed(1));
+      zTop.style.display = zVal > 0 ? '' : 'none';
+
+      // ذرات روی مسیر بزیر
+      for (let i = 0; i < particlePhases.length; i++) {
+        const pt = bezierPoint(particlePhases[i], yInlet);
+        const lateral = ((i % 3) - 1) * 4.5;
+        streamCircles[i].setAttribute('cx', pt.x.toFixed(1));
+        streamCircles[i].setAttribute('cy', (pt.y + lateral).toFixed(1));
+        streamCircles[i].setAttribute('fill', rho < 10 ? '#0ea5e9' : '#38bdf8');
+      }
+
+      turbineRotor.setAttribute('transform', `rotate(${turbineAngle.toFixed(1)}, 258, 162)`);
+      setDialNeedle(pNeedle, pVal, 0, rho < 10 ? 5 : 500, 19);
+      pDial.textContent = pVal.toFixed(rho < 10 ? 1 : 0);
+      vPill.textContent = `V = ${vVal.toFixed(0)} m/s`;
+      mPill.textContent = `ṁ = ${mdot.toLocaleString('en-US')} kg/s`;
+
+      // نمودار پشته‌ای
+      const maxScale = Math.max(0.04, eTot * 1.15);
+      axisMax.textContent = maxScale < 0.2 ? maxScale.toFixed(3) : maxScale.toFixed(2);
+      const baseY = 186;
+      const maxH = 142;
+
+      const hFlow = (eFlow / maxScale) * maxH;
+      const hKe = (eKe / maxScale) * maxH;
+      const hPe = (ePe / maxScale) * maxH;
+
+      const yFlow = baseY - hFlow;
+      const yKe = yFlow - hKe;
+      const yPe = yKe - hPe;
+
+      segFlow.setAttribute('y', yFlow.toFixed(1));
+      segFlow.setAttribute('height', Math.max(0, hFlow).toFixed(1));
+      segKe.setAttribute('y', yKe.toFixed(1));
+      segKe.setAttribute('height', Math.max(0, hKe).toFixed(1));
+      segPe.setAttribute('y', yPe.toFixed(1));
+      segPe.setAttribute('height', Math.max(0, hPe).toFixed(1));
+
+      barTop.setAttribute('y', Math.max(20, yPe - 7).toFixed(1));
+      barTop.textContent = fmtKJ(eTot);
+
+      lgPe.textContent = fmtKJ(ePe);
+      lgKe.textContent = fmtKJ(eKe);
+      lgFl.textContent = fmtKJ(eFlow);
+      lgTot.textContent = fmtKJ(eTot);
+      pwrVal.textContent = `${edot >= 100 ? edot.toFixed(0) : edot.toFixed(2)} kW`;
+
+      // کارت‌ها و توضیح
+      m1Lbl.innerHTML = 'کار جریان <span dir="ltr">(P/ρ)</span>';
+      m1Val.textContent = `${fmtKJ(eFlow)} kJ/kg`;
+      m2Lbl.innerHTML = 'انرژی جنبشی <span dir="ltr">(V²/2000)</span>';
+      m2Val.textContent = `${fmtKJ(eKe)} kJ/kg`;
+      m3Lbl.innerHTML = 'انرژی پتانسیل <span dir="ltr">(gz/1000)</span>';
+      m3Val.textContent = `${fmtKJ(ePe)} kJ/kg`;
+      m4Card.classList.remove('jh-metric--warn');
+      m4Lbl.innerHTML = 'توان مکانیکی کل <span dir="ltr">(Ė_mech = ṁ·e_mech)</span>';
+      m4Val.textContent = `${edot >= 100 ? edot.toFixed(0) : edot.toFixed(2)} kW`;
+
+      if (rho < 10 && Math.abs(vVal - 8) < 0.5 && zVal === 0 && pVal === 0) {
+        const wElec = 0.32 * edot;
+        explainEl.innerHTML = `مطابق <strong>تمرین ۲-۶۹</strong>: باد با سرعت <span dir="ltr">V = 8 m/s</span> انرژی جنبشی مخصوص <strong><span dir="ltr">e_mech = 8²/2000 = 0.032 kJ/kg</span></strong> دارد. با دبی جرمی <span dir="ltr">ṁ = ${mdot.toLocaleString('en-US')} kg/s</span>، حداکثر توان مکانیکی در دسترس <strong><span dir="ltr">${edot.toFixed(0)} kW</span></strong> (با بازده ۳۲٪ برابر <span dir="ltr">${wElec.toFixed(1)} kW</span> برق) می‌شود.`;
+      } else if (rho >= 1000 && pVal === 0 && vVal === 0 && Math.abs(zVal - 45) < 0.5 && mdot === 30) {
+        explainEl.innerHTML = `مطابق <strong>تمرین ۲-۷۲</strong>: در پمپاژ آب به ارتفاع <span dir="ltr">z = 45 m</span> (تغییر فشار و سرعت سطح آزاد صفر)، <span dir="ltr">Δe_mech = gz/1000 = 0.441 kJ/kg</span> است و با <span dir="ltr">ṁ = 30 kg/s</span> نرخ افزایش انرژی مکانیکی آب <strong><span dir="ltr">13.24 kW</span></strong> می‌شود.`;
+      } else {
+        explainEl.innerHTML = `در معادلهٔ ۲-۶، جملهٔ <span dir="ltr">P/ρ = ${fmtKJ(eFlow)} kJ/kg</span> مستقیم بر حسب <span dir="ltr">kJ/kg</span> است؛ اما جملات <span dir="ltr">V²/2</span> و <span dir="ltr">gz</span> ابتدا بر <span dir="ltr">1000</span> تقسیم می‌شوند تا مجموع <strong><span dir="ltr">e_mech = ${fmtKJ(eTot)} kJ/kg</span></strong> و توان جریان <strong><span dir="ltr">Ė_mech = ${edot.toFixed(1)} kW</span></strong> هم‌واحد و دقیق شوند.`;
+      }
+    }
+
+    function renderUnitTrap() {
+      tuLbl.textContent = `${trapU.toFixed(1)} kJ/kg`;
+      tvLbl.textContent = `${trapV.toFixed(0)} m/s`;
+
+      const rawJkg = (trapV * trapV) / 2;
+      const keCorrect = rawJkg / 1000;
+      const pctCorrect = (keCorrect / trapU) * 100;
+      const pctWrong = (rawJkg / trapU) * 100;
+
+      trapRatio.textContent = `ke/u = ${pctCorrect < 0.1 ? pctCorrect.toFixed(3) : pctCorrect.toFixed(1)}%`;
+      trapVtxt.textContent = `V = ${trapV.toFixed(0)} m/s`;
+      pipeRaw.textContent = rawJkg >= 1000 ? rawJkg.toFixed(0) : rawJkg.toFixed(1);
+
+      if (forgetDiv) {
+        divBox.setAttribute('fill', '#ef4444');
+        divBox.setAttribute('fill-opacity', '0.16');
+        divBox.setAttribute('stroke', '#ef4444');
+        divTxt.setAttribute('fill', '#ef4444');
+        divTxt.textContent = 'NO ÷1000!';
+        resUnitBox.setAttribute('fill', '#ef4444');
+        resUnitBox.setAttribute('stroke', '#ef4444');
+        pipeOut.setAttribute('fill', '#ef4444');
+        pipeOut.textContent = `+${rawJkg >= 1000 ? rawJkg.toFixed(0) : rawJkg.toFixed(1)}`;
+        pipeUnit.setAttribute('fill', '#ef4444');
+        pipeUnit.textContent = '1000× TOO BIG!';
+        errTag.style.color = '#ef4444';
+        errTag.textContent = `+${pctWrong.toFixed(1)}% Error!`;
+      } else {
+        divBox.setAttribute('fill', '#059669');
+        divBox.setAttribute('fill-opacity', '0.16');
+        divBox.setAttribute('stroke', '#059669');
+        divTxt.setAttribute('fill', '#059669');
+        divTxt.textContent = '÷ 1000 ✓';
+        resUnitBox.setAttribute('fill', '#059669');
+        resUnitBox.setAttribute('stroke', '#059669');
+        pipeOut.setAttribute('fill', '#059669');
+        pipeOut.textContent = `+${keCorrect < 1 ? keCorrect.toFixed(3) : keCorrect.toFixed(2)}`;
+        pipeUnit.setAttribute('fill', '#059669');
+        pipeUnit.textContent = 'kJ/kg (Exact)';
+        errTag.style.color = '#059669';
+        errTag.textContent = '0.0% Error ✓';
+      }
+
+      // نمودار مقایسه مقیاس
+      const baseY = 184;
+      const maxH = 136;
+      const yScaleMax = Math.max(trapU * 1.15, keCorrect * 1.15);
+      tYmax.textContent = yScaleMax >= 100 ? yScaleMax.toFixed(0) : yScaleMax.toFixed(1);
+
+      const hU = (trapU / yScaleMax) * maxH;
+      const hOk = Math.max(2, (keCorrect / yScaleMax) * maxH);
+      const rawHBad = (rawJkg / yScaleMax) * maxH;
+      const clipped = rawHBad > maxH + 6;
+      const hBad = Math.min(maxH + 6, Math.max(3, rawHBad));
+
+      tbU.setAttribute('y', (baseY - hU).toFixed(1));
+      tbU.setAttribute('height', hU.toFixed(1));
+      tvU.setAttribute('y', (baseY - hU - 7).toFixed(1));
+      tvU.textContent = trapU >= 100 ? trapU.toFixed(1) : trapU.toFixed(1);
+
+      tbOk.setAttribute('y', (baseY - hOk).toFixed(1));
+      tbOk.setAttribute('height', hOk.toFixed(1));
+      tvOk.setAttribute('y', (baseY - hOk - 7).toFixed(1));
+      tvOk.textContent = keCorrect < 1 ? keCorrect.toFixed(3) : keCorrect.toFixed(1);
+
+      if (forgetDiv) {
+        tbBad.style.display = '';
+        tvBad.style.display = '';
+        tlBad.style.display = '';
+        tbBad.setAttribute('y', (baseY - hBad).toFixed(1));
+        tbBad.setAttribute('height', hBad.toFixed(1));
+        tvBad.setAttribute('y', Math.max(46, baseY - hBad - 7).toFixed(1));
+        tvBad.textContent = rawJkg >= 1000 ? rawJkg.toFixed(0) : rawJkg.toFixed(1);
+        capBadge.style.display = clipped ? '' : 'none';
+        capTxt.style.display = clipped ? '' : 'none';
+      } else {
+        tbBad.style.display = 'none';
+        tvBad.style.display = 'none';
+        tlBad.style.display = 'none';
+        capBadge.style.display = 'none';
+        capTxt.style.display = 'none';
+      }
+
+      // کارت‌ها
+      const totalCorrect = trapU + keCorrect;
+      const totalWrong = trapU + rawJkg;
+      m1Lbl.innerHTML = 'انرژی داخلی <span dir="ltr">(u)</span>';
+      m1Val.textContent = `${trapU.toFixed(1)} kJ/kg`;
+      m2Lbl.innerHTML = 'جنبشی صحیح <span dir="ltr">(V²/2000)</span>';
+      m2Val.textContent = `${keCorrect < 1 ? keCorrect.toFixed(3) : keCorrect.toFixed(2)} kJ/kg`;
+      m3Lbl.innerHTML = 'عدد خام <span dir="ltr">(V²/2)</span>';
+      m3Val.textContent = `${rawJkg >= 1000 ? rawJkg.toLocaleString('en-US', { maximumFractionDigits: 0 }) : rawJkg.toFixed(1)} J/kg`;
+
+      if (forgetDiv) {
+        m4Card.classList.add('jh-metric--warn');
+        m4Lbl.innerHTML = '⚠️ جمع غلط بدون <span dir="ltr">÷ 1000</span>';
+        m4Val.textContent = `${totalWrong >= 1000 ? totalWrong.toFixed(0) : totalWrong.toFixed(1)} (+${pctWrong.toFixed(1)}%!)`;
+        explainEl.innerHTML = `⚠️ <strong>تلهٔ امتحانی (۱۰۰۰ برابر خطا!):</strong> برای <span dir="ltr">V = ${trapV} m/s</span>، مقدار خام <span dir="ltr">V²/2 = ${rawJkg.toFixed(1)}</span> بر حسب <strong><span dir="ltr">J/kg</span></strong> است. اگر یادتان برود بر <span dir="ltr">1000</span> تقسیم کنید، به‌جای <strong><span dir="ltr">${keCorrect.toFixed(3)} kJ/kg</span></strong> عدد <span dir="ltr">${rawJkg.toFixed(1)}</span> را با <span dir="ltr">u = ${trapU.toFixed(1)} kJ/kg</span> جمع می‌زنید و <span dir="ltr">${pctWrong.toFixed(1)}%</span> خطای فاحش می‌سازید!`;
+      } else {
+        m4Card.classList.remove('jh-metric--warn');
+        m4Lbl.innerHTML = '✅ انرژی کل صحیح <span dir="ltr">(u + ke)</span>';
+        m4Val.textContent = `${totalCorrect.toFixed(3)} kJ/kg`;
+        explainEl.innerHTML = `✅ <strong>تبدیل واحد صحیح:</strong> با ضرب <span dir="ltr">V²/2 = ${rawJkg.toFixed(1)} J/kg</span> در <span dir="ltr">10⁻³</span>، انرژی جنبشی <strong><span dir="ltr">${keCorrect.toFixed(3)} kJ/kg</span></strong> به دست می‌آید که تنها <span dir="ltr">${pctCorrect.toFixed(2)}%</span> انرژی داخلی <span dir="ltr">u = ${trapU.toFixed(1)} kJ/kg</span> است (کل: <span dir="ltr">${totalCorrect.toFixed(3)} kJ/kg</span>).`;
+      }
+    }
+
+    function render() {
+      if (mode === 'wind-hydro') {
+        renderWindHydro();
+      } else {
+        renderUnitTrap();
+      }
+    }
+
+    const anim = createAnimController(root, (dt) => {
+      if (mode === 'wind-hydro') {
+        const speedNorm = 0.08 + (vVal / 40) * 0.55;
+        for (let i = 0; i < particlePhases.length; i++) {
+          particlePhases[i] = (particlePhases[i] + speedNorm * dt) % 1;
+        }
+        const omega = 25 + (vVal + zVal * 0.5) * 4.5;
+        turbineAngle = (turbineAngle + omega * dt) % 360;
+        renderWindHydro();
+      } else {
+        const speedScale = 0.7 + Math.min(2.2, trapU / 800);
+        trapParticles.step(dt, speedScale);
+      }
+    });
+
+    function setWhPreset(key: string) {
+      if (key === 'hydro') {
+        rho = 1000;
+        pSlider.min = '0'; pSlider.max = '500'; pSlider.step = '10';
+        vSlider.min = '0'; vSlider.max = '40'; vSlider.step = '1';
+        zSlider.min = '0'; zSlider.max = '60'; zSlider.step = '1';
+        mdotSlider.min = '5'; mdotSlider.max = '100'; mdotSlider.step = '5';
+        pVal = 200; vVal = 14; zVal = 30; mdot = 30;
+      } else if (key === 'prob272') {
+        rho = 1000;
+        pSlider.min = '0'; pSlider.max = '500'; pSlider.step = '10';
+        vSlider.min = '0'; vSlider.max = '40'; vSlider.step = '1';
+        zSlider.min = '0'; zSlider.max = '60'; zSlider.step = '1';
+        mdotSlider.min = '5'; mdotSlider.max = '100'; mdotSlider.step = '5';
+        pVal = 0; vVal = 0; zVal = 45; mdot = 30;
+      } else {
+        rho = 1.25;
+        pSlider.min = '0'; pSlider.max = '5'; pSlider.step = '0.2';
+        vSlider.min = '1'; vSlider.max = '30'; vSlider.step = '1';
+        zSlider.min = '0'; zSlider.max = '60'; zSlider.step = '5';
+        mdotSlider.min = '10000'; mdotSlider.max = '140000'; mdotSlider.step = '20';
+        pVal = 0; vVal = 8; zVal = 0; mdot = 78540;
+      }
+      pSlider.value = String(pVal);
+      vSlider.value = String(vVal);
+      zSlider.value = String(zVal);
+      mdotSlider.value = String(mdot);
+      render();
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('#mml-modes button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#mml-modes button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        mode = (btn.getAttribute('data-mode') as 'wind-hydro' | 'unit-trap') || 'wind-hydro';
+        whPanel.style.display = mode === 'wind-hydro' ? '' : 'none';
+        splitWh.style.display = mode === 'wind-hydro' ? '' : 'none';
+        trapPanel.style.display = mode === 'unit-trap' ? '' : 'none';
+        splitTrap.style.display = mode === 'unit-trap' ? '' : 'none';
+        render();
+      });
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('#mml-wh-presets button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#mml-wh-presets button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        setWhPreset(btn.getAttribute('data-preset') || 'hydro');
+      });
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('#mml-trap-presets button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#mml-trap-presets button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const key = btn.getAttribute('data-tpreset');
+        if (key === 'wind8') {
+          trapU = 104.8;
+          trapV = 8;
+        } else {
+          trapU = 2500;
+          trapV = 200;
+        }
+        tuSlider.value = String(trapU);
+        tvSlider.value = String(trapV);
+        render();
+      });
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('#mml-trap-error-btns button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#mml-trap-error-btns button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        forgetDiv = btn.getAttribute('data-forget') !== 'no';
+        render();
+      });
+    });
+
+    pSlider.addEventListener('input', () => { pVal = parseFloat(pSlider.value); render(); });
+    vSlider.addEventListener('input', () => { vVal = parseFloat(vSlider.value); render(); });
+    zSlider.addEventListener('input', () => { zVal = parseFloat(zSlider.value); render(); });
+    mdotSlider.addEventListener('input', () => { mdot = parseFloat(mdotSlider.value); render(); });
+    tuSlider.addEventListener('input', () => { trapU = parseFloat(tuSlider.value); render(); });
+    tvSlider.addEventListener('input', () => { trapV = parseFloat(tvSlider.value); render(); });
+
+    playBtn.addEventListener('click', () => {
+      if (anim.isPlaying()) {
+        anim.stop();
+        playBtn.textContent = '▶ پخش جریان';
+      } else {
+        anim.start();
+        playBtn.textContent = '⏸ توقف جریان';
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      root.querySelectorAll('#mml-wh-presets button').forEach((b) => {
+        b.classList.toggle('is-active', b.getAttribute('data-preset') === 'hydro');
+      });
+      setWhPreset('hydro');
+    });
+
+    render();
+    anim.start();
+  }
+</script>

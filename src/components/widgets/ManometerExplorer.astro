@@ -1,106 +1,676 @@
 ---
-// شبیه‌ساز مفهومی مانومتر و فشار هیدرواستاتیک (فصل ۱)
+// آزمایشگاه دوپنلی زنده مانومتر، چندسیالی و پیمایش هیدرواستاتیک (فصل ۱ - بخش ۴)
 ---
 
 <div class="jh-widget not-content" id="manometer-widget">
   <div class="jh-widget__head">
-    <span class="jh-widget__title">شبیه‌ساز تعادل فشار در مانومتر و خلأ</span>
-    <span class="jh-widget__sub">رابطهٔ <span dir="ltr">P_abs = P_atm + rho·g·h</span> با انتخاب سیال مانومتر و جهت ستون</span>
+    <span class="jh-widget__title">آزمایشگاه زندهٔ مانومتر تک‌سیالی، چندسیالی و پیمایش هیدرواستاتیک</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    اجرای گام‌به‌گام قانون طلایی حرکت در لوله (پایین رفتن <span dir="ltr">+ρgh</span>، بالا رفتن <span dir="ltr">−ρgh</span>) هم‌زمان با نمودار پروفیل فشار
   </div>
 
   <div class="jh-widget__btns" id="mano-presets">
-    <button type="button" class="jh-widget__btn is-active" data-rho="13600" data-h="0.40" data-mode="gage">جیوه (۱-۵۰ سنجل)</button>
-    <button type="button" class="jh-widget__btn" data-rho="1000" data-h="0.65" data-mode="gage">ستون آب</button>
-    <button type="button" class="jh-widget__btn" data-rho="13600" data-h="0.30" data-mode="vac">حالت خلأ (P_gas &lt; P_atm)</button>
+    <button type="button" class="jh-widget__btn is-active" data-preset="single">جیوه تک‌سیالی (تمرین ۱-۵۰)</button>
+    <button type="button" class="jh-widget__btn" data-preset="multi">مانومتر چندسیالی (آب + روغن + جیوه)</button>
+    <button type="button" class="jh-widget__btn" data-preset="vac">حالت خلأ <span dir="ltr">(P_gas &lt; P_atm)</span></button>
   </div>
 
-  <div class="jh-widget__grid">
+  <!-- انتخاب سیال در حالت تک‌سیالی یا خلأ -->
+  <div class="jh-widget__btns" id="mano-fluids">
+    <button type="button" class="jh-widget__btn is-active" data-rho="13600" data-color="#94a3b8" data-name="جیوه (Hg)">جیوه <span dir="ltr">(13,600 kg/m³)</span></button>
+    <button type="button" class="jh-widget__btn" data-rho="1000" data-color="#0284c7" data-name="آب">آب <span dir="ltr">(1,000 kg/m³)</span></button>
+    <button type="button" class="jh-widget__btn" data-rho="850" data-color="#f59e0b" data-name="روغن">روغن <span dir="ltr">(850 kg/m³)</span></button>
+  </div>
+
+  <!-- لغزنده‌های تک‌سیالی / خلأ -->
+  <div class="jh-widget__grid" id="mano-ctrl-single">
     <label class="jh-widget__ctrl">
-      <span>اختلاف ارتفاع <span dir="ltr">h</span> (m): <strong id="mano-h-lbl" dir="ltr">0.40</strong></span>
-      <input id="mano-h" type="range" min="0.05" max="1.00" step="0.05" value="0.40" />
+      <span>اختلاف ارتفاع ستون (<span dir="ltr">h</span>): <strong id="mano-h-lbl" dir="ltr">0.40 m</strong></span>
+      <input id="mano-h" type="range" min="0.05" max="0.80" step="0.05" value="0.40" />
     </label>
     <label class="jh-widget__ctrl">
-      <span>فشار جو <span dir="ltr">P_atm</span> (kPa): <strong id="mano-atm-lbl" dir="ltr">100</strong></span>
+      <span>فشار جو (<span dir="ltr">P_atm</span>): <strong id="mano-atm-lbl" dir="ltr">100 kPa</strong></span>
       <input id="mano-atm" type="range" min="85" max="105" step="1" value="100" />
     </label>
   </div>
 
-  <div class="jh-widget__canvas">
-    <svg viewBox="0 0 420 150" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار تعادل فشار مانومتر">
-      <rect x="28" y="34" width="66" height="62" rx="10" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
-      <text x="61" y="68" text-anchor="middle" fill="currentColor" font-size="12" font-weight="700">Gas (P₁)</text>
-      <path d="M 94 65 L 145 65 L 145 122 L 235 122 L 235 28" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
-      <path id="mano-col" d="M 145 92 L 145 122 L 235 122 L 235 55" fill="none" stroke="#0284c7" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
-      <line x1="255" y1="55" x2="255" y2="92" stroke="#d97706" stroke-width="2" />
-      <text id="mano-svg-h" x="264" y="77" fill="#d97706" font-size="11.5" font-weight="700">h = 0.40 m</text>
-      <text x="235" y="18" text-anchor="middle" fill="currentColor" font-size="11">P_atm ↓</text>
-    </svg>
+  <!-- لغزنده‌های چندسیالی (تمرین ۱-۵۰) -->
+  <div class="jh-widget__grid" id="mano-ctrl-multi" style="display:none">
+    <label class="jh-widget__ctrl">
+      <span>ستون آب (<span dir="ltr">h₁</span>): <strong id="mano-h1-lbl" dir="ltr">0.20 m</strong></span>
+      <input id="mano-h1" type="range" min="0.10" max="0.50" step="0.05" value="0.20" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>ستون روغن (<span dir="ltr">h₂</span>): <strong id="mano-h2-lbl" dir="ltr">0.30 m</strong></span>
+      <input id="mano-h2" type="range" min="0.10" max="0.50" step="0.05" value="0.30" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>ستون جیوه (<span dir="ltr">h₃</span>): <strong id="mano-h3-lbl" dir="ltr">0.40 m</strong></span>
+      <input id="mano-h3" type="range" min="0.15" max="0.75" step="0.05" value="0.40" />
+    </label>
+  </div>
+
+  <!-- نوار ابزار پیمایش هیدرواستاتیک -->
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="mano-play">▶ گام حرکت در لوله</button>
+    <button type="button" class="jh-widget__btn" id="mano-reset">↺ ابتدای مسیر</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>پیشرفت پیمایش (<span dir="ltr">Hydrostatic Walk</span>): <strong id="mano-walk-lbl" dir="ltr">100%</strong></span>
+      <input id="mano-walk" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱: لوله U شکل زنده -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>مانومتر <span dir="ltr">U</span>شکل و نقطهٔ متحرک پیمایش</span>
+        <span dir="ltr" id="mano-node-tag" style="color:#0284c7">At P_atm</span>
+      </div>
+      <svg id="mano-tube-svg" viewBox="0 0 320 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="لوله U شکل مانومتر تک‌سیالی و چندسیالی">
+        <!-- مخزن گاز -->
+        <rect id="mano-tank" x="16" y="42" width="58" height="62" rx="8" fill="#0284c7" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text x="45" y="68" text-anchor="middle" fill="currentColor" font-size="11" font-weight="800">Gas (P₁)</text>
+        <text id="mano-tank-p" x="45" y="84" text-anchor="middle" fill="#0284c7" font-size="10" font-weight="800">153.4 kPa</text>
+
+        <!-- لوله تک‌سیالی / خلأ -->
+        <g id="mano-g-single">
+          <path d="M 74 74 L 138 74 L 138 194 L 244 194 L 244 30" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="17" stroke-linecap="round" stroke-linejoin="round" />
+          <path id="mano-s-col" d="" fill="none" stroke="#94a3b8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+          <line id="mano-s-eq" x1="138" y1="135" x2="244" y2="135" stroke="#059669" stroke-width="1.6" stroke-dasharray="4 3" />
+          <!-- براکت ارتفاع h -->
+          <line id="mano-s-hline" x1="262" y1="95" x2="262" y2="135" stroke="#d97706" stroke-width="2" />
+          <line id="mano-s-htop" x1="257" y1="95" x2="267" y2="95" stroke="#d97706" stroke-width="2" />
+          <line id="mano-s-hbot" x1="257" y1="135" x2="267" y2="135" stroke="#d97706" stroke-width="2" />
+          <text id="mano-s-hlbl" x="270" y="119" fill="#d97706" font-size="10.5" font-weight="800">h=0.40m</text>
+          <text x="244" y="19" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">P_atm ↓</text>
+        </g>
+
+        <!-- لوله چندسیالی (آب + روغن + جیوه) -->
+        <g id="mano-g-multi" style="display:none">
+          <path d="M 74 74 L 110 74 L 110 100 L 158 100 L 158 196 L 244 196 L 244 30" id="mano-m-glass" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+          <path id="mano-m-water" d="" fill="none" stroke="#0284c7" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+          <path id="mano-m-oil" d="" fill="none" stroke="#f59e0b" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+          <path id="mano-m-merc" d="" fill="none" stroke="#94a3b8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+          <line id="mano-m-eq" x1="158" y1="120" x2="244" y2="120" stroke="#059669" stroke-width="1.5" stroke-dasharray="4 3" />
+
+          <!-- برچسب‌های ارتفاع h1, h2, h3 -->
+          <text id="mano-m-h1lbl" x="92" y="88" text-anchor="end" fill="#0284c7" font-size="9.8" font-weight="800">h₁</text>
+          <text id="mano-m-h2lbl" x="142" y="114" text-anchor="end" fill="#d97706" font-size="9.8" font-weight="800">h₂</text>
+          <line id="mano-m-h3line" x1="262" y1="86" x2="262" y2="120" stroke="#64748b" stroke-width="1.8" />
+          <text id="mano-m-h3lbl" x="268" y="106" fill="currentColor" font-size="9.8" font-weight="800">h₃</text>
+          <text x="244" y="19" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">P_atm ↓</text>
+        </g>
+
+        <!-- نقاط گرهی و نشانگر متحرک پیمایش -->
+        <g id="mano-tube-nodes"></g>
+        <circle id="mano-walker-halo" cx="244" cy="95" r="10" fill="#ef4444" fill-opacity="0.22" />
+        <circle id="mano-walker" cx="244" cy="95" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.8" />
+      </svg>
+    </div>
+
+    <!-- پنل ۲: نمودار پله‌ای پروفیل فشار -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>پروفیل فشار در گره‌های ارتفاعی (<span dir="ltr">P₁ → P_A → P_B → P_atm</span>)</span>
+        <span dir="ltr" id="mano-step-delta" style="color:#059669">ΔP_walk</span>
+      </div>
+      <svg id="mano-prof-svg" viewBox="0 0 300 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار پله‌ای تغییرات فشار هیدرواستاتیک">
+        <g stroke="currentColor" stroke-opacity="0.12" stroke-width="1">
+          <line x1="48" y1="48" x2="282" y2="48" />
+          <line x1="48" y1="94" x2="282" y2="94" />
+          <line x1="48" y1="140" x2="282" y2="140" />
+        </g>
+        <line x1="48" y1="26" x2="48" y2="186" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <line x1="48" y1="186" x2="284" y2="186" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <text x="14" y="24" fill="currentColor" font-size="10.5" font-weight="700">P(kPa)</text>
+        <text id="mano-ax-pmax" x="42" y="38" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">180</text>
+        <text id="mano-ax-pmin" x="42" y="188" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+
+        <!-- خط مرجع P_atm -->
+        <line id="mano-atm-ref" x1="48" y1="118" x2="282" y2="118" stroke="currentColor" stroke-opacity="0.38" stroke-dasharray="4 3" stroke-width="1.4" />
+        <text id="mano-atm-reftxt" x="280" y="114" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="8.8" font-weight="700">P_atm</text>
+
+        <g id="mano-prof-bars"></g>
+        <path id="mano-prof-full" d="" fill="none" stroke="currentColor" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="4 3" />
+        <path id="mano-prof-cur" d="" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        <g id="mano-prof-tags"></g>
+        <circle id="mano-prof-dot" cx="252" cy="118" r="5.5" fill="#ef4444" stroke="#ffffff" stroke-width="1.8" />
+      </svg>
+    </div>
   </div>
 
   <div class="jh-widget__metrics">
     <div class="jh-metric">
-      <span class="jh-metric__label">فشار ستون سیال (<span dir="ltr">ΔP</span>)</span>
+      <span class="jh-metric__label">فشار پیمانه‌ای / خلأ (<span dir="ltr">ΔP</span>)</span>
       <span class="jh-metric__val" id="mano-dp">+53.37 kPa</span>
     </div>
-    <div class="jh-metric">
+    <div class="jh-metric" id="mano-pabs-card">
       <span class="jh-metric__label">فشار مطلق مخزن (<span dir="ltr">P_abs</span>)</span>
       <span class="jh-metric__val" id="mano-pabs">153.37 kPa</span>
     </div>
     <div class="jh-metric">
-      <span class="jh-metric__label">نوع فشارسنجی</span>
-      <span class="jh-metric__val" id="mano-type" style="direction:rtl;text-align:right">پیمانه‌ای (مثبت)</span>
+      <span class="jh-metric__label">فشار نقطه‌ای نشانگر (<span dir="ltr">P_walk</span>)</span>
+      <span class="jh-metric__val" id="mano-pwalk">100.00 kPa</span>
     </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label">نوع فشارسنجی</span>
+      <span class="jh-metric__val" id="mano-type" style="direction:rtl;text-align:right">پیمانه‌ای (بالای جو)</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="mano-explain">
+    با حرکت از مخزن گاز به سمت دهانهٔ باز جو، پایین رفتن در سیال باعث <strong>افزایش فشار (<span dir="ltr">+ρgh</span>)</strong>، پرش افقی در یک سیال همگن باعث <strong>ثبات فشار</strong> و بالا رفتن باعث <strong>کاهش فشار (<span dir="ltr">−ρgh</span>)</strong> می‌شود.
   </div>
 </div>
 
-<script is:inline>
-(() => {
-  const root = document.getElementById('manometer-widget');
-  if (!root) return;
-  let rho = 13600;
-  let mode = 'gage';
-  const hEl = root.querySelector('#mano-h');
-  const atmEl = root.querySelector('#mano-atm');
-  const hLbl = root.querySelector('#mano-h-lbl');
-  const atmLbl = root.querySelector('#mano-atm-lbl');
-  const dpEl = root.querySelector('#mano-dp');
-  const pabsEl = root.querySelector('#mano-pabs');
-  const typeEl = root.querySelector('#mano-type');
-  const svgH = root.querySelector('#mano-svg-h');
-  const col = root.querySelector('#mano-col');
+<script>
+import { createAnimController, createViewport } from '../../lib/liveSimKit';
 
-  function update() {
-    const h = parseFloat(hEl.value);
-    const patm = parseFloat(atmEl.value);
-    hLbl.textContent = h.toFixed(2);
-    atmLbl.textContent = patm.toFixed(0);
-    const dpKpa = (rho * 9.81 * h) / 1000;
-    const signedDp = mode === 'vac' ? -dpKpa : dpKpa;
-    const pabs = Math.max(0, patm + signedDp);
-    dpEl.textContent = `${signedDp >= 0 ? '+' : ''}${signedDp.toFixed(2)} kPa`;
-    pabsEl.textContent = `${pabs.toFixed(2)} kPa`;
-    typeEl.textContent = mode === 'vac' ? 'فشار خلأ (زیر جو)' : 'فشار پیمانه‌ای (بالای جو)';
-    svgH.textContent = `h = ${h.toFixed(2)} m`;
-    const offset = Math.round(h * 38);
-    if (mode === 'vac') {
-      col.setAttribute('d', `M 145 ${92 - offset} L 145 122 L 235 122 L 235 92`);
+const root = document.getElementById('manometer-widget');
+if (root) {
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const G = 9.81;
+
+  let preset: 'single' | 'multi' | 'vac' = 'single';
+  let rho = 13600;
+  let fluidColor = '#94a3b8';
+  let fluidName = 'جیوه (Hg)';
+  let hVal = 0.40;
+  let pAtm = 100;
+  let h1 = 0.20;
+  let h2 = 0.30;
+  let h3 = 0.40;
+  let walk = 1.0;
+
+  const fluidsBar = root.querySelector('#mano-fluids') as HTMLElement;
+  const ctrlSingle = root.querySelector('#mano-ctrl-single') as HTMLElement;
+  const ctrlMulti = root.querySelector('#mano-ctrl-multi') as HTMLElement;
+
+  const hEl = root.querySelector('#mano-h') as HTMLInputElement;
+  const atmEl = root.querySelector('#mano-atm') as HTMLInputElement;
+  const h1El = root.querySelector('#mano-h1') as HTMLInputElement;
+  const h2El = root.querySelector('#mano-h2') as HTMLInputElement;
+  const h3El = root.querySelector('#mano-h3') as HTMLInputElement;
+
+  const hLbl = root.querySelector('#mano-h-lbl') as HTMLElement;
+  const atmLbl = root.querySelector('#mano-atm-lbl') as HTMLElement;
+  const h1Lbl = root.querySelector('#mano-h1-lbl') as HTMLElement;
+  const h2Lbl = root.querySelector('#mano-h2-lbl') as HTMLElement;
+  const h3Lbl = root.querySelector('#mano-h3-lbl') as HTMLElement;
+
+  const playBtn = root.querySelector('#mano-play') as HTMLButtonElement;
+  const resetBtn = root.querySelector('#mano-reset') as HTMLButtonElement;
+  const walkEl = root.querySelector('#mano-walk') as HTMLInputElement;
+  const walkLbl = root.querySelector('#mano-walk-lbl') as HTMLElement;
+
+  const nodeTag = root.querySelector('#mano-node-tag') as HTMLElement;
+  const stepDeltaTag = root.querySelector('#mano-step-delta') as HTMLElement;
+  const tankRect = root.querySelector('#mano-tank') as SVGRectElement;
+  const tankP = root.querySelector('#mano-tank-p') as SVGTextElement;
+
+  const gSingle = root.querySelector('#mano-g-single') as SVGGElement;
+  const sCol = root.querySelector('#mano-s-col') as SVGPathElement;
+  const sEq = root.querySelector('#mano-s-eq') as SVGLineElement;
+  const sHline = root.querySelector('#mano-s-hline') as SVGLineElement;
+  const sHtop = root.querySelector('#mano-s-htop') as SVGLineElement;
+  const sHbot = root.querySelector('#mano-s-hbot') as SVGLineElement;
+  const sHlbl = root.querySelector('#mano-s-hlbl') as SVGTextElement;
+
+  const gMulti = root.querySelector('#mano-g-multi') as SVGGElement;
+  const mGlass = root.querySelector('#mano-m-glass') as SVGPathElement;
+  const mWater = root.querySelector('#mano-m-water') as SVGPathElement;
+  const mOil = root.querySelector('#mano-m-oil') as SVGPathElement;
+  const mMerc = root.querySelector('#mano-m-merc') as SVGPathElement;
+  const mEq = root.querySelector('#mano-m-eq') as SVGLineElement;
+  const mH1lbl = root.querySelector('#mano-m-h1lbl') as SVGTextElement;
+  const mH2lbl = root.querySelector('#mano-m-h2lbl') as SVGTextElement;
+  const mH3line = root.querySelector('#mano-m-h3line') as SVGLineElement;
+  const mH3lbl = root.querySelector('#mano-m-h3lbl') as SVGTextElement;
+
+  const tubeNodesGrp = root.querySelector('#mano-tube-nodes') as SVGGElement;
+  const walkerEl = root.querySelector('#mano-walker') as SVGCircleElement;
+  const walkerHalo = root.querySelector('#mano-walker-halo') as SVGCircleElement;
+
+  const axPmax = root.querySelector('#mano-ax-pmax') as SVGTextElement;
+  const axPmin = root.querySelector('#mano-ax-pmin') as SVGTextElement;
+  const atmRef = root.querySelector('#mano-atm-ref') as SVGLineElement;
+  const atmRefTxt = root.querySelector('#mano-atm-reftxt') as SVGTextElement;
+  const profBars = root.querySelector('#mano-prof-bars') as SVGGElement;
+  const profFull = root.querySelector('#mano-prof-full') as SVGPathElement;
+  const profCur = root.querySelector('#mano-prof-cur') as SVGPathElement;
+  const profTags = root.querySelector('#mano-prof-tags') as SVGGElement;
+  const profDot = root.querySelector('#mano-prof-dot') as SVGCircleElement;
+
+  const dpEl = root.querySelector('#mano-dp') as HTMLElement;
+  const pabsCard = root.querySelector('#mano-pabs-card') as HTMLElement;
+  const pabsEl = root.querySelector('#mano-pabs') as HTMLElement;
+  const pwalkEl = root.querySelector('#mano-pwalk') as HTMLElement;
+  const typeEl = root.querySelector('#mano-type') as HTMLElement;
+  const explainEl = root.querySelector('#mano-explain') as HTMLElement;
+
+  interface TubeNode {
+    x: number;
+    y: number;
+    p: number;
+    label: string;
+    stepNote: string;
+    color: string;
+  }
+
+  function interpPath(pts: ReadonlyArray<{ x: number; y: number; p: number }>, u: number) {
+    const clamped = Math.max(0, Math.min(1, u));
+    const segs = pts.length - 1;
+    const scaled = clamped * segs;
+    const idx = Math.min(segs - 1, Math.floor(scaled));
+    const frac = scaled - idx;
+    const a = pts[idx];
+    const b = pts[idx + 1];
+    return {
+      x: a.x + (b.x - a.x) * frac,
+      y: a.y + (b.y - a.y) * frac,
+      p: a.p + (b.p - a.p) * frac,
+      idx,
+      frac,
+    };
+  }
+
+  function render() {
+    hLbl.textContent = `${hVal.toFixed(2)} m`;
+    atmLbl.textContent = `${pAtm.toFixed(0)} kPa`;
+    h1Lbl.textContent = `${h1.toFixed(2)} m`;
+    h2Lbl.textContent = `${h2.toFixed(2)} m`;
+    h3Lbl.textContent = `${h3.toFixed(2)} m`;
+    walkLbl.textContent = `${Math.round(walk * 100)}%`;
+    walkEl.value = String(Math.round(walk * 100));
+
+    const isMulti = preset === 'multi';
+    fluidsBar.style.display = isMulti ? 'none' : '';
+    ctrlSingle.style.display = isMulti ? 'none' : '';
+    ctrlMulti.style.display = isMulti ? '' : 'none';
+    gSingle.style.display = isMulti ? 'none' : '';
+    gMulti.style.display = isMulti ? '' : 'none';
+
+    let p1 = pAtm;
+    let pGage = 0;
+    let nodes: TubeNode[] = [];
+    let tubePathPts: Array<{ x: number; y: number; p: number }> = [];
+
+    if (!isMulti) {
+      const dpKpa = (rho * G * hVal) / 1000;
+      pGage = preset === 'vac' ? -dpKpa : dpKpa;
+      p1 = pAtm + pGage;
+
+      const pxPerM = 58;
+      const offPx = hVal * pxPerM;
+      const yL = preset === 'vac' ? 124 - offPx * 0.55 : 124 + offPx * 0.45;
+      const yR = preset === 'vac' ? 124 + offPx * 0.45 : 124 - offPx * 0.55;
+      const yTop = Math.min(yL, yR);
+      const yBot = Math.max(yL, yR);
+      const dBottomM = (194 - yBot) / pxPerM;
+      const dpBot = (rho * G * dBottomM) / 1000;
+
+      sCol.setAttribute('stroke', fluidColor);
+      sCol.setAttribute('d', `M 138 ${yL.toFixed(1)} L 138 194 L 244 194 L 244 ${yR.toFixed(1)}`);
+      sEq.setAttribute('y1', yBot.toFixed(1));
+      sEq.setAttribute('y2', yBot.toFixed(1));
+
+      sHline.setAttribute('y1', yTop.toFixed(1));
+      sHline.setAttribute('y2', yBot.toFixed(1));
+      sHtop.setAttribute('y1', yTop.toFixed(1));
+      sHtop.setAttribute('y2', yTop.toFixed(1));
+      sHbot.setAttribute('y1', yBot.toFixed(1));
+      sHbot.setAttribute('y2', yBot.toFixed(1));
+      sHlbl.setAttribute('y', ((yTop + yBot) / 2 + 4).toFixed(1));
+      sHlbl.textContent = `h=${hVal.toFixed(2)}m`;
+
+      if (preset === 'single') {
+        const pBottom = p1 + dpBot;
+        nodes = [
+          { x: 138, y: yL, p: p1, label: '1', stepNote: '', color: '#0284c7' },
+          { x: 138, y: 194, p: pBottom, label: 'A', stepNote: `+${dpBot.toFixed(1)}`, color: '#059669' },
+          { x: 244, y: yL, p: p1, label: 'B', stepNote: `-${dpBot.toFixed(1)}`, color: '#0284c7' },
+          { x: 244, y: yR, p: pAtm, label: 'Atm', stepNote: `-${dpKpa.toFixed(1)}`, color: '#ef4444' },
+        ];
+        tubePathPts = [
+          { x: 138, y: yL, p: p1 },
+          { x: 138, y: 194, p: pBottom },
+          { x: 244, y: 194, p: pBottom },
+          { x: 244, y: yL, p: p1 },
+          { x: 244, y: yR, p: pAtm },
+        ];
+      } else {
+        const pBottom = pAtm + dpBot;
+        nodes = [
+          { x: 138, y: yL, p: p1, label: '1', stepNote: '', color: '#0284c7' },
+          { x: 138, y: yR, p: pAtm, label: 'A', stepNote: `+${dpKpa.toFixed(1)}`, color: '#059669' },
+          { x: 138, y: 194, p: pBottom, label: 'B', stepNote: `+${dpBot.toFixed(1)}`, color: '#059669' },
+          { x: 244, y: yR, p: pAtm, label: 'Atm', stepNote: `-${dpBot.toFixed(1)}`, color: '#ef4444' },
+        ];
+        tubePathPts = [
+          { x: 138, y: yL, p: p1 },
+          { x: 138, y: yR, p: pAtm },
+          { x: 138, y: 194, p: pBottom },
+          { x: 244, y: 194, p: pBottom },
+          { x: 244, y: yR, p: pAtm },
+        ];
+      }
     } else {
-      col.setAttribute('d', `M 145 92 L 145 122 L 235 122 L 235 ${92 - offset}`);
+      // چندسیالی (تمرین ۱-۵۰): آب + روغن + جیوه
+      const dp1 = (1000 * G * h1) / 1000;
+      const dp2 = (850 * G * h2) / 1000;
+      const dp3 = (13600 * G * h3) / 1000;
+      pGage = dp3 - dp1 - dp2;
+      p1 = pAtm + pGage;
+      const pA = p1 + dp1;
+      const pB = pA + dp2;
+
+      const pxPerM = 56;
+      const y1 = 74;
+      const yA = y1 + h1 * pxPerM;
+      const yB = yA + h2 * pxPerM;
+      const yAtm = yB - h3 * pxPerM;
+      const dMercBot = (196 - yB) / pxPerM;
+      const pBot = pB + (13600 * G * dMercBot) / 1000;
+
+      mGlass.setAttribute('d', `M 74 74 L 110 74 L 110 ${yA.toFixed(1)} L 158 ${yA.toFixed(1)} L 158 196 L 244 196 L 244 30`);
+      mWater.setAttribute('d', `M 110 ${y1.toFixed(1)} L 110 ${yA.toFixed(1)}`);
+      mOil.setAttribute('d', `M 110 ${yA.toFixed(1)} L 158 ${yA.toFixed(1)} L 158 ${yB.toFixed(1)}`);
+      mMerc.setAttribute('d', `M 158 ${yB.toFixed(1)} L 158 196 L 244 196 L 244 ${yAtm.toFixed(1)}`);
+      mEq.setAttribute('y1', yB.toFixed(1));
+      mEq.setAttribute('y2', yB.toFixed(1));
+
+      mH1lbl.setAttribute('y', ((y1 + yA) / 2 + 3).toFixed(1));
+      mH1lbl.textContent = `h₁=${h1.toFixed(2)}`;
+      mH2lbl.setAttribute('y', ((yA + yB) / 2 + 3).toFixed(1));
+      mH2lbl.textContent = `h₂=${h2.toFixed(2)}`;
+      mH3line.setAttribute('y1', yAtm.toFixed(1));
+      mH3line.setAttribute('y2', yB.toFixed(1));
+      mH3lbl.setAttribute('y', ((yAtm + yB) / 2 + 3).toFixed(1));
+      mH3lbl.textContent = `h₃=${h3.toFixed(2)}`;
+
+      nodes = [
+        { x: 110, y: y1, p: p1, label: '1', stepNote: '', color: '#0284c7' },
+        { x: 110, y: yA, p: pA, label: 'A', stepNote: `+${dp1.toFixed(1)}`, color: '#059669' },
+        { x: 158, y: yB, p: pB, label: 'B', stepNote: `+${dp2.toFixed(1)}`, color: '#059669' },
+        { x: 244, y: yAtm, p: pAtm, label: 'Atm', stepNote: `-${dp3.toFixed(1)}`, color: '#ef4444' },
+      ];
+      tubePathPts = [
+        { x: 110, y: y1, p: p1 },
+        { x: 110, y: yA, p: pA },
+        { x: 158, y: yA, p: pA },
+        { x: 158, y: yB, p: pB },
+        { x: 158, y: 196, p: pBot },
+        { x: 244, y: 196, p: pBot },
+        { x: 244, y: yB, p: pB },
+        { x: 244, y: yAtm, p: pAtm },
+      ];
+    }
+
+    const isInvalidVac = p1 <= 0;
+    const p1Clamped = Math.max(0, p1);
+    tankP.textContent = `${p1Clamped.toFixed(1)} kPa`;
+    tankRect.setAttribute('fill', pGage < 0 ? '#38bdf8' : '#d97706');
+    tankRect.setAttribute('fill-opacity', pGage < 0 ? '0.14' : '0.18');
+    pabsCard.classList.toggle('jh-metric--warn', isInvalidVac);
+
+    // نقاط گرهی روی لوله
+    tubeNodesGrp.innerHTML = '';
+    nodes.forEach((nd) => {
+      const c = document.createElementNS(SVG_NS, 'circle');
+      c.setAttribute('cx', nd.x.toFixed(1));
+      c.setAttribute('cy', nd.y.toFixed(1));
+      c.setAttribute('r', '3.6');
+      c.setAttribute('fill', nd.color);
+      c.setAttribute('stroke', '#ffffff');
+      c.setAttribute('stroke-width', '1.2');
+      tubeNodesGrp.appendChild(c);
+
+      const t = document.createElementNS(SVG_NS, 'text');
+      const isRightArm = nd.x > 200;
+      if (isMulti && nd.label === '1') {
+        t.setAttribute('x', nd.x.toFixed(1));
+        t.setAttribute('y', (nd.y - 12).toFixed(1));
+        t.setAttribute('text-anchor', 'middle');
+      } else if (isMulti && nd.label === 'A') {
+        t.setAttribute('x', nd.x.toFixed(1));
+        t.setAttribute('y', (nd.y + 16).toFixed(1));
+        t.setAttribute('text-anchor', 'middle');
+      } else if (isMulti && nd.label === 'B') {
+        t.setAttribute('x', (nd.x + 12).toFixed(1));
+        t.setAttribute('y', (nd.y - 6).toFixed(1));
+        t.setAttribute('text-anchor', 'start');
+      } else if (isRightArm) {
+        t.setAttribute('x', (nd.x - 12).toFixed(1));
+        t.setAttribute('y', (nd.y + 3).toFixed(1));
+        t.setAttribute('text-anchor', 'end');
+      } else {
+        t.setAttribute('x', (nd.x - 12).toFixed(1));
+        t.setAttribute('y', (nd.y + 3).toFixed(1));
+        t.setAttribute('text-anchor', 'end');
+      }
+      t.setAttribute('fill', 'currentColor');
+      t.setAttribute('font-size', '9.5');
+      t.setAttribute('font-weight', '800');
+      t.textContent = nd.label;
+      tubeNodesGrp.appendChild(t);
+    });
+
+    // مکان نشانگر متحرک در لوله
+    const curTube = interpPath(tubePathPts, walk);
+    walkerEl.setAttribute('cx', curTube.x.toFixed(1));
+    walkerEl.setAttribute('cy', curTube.y.toFixed(1));
+    walkerHalo.setAttribute('cx', curTube.x.toFixed(1));
+    walkerHalo.setAttribute('cy', curTube.y.toFixed(1));
+
+    // نمودار پروفیل فشار در پنل ۲
+    const allPs = nodes.map((n) => n.p);
+    const pMin = Math.max(0, Math.floor((Math.min(...allPs, pAtm) - 15) / 10) * 10);
+    const pMax = Math.ceil((Math.max(...allPs, pAtm) + 15) / 10) * 10;
+    const vp = createViewport(0, 3, pMin, pMax, 72, 260, 186, 36);
+
+    axPmax.textContent = String(pMax);
+    axPmin.textContent = String(pMin);
+    const yAtmRef = vp.y(pAtm);
+    atmRef.setAttribute('y1', yAtmRef.toFixed(1));
+    atmRef.setAttribute('y2', yAtmRef.toFixed(1));
+    atmRefTxt.setAttribute('y', (yAtmRef - 4).toFixed(1));
+
+    const profPts = nodes.map((n, i) => ({ x: vp.x(i), y: vp.y(Math.max(0, n.p)), p: Math.max(0, n.p), n }));
+    profFull.setAttribute(
+      'd',
+      profPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`).join(' ')
+    );
+
+    const curProf = interpPath(profPts, walk);
+    const drawnPts = profPts.slice(0, curProf.idx + 1).map((pt) => [pt.x, pt.y]);
+    drawnPts.push([curProf.x, curProf.y]);
+    profCur.setAttribute(
+      'd',
+      drawnPts.map((pt, i) => `${i === 0 ? 'M' : 'L'} ${pt[0].toFixed(1)} ${pt[1].toFixed(1)}`).join(' ')
+    );
+    profDot.setAttribute('cx', curProf.x.toFixed(1));
+    profDot.setAttribute('cy', curProf.y.toFixed(1));
+
+    profBars.innerHTML = '';
+    profTags.innerHTML = '';
+    profPts.forEach((pt, i) => {
+      const barH = Math.max(4, 186 - pt.y);
+      const bar = document.createElementNS(SVG_NS, 'rect');
+      bar.setAttribute('x', (pt.x - 13).toFixed(1));
+      bar.setAttribute('y', pt.y.toFixed(1));
+      bar.setAttribute('width', '26');
+      bar.setAttribute('height', barH.toFixed(1));
+      bar.setAttribute('rx', '4');
+      bar.setAttribute('fill', pt.n.color);
+      bar.setAttribute('fill-opacity', '0.26');
+      profBars.appendChild(bar);
+
+      const xLbl = document.createElementNS(SVG_NS, 'text');
+      xLbl.setAttribute('x', pt.x.toFixed(1));
+      xLbl.setAttribute('y', '202');
+      xLbl.setAttribute('text-anchor', 'middle');
+      xLbl.setAttribute('fill', 'currentColor');
+      xLbl.setAttribute('font-size', '10');
+      xLbl.setAttribute('font-weight', '800');
+      xLbl.textContent = pt.n.label === 'Atm' ? 'Atm' : `P_${pt.n.label}`;
+      profTags.appendChild(xLbl);
+
+      const pValLbl = document.createElementNS(SVG_NS, 'text');
+      pValLbl.setAttribute('x', pt.x.toFixed(1));
+      pValLbl.setAttribute('y', Math.max(24, pt.y - 7).toFixed(1));
+      pValLbl.setAttribute('text-anchor', 'middle');
+      pValLbl.setAttribute('fill', pt.n.color);
+      pValLbl.setAttribute('font-size', '9.5');
+      pValLbl.setAttribute('font-weight', '800');
+      pValLbl.textContent = pt.p.toFixed(1);
+      profTags.appendChild(pValLbl);
+
+      if (i > 0 && pt.n.stepNote) {
+        const prev = profPts[i - 1];
+        const midX = (prev.x + pt.x) / 2;
+        const midY = (prev.y + pt.y) / 2 - 8;
+        const stLbl = document.createElementNS(SVG_NS, 'text');
+        stLbl.setAttribute('x', midX.toFixed(1));
+        stLbl.setAttribute('y', Math.max(26, midY).toFixed(1));
+        stLbl.setAttribute('text-anchor', 'middle');
+        stLbl.setAttribute('fill', pt.n.stepNote.startsWith('+') ? '#059669' : '#ef4444');
+        stLbl.setAttribute('font-size', '8.8');
+        stLbl.setAttribute('font-weight', '800');
+        stLbl.textContent = pt.n.stepNote;
+        profTags.appendChild(stLbl);
+      }
+    });
+
+    const curNodeLabel =
+      walk < 0.05 ? 'Node 1 (Gas)' : walk > 0.95 ? 'Node Atm (Open)' : `Walking: ${curTube.p.toFixed(1)} kPa`;
+    nodeTag.textContent = curNodeLabel;
+    const dWalk = curTube.p - p1;
+    stepDeltaTag.textContent = `ΔP_from_1 = ${dWalk >= 0 ? '+' : ''}${dWalk.toFixed(1)} kPa`;
+
+    dpEl.textContent = `${pGage >= 0 ? '+' : ''}${pGage.toFixed(2)} kPa`;
+    pabsEl.textContent = isInvalidVac ? '0.00 kPa (حد خلأ مطلق!)' : `${p1Clamped.toFixed(2)} kPa`;
+    pwalkEl.textContent = `${Math.max(0, curTube.p).toFixed(2)} kPa`;
+    typeEl.textContent =
+      isInvalidVac
+        ? '⚠️ فراتر از خلأ مطلق'
+        : preset === 'vac'
+        ? 'فشار خلأ (زیر جو)'
+        : 'فشار پیمانه‌ای (بالای جو)';
+
+    if (isMulti) {
+      explainEl.innerHTML = `در <strong>مانومتر چندسیالی (مبنای تمرین ۱-۵۰)</strong>: از هوا/آب <span dir="ltr">(P₁ = ${p1.toFixed(2)} kPa)</span> با پایین‌رفتن در آب <span dir="ltr">(+${((1000 * G * h1) / 1000).toFixed(2)} kPa)</span> و روغن <span dir="ltr">(+${((850 * G * h2) / 1000).toFixed(2)} kPa)</span> به فشار اوج <span dir="ltr">P_B</span> می‌رسیم؛ سپس در جیوه بالا رفته <span dir="ltr">(−${((13600 * G * h3) / 1000).toFixed(2)} kPa)</span> به <span dir="ltr">P_atm = ${pAtm} kPa</span> می‌رسیم. نتیجه: <span dir="ltr">P₁,gage = +${pGage.toFixed(2)} kPa</span>.`;
+    } else if (preset === 'vac') {
+      explainEl.innerHTML = `در <strong>حالت خلأ</strong> با سیال <strong>${fluidName}</strong>، ستون سمت مخزن به اندازهٔ <span dir="ltr">h = ${hVal.toFixed(2)} m</span> بالاتر می‌ایستد؛ یعنی با پایین آمدن از گاز تا سطح سمت راست، فشار <span dir="ltr">+${Math.abs(pGage).toFixed(2)} kPa</span> افزایش می‌یابد تا به <span dir="ltr">P_atm = ${pAtm} kPa</span> برسد. پس <span dir="ltr">P₁ = ${p1Clamped.toFixed(2)} kPa</span>.`;
+    } else {
+      explainEl.innerHTML = `در <strong>مانومتر تک‌سیالی (${fluidName})</strong>، خط‌چین افقی سبز تراز هم‌فشار را در شاخهٔ راست نشان می‌دهد <span dir="ltr">(P_B = P₁)</span>. رفتن به ته خم <span dir="ltr">U</span>شکل فشار را تا <span dir="ltr">P_A</span> بالا می‌برد و برگشتن به همان تراز دوباره به <span dir="ltr">P₁</span> برمی‌گردد؛ سپس بالارفتن به اندازهٔ <span dir="ltr">h = ${hVal.toFixed(2)} m</span> فشار را <span dir="ltr">−${pGage.toFixed(2)} kPa</span> کم کرده و به <span dir="ltr">P_atm</span> می‌رساند.`;
     }
   }
+
+  const anim = createAnimController(root, (dt) => {
+    walk += dt * 0.25;
+    if (walk >= 1) {
+      walk = 1;
+      playBtn.textContent = '▶ گام حرکت در لوله';
+      render();
+      return false;
+    }
+    render();
+  });
 
   root.querySelectorAll('#mano-presets button').forEach((btn) => {
     btn.addEventListener('click', () => {
       root.querySelectorAll('#mano-presets button').forEach((b) => b.classList.remove('is-active'));
       btn.classList.add('is-active');
-      rho = parseFloat(btn.getAttribute('data-rho') || '13600');
-      mode = btn.getAttribute('data-mode') || 'gage';
-      hEl.value = btn.getAttribute('data-h') || '0.40';
-      update();
+      preset = (btn.getAttribute('data-preset') as typeof preset) || 'single';
+      anim.stop();
+      playBtn.textContent = '▶ گام حرکت در لوله';
+      if (preset === 'single') {
+        rho = 13600;
+        fluidColor = '#94a3b8';
+        fluidName = 'جیوه (Hg)';
+        hVal = 0.40;
+        hEl.value = '0.40';
+        root.querySelectorAll('#mano-fluids button').forEach((fb, i) => fb.classList.toggle('is-active', i === 0));
+      } else if (preset === 'vac') {
+        rho = 13600;
+        fluidColor = '#94a3b8';
+        fluidName = 'جیوه (Hg)';
+        hVal = 0.30;
+        hEl.value = '0.30';
+        root.querySelectorAll('#mano-fluids button').forEach((fb, i) => fb.classList.toggle('is-active', i === 0));
+      } else {
+        h1 = 0.20;
+        h2 = 0.30;
+        h3 = 0.40;
+        h1El.value = '0.20';
+        h2El.value = '0.30';
+        h3El.value = '0.40';
+      }
+      walk = 1.0;
+      render();
     });
   });
-  hEl.addEventListener('input', update);
-  atmEl.addEventListener('input', update);
-  update();
-})();
+
+  root.querySelectorAll('#mano-fluids button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      root.querySelectorAll('#mano-fluids button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      rho = parseFloat(btn.getAttribute('data-rho') || '13600');
+      fluidColor = btn.getAttribute('data-color') || '#94a3b8';
+      fluidName = btn.getAttribute('data-name') || 'جیوه';
+      render();
+    });
+  });
+
+  playBtn.addEventListener('click', () => {
+    if (anim.isPlaying()) {
+      anim.stop();
+      playBtn.textContent = '▶ گام حرکت در لوله';
+    } else {
+      if (walk >= 0.99) walk = 0;
+      playBtn.textContent = '⏸ توقف حرکت';
+      anim.start();
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    anim.stop();
+    playBtn.textContent = '▶ گام حرکت در لوله';
+    walk = 0;
+    render();
+  });
+
+  walkEl.addEventListener('input', () => {
+    anim.stop();
+    playBtn.textContent = '▶ گام حرکت در لوله';
+    walk = parseFloat(walkEl.value) / 100;
+    render();
+  });
+
+  hEl.addEventListener('input', () => {
+    hVal = parseFloat(hEl.value);
+    render();
+  });
+  atmEl.addEventListener('input', () => {
+    pAtm = parseFloat(atmEl.value);
+    render();
+  });
+  h1El.addEventListener('input', () => {
+    h1 = parseFloat(h1El.value);
+    render();
+  });
+  h2El.addEventListener('input', () => {
+    h2 = parseFloat(h2El.value);
+    render();
+  });
+  h3El.addEventListener('input', () => {
+    h3 = parseFloat(h3El.value);
+    render();
+  });
+
+  render();
+}
 </script>

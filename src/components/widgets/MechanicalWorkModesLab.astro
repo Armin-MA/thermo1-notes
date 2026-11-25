@@ -1,0 +1,910 @@
+---
+// آزمایشگر زنده شکل‌های کار مکانیکی: فنر پیش‌بارگذاری‌شده، شفت دوار و شتاب‌گیری خودرو (فصل ۲ - بخش ۴)
+---
+
+<div class="jh-widget not-content" id="mech-work-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ کارهای مکانیکی: فنر <span dir="ltr">(x₁ ≠ 0)</span>، شفت دوار و شتاب‌گیری</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ سه شکل کلیدی کار در بخش ۴ فصل دوم و حل زندهٔ تلهٔ پیش‌بارگذاری فنر و مثال ۲-۳ (اسلاید ۱۹)
+  </div>
+
+  <div class="jh-widget__btns" id="mwl-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="spring-preload">۱) تلهٔ فنر <span dir="ltr">(x₁ ≠ 0)</span></button>
+    <button type="button" class="jh-widget__btn" data-mode="shaft">۲) کار شفت دوار <span dir="ltr">(W_sh = 2π n τ)</span></button>
+    <button type="button" class="jh-widget__btn" data-mode="accel">۳) شتاب‌گیری خودرو (مثال ۲-۳: <span dir="ltr">900 kg</span>)</button>
+  </div>
+
+  <!-- کنترل‌های حالت ۱: فنر پیش‌بارگذاری‌شده -->
+  <div class="jh-widget__grid" id="mwl-spring-ctrls">
+    <label class="jh-widget__ctrl">
+      <span>ثابت فنر <span dir="ltr">(k)</span>: <strong id="mwl-k-lbl" dir="ltr">20 kN/m</strong></span>
+      <input id="mwl-k" type="range" min="5" max="50" step="1" value="20" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>فشردگی اولیه (<span dir="ltr">x₁</span> از طول آزاد): <strong id="mwl-x1-lbl" dir="ltr">2.0 cm</strong></span>
+      <input id="mwl-x1" type="range" min="0" max="5" step="0.5" value="2" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>فشردگی نهایی (<span dir="ltr">x₂</span> از طول آزاد): <strong id="mwl-x2-lbl" dir="ltr">5.0 cm</strong></span>
+      <input id="mwl-x2" type="range" min="1" max="10" step="0.5" value="5" />
+    </label>
+  </div>
+
+  <!-- کنترل‌های حالت ۲: کار شفت دوار -->
+  <div class="jh-widget__grid" id="mwl-shaft-ctrls" style="display:none">
+    <label class="jh-widget__ctrl">
+      <span>سرعت دورانی <span dir="ltr">(ṅ)</span>: <strong id="mwl-rpm-lbl" dir="ltr">300 rpm (5.0 rev/s)</strong></span>
+      <input id="mwl-rpm" type="range" min="60" max="1200" step="30" value="300" />
+    </label>
+    <label class="jh-widget__ctrl">
+      <span>گشتاور محور <span dir="ltr">(τ)</span>: <strong id="mwl-tau-lbl" dir="ltr">50 N·m</strong></span>
+      <input id="mwl-tau" type="range" min="10" max="200" step="5" value="50" />
+    </label>
+  </div>
+
+  <!-- کنترل‌های حالت ۳: شتاب‌گیری خودرو -->
+  <div id="mwl-accel-ctrls" style="display:none">
+    <div class="jh-widget__btns" id="mwl-accel-presets">
+      <button type="button" class="jh-widget__btn is-active" data-ap="ex23">🚗 مثال ۲-۳ (اسلاید ۱۹: <span dir="ltr">900 kg, 0 → 80 km/h</span>)</button>
+      <button type="button" class="jh-widget__btn" data-ap="p235">🚙 تمرین ۲-۳۵ <span dir="ltr">(1500 kg, 0 → 100 km/h)</span></button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>جرم خودرو <span dir="ltr">(m)</span>: <strong id="mwl-m-lbl" dir="ltr">900 kg</strong></span>
+        <input id="mwl-m" type="range" min="500" max="2000" step="50" value="900" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>سرعت آغاز <span dir="ltr">(V₁)</span>: <strong id="mwl-v1-lbl" dir="ltr">0 km/h</strong></span>
+        <input id="mwl-v1" type="range" min="0" max="60" step="5" value="0" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>سرعت پایان <span dir="ltr">(V₂)</span>: <strong id="mwl-v2-lbl" dir="ltr">80 km/h</strong></span>
+        <input id="mwl-v2" type="range" min="20" max="140" step="5" value="80" />
+      </label>
+    </div>
+  </div>
+
+  <!-- نوار ابزار پخش مشترک -->
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="mwl-play">▶ پخش فرآیند</button>
+    <button type="button" class="jh-widget__btn" id="mwl-reset">↺ بازنشانی</button>
+    <label class="jh-widget__ctrl" style="flex:1;min-width:180px">
+      <span>پیشرفت فرآیند <span dir="ltr">(t)</span>: <strong id="mwl-t-lbl" dir="ltr">100%</strong></span>
+      <input id="mwl-t" type="range" min="0" max="100" step="1" value="100" />
+    </label>
+  </div>
+
+  <!-- پنل دوگانه حالت ۱: فنر -->
+  <div class="jh-widget__split" id="mwl-split-spring">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>شماتیک زندهٔ فشرده‌سازی فنر نسبت به طول آزاد <span dir="ltr">(x = 0)</span></span>
+        <span dir="ltr" id="mwl-sp-tag">x = 5.0 cm</span>
+      </div>
+      <svg id="mwl-spring-svg" viewBox="0 0 330 234" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شماتیک زنده فشرده‌سازی فنر خطی">
+        <defs>
+          <marker id="mwl-arr-f" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#d97706" />
+          </marker>
+        </defs>
+        <!-- دیواره صلب سمت چپ -->
+        <rect x="16" y="46" width="14" height="122" rx="3" fill="currentColor" fill-opacity="0.5" />
+        <!-- ناحیه جابجایی بین x1 و x2 -->
+        <rect id="mwl-sp-band" x="186" y="54" width="42" height="106" fill="#059669" fill-opacity="0.1" />
+        <!-- خط مرجع طول آزاد x = 0 -->
+        <line x1="256" y1="36" x2="256" y2="186" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="4 3" />
+        <text x="256" y="26" text-anchor="middle" fill="currentColor" fill-opacity="0.8" font-size="9.5" font-weight="800">x = 0 (Free)</text>
+
+        <!-- خط‌چین x1 و x2 -->
+        <line id="mwl-x1-line" x1="228" y1="44" x2="228" y2="186" stroke="#d97706" stroke-width="1.4" stroke-dasharray="4 3" />
+        <line id="mwl-x2-line" x1="186" y1="44" x2="186" y2="186" stroke="#059669" stroke-width="1.4" stroke-dasharray="4 3" />
+
+        <!-- فنر افقی مارپیچ -->
+        <path id="mwl-spring-path" d="" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+
+        <!-- صفحه متحرک انتهای فنر و فلش نیرو -->
+        <rect id="mwl-sp-plate" x="186" y="74" width="10" height="68" rx="2" fill="#64748b" stroke="currentColor" stroke-opacity="0.55" />
+        <g id="mwl-sp-fgrp">
+          <line id="mwl-sp-fline" x1="242" y1="108" x2="200" y2="108" stroke="#d97706" stroke-width="3" marker-end="url(#mwl-arr-f)" />
+          <text id="mwl-sp-flbl" x="224" y="64" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800">F = 1000 N</text>
+        </g>
+
+        <!-- محور خط‌کش پایینی -->
+        <line x1="90" y1="186" x2="274" y2="186" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" />
+        <text x="256" y="199" text-anchor="middle" fill="currentColor" fill-opacity="0.7" font-size="9">0</text>
+        <text id="mwl-x1-tick" x="228" y="212" text-anchor="middle" fill="#d97706" font-size="9" font-weight="800">x₁=2</text>
+        <text id="mwl-x2-tick" x="186" y="224" text-anchor="middle" fill="#059669" font-size="9" font-weight="800">x₂=5 cm</text>
+
+        <!-- برچسب اطلاعات بالا چپ -->
+        <rect x="38" y="18" width="136" height="24" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2" />
+        <text id="mwl-sp-info" x="106" y="34" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="800">k = 20 kN/m | Δx = 3.0 cm</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>نمودار <span dir="ltr">F-x</span>: ذوزنقهٔ صحیح در برابر مثلث غلط</span>
+        <span dir="ltr" id="mwl-fx-tag" style="color:#059669">21.0 J vs 9.0 J</span>
+      </div>
+      <svg id="mwl-fx-svg" viewBox="0 0 330 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار نیرو جابجایی فنر و مقایسه ذوزنقه با مثلث غلط">
+        <line x1="48" y1="24" x2="48" y2="186" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="48" y1="186" x2="314" y2="186" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <text x="14" y="24" fill="currentColor" font-size="10.5" font-weight="700">F(N)</text>
+        <text x="292" y="216" fill="currentColor" font-size="10" font-weight="700">x(cm)</text>
+        <text x="42" y="190" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+        <text id="mwl-fx-fmax" x="42" y="34" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">1200</text>
+
+        <!-- مستطیل پایینی پیش‌بارگذاری (حذف‌شده در فرمول غلط!) -->
+        <path id="mwl-fx-rect" d="" fill="#059669" fill-opacity="0.24" />
+        <!-- مثلث بالایی (فرمول غلط ½k(x2-x1)^2) -->
+        <path id="mwl-fx-tri" d="" fill="#ef4444" fill-opacity="0.28" />
+        <!-- حاشیه ذوزنقه صحیح کل -->
+        <path id="mwl-fx-trap-stroke" d="" fill="none" stroke="#059669" stroke-width="2" />
+        <!-- خط جداکننده افقی F1 -->
+        <line id="mwl-fx-f1line" x1="48" y1="130" x2="250" y2="130" stroke="#d97706" stroke-dasharray="4 3" stroke-width="1.3" />
+
+        <!-- خط کشسانی F = kx -->
+        <line id="mwl-fx-hooke" x1="48" y1="186" x2="290" y2="42" stroke="#0284c7" stroke-width="2.6" />
+        <circle id="mwl-fx-dot" cx="180" cy="100" r="5.5" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+
+        <!-- تیک‌های محور افقی -->
+        <text id="mwl-fx-x1lbl" x="110" y="200" text-anchor="middle" fill="#d97706" font-size="9" font-weight="800">x₁</text>
+        <text id="mwl-fx-x2lbl" x="210" y="213" text-anchor="middle" fill="#059669" font-size="9" font-weight="800">x₂</text>
+        <text id="mwl-fx-f1lbl" x="42" y="133" text-anchor="end" fill="#d97706" font-size="8.5" font-weight="700">F₁</text>
+
+        <!-- راهنمای گوشه بالا-چپ -->
+        <rect x="56" y="22" width="168" height="44" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" />
+        <rect x="64" y="30" width="10" height="10" rx="2" fill="#059669" fill-opacity="0.55" stroke="#059669" />
+        <text id="mwl-fx-leg1" x="79" y="39" fill="#059669" font-size="9" font-weight="800">Correct: 21.0 J (Trapezoid)</text>
+        <rect x="64" y="48" width="10" height="10" rx="2" fill="#ef4444" fill-opacity="0.55" stroke="#ef4444" />
+        <text id="mwl-fx-leg2" x="79" y="57" fill="#ef4444" font-size="9" font-weight="800">Wrong: 9.0 J (Top Triangle)</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- پنل دوگانه حالت ۲: شفت دوار -->
+  <div class="jh-widget__split" id="mwl-split-shaft" style="display:none">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>فلای‌ویل و محور دوار تحت گشتاور <span dir="ltr">τ</span></span>
+        <span dir="ltr" id="mwl-sh-tag">n = 50.0 rev</span>
+      </div>
+      <svg id="mwl-shaft-svg" viewBox="0 0 330 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="شفت دوار و گشتاور محور">
+        <defs>
+          <marker id="mwl-arr-t" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#d97706" />
+          </marker>
+        </defs>
+        <!-- فلای‌ویل چرخان -->
+        <circle cx="116" cy="116" r="62" fill="#0284c7" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.65" stroke-width="4" />
+        <g id="mwl-flywheel" transform="rotate(0, 116, 116)">
+          <line x1="116" y1="56" x2="116" y2="176" stroke="#0284c7" stroke-width="3" />
+          <line x1="64" y1="86" x2="168" y2="146" stroke="#0284c7" stroke-width="3" />
+          <line x1="64" y1="146" x2="168" y2="86" stroke="#0284c7" stroke-width="3" />
+          <circle cx="116" cy="70" r="4.5" fill="#d97706" />
+        </g>
+        <circle cx="116" cy="116" r="14" fill="#64748b" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+
+        <!-- میله شفت -->
+        <rect x="128" y="106" width="164" height="20" rx="4" fill="#64748b" fill-opacity="0.4" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" />
+        <line id="mwl-sh-stripe1" x1="170" y1="106" x2="180" y2="126" stroke="#0284c7" stroke-width="2.5" />
+        <line id="mwl-sh-stripe2" x1="220" y1="106" x2="230" y2="126" stroke="#0284c7" stroke-width="2.5" />
+        <line id="mwl-sh-stripe3" x1="265" y1="106" x2="275" y2="126" stroke="#0284c7" stroke-width="2.5" />
+
+        <!-- فلش خمیده گشتاور τ -->
+        <path d="M 218 82 A 34 34 0 0 1 258 100" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#mwl-arr-t)" />
+        <text id="mwl-sh-tau-txt" x="236" y="72" text-anchor="middle" fill="#d97706" font-size="11" font-weight="800">τ = 50 N·m</text>
+
+        <!-- برچسب‌های RPM و دور -->
+        <rect x="168" y="152" width="144" height="48" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" />
+        <text id="mwl-sh-rpm-txt" x="240" y="172" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">ṅ = 300 rpm (5.0 rev/s)</text>
+        <text id="mwl-sh-rev-txt" x="240" y="190" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">n = 50.0 rev (t = 10.0 s)</text>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>رشد خطی کار محور <span dir="ltr">W_sh(t) = Ẇ_sh · t</span></span>
+        <span dir="ltr" id="mwl-sh-ptag" style="color:#059669">Ẇ_sh = 1.57 kW</span>
+      </div>
+      <svg id="mwl-shaft-plot" viewBox="0 0 330 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار کار شفت بر حسب زمان">
+        <line x1="48" y1="24" x2="48" y2="186" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="48" y1="186" x2="312" y2="186" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <text x="12" y="24" fill="currentColor" font-size="10" font-weight="700">W_sh(kJ)</text>
+        <text x="296" y="214" fill="currentColor" font-size="10" font-weight="700">t(s)</text>
+        <text x="42" y="190" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+        <text id="mwl-sh-ymax" x="42" y="34" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">18.0</text>
+        <text x="308" y="201" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9">10 s</text>
+
+        <path id="mwl-sh-area" d="" fill="#0284c7" fill-opacity="0.22" />
+        <line id="mwl-sh-full" x1="48" y1="186" x2="308" y2="42" stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="4 4" stroke-width="1.8" />
+        <line id="mwl-sh-cur" x1="48" y1="186" x2="308" y2="42" stroke="#0284c7" stroke-width="3" />
+        <circle id="mwl-sh-dot" cx="308" cy="42" r="5.5" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+        <text id="mwl-sh-slope" x="126" y="48" text-anchor="middle" fill="#059669" font-size="10.5" font-weight="800">Slope = Ẇ_sh = 1.57 kW</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- پنل دوگانه حالت ۳: شتاب‌گیری خودرو -->
+  <div class="jh-widget__split" id="mwl-split-accel" style="display:none">
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>حرکت خودرو در مسیر هموار <span dir="ltr" id="mwl-ac-mtag">(m = 900 kg)</span></span>
+        <span dir="ltr" id="mwl-ac-vtag">V = 22.22 m/s</span>
+      </div>
+      <svg id="mwl-car-svg" viewBox="0 0 330 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="انیمیشن شتاب‌گیری خودرو">
+        <defs>
+          <marker id="mwl-arr-v" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#059669" />
+          </marker>
+        </defs>
+        <!-- سرعت‌سنج بالا-راست -->
+        <g transform="translate(278, 52)">
+          <circle cx="0" cy="0" r="30" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.45" stroke-width="2" />
+          <path d="M -20 14 A 24 24 0 1 1 20 14" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="2.6" stroke-linecap="round" />
+          <circle cx="0" cy="0" r="3" fill="currentColor" />
+          <line id="mwl-spdo-needle" x1="0" y1="0" x2="10" y2="-16" stroke="#ef4444" stroke-width="2.4" stroke-linecap="round" />
+          <text x="0" y="-12" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="8" font-weight="700">km/h</text>
+          <text id="mwl-spdo-val" x="0" y="21" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">80</text>
+        </g>
+
+        <rect x="16" y="24" width="166" height="44" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2" />
+        <text id="mwl-car-ms" x="99" y="42" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">V = 22.22 m/s</text>
+        <text id="mwl-car-wa" x="99" y="59" text-anchor="middle" fill="#d97706" font-size="10" font-weight="800">W_a = 222.2 kJ</text>
+
+        <!-- جاده -->
+        <rect x="10" y="168" width="310" height="28" rx="4" fill="currentColor" fill-opacity="0.1" />
+        <line x1="10" y1="168" x2="320" y2="168" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" />
+        <line id="mwl-road-line" x1="14" y1="182" x2="316" y2="182" stroke="currentColor" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="16 12" />
+
+        <!-- خودروی متحرک -->
+        <g id="mwl-car-grp" transform="translate(180, 0)">
+          <!-- بدنه خودرو -->
+          <path d="M 8 152 L 12 136 L 30 134 L 46 118 L 76 118 L 90 134 L 106 138 L 108 152 Z" fill="#0284c7" fill-opacity="0.85" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-linejoin="round" />
+          <path d="M 35 134 L 48 122 L 73 122 L 85 134 Z" fill="#e0f2fe" fill-opacity="0.85" />
+          <!-- چرخ عقب و جلو -->
+          <circle cx="30" cy="155" r="12" fill="#334155" stroke="#ffffff" stroke-width="1.5" />
+          <g id="mwl-wheel-1" transform="rotate(0, 30, 155)">
+            <line x1="22" y1="155" x2="38" y2="155" stroke="#e2e8f0" stroke-width="1.6" />
+            <line x1="30" y1="147" x2="30" y2="163" stroke="#e2e8f0" stroke-width="1.6" />
+          </g>
+          <circle cx="86" cy="155" r="12" fill="#334155" stroke="#ffffff" stroke-width="1.5" />
+          <g id="mwl-wheel-2" transform="rotate(0, 86, 155)">
+            <line x1="78" y1="155" x2="94" y2="155" stroke="#e2e8f0" stroke-width="1.6" />
+            <line x1="86" y1="147" x2="86" y2="163" stroke="#e2e8f0" stroke-width="1.6" />
+          </g>
+          <!-- فلش سرعت -->
+          <line id="mwl-car-varr" x1="112" y1="142" x2="146" y2="142" stroke="#059669" stroke-width="3" marker-end="url(#mwl-arr-v)" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span>منحنی سهموی انرژی جنبشی <span dir="ltr">(½ m V²)</span></span>
+        <span dir="ltr" id="mwl-ac-ktag" style="color:#d97706">ΔKE = 222.2 kJ</span>
+      </div>
+      <svg id="mwl-accel-plot" viewBox="0 0 330 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="منحنی سهموی انرژی جنبشی خودرو">
+        <line x1="50" y1="24" x2="50" y2="186" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <line x1="50" y1="186" x2="312" y2="186" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+        <text x="12" y="24" fill="currentColor" font-size="10" font-weight="700">KE(kJ)</text>
+        <text x="276" y="216" fill="currentColor" font-size="10" font-weight="700">V(km/h)</text>
+        <text x="44" y="190" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+        <text id="mwl-ac-ymax" x="44" y="34" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">260</text>
+        <text id="mwl-ac-xmax" x="306" y="201" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9">90</text>
+
+        <!-- نوار ΔKE بین V1 و V(t) -->
+        <rect id="mwl-ac-band" x="50" y="50" width="260" height="136" fill="#d97706" fill-opacity="0.16" />
+        <!-- سهمی کامل و سهمی فعال -->
+        <path id="mwl-ac-full" d="" fill="none" stroke="currentColor" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="4 4" />
+        <path id="mwl-ac-cur" d="" fill="none" stroke="#0284c7" stroke-width="3.2" stroke-linecap="round" />
+
+        <!-- نقاط V1, V2 و نقطه متحرک -->
+        <circle id="mwl-ac-p1" cx="50" cy="186" r="4.5" fill="#059669" />
+        <circle id="mwl-ac-p2" cx="250" cy="50" r="4.5" fill="#0284c7" />
+        <circle id="mwl-ac-dot" cx="250" cy="50" r="6" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+        <text id="mwl-ac-lbl" x="132" y="44" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800">W_a = 222.2 kJ</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- کارت‌های متریک -->
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="mwl-m1-lbl">کار صحیح فنر <span dir="ltr">(½k(x₂²-x₁²))</span></span>
+      <span class="jh-metric__val" id="mwl-m1-val">21.0 J (0.021 kJ)</span>
+    </div>
+    <div class="jh-metric jh-metric--warn" id="mwl-m2-card">
+      <span class="jh-metric__label" id="mwl-m2-lbl">تلهٔ غلط <span dir="ltr">(½k(x₂-x₁)²)</span></span>
+      <span class="jh-metric__val" id="mwl-m2-val">9.0 J (خطای -57%!)</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="mwl-m3-lbl">اختلاف جاافتاده <span dir="ltr">(F₁·Δx)</span></span>
+      <span class="jh-metric__val" id="mwl-m3-val">12.0 J</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="mwl-m4-lbl">نیروی لحظه‌ای فنر <span dir="ltr">(F = kx)</span></span>
+      <span class="jh-metric__val" id="mwl-m4-val">1000 N</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="mwl-explain">
+    وقتی فنری از پیش <span dir="ltr">x₁ = 2 cm</span> فشرده شده و به <span dir="ltr">x₂ = 5 cm</span> می‌رسد، نیروی آن از <span dir="ltr">F₁ = 400 N</span> به <span dir="ltr">F₂ = 1000 N</span> بالا می‌رود؛ پس مساحت زیر نمودار <span dir="ltr">F-x</span> یک <strong>ذوزنقه <span dir="ltr">(21.0 J)</span></strong> است نه یک مثلث! رابطهٔ غلط <span dir="ltr">½k(x₂-x₁)² = 9.0 J</span> مستطیل زیرین <span dir="ltr">(F₁·Δx = 12.0 J)</span> را به‌طور کامل حذف می‌کند!
+  </div>
+</div>
+
+<script>
+  import {
+    buildHorizontalSpringPath,
+    createAnimController,
+    createViewport,
+    setDialNeedle,
+  } from '../../lib/liveSimKit';
+
+  const root = document.getElementById('mech-work-lab');
+  if (root) {
+    type ModeKey = 'spring-preload' | 'shaft' | 'accel';
+    let mode: ModeKey = 'spring-preload';
+    let progress = 1.0;
+
+    // پارامترهای فنر
+    let kSpring = 20; // kN/m
+    let x1Cm = 2.0;
+    let x2Cm = 5.0;
+
+    // پارامترهای شفت
+    let rpm = 300;
+    let tau = 50; // N·m
+    let shaftAngle = 0;
+
+    // پارامترهای خودرو
+    let carMass = 900;
+    let v1Kmh = 0;
+    let v2Kmh = 80;
+    let wheelAngle = 0;
+    let roadOffset = 0;
+
+    const springCtrls = root.querySelector<HTMLElement>('#mwl-spring-ctrls')!;
+    const shaftCtrls = root.querySelector<HTMLElement>('#mwl-shaft-ctrls')!;
+    const accelCtrls = root.querySelector<HTMLElement>('#mwl-accel-ctrls')!;
+
+    const splitSpring = root.querySelector<HTMLElement>('#mwl-split-spring')!;
+    const splitShaft = root.querySelector<HTMLElement>('#mwl-split-shaft')!;
+    const splitAccel = root.querySelector<HTMLElement>('#mwl-split-accel')!;
+
+    const kSlider = root.querySelector<HTMLInputElement>('#mwl-k')!;
+    const x1Slider = root.querySelector<HTMLInputElement>('#mwl-x1')!;
+    const x2Slider = root.querySelector<HTMLInputElement>('#mwl-x2')!;
+    const kLbl = root.querySelector<HTMLElement>('#mwl-k-lbl')!;
+    const x1Lbl = root.querySelector<HTMLElement>('#mwl-x1-lbl')!;
+    const x2Lbl = root.querySelector<HTMLElement>('#mwl-x2-lbl')!;
+
+    const rpmSlider = root.querySelector<HTMLInputElement>('#mwl-rpm')!;
+    const tauSlider = root.querySelector<HTMLInputElement>('#mwl-tau')!;
+    const rpmLbl = root.querySelector<HTMLElement>('#mwl-rpm-lbl')!;
+    const tauLbl = root.querySelector<HTMLElement>('#mwl-tau-lbl')!;
+
+    const mSlider = root.querySelector<HTMLInputElement>('#mwl-m')!;
+    const v1Slider = root.querySelector<HTMLInputElement>('#mwl-v1')!;
+    const v2Slider = root.querySelector<HTMLInputElement>('#mwl-v2')!;
+    const mLbl = root.querySelector<HTMLElement>('#mwl-m-lbl')!;
+    const v1Lbl = root.querySelector<HTMLElement>('#mwl-v1-lbl')!;
+    const v2Lbl = root.querySelector<HTMLElement>('#mwl-v2-lbl')!;
+
+    const playBtn = root.querySelector<HTMLButtonElement>('#mwl-play')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('#mwl-reset')!;
+    const tSlider = root.querySelector<HTMLInputElement>('#mwl-t')!;
+    const tLbl = root.querySelector<HTMLElement>('#mwl-t-lbl')!;
+
+    // عناصر SVG فنر
+    const spTag = root.querySelector<HTMLElement>('#mwl-sp-tag')!;
+    const fxTag = root.querySelector<HTMLElement>('#mwl-fx-tag')!;
+    const spBand = root.querySelector<SVGRectElement>('#mwl-sp-band')!;
+    const x1Line = root.querySelector<SVGLineElement>('#mwl-x1-line')!;
+    const x2Line = root.querySelector<SVGLineElement>('#mwl-x2-line')!;
+    const springPath = root.querySelector<SVGPathElement>('#mwl-spring-path')!;
+    const spPlate = root.querySelector<SVGRectElement>('#mwl-sp-plate')!;
+    const spFline = root.querySelector<SVGLineElement>('#mwl-sp-fline')!;
+    const spFlbl = root.querySelector<SVGTextElement>('#mwl-sp-flbl')!;
+    const x1Tick = root.querySelector<SVGTextElement>('#mwl-x1-tick')!;
+    const x2Tick = root.querySelector<SVGTextElement>('#mwl-x2-tick')!;
+    const spInfo = root.querySelector<SVGTextElement>('#mwl-sp-info')!;
+
+    const fxFmax = root.querySelector<SVGTextElement>('#mwl-fx-fmax')!;
+    const fxRect = root.querySelector<SVGPathElement>('#mwl-fx-rect')!;
+    const fxTri = root.querySelector<SVGPathElement>('#mwl-fx-tri')!;
+    const fxTrapStroke = root.querySelector<SVGPathElement>('#mwl-fx-trap-stroke')!;
+    const fxF1line = root.querySelector<SVGLineElement>('#mwl-fx-f1line')!;
+    const fxHooke = root.querySelector<SVGLineElement>('#mwl-fx-hooke')!;
+    const fxDot = root.querySelector<SVGCircleElement>('#mwl-fx-dot')!;
+    const fxX1lbl = root.querySelector<SVGTextElement>('#mwl-fx-x1lbl')!;
+    const fxX2lbl = root.querySelector<SVGTextElement>('#mwl-fx-x2lbl')!;
+    const fxF1lbl = root.querySelector<SVGTextElement>('#mwl-fx-f1lbl')!;
+    const fxLeg1 = root.querySelector<SVGTextElement>('#mwl-fx-leg1')!;
+    const fxLeg2 = root.querySelector<SVGTextElement>('#mwl-fx-leg2')!;
+
+    // عناصر SVG شفت
+    const shTag = root.querySelector<HTMLElement>('#mwl-sh-tag')!;
+    const shPtag = root.querySelector<HTMLElement>('#mwl-sh-ptag')!;
+    const flywheel = root.querySelector<SVGGElement>('#mwl-flywheel')!;
+    const shStripe1 = root.querySelector<SVGLineElement>('#mwl-sh-stripe1')!;
+    const shStripe2 = root.querySelector<SVGLineElement>('#mwl-sh-stripe2')!;
+    const shStripe3 = root.querySelector<SVGLineElement>('#mwl-sh-stripe3')!;
+    const shTauTxt = root.querySelector<SVGTextElement>('#mwl-sh-tau-txt')!;
+    const shRpmTxt = root.querySelector<SVGTextElement>('#mwl-sh-rpm-txt')!;
+    const shRevTxt = root.querySelector<SVGTextElement>('#mwl-sh-rev-txt')!;
+    const shYmax = root.querySelector<SVGTextElement>('#mwl-sh-ymax')!;
+    const shArea = root.querySelector<SVGPathElement>('#mwl-sh-area')!;
+    const shFull = root.querySelector<SVGLineElement>('#mwl-sh-full')!;
+    const shCur = root.querySelector<SVGLineElement>('#mwl-sh-cur')!;
+    const shDot = root.querySelector<SVGCircleElement>('#mwl-sh-dot')!;
+    const shSlope = root.querySelector<SVGTextElement>('#mwl-sh-slope')!;
+
+    // عناصر SVG خودرو
+    const acMtag = root.querySelector<HTMLElement>('#mwl-ac-mtag');
+    const acVtag = root.querySelector<HTMLElement>('#mwl-ac-vtag')!;
+    const acKtag = root.querySelector<HTMLElement>('#mwl-ac-ktag')!;
+    const spdoNeedle = root.querySelector<SVGLineElement>('#mwl-spdo-needle')!;
+    const spdoVal = root.querySelector<SVGTextElement>('#mwl-spdo-val')!;
+    const carMs = root.querySelector<SVGTextElement>('#mwl-car-ms')!;
+    const carWa = root.querySelector<SVGTextElement>('#mwl-car-wa')!;
+    const roadLine = root.querySelector<SVGLineElement>('#mwl-road-line')!;
+    const carGrp = root.querySelector<SVGGElement>('#mwl-car-grp')!;
+    const wheel1 = root.querySelector<SVGGElement>('#mwl-wheel-1')!;
+    const wheel2 = root.querySelector<SVGGElement>('#mwl-wheel-2')!;
+    const carVarr = root.querySelector<SVGLineElement>('#mwl-car-varr')!;
+
+    const acYmax = root.querySelector<SVGTextElement>('#mwl-ac-ymax')!;
+    const acXmax = root.querySelector<SVGTextElement>('#mwl-ac-xmax')!;
+    const acBand = root.querySelector<SVGRectElement>('#mwl-ac-band')!;
+    const acFull = root.querySelector<SVGPathElement>('#mwl-ac-full')!;
+    const acCur = root.querySelector<SVGPathElement>('#mwl-ac-cur')!;
+    const acP1 = root.querySelector<SVGCircleElement>('#mwl-ac-p1')!;
+    const acP2 = root.querySelector<SVGCircleElement>('#mwl-ac-p2')!;
+    const acDot = root.querySelector<SVGCircleElement>('#mwl-ac-dot')!;
+    const acLbl = root.querySelector<SVGTextElement>('#mwl-ac-lbl')!;
+
+    // کارت‌های متریک و توضیح
+    const m1Lbl = root.querySelector<HTMLElement>('#mwl-m1-lbl')!;
+    const m1Val = root.querySelector<HTMLElement>('#mwl-m1-val')!;
+    const m2Card = root.querySelector<HTMLElement>('#mwl-m2-card')!;
+    const m2Lbl = root.querySelector<HTMLElement>('#mwl-m2-lbl')!;
+    const m2Val = root.querySelector<HTMLElement>('#mwl-m2-val')!;
+    const m3Lbl = root.querySelector<HTMLElement>('#mwl-m3-lbl')!;
+    const m3Val = root.querySelector<HTMLElement>('#mwl-m3-val')!;
+    const m4Lbl = root.querySelector<HTMLElement>('#mwl-m4-lbl')!;
+    const m4Val = root.querySelector<HTMLElement>('#mwl-m4-val')!;
+    const explainEl = root.querySelector<HTMLElement>('#mwl-explain')!;
+
+    function renderSpring() {
+      kLbl.textContent = `${kSpring} kN/m`;
+      x1Lbl.textContent = `${x1Cm.toFixed(1)} cm`;
+      x2Lbl.textContent = `${x2Cm.toFixed(1)} cm`;
+
+      const xCurCm = x1Cm + (x2Cm - x1Cm) * progress;
+      const x1M = x1Cm / 100;
+      const x2M = x2Cm / 100;
+      const xCurM = xCurCm / 100;
+
+      const F1 = kSpring * x1M * 1000; // N
+      const F2 = kSpring * x2M * 1000; // N
+      const Fcur = kSpring * xCurM * 1000; // N
+
+      const wCorrectFull = 0.5 * kSpring * 1000 * (x2M * x2M - x1M * x1M); // J
+      const wWrongFull = 0.5 * kSpring * 1000 * (x2M - x1M) * (x2M - x1M); // J
+      const wCur = 0.5 * kSpring * 1000 * (xCurM * xCurM - x1M * x1M); // J
+      const wWrongCur = 0.5 * kSpring * 1000 * (xCurM - x1M) * (xCurM - x1M); // J
+      const wMissingFull = F1 * (x2M - x1M); // J
+      const errPct = wCorrectFull > 0 ? ((wWrongFull - wCorrectFull) / wCorrectFull) * 100 : 0;
+
+      // پنل ۱: فنر افقی
+      spTag.textContent = `x = ${xCurCm.toFixed(1)} cm`;
+      fxTag.textContent = `${wCorrectFull.toFixed(1)} J vs ${wWrongFull.toFixed(1)} J`;
+
+      const xFree = 256;
+      const pxPerCm = 14;
+      const x1Px = xFree - x1Cm * pxPerCm;
+      const x2Px = xFree - x2Cm * pxPerCm;
+      const xCurPx = xFree - xCurCm * pxPerCm;
+
+      spBand.setAttribute('x', x2Px.toFixed(1));
+      spBand.setAttribute('width', Math.max(0, x1Px - x2Px).toFixed(1));
+      x1Line.setAttribute('x1', x1Px.toFixed(1));
+      x1Line.setAttribute('x2', x1Px.toFixed(1));
+      x2Line.setAttribute('x1', x2Px.toFixed(1));
+      x2Line.setAttribute('x2', x2Px.toFixed(1));
+
+      springPath.setAttribute('d', buildHorizontalSpringPath(108, 30, xCurPx, 9, 16));
+      spPlate.setAttribute('x', xCurPx.toFixed(1));
+      spFline.setAttribute('x1', (xCurPx + 48).toFixed(1));
+      spFline.setAttribute('x2', (xCurPx + 14).toFixed(1));
+      spFlbl.setAttribute('x', Math.min(286, xCurPx + 28).toFixed(1));
+      spFlbl.textContent = `F = ${Fcur.toFixed(0)} N`;
+
+      x1Tick.setAttribute('x', x1Px.toFixed(1));
+      x1Tick.textContent = `x₁=${x1Cm.toFixed(1)}`;
+      x2Tick.setAttribute('x', x2Px.toFixed(1));
+      x2Tick.textContent = `x₂=${x2Cm.toFixed(1)} cm`;
+      spInfo.textContent = `k = ${kSpring} kN/m | Δx = ${(x2Cm - x1Cm).toFixed(1)} cm`;
+
+      // پنل ۲: نمودار F-x
+      const xAxisMax = Math.max(6, x2Cm * 1.15);
+      const fAxisMax = Math.max(300, Math.ceil((F2 * 1.2) / 100) * 100);
+      fxFmax.textContent = fAxisMax.toFixed(0);
+
+      const vp = createViewport(0, xAxisMax, 0, fAxisMax, 48, 310, 186, 26);
+      const pxX1 = vp.x(x1Cm);
+      const pxXcur = vp.x(xCurCm);
+      const pxX2 = vp.x(x2Cm);
+      const py0 = vp.y(0);
+      const pyF1 = vp.y(F1);
+      const pyFcur = vp.y(Fcur);
+
+      if (xCurCm > x1Cm + 0.02) {
+        fxRect.setAttribute(
+          'd',
+          vp.path([
+            [x1Cm, 0],
+            [x1Cm, F1],
+            [xCurCm, F1],
+            [xCurCm, 0],
+          ], true)
+        );
+        fxTri.setAttribute(
+          'd',
+          vp.path([
+            [x1Cm, F1],
+            [xCurCm, Fcur],
+            [xCurCm, F1],
+          ], true)
+        );
+        fxTrapStroke.setAttribute(
+          'd',
+          vp.path([
+            [x1Cm, 0],
+            [x1Cm, F1],
+            [xCurCm, Fcur],
+            [xCurCm, 0],
+          ], true)
+        );
+      } else {
+        fxRect.setAttribute('d', '');
+        fxTri.setAttribute('d', '');
+        fxTrapStroke.setAttribute('d', '');
+      }
+
+      fxF1line.style.display = x1Cm > 0 ? '' : 'none';
+      fxF1lbl.style.display = x1Cm > 0 ? '' : 'none';
+      fxF1line.setAttribute('y1', pyF1.toFixed(1));
+      fxF1line.setAttribute('y2', pyF1.toFixed(1));
+      fxF1line.setAttribute('x2', pxX2.toFixed(1));
+      fxF1lbl.setAttribute('y', (pyF1 + 3).toFixed(1));
+
+      const xHookeEnd = Math.min(xAxisMax, x2Cm * 1.08);
+      const fHookeEnd = kSpring * (xHookeEnd / 100) * 1000;
+      fxHooke.setAttribute('x1', vp.x(0).toFixed(1));
+      fxHooke.setAttribute('y1', py0.toFixed(1));
+      fxHooke.setAttribute('x2', vp.x(xHookeEnd).toFixed(1));
+      fxHooke.setAttribute('y2', vp.y(fHookeEnd).toFixed(1));
+
+      fxDot.setAttribute('cx', pxXcur.toFixed(1));
+      fxDot.setAttribute('cy', pyFcur.toFixed(1));
+      fxX1lbl.setAttribute('x', pxX1.toFixed(1));
+      fxX1lbl.textContent = `x₁=${x1Cm.toFixed(1)}`;
+      fxX2lbl.setAttribute('x', pxX2.toFixed(1));
+      fxX2lbl.textContent = `x₂=${x2Cm.toFixed(1)}`;
+      fxLeg1.textContent = `Correct: ${wCur.toFixed(1)} J (Trapezoid)`;
+      fxLeg2.textContent = `Wrong: ${wWrongCur.toFixed(1)} J (Top Triangle)`;
+
+      // کارت‌ها
+      m1Lbl.innerHTML = 'کار صحیح فنر <span dir="ltr">(½k(x₂² - x₁²))</span>';
+      m1Val.textContent = `${wCorrectFull.toFixed(1)} J (${(wCorrectFull / 1000).toFixed(4)} kJ)`;
+      m2Card.classList.toggle('jh-metric--warn', x1Cm > 0);
+      m2Lbl.innerHTML = 'فرمول تله <span dir="ltr">(½k(x₂ - x₁)²)</span>';
+      m2Val.textContent = x1Cm > 0 ? `${wWrongFull.toFixed(1)} J (خطای ${errPct.toFixed(0)}%!)` : `${wWrongFull.toFixed(1)} J (برابر چون x₁=0)`;
+      m3Lbl.innerHTML = 'مستطیل جاافتاده <span dir="ltr">(F₁·Δx)</span>';
+      m3Val.textContent = `${wMissingFull.toFixed(1)} J`;
+      m4Lbl.innerHTML = 'نیروی لحظه‌ای <span dir="ltr">(F = kx)</span>';
+      m4Val.textContent = `${Fcur.toFixed(0)} N`;
+
+      if (x1Cm === 0) {
+        explainEl.innerHTML = `وقتی <span dir="ltr">x₁ = 0</span> باشد (شروع از طول آزاد)، ذوزنقه به مثلث تبدیل می‌شود و هر دو رابطه عدد <strong><span dir="ltr">${wCorrectFull.toFixed(1)} J</span></strong> را می‌دهند؛ اما به‌محض اینکه <span dir="ltr">x₁ ≠ 0</span> شود، فرض غلطِ شروع از صفر بخش بزرگی از کار را حذف می‌کند!`;
+      } else {
+        explainEl.innerHTML = `⚠️ <strong>تلهٔ پیش‌بارگذاری <span dir="ltr">(x₁ ≠ 0)</span>:</strong> فنر از پیش به‌اندازهٔ <span dir="ltr">x₁ = ${x1Cm.toFixed(1)} cm</span> تحت نیروی <span dir="ltr">F₁ = ${F1.toFixed(0)} N</span> فشرده بوده است. هنگام فشرده‌سازی تا <span dir="ltr">x₂ = ${x2Cm.toFixed(1)} cm</span>، کار واقعی برابر مساحت کل ذوزنقه <strong><span dir="ltr">${wCorrectFull.toFixed(1)} J</span></strong> است؛ اما فرمول اشتباه <span dir="ltr">½k(x₂-x₁)²</span> فقط مثلث قرمز بالایی <strong><span dir="ltr">(${wWrongFull.toFixed(1)} J)</span></strong> را حساب کرده و مستطیل سبز پایینی <span dir="ltr">(F₁·Δx = ${wMissingFull.toFixed(1)} J)</span> را از قلم می‌اندازد!`;
+      }
+    }
+
+    function renderShaft() {
+      const nDot = rpm / 60; // rev/s
+      rpmLbl.textContent = `${rpm} rpm (${nDot.toFixed(1)} rev/s)`;
+      tauLbl.textContent = `${tau} N·m`;
+
+      const tMax = 10.0;
+      const tCur = tMax * progress;
+      const wDotKW = (2 * Math.PI * nDot * tau) / 1000;
+      const wFullKJ = wDotKW * tMax;
+      const wCurKJ = wDotKW * tCur;
+      const nCur = nDot * tCur;
+
+      shTag.textContent = `n = ${nCur.toFixed(1)} rev`;
+      shPtag.textContent = `Ẇ_sh = ${wDotKW.toFixed(2)} kW`;
+
+      flywheel.setAttribute('transform', `rotate(${shaftAngle.toFixed(1)}, 116, 116)`);
+      const dy = ((shaftAngle % 360) / 360) * 16;
+      shStripe1.setAttribute('y1', (106 + (dy % 8)).toFixed(1));
+      shStripe2.setAttribute('y1', (106 + ((dy + 5) % 8)).toFixed(1));
+      shStripe3.setAttribute('y1', (106 + ((dy + 2) % 8)).toFixed(1));
+
+      shTauTxt.textContent = `τ = ${tau} N·m`;
+      shRpmTxt.textContent = `ṅ = ${rpm} rpm (${nDot.toFixed(1)} rev/s)`;
+      shRevTxt.textContent = `n = ${nCur.toFixed(1)} rev (t = ${tCur.toFixed(1)} s)`;
+
+      // نمودار خطی W_sh(t)
+      const yAxisMax = Math.max(2, Math.ceil((wFullKJ * 1.15) / 2) * 2);
+      shYmax.textContent = yAxisMax.toFixed(1);
+      const vp = createViewport(0, tMax, 0, yAxisMax, 48, 308, 186, 28);
+
+      shFull.setAttribute('x1', vp.x(0).toFixed(1));
+      shFull.setAttribute('y1', vp.y(0).toFixed(1));
+      shFull.setAttribute('x2', vp.x(tMax).toFixed(1));
+      shFull.setAttribute('y2', vp.y(wFullKJ).toFixed(1));
+
+      shCur.setAttribute('x1', vp.x(0).toFixed(1));
+      shCur.setAttribute('y1', vp.y(0).toFixed(1));
+      shCur.setAttribute('x2', vp.x(tCur).toFixed(1));
+      shCur.setAttribute('y2', vp.y(wCurKJ).toFixed(1));
+
+      shArea.setAttribute(
+        'd',
+        tCur > 0.05
+          ? vp.path([
+              [0, 0],
+              [tCur, wCurKJ],
+              [tCur, 0],
+            ], true)
+          : ''
+      );
+      shDot.setAttribute('cx', vp.x(tCur).toFixed(1));
+      shDot.setAttribute('cy', vp.y(wCurKJ).toFixed(1));
+      shSlope.textContent = `Slope = Ẇ_sh = ${wDotKW.toFixed(2)} kW`;
+
+      // کارت‌ها
+      m1Lbl.innerHTML = 'توان محور <span dir="ltr">(Ẇ_sh = 2π ṅ τ)</span>';
+      m1Val.textContent = `${wDotKW.toFixed(2)} kW (${(wDotKW * 1000).toFixed(0)} W)`;
+      m2Card.classList.remove('jh-metric--warn');
+      m2Lbl.innerHTML = 'کار شفت تا این لحظه <span dir="ltr">(W_sh)</span>';
+      m2Val.textContent = `${wCurKJ.toFixed(2)} kJ`;
+      m3Lbl.innerHTML = 'تعداد دور چرخش <span dir="ltr">(n = ṅ·t)</span>';
+      m3Val.textContent = `${nCur.toFixed(1)} rev`;
+      m4Lbl.innerHTML = 'سرعت زاویه‌ای <span dir="ltr">(ω = 2π ṅ)</span>';
+      m4Val.textContent = `${(2 * Math.PI * nDot).toFixed(1)} rad/s`;
+
+      explainEl.innerHTML = `مطابق <strong>معادله ۲-۱۴</strong>، با سرعت دورانی <span dir="ltr">ṅ = ${rpm} rpm = ${nDot.toFixed(1)} rev/s</span> و گشتاور ثابت <span dir="ltr">τ = ${tau} N·m</span>، توان انتقالی از شفت برابر <strong><span dir="ltr">Ẇ_sh = 2π ṅ τ = ${wDotKW.toFixed(2)} kW</span></strong> است. در مدت <span dir="ltr">${tCur.toFixed(1)} s</span> محور <span dir="ltr">${nCur.toFixed(1)}</span> دور می‌چرخد و <span dir="ltr">${wCurKJ.toFixed(2)} kJ</span> کار منتقل می‌کند.`;
+    }
+
+    function renderAccel() {
+      mLbl.textContent = `${carMass} kg`;
+      v1Lbl.textContent = `${v1Kmh} km/h (${(v1Kmh / 3.6).toFixed(2)} m/s)`;
+      v2Lbl.textContent = `${v2Kmh} km/h (${(v2Kmh / 3.6).toFixed(2)} m/s)`;
+
+      const vCurKmh = v1Kmh + (v2Kmh - v1Kmh) * progress;
+      const v1Ms = v1Kmh / 3.6;
+      const v2Ms = v2Kmh / 3.6;
+      const vCurMs = vCurKmh / 3.6;
+
+      const ke1KJ = (0.5 * carMass * v1Ms * v1Ms) / 1000;
+      const ke2KJ = (0.5 * carMass * v2Ms * v2Ms) / 1000;
+      const keCurKJ = (0.5 * carMass * vCurMs * vCurMs) / 1000;
+      const waCurKJ = keCurKJ - ke1KJ;
+      const waFullKJ = ke2KJ - ke1KJ;
+
+      acVtag.textContent = `V = ${vCurMs.toFixed(2)} m/s`;
+      if (acMtag) acMtag.textContent = `(m = ${carMass} kg)`;
+      acKtag.textContent = `W_a = ${waCurKJ.toFixed(1)} kJ`;
+
+      setDialNeedle(spdoNeedle, vCurKmh, 0, 140, 20);
+      spdoVal.textContent = `${vCurKmh.toFixed(0)}`;
+      carMs.textContent = `V = ${vCurMs.toFixed(2)} m/s`;
+      carWa.textContent = `W_a = ${waCurKJ.toFixed(1)} kJ`;
+
+      // موقعیت خودرو روی جاده
+      const carX = 16 + progress * 144;
+      carGrp.setAttribute('transform', `translate(${carX.toFixed(1)}, 0)`);
+      wheel1.setAttribute('transform', `rotate(${wheelAngle.toFixed(1)}, 30, 155)`);
+      wheel2.setAttribute('transform', `rotate(${wheelAngle.toFixed(1)}, 86, 155)`);
+      roadLine.setAttribute('stroke-dashoffset', roadOffset.toFixed(1));
+      const arrLen = 18 + (vCurKmh / 140) * 28;
+      carVarr.setAttribute('x2', (112 + arrLen).toFixed(1));
+
+      // سهمی KE = 0.5 * m * V^2
+      const vPlotMax = Math.max(40, Math.ceil((v2Kmh * 1.12) / 10) * 10);
+      const kePlotMax = Math.max(20, Math.ceil(((0.5 * carMass * Math.pow(vPlotMax / 3.6, 2)) / 1000) * 1.12 / 10) * 10);
+      acXmax.textContent = vPlotMax.toFixed(0);
+      acYmax.textContent = kePlotMax.toFixed(0);
+
+      const vp = createViewport(0, vPlotMax, 0, kePlotMax, 50, 310, 186, 26);
+      const fullPts: Array<[number, number]> = [];
+      const curPts: Array<[number, number]> = [];
+      for (let i = 0; i <= 40; i++) {
+        const vk = (i / 40) * v2Kmh;
+        const vm = vk / 3.6;
+        fullPts.push([vk, (0.5 * carMass * vm * vm) / 1000]);
+      }
+      for (let i = 0; i <= 40; i++) {
+        const vk = v1Kmh + (i / 40) * (vCurKmh - v1Kmh);
+        const vm = vk / 3.6;
+        curPts.push([vk, (0.5 * carMass * vm * vm) / 1000]);
+      }
+      acFull.setAttribute('d', vp.path(fullPts));
+      acCur.setAttribute('d', vp.path(curPts));
+
+      const yKe1 = vp.y(ke1KJ);
+      const yKeCur = vp.y(keCurKJ);
+      acBand.setAttribute('y', Math.min(yKe1, yKeCur).toFixed(1));
+      acBand.setAttribute('height', Math.max(0, Math.abs(yKe1 - yKeCur)).toFixed(1));
+
+      acP1.setAttribute('cx', vp.x(v1Kmh).toFixed(1));
+      acP1.setAttribute('cy', yKe1.toFixed(1));
+      acP2.setAttribute('cx', vp.x(v2Kmh).toFixed(1));
+      acP2.setAttribute('cy', vp.y(ke2KJ).toFixed(1));
+      acDot.setAttribute('cx', vp.x(vCurKmh).toFixed(1));
+      acDot.setAttribute('cy', yKeCur.toFixed(1));
+      acLbl.textContent = `W_a = ${waCurKJ.toFixed(1)} kJ`;
+
+      // کارت‌ها
+      m1Lbl.innerHTML = 'سرعت استاندارد <span dir="ltr">(V₂ بر حسب m/s)</span>';
+      m1Val.textContent = `${v2Ms.toFixed(2)} m/s`;
+      m2Card.classList.remove('jh-metric--warn');
+      m2Lbl.innerHTML = 'کار شتاب کل <span dir="ltr">(W_a = ΔKE)</span>';
+      m2Val.textContent = `${waFullKJ.toFixed(1)} kJ`;
+      m3Lbl.innerHTML = 'کار لحظه‌ای تا اینجا';
+      m3Val.textContent = `${waCurKJ.toFixed(1)} kJ`;
+      m4Lbl.innerHTML = 'انرژی جنبشی آغاز <span dir="ltr">(KE₁)</span>';
+      m4Val.textContent = `${ke1KJ.toFixed(1)} kJ`;
+
+      explainEl.innerHTML = `مطابق <strong>مثال ۲-۳ (اسلاید ۱۹)</strong>: ابتدا سرعت را بر <span dir="ltr">3.6</span> تقسیم می‌کنیم <span dir="ltr">(${v2Kmh} km/h = ${v2Ms.toFixed(2)} m/s)</span> و سپس حاصل <span dir="ltr">½ m (V₂² - V₁²)</span> را بر <span dir="ltr">1000</span> تقسیم می‌کنیم تا <strong><span dir="ltr">W_a = ${waFullKJ.toFixed(1)} kJ</span></strong> به دست آید. دقت کنید منحنی <span dir="ltr">KE-V</span> سهموی است (سرعت ۲ برابر ← کار ۴ برابر!).`;
+    }
+
+    function render() {
+      tLbl.textContent = `${Math.round(progress * 100)}%`;
+      tSlider.value = String(Math.round(progress * 100));
+      if (mode === 'spring-preload') renderSpring();
+      else if (mode === 'shaft') renderShaft();
+      else renderAccel();
+    }
+
+    const anim = createAnimController(root, (dt) => {
+      if (mode === 'shaft') {
+        const nDot = rpm / 60;
+        shaftAngle = (shaftAngle + nDot * 360 * dt * 0.4) % 360;
+      }
+      if (mode === 'accel') {
+        const vCurMs = (v1Kmh + (v2Kmh - v1Kmh) * progress) / 3.6;
+        wheelAngle = (wheelAngle + vCurMs * 28 * dt) % 360;
+        roadOffset = (roadOffset + vCurMs * 4.5 * dt) % 28;
+      }
+      if (progress < 1) {
+        progress = Math.min(1, progress + dt * 0.28);
+        render();
+        return true;
+      }
+      if (mode === 'shaft') {
+        renderShaft();
+        return true;
+      }
+      playBtn.textContent = '▶ پخش فرآیند';
+      return false;
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('#mwl-modes button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#mwl-modes button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        mode = (btn.getAttribute('data-mode') as ModeKey) || 'spring-preload';
+        springCtrls.style.display = mode === 'spring-preload' ? '' : 'none';
+        shaftCtrls.style.display = mode === 'shaft' ? '' : 'none';
+        accelCtrls.style.display = mode === 'accel' ? '' : 'none';
+        splitSpring.style.display = mode === 'spring-preload' ? '' : 'none';
+        splitShaft.style.display = mode === 'shaft' ? '' : 'none';
+        splitAccel.style.display = mode === 'accel' ? '' : 'none';
+        anim.stop();
+        playBtn.textContent = '▶ پخش فرآیند';
+        progress = 1.0;
+        render();
+      });
+    });
+
+    kSlider.addEventListener('input', () => { kSpring = parseFloat(kSlider.value); render(); });
+    x1Slider.addEventListener('input', () => {
+      x1Cm = parseFloat(x1Slider.value);
+      if (x1Cm >= x2Cm) {
+        x2Cm = Math.min(10, x1Cm + 0.5);
+        x2Slider.value = String(x2Cm);
+        if (x1Cm >= x2Cm) {
+          x1Cm = x2Cm - 0.5;
+          x1Slider.value = String(x1Cm);
+        }
+      }
+      render();
+    });
+    x2Slider.addEventListener('input', () => {
+      x2Cm = parseFloat(x2Slider.value);
+      if (x2Cm <= x1Cm) {
+        x1Cm = Math.max(0, x2Cm - 0.5);
+        x1Slider.value = String(x1Cm);
+        if (x2Cm <= x1Cm) {
+          x2Cm = x1Cm + 0.5;
+          x2Slider.value = String(x2Cm);
+        }
+      }
+      render();
+    });
+
+    rpmSlider.addEventListener('input', () => { rpm = parseFloat(rpmSlider.value); render(); });
+    tauSlider.addEventListener('input', () => { tau = parseFloat(tauSlider.value); render(); });
+
+    root.querySelectorAll<HTMLButtonElement>('#mwl-accel-presets button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#mwl-accel-presets button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        if (btn.getAttribute('data-ap') === 'p235') {
+          carMass = 1500; v1Kmh = 0; v2Kmh = 100;
+        } else {
+          carMass = 900; v1Kmh = 0; v2Kmh = 80;
+        }
+        mSlider.value = String(carMass);
+        v1Slider.value = String(v1Kmh);
+        v2Slider.value = String(v2Kmh);
+        render();
+      });
+    });
+
+    mSlider.addEventListener('input', () => { carMass = parseFloat(mSlider.value); render(); });
+    v1Slider.addEventListener('input', () => {
+      v1Kmh = parseFloat(v1Slider.value);
+      if (v1Kmh >= v2Kmh) {
+        v2Kmh = Math.min(140, v1Kmh + 10);
+        v2Slider.value = String(v2Kmh);
+      }
+      render();
+    });
+    v2Slider.addEventListener('input', () => {
+      v2Kmh = parseFloat(v2Slider.value);
+      if (v2Kmh <= v1Kmh) {
+        v1Kmh = Math.max(0, v2Kmh - 10);
+        v1Slider.value = String(v1Kmh);
+      }
+      render();
+    });
+
+    playBtn.addEventListener('click', () => {
+      if (anim.isPlaying()) {
+        anim.stop();
+        playBtn.textContent = '▶ پخش فرآیند';
+      } else {
+        if (progress >= 0.995) progress = 0;
+        anim.start();
+        playBtn.textContent = '⏸ توقف';
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      anim.stop();
+      progress = 0;
+      playBtn.textContent = '▶ پخش فرآیند';
+      render();
+    });
+
+    tSlider.addEventListener('input', () => {
+      anim.stop();
+      playBtn.textContent = '▶ پخش فرآیند';
+      progress = parseFloat(tSlider.value) / 100;
+      render();
+    });
+
+    render();
+  }
+</script>

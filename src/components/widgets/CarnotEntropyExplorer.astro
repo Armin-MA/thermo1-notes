@@ -1,74 +1,970 @@
 ---
-// کاوشگر چرخه کارنو و بازده ایزنتروپیک روی نمودار T-s (فصول ۶ و ۷)
+// آزمایشگر جامع چرخه کارنو، برگشت‌پذیری پیستون (اسلاید ۲۸) و دو موتور متوالی (فصل ۶)
 ---
 
 <div class="jh-widget not-content" id="carnot-ts-widget">
   <div class="jh-widget__head">
-    <span class="jh-widget__title">آزمایشگر چرخه کارنو و مقایسهٔ حساسیت به <span dir="ltr">T_L</span> و <span dir="ltr">T_H</span></span>
-    <span class="jh-widget__sub">بررسی <span dir="ltr">η_th,rev = 1 - T_L / T_H</span> و <span dir="ltr">COP_HP = COP_R + 1</span></span>
+    <span class="jh-widget__title">آزمایشگر زندهٔ چرخهٔ کارنو، برگشت‌پذیری پیستون و موتورهای متوالی</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    بازپخش ۴ مرحلهٔ سیلندر–پیستون کارنو روی نمودار <span dir="ltr">T-s</span>، شبیه‌سازی مولکولی پیستون آهسته در برابر سریع و بهینه‌سازی دمای میانی <span dir="ltr">T₂</span>
   </div>
 
-  <div class="jh-widget__grid">
-    <label class="jh-widget__ctrl">
-      <span>دمای منبع گرم <span dir="ltr">T_H</span> (K): <strong id="ct-th-lbl" dir="ltr">800</strong></span>
-      <input id="ct-th" type="range" min="400" max="1500" step="20" value="800" />
-    </label>
-    <label class="jh-widget__ctrl">
-      <span>دمای منبع سرد <span dir="ltr">T_L</span> (K): <strong id="ct-tl-lbl" dir="ltr">300</strong></span>
-      <input id="ct-tl" type="range" min="200" max="380" step="10" value="300" />
-    </label>
+  <div class="jh-widget__btns" id="ct-tabs">
+    <button type="button" class="jh-widget__btn is-active" data-tab="carnot">۱) چرخهٔ کارنو (۴ مرحله + <span dir="ltr">T-s</span>)</button>
+    <button type="button" class="jh-widget__btn" data-tab="reversibility">۲) پیستون آهسته در برابر سریع (اسلاید ۲۸)</button>
+    <button type="button" class="jh-widget__btn" data-tab="series">۳) دو موتور متوالی (<span dir="ltr">W</span> برابر <span dir="ltr">vs</span> <span dir="ltr">η</span> برابر)</button>
   </div>
 
+  <!-- کنترل‌های تب ۱: کارنو -->
+  <div id="ct-panel-carnot">
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>دمای منبع گرم (<span dir="ltr">T_H</span>): <strong id="ct-th-lbl" dir="ltr">800 K</strong></span>
+        <input id="ct-th" type="range" min="400" max="1500" step="20" value="800" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>دمای منبع سرد (<span dir="ltr">T_L</span>): <strong id="ct-tl-lbl" dir="ltr">300 K</strong></span>
+        <input id="ct-tl" type="range" min="200" max="380" step="10" value="300" />
+      </label>
+    </div>
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="ct-c-play">⏸ توقف چرخه</button>
+      <button type="button" class="jh-widget__btn" id="ct-c-reset">↺ شروع از نقطهٔ ۱</button>
+      <label class="jh-widget__ctrl" style="flex:1;min-width:170px">
+        <span>فاز چرخه (<span dir="ltr">1→2→3→4→1</span>): <strong id="ct-c-phase-lbl" dir="ltr">1→2 Isothermal (T_H)</strong></span>
+        <input id="ct-c-scrub" type="range" min="0" max="100" step="0.5" value="12" />
+      </label>
+    </div>
+  </div>
+
+  <!-- کنترل‌های تب ۲: پیستون آهسته در برابر سریع -->
+  <div id="ct-panel-rev" style="display:none">
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>شدت سرعت پیستون سریع (ضریب موج شوک): <strong id="ct-r-spd-lbl" dir="ltr">5.0×</strong></span>
+        <input id="ct-r-spd" type="range" min="2" max="8" step="0.5" value="5" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>موقعیت کورس رفت‌وبرگشت (<span dir="ltr">0→100%</span>): <strong id="ct-r-pos-lbl" dir="ltr">Compression</strong></span>
+        <input id="ct-r-scrub" type="range" min="0" max="100" step="1" value="25" />
+      </label>
+    </div>
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="ct-r-play">⏸ توقف رفت‌وبرگشت</button>
+      <button type="button" class="jh-widget__btn" id="ct-r-reset">↺ بازنشانی</button>
+    </div>
+  </div>
+
+  <!-- کنترل‌های تب ۳: دو موتور متوالی -->
+  <div id="ct-panel-series" style="display:none">
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>دمای منبع اول (<span dir="ltr">T₁</span>): <strong id="ct-s-t1-lbl" dir="ltr">1000 K</strong></span>
+        <input id="ct-s-t1" type="range" min="700" max="1500" step="20" value="1000" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>دمای میانی (<span dir="ltr">T₂</span>): <strong id="ct-s-t2-lbl" dir="ltr">650 K</strong></span>
+        <input id="ct-s-t2" type="range" min="330" max="970" step="5" value="650" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>دمای چاه آخر (<span dir="ltr">T₃</span>): <strong id="ct-s-t3-lbl" dir="ltr">300 K</strong></span>
+        <input id="ct-s-t3" type="range" min="200" max="500" step="10" value="300" />
+      </label>
+    </div>
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="ct-s-eqw">🎯 کار مساوی: <span dir="ltr">T₂ = (T₁+T₃)/2</span></button>
+      <button type="button" class="jh-widget__btn" id="ct-s-eqeta">🎯 بازده مساوی: <span dir="ltr">T₂ = √(T₁·T₃)</span></button>
+    </div>
+  </div>
+
+  <!-- نمایشگر دوگانه -->
+  <div class="jh-widget__split">
+    <!-- پنل ۱ -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="ct-p1-title">سیلندر–پیستون کارنو (اتصال به مخازن و عایق)</span>
+        <span dir="ltr" id="ct-p1-tag">T = 800 K</span>
+      </div>
+
+      <!-- SVG تب ۱: سیلندر کارنو -->
+      <svg id="ct-svg-carnot-cyl" viewBox="0 0 280 236" style="width:100%;height:auto;display:block;direction:ltr" aria-label="انیمیشن ۴ مرحله ای سیلندر پیستون کارنو">
+        <defs>
+          <marker id="ct-arr-q" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="currentColor" />
+          </marker>
+        </defs>
+        <!-- برچسب مرحله -->
+        <text id="ct-cyl-stage" x="120" y="16" text-anchor="middle" fill="currentColor" font-size="11" font-weight="800">1 → 2 : Isothermal Expansion (T_H)</text>
+
+        <!-- دیواره سیلندر -->
+        <rect id="ct-cyl-gas" x="62" y="100" width="116" height="80" fill="#ef4444" fill-opacity="0.22" rx="2" />
+        <g id="ct-cyl-particles"></g>
+        <path d="M 58 30 L 58 182 L 182 182 L 182 30" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="5" stroke-linejoin="round" />
+
+        <!-- پیستون و میله -->
+        <g id="ct-cyl-piston">
+          <rect id="ct-cyl-rod" x="114" y="18" width="12" height="72" rx="3" fill="currentColor" fill-opacity="0.4" />
+          <rect id="ct-cyl-head" x="60" y="88" width="120" height="14" rx="3" fill="#64748b" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" />
+        </g>
+
+        <!-- کف سیلندر: مخزن گرم / عایق / مخزن سرد -->
+        <g id="ct-dock-hot">
+          <rect x="54" y="188" width="132" height="36" rx="7" fill="#ef4444" fill-opacity="0.2" stroke="#ef4444" stroke-width="2" />
+          <text id="ct-dock-hot-txt" x="120" y="212" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="800">Hot Reservoir (T_H)</text>
+          <path d="M 94 192 L 94 172 M 120 192 L 120 172 M 146 192 L 146 172" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" />
+          <path d="M 90 176 L 94 170 L 98 176 M 116 176 L 120 170 L 124 176 M 142 176 L 146 170 L 150 176" fill="none" stroke="#ef4444" stroke-width="2" />
+        </g>
+        <g id="ct-dock-cold" style="display:none">
+          <rect x="54" y="188" width="132" height="36" rx="7" fill="#0284c7" fill-opacity="0.2" stroke="#0284c7" stroke-width="2" />
+          <text id="ct-dock-cold-txt" x="120" y="212" text-anchor="middle" fill="#0284c7" font-size="11" font-weight="800">Cold Reservoir (T_L)</text>
+          <path d="M 94 172 L 94 192 M 120 172 L 120 192 M 146 172 L 146 192" stroke="#0284c7" stroke-width="2.2" stroke-linecap="round" />
+          <path d="M 90 187 L 94 193 L 98 187 M 116 187 L 120 193 L 124 187 M 142 187 L 146 193 L 150 187" fill="none" stroke="#0284c7" stroke-width="2" />
+        </g>
+        <g id="ct-dock-ins" style="display:none">
+          <rect x="54" y="188" width="132" height="36" rx="7" fill="currentColor" fill-opacity="0.14" stroke="#d97706" stroke-width="2" stroke-dasharray="5 3" />
+          <text x="120" y="210" text-anchor="middle" fill="#d97706" font-size="11" font-weight="800">Adiabatic Insulator (Q = 0)</text>
+        </g>
+
+        <!-- دماسنج جیوه ای -->
+        <g transform="translate(232, 34)">
+          <rect x="-7" y="4" width="14" height="104" rx="7" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+          <circle id="ct-cyl-bulb" cx="0" cy="116" r="11" fill="#ef4444" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+          <rect id="ct-cyl-merc" x="-3.5" y="24" width="7" height="86" rx="3" fill="#ef4444" />
+          <text id="ct-cyl-tlbl" x="0" y="144" text-anchor="middle" fill="#ef4444" font-size="11.5" font-weight="800">800 K</text>
+          <text x="0" y="-4" text-anchor="middle" fill="currentColor" fill-opacity="0.65" font-size="9" font-weight="700">T_gas</text>
+        </g>
+      </svg>
+
+      <!-- SVG تب ۲: پیستون آهسته -->
+      <svg id="ct-svg-rev-slow" viewBox="0 0 300 220" style="width:100%;height:auto;display:none;direction:ltr" aria-label="پیستون آهسته شبه‌تعادلی با توزیع فشار یکنواخت">
+        <text x="150" y="18" text-anchor="middle" fill="#059669" font-size="11.5" font-weight="800">Slow Quasi-Equilibrium (S_gen = 0)</text>
+        <!-- سیلندر افقی -->
+        <rect id="ct-rs-gas" x="26" y="34" width="170" height="92" fill="#059669" fill-opacity="0.16" rx="2" />
+        <g id="ct-rs-particles"></g>
+        <path d="M 272 32 L 24 32 L 24 128 L 272 128" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" stroke-linejoin="round" />
+        <g id="ct-rs-piston">
+          <rect id="ct-rs-head" x="196" y="34" width="12" height="92" rx="2" fill="#64748b" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" />
+          <rect id="ct-rs-rod" x="208" y="74" width="72" height="12" rx="3" fill="currentColor" fill-opacity="0.4" />
+        </g>
+        <!-- پروفیل فشار یکنواخت P(x) -->
+        <text x="24" y="150" fill="currentColor" fill-opacity="0.7" font-size="9.5" font-weight="700">Pressure Profile P(x):</text>
+        <line x1="24" y1="200" x2="272" y2="200" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5" />
+        <line x1="24" y1="156" x2="24" y2="200" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5" />
+        <path id="ct-rs-pcurve" d="M 24 176 L 196 176" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" />
+        <text id="ct-rs-plbl" x="150" y="214" text-anchor="middle" fill="#059669" font-size="10.5" font-weight="800">Uniform P_face = P_avg (Reversible)</text>
+      </svg>
+
+      <!-- SVG تب ۳: دو موتور متوالی -->
+      <svg id="ct-svg-ser-diag" viewBox="0 0 280 236" style="width:100%;height:auto;display:none;direction:ltr" aria-label="دو موتور حرارتی کارنو به صورت سری بین دماهای T1 و T2 و T3">
+        <defs>
+          <marker id="ct-ser-arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="currentColor" />
+          </marker>
+        </defs>
+        <!-- T1 -->
+        <rect x="44" y="8" width="132" height="30" rx="6" fill="#ef4444" fill-opacity="0.18" stroke="#ef4444" stroke-width="1.8" />
+        <text id="ct-sd-t1" x="110" y="27" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="800">T₁ = 1000 K</text>
+        <line x1="110" y1="38" x2="110" y2="56" stroke="#ef4444" stroke-width="4" marker-end="url(#ct-ser-arr)" />
+        <text x="122" y="51" fill="#ef4444" font-size="9.5" font-weight="800">Q₁</text>
+
+        <!-- موتور ۱ -->
+        <circle cx="110" cy="76" r="19" fill="currentColor" fill-opacity="0.06" stroke="#0284c7" stroke-width="2" />
+        <text x="110" y="80" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">HE₁</text>
+        <line id="ct-sd-w1-line" x1="129" y1="76" x2="190" y2="76" stroke="#059669" stroke-width="4" />
+        <text id="ct-sd-w1" x="195" y="74" fill="#059669" font-size="10.5" font-weight="800">W₁ = 35.0%</text>
+        <text id="ct-sd-e1" x="195" y="86" fill="currentColor" fill-opacity="0.7" font-size="9.5" font-weight="700">η₁ = 35.0%</text>
+
+        <!-- مخزن میانی T2 -->
+        <line x1="110" y1="95" x2="110" y2="110" stroke="#d97706" stroke-width="3.2" />
+        <rect x="44" y="110" width="132" height="28" rx="6" fill="#d97706" fill-opacity="0.18" stroke="#d97706" stroke-width="1.8" />
+        <text id="ct-sd-t2" x="110" y="128" text-anchor="middle" fill="#d97706" font-size="11" font-weight="800">T₂ = 650 K</text>
+        <line x1="110" y1="138" x2="110" y2="154" stroke="#d97706" stroke-width="3.2" />
+        <text id="ct-sd-q2" x="122" y="149" fill="#d97706" font-size="9.5" font-weight="800">Q₂ = 0.65 Q₁</text>
+
+        <!-- موتور ۲ -->
+        <circle cx="110" cy="173" r="19" fill="currentColor" fill-opacity="0.06" stroke="#0284c7" stroke-width="2" />
+        <text x="110" y="177" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">HE₂</text>
+        <line id="ct-sd-w2-line" x1="129" y1="173" x2="190" y2="173" stroke="#0284c7" stroke-width="4" />
+        <text id="ct-sd-w2" x="195" y="171" fill="#0284c7" font-size="10.5" font-weight="800">W₂ = 35.0%</text>
+        <text id="ct-sd-e2" x="195" y="183" fill="currentColor" fill-opacity="0.7" font-size="9.5" font-weight="700">η₂ = 53.8%</text>
+
+        <!-- T3 -->
+        <line x1="110" y1="192" x2="110" y2="205" stroke="#0284c7" stroke-width="2.6" />
+        <rect x="44" y="205" width="132" height="28" rx="6" fill="#0284c7" fill-opacity="0.18" stroke="#0284c7" stroke-width="1.8" />
+        <text id="ct-sd-t3" x="110" y="223" text-anchor="middle" fill="#0284c7" font-size="11" font-weight="800">T₃ = 300 K</text>
+      </svg>
+    </div>
+
+    <!-- پنل ۲ -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="ct-p2-title">نمودار <span dir="ltr">T-s</span> کارنو و حساسیت به دما</span>
+        <span dir="ltr" id="ct-p2-tag">W_net = (T_H - T_L)Δs</span>
+      </div>
+
+      <!-- SVG تب ۱: نمودار T-s کارنو -->
+      <svg id="ct-svg-carnot-ts" viewBox="0 0 330 236" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار T-s چرخه کارنو">
+        <defs>
+          <marker id="ct-ts-arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="#059669" />
+          </marker>
+        </defs>
+        <!-- شبکه -->
+        <g stroke="currentColor" stroke-opacity="0.11" stroke-width="1">
+          <line x1="48" y1="44" x2="310" y2="44" />
+          <line x1="48" y1="86" x2="310" y2="86" />
+          <line x1="48" y1="128" x2="310" y2="128" />
+          <line x1="48" y1="170" x2="310" y2="170" />
+        </g>
+        <!-- محورها -->
+        <line x1="48" y1="14" x2="48" y2="176" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="48" y1="176" x2="314" y2="176" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text x="10" y="22" fill="currentColor" font-size="11" font-weight="800">T(K)</text>
+        <text x="304" y="191" text-anchor="end" fill="currentColor" font-size="11" font-weight="800">s (kJ/kg·K)</text>
+        <text x="42" y="179" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">0</text>
+        <text x="42" y="132" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">500</text>
+        <text x="42" y="90" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">1000</text>
+        <text x="42" y="48" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">1500</text>
+
+        <!-- مساحت Q_L و W_net -->
+        <rect id="ct-ts-ql-rect" x="108" y="146" width="144" height="30" fill="#0284c7" fill-opacity="0.18" />
+        <rect id="ct-ts-w-rect" x="108" y="96" width="144" height="50" fill="#059669" fill-opacity="0.24" stroke="#059669" stroke-width="2.4" />
+        <text id="ct-ts-w-lbl" x="180" y="125" text-anchor="middle" fill="#059669" font-size="11" font-weight="800">W_net</text>
+        <text id="ct-ts-ql-lbl" x="180" y="164" text-anchor="middle" fill="#0284c7" font-size="10" font-weight="800">Q_L</text>
+
+        <!-- خط های T_H و T_L -->
+        <line id="ct-ts-th-line" x1="48" y1="96" x2="108" y2="96" stroke="#ef4444" stroke-dasharray="3 3" stroke-width="1.2" />
+        <line id="ct-ts-tl-line" x1="48" y1="146" x2="108" y2="146" stroke="#0284c7" stroke-dasharray="3 3" stroke-width="1.2" />
+        <text id="ct-ts-th-tag" x="54" y="91" fill="#ef4444" font-size="9.5" font-weight="800">T_H=800</text>
+        <text id="ct-ts-tl-tag" x="54" y="142" fill="#0284c7" font-size="9.5" font-weight="800">T_L=300</text>
+
+        <!-- رئوس 1..4 و نقطه متحرک -->
+        <circle id="ct-ts-p1" cx="108" cy="96" r="3.8" fill="#ef4444" />
+        <circle id="ct-ts-p2" cx="252" cy="96" r="3.8" fill="#ef4444" />
+        <circle id="ct-ts-p3" cx="252" cy="146" r="3.8" fill="#0284c7" />
+        <circle id="ct-ts-p4" cx="108" cy="146" r="3.8" fill="#0284c7" />
+        <text id="ct-ts-l1" x="98" y="92" fill="currentColor" font-size="10.5" font-weight="800">1</text>
+        <text id="ct-ts-l2" x="260" y="92" fill="currentColor" font-size="10.5" font-weight="800">2</text>
+        <text id="ct-ts-l3" x="260" y="152" fill="currentColor" font-size="10.5" font-weight="800">3</text>
+        <text id="ct-ts-l4" x="98" y="152" fill="currentColor" font-size="10.5" font-weight="800">4</text>
+        <circle id="ct-ts-dot" cx="180" cy="96" r="6" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+
+        <!-- مقایسه حساسیت کاهش T_L vs افزایش T_H -->
+        <rect x="48" y="200" width="266" height="30" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.2" />
+        <text id="ct-ts-sens" x="181" y="219" text-anchor="middle" fill="currentColor" font-size="10" font-weight="800">-50K T_L: +6.3%  &gt;  +50K T_H: +2.2%</text>
+      </svg>
+
+      <!-- SVG تب ۲: پیستون سریع -->
+      <svg id="ct-svg-rev-fast" viewBox="0 0 300 220" style="width:100%;height:auto;display:none;direction:ltr" aria-label="پیستون سریع برگشت‌ناپذیر با موج شوک فشار">
+        <text x="150" y="18" text-anchor="middle" fill="#ef4444" font-size="11.5" font-weight="800">Fast Irreversible Piston (S_gen &gt; 0)</text>
+        <!-- سیلندر افقی -->
+        <rect id="ct-rf-gas" x="26" y="34" width="170" height="92" fill="#0284c7" fill-opacity="0.14" rx="2" />
+        <!-- نوار موج شوک / کمبود چگالی نزدیک پیستون -->
+        <rect id="ct-rf-shock" x="166" y="34" width="30" height="92" fill="#ef4444" fill-opacity="0.32" rx="2" />
+        <g id="ct-rf-particles"></g>
+        <path d="M 272 32 L 24 32 L 24 128 L 272 128" fill="none" stroke="currentColor" stroke-opacity="0.72" stroke-width="4" stroke-linejoin="round" />
+        <g id="ct-rf-piston">
+          <rect id="ct-rf-head" x="196" y="34" width="12" height="92" rx="2" fill="#d97706" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" />
+          <rect id="ct-rf-rod" x="208" y="74" width="72" height="12" rx="3" fill="currentColor" fill-opacity="0.4" />
+        </g>
+        <!-- پروفیل فشار غیریکنواخت P(x) -->
+        <text x="24" y="150" fill="currentColor" fill-opacity="0.7" font-size="9.5" font-weight="700">Non-Uniform Pressure P(x):</text>
+        <line x1="24" y1="200" x2="272" y2="200" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5" />
+        <line x1="24" y1="156" x2="24" y2="200" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5" />
+        <line id="ct-rf-pavg" x1="24" y1="176" x2="196" y2="176" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3" stroke-width="1.4" />
+        <path id="ct-rf-pcurve" d="" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+        <text id="ct-rf-plbl" x="150" y="214" text-anchor="middle" fill="#ef4444" font-size="10.5" font-weight="800">Shock Pile-up: P_face &gt; P_avg (+W_in)</text>
+      </svg>
+
+      <!-- SVG تب ۳: نمودار مقایسه T2 در موتور متوالی -->
+      <svg id="ct-svg-ser-plot" viewBox="0 0 330 236" style="width:100%;height:auto;display:none;direction:ltr" aria-label="تغییرات کار و بازده دو موتور متوالی بر حسب دمای میانی T2">
+        <g stroke="currentColor" stroke-opacity="0.12" stroke-width="1">
+          <line x1="48" y1="40" x2="310" y2="40" />
+          <line x1="48" y1="86" x2="310" y2="86" />
+          <line x1="48" y1="132" x2="310" y2="132" />
+        </g>
+        <line x1="48" y1="18" x2="48" y2="180" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="48" y1="180" x2="314" y2="180" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text x="12" y="22" fill="currentColor" font-size="10.5" font-weight="800">η , W/Q₁</text>
+        <text x="308" y="196" text-anchor="end" fill="currentColor" font-size="10.5" font-weight="800">T₂ (K)</text>
+        <text x="42" y="183" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">0%</text>
+        <text x="42" y="102" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">50%</text>
+        <text x="42" y="26" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">100%</text>
+
+        <!-- منحنی های بازده (خط‌چین) و کار (خط پر) -->
+        <path id="ct-sp-w1" d="" fill="none" stroke="#059669" stroke-width="2.4" />
+        <path id="ct-sp-w2" d="" fill="none" stroke="#0284c7" stroke-width="2.4" />
+        <path id="ct-sp-e1" d="" fill="none" stroke="#059669" stroke-width="1.8" stroke-dasharray="4 3" />
+        <path id="ct-sp-e2" d="" fill="none" stroke="#0284c7" stroke-width="1.8" stroke-dasharray="4 3" />
+
+        <!-- مکان نمای T2 فعلی -->
+        <line id="ct-sp-cur" x1="179" y1="22" x2="179" y2="180" stroke="#d97706" stroke-width="2" />
+        <!-- نقاط تقاطع W1=W2 و eta1=eta2 -->
+        <circle id="ct-sp-dotw" cx="179" cy="120" r="5" fill="#059669" stroke="#ffffff" stroke-width="1.5" />
+        <circle id="ct-sp-dote" cx="145" cy="105" r="5" fill="#d97706" stroke="#ffffff" stroke-width="1.5" />
+
+        <!-- راهنمای نمودار -->
+        <text id="ct-sp-t3lbl" x="52" y="194" fill="currentColor" fill-opacity="0.7" font-size="9.5">300</text>
+        <text id="ct-sp-t1lbl" x="304" y="194" text-anchor="end" fill="currentColor" fill-opacity="0.7" font-size="9.5">1000</text>
+        <text x="180" y="214" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="700">Solid: W₁/Q₁ &amp; W₂/Q₁ (meet at avg) | Dashed: η₁ &amp; η₂ (meet at geom mean)</text>
+        <text id="ct-sp-legend" x="180" y="229" text-anchor="middle" fill="#d97706" font-size="9.5" font-weight="800"></text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- معیارها -->
   <div class="jh-widget__metrics">
     <div class="jh-metric">
-      <span class="jh-metric__label">حداکثر بازده موتور (<span dir="ltr">η_Carnot</span>)</span>
+      <span class="jh-metric__label" id="ct-m1-lbl">حداکثر بازده موتور <span dir="ltr">(η_Carnot)</span></span>
       <span class="jh-metric__val" id="ct-eta">62.5%</span>
     </div>
     <div class="jh-metric">
-      <span class="jh-metric__label">ضریب عملکرد یخچال (<span dir="ltr">COP_R,max</span>)</span>
+      <span class="jh-metric__label" id="ct-m2-lbl">ضریب عملکرد یخچال <span dir="ltr">(COP_R,max)</span></span>
       <span class="jh-metric__val" id="ct-copr">0.60</span>
     </div>
     <div class="jh-metric">
-      <span class="jh-metric__label">پمپ حرارتی (<span dir="ltr">COP_HP = COP_R+1</span>)</span>
+      <span class="jh-metric__label" id="ct-m3-lbl">پمپ حرارتی <span dir="ltr">(COP_HP = COP_R + 1)</span></span>
       <span class="jh-metric__val" id="ct-cophp">1.60</span>
     </div>
     <div class="jh-metric">
-      <span class="jh-metric__label">دمای بهینه بین دو کارنو</span>
-      <span class="jh-metric__val" id="ct-tmid">T_eq = √(T_H·T_L) = 489.9 K</span>
+      <span class="jh-metric__label" id="ct-m4-lbl">حساسیت: کاهش <span dir="ltr">50K</span> در <span dir="ltr">T_L</span> vs افزایش در <span dir="ltr">T_H</span></span>
+      <span class="jh-metric__val" id="ct-tmid">+6.3% vs +2.2%</span>
     </div>
+  </div>
+
+  <div class="jh-widget__explain" id="ct-explain">
+    در چرخهٔ کارنو بین <span dir="ltr">T_H = 800 K</span> و <span dir="ltr">T_L = 300 K</span>، سطح محصور مستطیل روی <span dir="ltr">T-s</span> کار خالص است؛ همچنین کاهش <span dir="ltr">50 K</span> در دمای منبع سرد بسیار مؤثرتر از افزایش <span dir="ltr">50 K</span> در دمای منبع گرم است.
   </div>
 </div>
 
-<script is:inline>
-(() => {
-  const root = document.getElementById('carnot-ts-widget');
-  if (!root) return;
-  const thEl = root.querySelector('#ct-th');
-  const tlEl = root.querySelector('#ct-tl');
-  const thLbl = root.querySelector('#ct-th-lbl');
-  const tlLbl = root.querySelector('#ct-tl-lbl');
-  const etaEl = root.querySelector('#ct-eta');
-  const coprEl = root.querySelector('#ct-copr');
-  const cophpEl = root.querySelector('#ct-cophp');
-  const tmidEl = root.querySelector('#ct-tmid');
+<script>
+  import { createViewport, tempToColor, setThermometer, createAnimController, createParticleBox } from '../../lib/liveSimKit';
 
-  function update() {
-    const th = parseFloat(thEl.value);
-    const tl = Math.min(parseFloat(tlEl.value), th - 20);
-    thLbl.textContent = th.toFixed(0);
-    tlLbl.textContent = tl.toFixed(0);
-    const eta = (1 - tl / th) * 100;
-    const copR = tl / (th - tl);
-    const copHP = th / (th - tl);
-    const tEqEta = Math.sqrt(th * tl);
-    etaEl.textContent = `${eta.toFixed(1)}%`;
-    coprEl.textContent = copR.toFixed(2);
-    cophpEl.textContent = copHP.toFixed(2);
-    tmidEl.textContent = `√(T_H·T_L) = ${tEqEta.toFixed(1)} K`;
-  }
+  (() => {
+    const root = document.getElementById('carnot-ts-widget');
+    if (!root) return;
 
-  thEl.addEventListener('input', update);
-  tlEl.addEventListener('input', update);
-  update();
-})();
+    type TabMode = 'carnot' | 'reversibility' | 'series';
+    let tab: TabMode = 'carnot';
+
+    // وضعیت تب ۱ (کارنو)
+    let th = 800;
+    let tl = 300;
+    let cProg = 0.12;
+    let cPlaying = true;
+
+    // وضعیت تب ۲ (پیستون آهسته در برابر سریع)
+    let rShock = 5.0;
+    let rProg = 0.25; // 0..0.5 تراکم، 0.5..1 انبساط
+    let rPlaying = true;
+
+    // وضعیت تب ۳ (دو موتور متوالی)
+    let sT1 = 1000;
+    let sT2 = 650;
+    let sT3 = 300;
+
+    // المان‌های رابط کاربری
+    const pCarnot = root.querySelector<HTMLElement>('#ct-panel-carnot')!;
+    const pRev = root.querySelector<HTMLElement>('#ct-panel-rev')!;
+    const pSer = root.querySelector<HTMLElement>('#ct-panel-series')!;
+
+    const svgCarnotCyl = root.querySelector<SVGSVGElement>('#ct-svg-carnot-cyl')!;
+    const svgCarnotTs = root.querySelector<SVGSVGElement>('#ct-svg-carnot-ts')!;
+    const svgRevSlow = root.querySelector<SVGSVGElement>('#ct-svg-rev-slow')!;
+    const svgRevFast = root.querySelector<SVGSVGElement>('#ct-svg-rev-fast')!;
+    const svgSerDiag = root.querySelector<SVGSVGElement>('#ct-svg-ser-diag')!;
+    const svgSerPlot = root.querySelector<SVGSVGElement>('#ct-svg-ser-plot')!;
+
+    const p1Title = root.querySelector<HTMLElement>('#ct-p1-title')!;
+    const p1Tag = root.querySelector<HTMLElement>('#ct-p1-tag')!;
+    const p2Title = root.querySelector<HTMLElement>('#ct-p2-title')!;
+    const p2Tag = root.querySelector<HTMLElement>('#ct-p2-tag')!;
+
+    // کنترل‌های تب ۱
+    const thEl = root.querySelector<HTMLInputElement>('#ct-th')!;
+    const tlEl = root.querySelector<HTMLInputElement>('#ct-tl')!;
+    const thLbl = root.querySelector<HTMLElement>('#ct-th-lbl')!;
+    const tlLbl = root.querySelector<HTMLElement>('#ct-tl-lbl')!;
+    const cPlayBtn = root.querySelector<HTMLButtonElement>('#ct-c-play')!;
+    const cResetBtn = root.querySelector<HTMLButtonElement>('#ct-c-reset')!;
+    const cScrub = root.querySelector<HTMLInputElement>('#ct-c-scrub')!;
+    const cPhaseLbl = root.querySelector<HTMLElement>('#ct-c-phase-lbl')!;
+
+    // المان‌های SVG تب ۱
+    const cylStage = root.querySelector<SVGTextElement>('#ct-cyl-stage')!;
+    const cylGas = root.querySelector<SVGRectElement>('#ct-cyl-gas')!;
+    const cylRod = root.querySelector<SVGRectElement>('#ct-cyl-rod')!;
+    const cylHead = root.querySelector<SVGRectElement>('#ct-cyl-head')!;
+    const dockHot = root.querySelector<SVGGElement>('#ct-dock-hot')!;
+    const dockCold = root.querySelector<SVGGElement>('#ct-dock-cold')!;
+    const dockIns = root.querySelector<SVGGElement>('#ct-dock-ins')!;
+    const dockHotTxt = root.querySelector<SVGTextElement>('#ct-dock-hot-txt')!;
+    const dockColdTxt = root.querySelector<SVGTextElement>('#ct-dock-cold-txt')!;
+    const cylMerc = root.querySelector<SVGRectElement>('#ct-cyl-merc')!;
+    const cylBulb = root.querySelector<SVGCircleElement>('#ct-cyl-bulb')!;
+    const cylTlbl = root.querySelector<SVGTextElement>('#ct-cyl-tlbl')!;
+
+    const tsQlRect = root.querySelector<SVGRectElement>('#ct-ts-ql-rect')!;
+    const tsWRect = root.querySelector<SVGRectElement>('#ct-ts-w-rect')!;
+    const tsWLbl = root.querySelector<SVGTextElement>('#ct-ts-w-lbl')!;
+    const tsQlLbl = root.querySelector<SVGTextElement>('#ct-ts-ql-lbl')!;
+    const tsThLine = root.querySelector<SVGLineElement>('#ct-ts-th-line')!;
+    const tsTlLine = root.querySelector<SVGLineElement>('#ct-ts-tl-line')!;
+    const tsThTag = root.querySelector<SVGTextElement>('#ct-ts-th-tag')!;
+    const tsTlTag = root.querySelector<SVGTextElement>('#ct-ts-tl-tag')!;
+    const tsP1 = root.querySelector<SVGCircleElement>('#ct-ts-p1')!;
+    const tsP2 = root.querySelector<SVGCircleElement>('#ct-ts-p2')!;
+    const tsP3 = root.querySelector<SVGCircleElement>('#ct-ts-p3')!;
+    const tsP4 = root.querySelector<SVGCircleElement>('#ct-ts-p4')!;
+    const tsL1 = root.querySelector<SVGTextElement>('#ct-ts-l1')!;
+    const tsL2 = root.querySelector<SVGTextElement>('#ct-ts-l2')!;
+    const tsL3 = root.querySelector<SVGTextElement>('#ct-ts-l3')!;
+    const tsL4 = root.querySelector<SVGTextElement>('#ct-ts-l4')!;
+    const tsDot = root.querySelector<SVGCircleElement>('#ct-ts-dot')!;
+    const tsSens = root.querySelector<SVGTextElement>('#ct-ts-sens')!;
+
+    // کنترل‌ها و المان‌های تب ۲
+    const rSpdEl = root.querySelector<HTMLInputElement>('#ct-r-spd')!;
+    const rSpdLbl = root.querySelector<HTMLElement>('#ct-r-spd-lbl')!;
+    const rScrub = root.querySelector<HTMLInputElement>('#ct-r-scrub')!;
+    const rPosLbl = root.querySelector<HTMLElement>('#ct-r-pos-lbl')!;
+    const rPlayBtn = root.querySelector<HTMLButtonElement>('#ct-r-play')!;
+    const rResetBtn = root.querySelector<HTMLButtonElement>('#ct-r-reset')!;
+
+    const rsGas = root.querySelector<SVGRectElement>('#ct-rs-gas')!;
+    const rsHead = root.querySelector<SVGRectElement>('#ct-rs-head')!;
+    const rsRod = root.querySelector<SVGRectElement>('#ct-rs-rod')!;
+    const rsPcurve = root.querySelector<SVGPathElement>('#ct-rs-pcurve')!;
+    const rsPlbl = root.querySelector<SVGTextElement>('#ct-rs-plbl')!;
+
+    const rfGas = root.querySelector<SVGRectElement>('#ct-rf-gas')!;
+    const rfShock = root.querySelector<SVGRectElement>('#ct-rf-shock')!;
+    const rfHead = root.querySelector<SVGRectElement>('#ct-rf-head')!;
+    const rfRod = root.querySelector<SVGRectElement>('#ct-rf-rod')!;
+    const rfPavg = root.querySelector<SVGLineElement>('#ct-rf-pavg')!;
+    const rfPcurve = root.querySelector<SVGPathElement>('#ct-rf-pcurve')!;
+    const rfPlbl = root.querySelector<SVGTextElement>('#ct-rf-plbl')!;
+
+    // کنترل‌ها و المان‌های تب ۳
+    const sT1El = root.querySelector<HTMLInputElement>('#ct-s-t1')!;
+    const sT2El = root.querySelector<HTMLInputElement>('#ct-s-t2')!;
+    const sT3El = root.querySelector<HTMLInputElement>('#ct-s-t3')!;
+    const sT1Lbl = root.querySelector<HTMLElement>('#ct-s-t1-lbl')!;
+    const sT2Lbl = root.querySelector<HTMLElement>('#ct-s-t2-lbl')!;
+    const sT3Lbl = root.querySelector<HTMLElement>('#ct-s-t3-lbl')!;
+    const sEqWBtn = root.querySelector<HTMLButtonElement>('#ct-s-eqw')!;
+    const sEqEtaBtn = root.querySelector<HTMLButtonElement>('#ct-s-eqeta')!;
+
+    const sdT1 = root.querySelector<SVGTextElement>('#ct-sd-t1')!;
+    const sdT2 = root.querySelector<SVGTextElement>('#ct-sd-t2')!;
+    const sdT3 = root.querySelector<SVGTextElement>('#ct-sd-t3')!;
+    const sdQ2 = root.querySelector<SVGTextElement>('#ct-sd-q2')!;
+    const sdW1 = root.querySelector<SVGTextElement>('#ct-sd-w1')!;
+    const sdE1 = root.querySelector<SVGTextElement>('#ct-sd-e1')!;
+    const sdW2 = root.querySelector<SVGTextElement>('#ct-sd-w2')!;
+    const sdE2 = root.querySelector<SVGTextElement>('#ct-sd-e2')!;
+    const sdW1Line = root.querySelector<SVGLineElement>('#ct-sd-w1-line')!;
+    const sdW2Line = root.querySelector<SVGLineElement>('#ct-sd-w2-line')!;
+
+    const spW1 = root.querySelector<SVGPathElement>('#ct-sp-w1')!;
+    const spW2 = root.querySelector<SVGPathElement>('#ct-sp-w2')!;
+    const spE1 = root.querySelector<SVGPathElement>('#ct-sp-e1')!;
+    const spE2 = root.querySelector<SVGPathElement>('#ct-sp-e2')!;
+    const spCur = root.querySelector<SVGLineElement>('#ct-sp-cur')!;
+    const spDotW = root.querySelector<SVGCircleElement>('#ct-sp-dotw')!;
+    const spDotE = root.querySelector<SVGCircleElement>('#ct-sp-dote')!;
+    const spT3Lbl = root.querySelector<SVGTextElement>('#ct-sp-t3lbl')!;
+    const spT1Lbl = root.querySelector<SVGTextElement>('#ct-sp-t1lbl')!;
+    const spLegend = root.querySelector<SVGTextElement>('#ct-sp-legend')!;
+
+    // معیارها و توضیح
+    const m1Lbl = root.querySelector<HTMLElement>('#ct-m1-lbl')!;
+    const m2Lbl = root.querySelector<HTMLElement>('#ct-m2-lbl')!;
+    const m3Lbl = root.querySelector<HTMLElement>('#ct-m3-lbl')!;
+    const m4Lbl = root.querySelector<HTMLElement>('#ct-m4-lbl')!;
+    const etaEl = root.querySelector<HTMLElement>('#ct-eta')!;
+    const coprEl = root.querySelector<HTMLElement>('#ct-copr')!;
+    const cophpEl = root.querySelector<HTMLElement>('#ct-cophp')!;
+    const tmidEl = root.querySelector<HTMLElement>('#ct-tmid')!;
+    const explainEl = root.querySelector<HTMLElement>('#ct-explain')!;
+
+    // جعبه‌های ذرات مولکولی
+    let cylPistonY = 100;
+    let revPistonX = 196;
+
+    const carnotParticles = createParticleBox(
+      root.querySelector('#ct-cyl-particles'),
+      20,
+      () => ({ minX: 66, maxX: 174, minY: cylPistonY + 18, maxY: 177 }),
+      'currentColor',
+      2.3,
+      54
+    );
+
+    const slowParticles = createParticleBox(
+      root.querySelector('#ct-rs-particles'),
+      22,
+      () => ({ minX: 29, maxX: Math.max(48, revPistonX - 4), minY: 38, maxY: 122 }),
+      '#059669',
+      2.3,
+      46
+    );
+
+    const fastParticles = createParticleBox(
+      root.querySelector('#ct-rf-particles'),
+      22,
+      () => {
+        // در تراکم سریع، نیمی از مولکول‌ها در جبهه پیستون متراکم می‌شوند
+        return { minX: 29, maxX: Math.max(48, revPistonX - 4), minY: 38, maxY: 122 };
+      },
+      '#ef4444',
+      2.3,
+      62
+    );
+
+    const tsVp = createViewport(0, 10, 0, 1600, 48, 304, 176, 20);
+
+    function renderCarnot() {
+      thLbl.textContent = `${th.toFixed(0)} K`;
+      tlLbl.textContent = `${tl.toFixed(0)} K`;
+      cScrub.value = String((cProg * 100).toFixed(1));
+
+      // محاسبه مختصات ۴ مرحله کارنو: 0..0.25 (1->2), 0.25..0.5 (2->3), 0.5..0.75 (3->4), 0.75..1 (4->1)
+      let tCur = th;
+      let sNorm = 0; // 0..1 روی عرض مستطیل T-s
+      let stageTxt = '';
+      if (cProg < 0.25) {
+        const u = cProg / 0.25;
+        tCur = th;
+        sNorm = u;
+        cylPistonY = 132 - 36 * u; // 132 -> 96
+        stageTxt = '1 → 2 : Isothermal Expansion (T_H)';
+        dockHot.style.display = '';
+        dockCold.style.display = 'none';
+        dockIns.style.display = 'none';
+      } else if (cProg < 0.5) {
+        const u = (cProg - 0.25) / 0.25;
+        tCur = th - (th - tl) * u;
+        sNorm = 1;
+        cylPistonY = 96 - 42 * u; // 96 -> 54
+        stageTxt = '2 → 3 : Adiabatic Expansion (Q = 0)';
+        dockHot.style.display = 'none';
+        dockCold.style.display = 'none';
+        dockIns.style.display = '';
+      } else if (cProg < 0.75) {
+        const u = (cProg - 0.5) / 0.25;
+        tCur = tl;
+        sNorm = 1 - u;
+        cylPistonY = 54 + 42 * u; // 54 -> 96
+        stageTxt = '3 → 4 : Isothermal Compression (T_L)';
+        dockHot.style.display = 'none';
+        dockCold.style.display = '';
+        dockIns.style.display = 'none';
+      } else {
+        const u = (cProg - 0.75) / 0.25;
+        tCur = tl + (th - tl) * u;
+        sNorm = 0;
+        cylPistonY = 96 + 36 * u; // 96 -> 132
+        stageTxt = '4 → 1 : Adiabatic Compression (Q = 0)';
+        dockHot.style.display = 'none';
+        dockCold.style.display = 'none';
+        dockIns.style.display = '';
+      }
+
+      cPhaseLbl.textContent = stageTxt.split(':')[0].trim();
+      cylStage.textContent = stageTxt;
+      p1Tag.textContent = `T = ${tCur.toFixed(0)} K`;
+
+      const col = tempToColor(tCur);
+      cylHead.setAttribute('y', cylPistonY.toFixed(1));
+      cylRod.setAttribute('y', '18');
+      cylRod.setAttribute('height', Math.max(6, cylPistonY - 18).toFixed(1));
+      cylGas.setAttribute('y', (cylPistonY + 14).toFixed(1));
+      cylGas.setAttribute('height', Math.max(10, 180 - (cylPistonY + 14)).toFixed(1));
+      cylGas.setAttribute('fill', col);
+
+      dockHotTxt.textContent = `Hot Reservoir (T_H=${th}K)`;
+      dockColdTxt.textContent = `Cold Reservoir (T_L=${tl}K)`;
+
+      setThermometer(cylMerc, tCur, 180, 1500, 108, 96);
+      cylMerc.setAttribute('fill', col);
+      cylBulb.setAttribute('fill', col);
+      cylTlbl.setAttribute('fill', col);
+      cylTlbl.textContent = `${tCur.toFixed(0)} K`;
+
+      // نمودار T-s کارنو
+      const sLeft = 2.4;
+      const sRight = 7.6;
+      const x1 = tsVp.x(sLeft);
+      const x2 = tsVp.x(sRight);
+      const yH = tsVp.y(th);
+      const yL = tsVp.y(tl);
+      const y0 = tsVp.y(0);
+
+      tsQlRect.setAttribute('x', x1.toFixed(1));
+      tsQlRect.setAttribute('y', yL.toFixed(1));
+      tsQlRect.setAttribute('width', (x2 - x1).toFixed(1));
+      tsQlRect.setAttribute('height', (y0 - yL).toFixed(1));
+
+      tsWRect.setAttribute('x', x1.toFixed(1));
+      tsWRect.setAttribute('y', yH.toFixed(1));
+      tsWRect.setAttribute('width', (x2 - x1).toFixed(1));
+      tsWRect.setAttribute('height', Math.max(4, yL - yH).toFixed(1));
+
+      tsWLbl.setAttribute('y', ((yH + yL) / 2 + 4).toFixed(1));
+      tsQlLbl.setAttribute('y', ((yL + y0) / 2 + 4).toFixed(1));
+
+      tsThLine.setAttribute('y1', yH.toFixed(1));
+      tsThLine.setAttribute('y2', yH.toFixed(1));
+      tsTlLine.setAttribute('y1', yL.toFixed(1));
+      tsTlLine.setAttribute('y2', yL.toFixed(1));
+      tsThTag.setAttribute('y', Math.max(14, yH - 4).toFixed(1));
+      tsThTag.textContent = `T_H=${th}`;
+      tsTlTag.setAttribute('y', (yL - 4).toFixed(1));
+      tsTlTag.textContent = `T_L=${tl}`;
+
+      tsP1.setAttribute('cx', x1.toFixed(1));
+      tsP1.setAttribute('cy', yH.toFixed(1));
+      tsP2.setAttribute('cx', x2.toFixed(1));
+      tsP2.setAttribute('cy', yH.toFixed(1));
+      tsP3.setAttribute('cx', x2.toFixed(1));
+      tsP3.setAttribute('cy', yL.toFixed(1));
+      tsP4.setAttribute('cx', x1.toFixed(1));
+      tsP4.setAttribute('cy', yL.toFixed(1));
+
+      tsL1.setAttribute('x', (x1 - 11).toFixed(1));
+      tsL1.setAttribute('y', (yH - 4).toFixed(1));
+      tsL2.setAttribute('x', (x2 + 8).toFixed(1));
+      tsL2.setAttribute('y', (yH - 4).toFixed(1));
+      tsL3.setAttribute('x', (x2 + 8).toFixed(1));
+      tsL3.setAttribute('y', (yL + 8).toFixed(1));
+      tsL4.setAttribute('x', (x1 - 11).toFixed(1));
+      tsL4.setAttribute('y', (yL + 8).toFixed(1));
+
+      tsDot.setAttribute('cx', tsVp.x(sLeft + sNorm * (sRight - sLeft)).toFixed(1));
+      tsDot.setAttribute('cy', tsVp.y(tCur).toFixed(1));
+
+      // محاسبات کارنو و حساسیت
+      const eta = (1 - tl / th) * 100;
+      const copR = tl / (th - tl);
+      const copHP = copR + 1;
+      const dEtaDropTL = (Math.min(50, tl - 50) / th) * 100;
+      const dEtaRaiseTH = (tl / th - tl / (th + 50)) * 100;
+
+      tsSens.textContent = `-50K T_L: +${dEtaDropTL.toFixed(1)}%  >  +50K T_H: +${dEtaRaiseTH.toFixed(1)}%`;
+
+      m1Lbl.innerHTML = 'حداکثر بازده موتور <span dir="ltr">(η_Carnot)</span>';
+      m2Lbl.innerHTML = 'ضریب عملکرد یخچال <span dir="ltr">(COP_R,max)</span>';
+      m3Lbl.innerHTML = 'پمپ حرارتی <span dir="ltr">(COP_HP = COP_R + 1)</span>';
+      m4Lbl.innerHTML = 'حساسیت <span dir="ltr">(-50K T_L vs +50K T_H)</span>';
+
+      etaEl.textContent = `${eta.toFixed(1)}%`;
+      coprEl.textContent = copR.toFixed(2);
+      cophpEl.textContent = copHP.toFixed(2);
+      tmidEl.textContent = `+${dEtaDropTL.toFixed(1)}% > +${dEtaRaiseTH.toFixed(1)}%`;
+
+      explainEl.innerHTML = `در <strong>چرخهٔ کارنو</strong> بین <span dir="ltr">T_H = ${th} K</span> و <span dir="ltr">T_L = ${tl} K</span>، بازده بیشینه <strong><span dir="ltr">${eta.toFixed(1)}%</span></strong> است. چون <span dir="ltr">|∂η/∂T_L| = 1/T_H > T_L/T_H²</span> است، کاهش <span dir="ltr">50 K</span> در دمای منبع سرد <strong><span dir="ltr">+${dEtaDropTL.toFixed(1)}%</span></strong> بازده را بالا می‌برد، در حالی که افزایش <span dir="ltr">50 K</span> در <span dir="ltr">T_H</span> فقط <strong><span dir="ltr">+${dEtaRaiseTH.toFixed(1)}%</span></strong> افزایش می‌دهد!`;
+    }
+
+    function renderReversibility() {
+      rSpdLbl.textContent = `${rShock.toFixed(1)}×`;
+      rScrub.value = String(Math.round(rProg * 100));
+
+      const isComp = rProg <= 0.5;
+      const strokeU = isComp ? rProg * 2 : (1 - rProg) * 2; // 0 = باز، 1 = فشرده
+      revPistonX = 224 - 114 * strokeU; // 224 .. 110
+      const gasW = Math.max(20, revPistonX - 26);
+
+      rPosLbl.textContent = isComp ? 'Fast Compression (P_face ↑)' : 'Fast Expansion (P_face ↓)';
+      p1Tag.textContent = 'P(x) = uniform';
+      p2Tag.textContent = isComp ? `Shock +${((rShock - 1) * 14).toFixed(0)}%` : `Wake -${((rShock - 1) * 9).toFixed(0)}%`;
+
+      // پیستون آهسته
+      rsGas.setAttribute('width', gasW.toFixed(1));
+      rsHead.setAttribute('x', revPistonX.toFixed(1));
+      rsRod.setAttribute('x', (revPistonX + 12).toFixed(1));
+      rsRod.setAttribute('width', Math.max(12, 286 - (revPistonX + 12)).toFixed(1));
+
+      const pAvgY = 178 - 16 * strokeU; // فشار متوسط با تراکم بالا می‌رود
+      rsPcurve.setAttribute('d', `M 24 ${pAvgY.toFixed(1)} L ${revPistonX.toFixed(1)} ${pAvgY.toFixed(1)}`);
+      rsPlbl.textContent = 'Uniform P_face = P_avg (S_gen = 0)';
+
+      // پیستون سریع
+      rfGas.setAttribute('width', gasW.toFixed(1));
+      rfHead.setAttribute('x', revPistonX.toFixed(1));
+      rfRod.setAttribute('x', (revPistonX + 12).toFixed(1));
+      rfRod.setAttribute('width', Math.max(12, 286 - (revPistonX + 12)).toFixed(1));
+
+      const bandW = Math.min(34, gasW * 0.4);
+      rfShock.setAttribute('x', (revPistonX - bandW).toFixed(1));
+      rfShock.setAttribute('width', bandW.toFixed(1));
+      rfShock.setAttribute('fill', isComp ? '#ef4444' : '#38bdf8');
+      rfShock.setAttribute('fill-opacity', Math.min(0.55, 0.12 + 0.06 * rShock).toFixed(2));
+
+      rfPavg.setAttribute('x2', revPistonX.toFixed(1));
+      rfPavg.setAttribute('y1', pAvgY.toFixed(1));
+      rfPavg.setAttribute('y2', pAvgY.toFixed(1));
+
+      const spikeAmp = (rShock - 1) * 3.4;
+      let dFast = '';
+      const steps = 28;
+      for (let i = 0; i <= steps; i++) {
+        const u = i / steps;
+        const px = 24 + u * (revPistonX - 24);
+        const edge = Math.pow(u, 4);
+        const py = isComp
+          ? Math.max(152, pAvgY - spikeAmp * edge)
+          : Math.min(198, pAvgY + spikeAmp * 0.72 * edge);
+        dFast += `${i === 0 ? 'M' : 'L'} ${px.toFixed(1)} ${py.toFixed(1)} `;
+      }
+      rfPcurve.setAttribute('d', dFast);
+      rfPcurve.setAttribute('stroke', isComp ? '#ef4444' : '#0284c7');
+      rfPlbl.setAttribute('fill', isComp ? '#ef4444' : '#0284c7');
+      rfPlbl.textContent = isComp
+        ? 'Compression: P_face > P_avg (Extra Work In!)'
+        : 'Expansion: P_face < P_avg (Less Work Out!)';
+
+      const extraIn = (rShock - 1) * 7.5;
+      const lostOut = (rShock - 1) * 5.2;
+      const netLoss = extraIn + lostOut;
+
+      m1Lbl.innerHTML = 'فشار پیشانی در تراکم سریع';
+      m2Lbl.innerHTML = 'فشار پیشانی در انبساط سریع';
+      m3Lbl.innerHTML = 'کار تلف‌شده در رفت‌وبرگشت <span dir="ltr">(ΔW_lost)</span>';
+      m4Lbl.innerHTML = 'آنتروپی تولیدی <span dir="ltr">(S_gen)</span>';
+
+      etaEl.textContent = `+${extraIn.toFixed(1)}% > P_avg`;
+      coprEl.textContent = `-${lostOut.toFixed(1)}% < P_avg`;
+      cophpEl.textContent = `${netLoss.toFixed(1)}% کار اتلافی`;
+      tmidEl.textContent = `برگشت‌ناپذیر (S_gen > 0)`;
+
+      explainEl.innerHTML = `در <strong>حرکت آهسته (شبه‌تعادلی)</strong>، مولکول‌ها فرصت پخش شدن دارند و فشار در تمام سیلندر یکنواخت است؛ پس کار رفت و برگشت خنثی می‌شود <span dir="ltr">(S_gen = 0)</span>. اما در <strong>حرکت سریع</strong>، هنگام تراکم مولکول‌ها جلوی پیستون انباشته شده <span dir="ltr">(P_face &gt; P_avg)</span> و کار بیشتری مصرف می‌شود، و هنگام انبساط پشت پیستون خلا نسبی ایجاد شده <span dir="ltr">(P_face &lt; P_avg)</span> و کار کمتری تولید می‌گردد؛ مابه‌التفاوت به انرژی درونی و تولید آنتروپی می‌رود.`;
+    }
+
+    function renderSeries() {
+      if (sT3 >= sT1 - 80) {
+        sT3 = sT1 - 80;
+        sT3El.value = String(sT3);
+      }
+      sT2El.min = String(sT3 + 20);
+      sT2El.max = String(sT1 - 20);
+      if (sT2 <= sT3 + 20) sT2 = sT3 + 20;
+      if (sT2 >= sT1 - 20) sT2 = sT1 - 20;
+      sT2El.value = String(sT2);
+
+      sT1Lbl.textContent = `${sT1.toFixed(0)} K`;
+      sT2Lbl.textContent = `${sT2.toFixed(0)} K`;
+      sT3Lbl.textContent = `${sT3.toFixed(0)} K`;
+
+      const eta1 = 1 - sT2 / sT1;
+      const eta2 = 1 - sT3 / sT2;
+      const w1Frac = (sT1 - sT2) / sT1;
+      const w2Frac = (sT2 - sT3) / sT1;
+      const q2Frac = sT2 / sT1;
+      const etaTot = 1 - sT3 / sT1;
+
+      const t2EqW = (sT1 + sT3) / 2;
+      const t2EqEta = Math.sqrt(sT1 * sT3);
+
+      p1Tag.textContent = `T₂ = ${sT2.toFixed(0)} K`;
+      p2Tag.textContent = `η_tot = ${(etaTot * 100).toFixed(1)}%`;
+
+      sdT1.textContent = `T₁ = ${sT1.toFixed(0)} K`;
+      sdT2.textContent = `T₂ = ${sT2.toFixed(0)} K`;
+      sdT3.textContent = `T₃ = ${sT3.toFixed(0)} K`;
+      sdQ2.textContent = `Q₂ = ${q2Frac.toFixed(2)} Q₁`;
+      sdW1.textContent = `W₁ = ${(w1Frac * 100).toFixed(1)}%`;
+      sdE1.textContent = `η₁ = ${(eta1 * 100).toFixed(1)}%`;
+      sdW2.textContent = `W₂ = ${(w2Frac * 100).toFixed(1)}%`;
+      sdE2.textContent = `η₂ = ${(eta2 * 100).toFixed(1)}%`;
+      sdW1Line.setAttribute('stroke-width', (2 + 8 * w1Frac).toFixed(1));
+      sdW2Line.setAttribute('stroke-width', (2 + 8 * w2Frac).toFixed(1));
+
+      // رسم نمودار در پنل ۲
+      const vp = createViewport(sT3, sT1, 0, 1.0, 48, 308, 180, 22);
+      const ptsW1: Array<[number, number]> = [];
+      const ptsW2: Array<[number, number]> = [];
+      const ptsE1: Array<[number, number]> = [];
+      const ptsE2: Array<[number, number]> = [];
+      const N = 60;
+      for (let i = 0; i <= N; i++) {
+        const t = sT3 + (i / N) * (sT1 - sT3);
+        ptsW1.push([t, (sT1 - t) / sT1]);
+        ptsW2.push([t, (t - sT3) / sT1]);
+        ptsE1.push([t, 1 - t / sT1]);
+        ptsE2.push([t, 1 - sT3 / t]);
+      }
+      spW1.setAttribute('d', vp.path(ptsW1));
+      spW2.setAttribute('d', vp.path(ptsW2));
+      spE1.setAttribute('d', vp.path(ptsE1));
+      spE2.setAttribute('d', vp.path(ptsE2));
+
+      const xCur = vp.x(sT2);
+      spCur.setAttribute('x1', xCur.toFixed(1));
+      spCur.setAttribute('x2', xCur.toFixed(1));
+
+      const wEqVal = (sT1 - t2EqW) / sT1;
+      spDotW.setAttribute('cx', vp.x(t2EqW).toFixed(1));
+      spDotW.setAttribute('cy', vp.y(wEqVal).toFixed(1));
+
+      const eEqVal = 1 - t2EqEta / sT1;
+      spDotE.setAttribute('cx', vp.x(t2EqEta).toFixed(1));
+      spDotE.setAttribute('cy', vp.y(eEqVal).toFixed(1));
+
+      spT3Lbl.textContent = `${sT3.toFixed(0)}`;
+      spT1Lbl.textContent = `${sT1.toFixed(0)}`;
+      spLegend.textContent = `T₂(W₁=W₂)=${t2EqW.toFixed(1)} K  |  T₂(η₁=η₂)=${t2EqEta.toFixed(1)} K`;
+
+      m1Lbl.innerHTML = 'کار دو موتور (<span dir="ltr">W₁/Q₁</span> vs <span dir="ltr">W₂/Q₁</span>)';
+      m2Lbl.innerHTML = 'بازده دو موتور (<span dir="ltr">η₁</span> vs <span dir="ltr">η₂</span>)';
+      m3Lbl.innerHTML = 'شرط کار مساوی <span dir="ltr">(W₁ = W₂)</span>';
+      m4Lbl.innerHTML = 'شرط بازده مساوی <span dir="ltr">(η₁ = η₂)</span>';
+
+      etaEl.textContent = `${(w1Frac * 100).toFixed(1)}% vs ${(w2Frac * 100).toFixed(1)}%`;
+      coprEl.textContent = `${(eta1 * 100).toFixed(1)}% vs ${(eta2 * 100).toFixed(1)}%`;
+      cophpEl.textContent = `T₂ = ${t2EqW.toFixed(1)} K`;
+      tmidEl.textContent = `T₂ = ${t2EqEta.toFixed(1)} K`;
+
+      const nearW = Math.abs(sT2 - t2EqW) <= 6;
+      const nearE = Math.abs(sT2 - t2EqEta) <= 6;
+      explainEl.innerHTML = nearW
+        ? `<strong>نقطهٔ کار مساوی <span dir="ltr">(W₁ = W₂)</span>:</strong> در میانگین حسابی <strong><span dir="ltr">T₂ = (T₁+T₃)/2 = ${t2EqW.toFixed(1)} K</span></strong>، هر دو موتور دقیقاً <strong><span dir="ltr">${(wEqVal * 100).toFixed(1)}%</span></strong> از گرمای اولیه <span dir="ltr">Q₁</span> را به کار تبدیل می‌کنند؛ اما بازده‌ها نابرابرند (<span dir="ltr">η₁ = ${(eta1 * 100).toFixed(1)}%</span> در برابر <span dir="ltr">η₂ = ${(eta2 * 100).toFixed(1)}%</span>).`
+        : nearE
+          ? `<strong>نقطهٔ بازده مساوی <span dir="ltr">(η₁ = η₂)</span>:</strong> در میانگین هندسی <strong><span dir="ltr">T₂ = √(T₁·T₃) = ${t2EqEta.toFixed(1)} K</span></strong>، بازده هر دو موتور دقیقاً برابر <strong><span dir="ltr">${(eEqVal * 100).toFixed(1)}%</span></strong> است؛ اما چون <span dir="ltr">Q₂ &lt; Q₁</span> است، کار موتور اول بیشتر است. بازده کل همیشه <strong><span dir="ltr">η_tot = 1 - T₃/T₁ = ${(etaTot * 100).toFixed(1)}%</span></strong> ثابت می‌ماند!`
+          : `برای دو موتور کارنو متوالی بین <span dir="ltr">${sT1} K</span> و <span dir="ltr">${sT3} K</span>، بازده کل ترکیب همیشه برابر <span dir="ltr">${(etaTot * 100).toFixed(1)}%</span> (مستقل از <span dir="ltr">T₂</span>) است. میانگین حسابی <span dir="ltr">(${t2EqW.toFixed(1)} K)</span> کارها را برابر می‌کند و میانگین هندسی <span dir="ltr">(${t2EqEta.toFixed(1)} K)</span> بازده‌ها را برابر می‌سازد.`;
+    }
+
+    function renderAll() {
+      if (tab === 'carnot') renderCarnot();
+      else if (tab === 'reversibility') renderReversibility();
+      else renderSeries();
+    }
+
+    const anim = createAnimController(root, (dt) => {
+      if (tab === 'carnot') {
+        if (cPlaying) {
+          cProg = (cProg + dt * 0.14) % 1;
+          renderCarnot();
+        }
+        carnotParticles.step(dt, 0.8 + (th / 800) * 0.5);
+      } else if (tab === 'reversibility') {
+        if (rPlaying) {
+          rProg = (rProg + dt * 0.24) % 1;
+          renderReversibility();
+        }
+        slowParticles.step(dt, 0.9);
+        fastParticles.step(dt, 1.3 + rShock * 0.15);
+      }
+    });
+
+    root.querySelectorAll('#ct-tabs button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#ct-tabs button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        tab = (btn.getAttribute('data-tab') as TabMode) || 'carnot';
+
+        pCarnot.style.display = tab === 'carnot' ? '' : 'none';
+        pRev.style.display = tab === 'reversibility' ? '' : 'none';
+        pSer.style.display = tab === 'series' ? '' : 'none';
+
+        svgCarnotCyl.style.display = tab === 'carnot' ? 'block' : 'none';
+        svgCarnotTs.style.display = tab === 'carnot' ? 'block' : 'none';
+        svgRevSlow.style.display = tab === 'reversibility' ? 'block' : 'none';
+        svgRevFast.style.display = tab === 'reversibility' ? 'block' : 'none';
+        svgSerDiag.style.display = tab === 'series' ? 'block' : 'none';
+        svgSerPlot.style.display = tab === 'series' ? 'block' : 'none';
+
+        if (tab === 'carnot') {
+          p1Title.innerHTML = 'سیلندر–پیستون کارنو (اتصال به مخازن و عایق)';
+          p2Title.innerHTML = 'نمودار <span dir="ltr">T-s</span> کارنو و حساسیت دما';
+          anim.start();
+        } else if (tab === 'reversibility') {
+          p1Title.innerHTML = '۱) پیستون آهسته (شبه‌تعادلی)';
+          p2Title.innerHTML = '۲) پیستون سریع (برگشت‌ناپذیر)';
+          anim.start();
+        } else {
+          p1Title.innerHTML = 'شماتیک دو موتور کارنو متوالی';
+          p2Title.innerHTML = 'منحنی تغییر <span dir="ltr">W</span> و <span dir="ltr">η</span> بر حسب <span dir="ltr">T₂</span>';
+          anim.stop();
+        }
+        renderAll();
+      });
+    });
+
+    // رویدادهای تب ۱
+    thEl.addEventListener('input', () => {
+      th = parseFloat(thEl.value);
+      if (tl >= th - 20) {
+        tl = th - 20;
+        tlEl.value = String(tl);
+      }
+      renderCarnot();
+    });
+    tlEl.addEventListener('input', () => {
+      tl = Math.min(parseFloat(tlEl.value), th - 20);
+      tlEl.value = String(tl);
+      renderCarnot();
+    });
+    cScrub.addEventListener('input', () => {
+      cPlaying = false;
+      cPlayBtn.textContent = '▶ پخش چرخه';
+      cProg = parseFloat(cScrub.value) / 100;
+      renderCarnot();
+    });
+    cPlayBtn.addEventListener('click', () => {
+      cPlaying = !cPlaying;
+      cPlayBtn.textContent = cPlaying ? '⏸ توقف چرخه' : '▶ پخش چرخه';
+    });
+    cResetBtn.addEventListener('click', () => {
+      cProg = 0;
+      renderCarnot();
+    });
+
+    // رویدادهای تب ۲
+    rSpdEl.addEventListener('input', () => {
+      rShock = parseFloat(rSpdEl.value);
+      renderReversibility();
+    });
+    rScrub.addEventListener('input', () => {
+      rPlaying = false;
+      rPlayBtn.textContent = '▶ پخش رفت‌وبرگشت';
+      rProg = parseFloat(rScrub.value) / 100;
+      renderReversibility();
+    });
+    rPlayBtn.addEventListener('click', () => {
+      rPlaying = !rPlaying;
+      rPlayBtn.textContent = rPlaying ? '⏸ توقف رفت‌وبرگشت' : '▶ پخش رفت‌وبرگشت';
+    });
+    rResetBtn.addEventListener('click', () => {
+      rProg = 0;
+      renderReversibility();
+    });
+
+    // رویدادهای تب ۳
+    sT1El.addEventListener('input', () => {
+      sT1 = parseFloat(sT1El.value);
+      renderSeries();
+    });
+    sT2El.addEventListener('input', () => {
+      sT2 = parseFloat(sT2El.value);
+      renderSeries();
+    });
+    sT3El.addEventListener('input', () => {
+      sT3 = parseFloat(sT3El.value);
+      renderSeries();
+    });
+    sEqWBtn.addEventListener('click', () => {
+      sT2 = Math.round((sT1 + sT3) / 2);
+      renderSeries();
+    });
+    sEqEtaBtn.addEventListener('click', () => {
+      sT2 = Math.round(Math.sqrt(sT1 * sT3));
+      renderSeries();
+    });
+
+    renderAll();
+    anim.start();
+  })();
 </script>

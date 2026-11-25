@@ -1,0 +1,905 @@
+---
+// آزمایشگر زنده موازنه اگزرژی، تله انتخاب مرز (مثال ۸-۷) و اگزرژی جریان بخار واقعی با IAPWS-IF97 (فصل ۸)
+---
+
+<div class="jh-widget not-content" id="exergy-boundary-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ تراز اگزرژی: تلهٔ انتخاب مرز و توربین بخار واقعی</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ تغییر <span dir="ltr">Ẋ_dest = T₀ Ṡ_gen</span> هنگام جابه‌جایی مرز دیوار <span dir="ltr">(مثال ۸-۷)</span> و تحلیل اگزرژی جریان <span dir="ltr">(ψ)</span> با خواص واقعی <span dir="ltr">IAPWS-IF97</span>
+  </div>
+
+  <div class="jh-widget__btns" id="ebb-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="wall-ex87">۱) مثال ۸-۷: تلهٔ انتخاب مرز در دیواره آجری <span dir="ltr">(Q̇ = 1035 W)</span></button>
+    <button type="button" class="jh-widget__btn" data-mode="steam-flow">۲) اگزرژی جریان پایا <span dir="ltr">(ψ)</span> و توربین بخار <span dir="ltr">(IAPWS-IF97)</span></button>
+  </div>
+
+  <!-- کنترل‌های حالت ۱: دیوار آجری مثال ۸-۷ -->
+  <div id="ebb-wall-ctrls">
+    <div class="jh-widget__btns" id="ebb-boundary-btns">
+      <button type="button" class="jh-widget__btn is-active" data-bound="wall">مرز الف: فقط خود دیوار <span dir="ltr">(20 °C → 5 °C)</span></button>
+      <button type="button" class="jh-widget__btn" data-bound="extended">مرز ب: مرز گسترش‌یافته <span dir="ltr">(اتاق 27 °C → هوای بیرون T₀)</span></button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>نرخ انتقال حرارت <span dir="ltr">(Q̇)</span>: <strong id="ebb-qdot-lbl" dir="ltr">1035 W</strong></span>
+        <input id="ebb-qdot" type="range" min="400" max="2000" step="15" value="1035" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>دمای هوای بیرون / حالت مرده <span dir="ltr">(T₀)</span>: <strong id="ebb-t0c-lbl" dir="ltr">0 °C (273 K)</strong></span>
+        <input id="ebb-t0c" type="range" min="-15" max="4" step="1" value="0" />
+      </label>
+    </div>
+  </div>
+
+  <!-- کنترل‌های حالت ۲: توربین بخار جریان پایا -->
+  <div id="ebb-steam-ctrls" style="display:none">
+    <div class="jh-widget__btns" id="ebb-steam-presets">
+      <button type="button" class="jh-widget__btn is-active" data-preset="ex811">مثال ۸-۱۱ <span dir="ltr">(3 MPa, 450°C → 200 kPa, ṁ=8 kg/s)</span></button>
+      <button type="button" class="jh-widget__btn" data-preset="vac">توربین خلأ کندانسور <span dir="ltr">(P₂ = 20 kPa, ṁ=8 kg/s)</span></button>
+      <button type="button" class="jh-widget__btn" data-preset="unit">بر واحد جرم <span dir="ltr">(ṁ = 1 kg/s)</span></button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>فشار ورودی بخار <span dir="ltr">(P₁)</span>: <strong id="ebb-p1-lbl" dir="ltr">3000 kPa</strong></span>
+        <input id="ebb-p1" type="range" min="1000" max="8000" step="200" value="3000" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>دمای ورودی بخار <span dir="ltr">(T₁)</span>: <strong id="ebb-t1-lbl" dir="ltr">450 °C</strong></span>
+        <input id="ebb-t1" type="range" min="320" max="600" step="10" value="450" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>فشار خروجی توربین <span dir="ltr">(P₂)</span>: <strong id="ebb-p2-lbl" dir="ltr">200 kPa</strong></span>
+        <input id="ebb-p2" type="range" min="10" max="400" step="10" value="200" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>بازده ایزنتروپیک <span dir="ltr">(η_T)</span>: <strong id="ebb-etat-lbl" dir="ltr">88%</strong></span>
+        <input id="ebb-etat" type="range" min="55" max="100" step="1" value="88" />
+      </label>
+    </div>
+  </div>
+
+  <div class="jh-widget__toolbar">
+    <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="ebb-play">▶ پخش جریان زنده</button>
+    <button type="button" class="jh-widget__btn" id="ebb-reset">↺ بازنشانی</button>
+    <span class="jh-widget__sub" id="ebb-flow-note" style="margin-inline-start:auto">حالت مرده دیوار: <span dir="ltr">T₀ = 0 °C (273 K)</span></span>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱: شماتیک فیزیکی (دیوار آجری با مرز متحرک یا توربین بخار) -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="ebb-sys-title">برش دیواره آجری و پروفیل دما</span>
+        <span dir="ltr" id="ebb-sys-tag" style="color:#0284c7">CV: Wall Only</span>
+      </div>
+      <svg id="ebb-sys-svg" viewBox="0 0 320 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="برش دیواره آجری و توربین بخار جریان پایا">
+        <defs>
+          <pattern id="ebb-brick-pat" width="22" height="12" patternUnits="userSpaceOnUse">
+            <rect width="22" height="12" fill="#d97706" fill-opacity="0.09" />
+            <path d="M 0 6 L 22 6 M 11 0 L 11 6 M 0 6 L 0 12 M 22 6 L 22 12" stroke="#d97706" stroke-opacity="0.28" stroke-width="1" />
+          </pattern>
+          <marker id="ebb-arr-q" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#ef4444" />
+          </marker>
+          <marker id="ebb-arr-em" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#059669" />
+          </marker>
+          <marker id="ebb-arr-bl" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 1 2 L 8 5 L 1 8 z" fill="#0284c7" />
+          </marker>
+        </defs>
+
+        <!-- لایه ۱: دیواره آجری مثال ۸-۷ -->
+        <g id="ebb-scene-wall">
+          <!-- پس‌زمینه دماهای چپ (اتاق گرم) و راست (هوای سرد بیرون) -->
+          <rect x="18" y="38" width="88" height="148" fill="#ef4444" fill-opacity="0.07" rx="4" />
+          <rect x="106" y="38" width="108" height="148" fill="url(#ebb-brick-pat)" stroke="currentColor" stroke-opacity="0.55" stroke-width="2.2" />
+          <rect x="214" y="38" width="88" height="148" fill="#0284c7" fill-opacity="0.08" rx="4" />
+
+          <!-- خط‌چین لایه‌های مرزی همرفت -->
+          <line x1="56" y1="38" x2="56" y2="186" stroke="#ef4444" stroke-opacity="0.24" stroke-dasharray="3 3" />
+          <line x1="264" y1="38" x2="264" y2="186" stroke="#0284c7" stroke-opacity="0.24" stroke-dasharray="3 3" />
+
+          <!-- برچسب بالای نواحی -->
+          <text x="40" y="54" text-anchor="middle" fill="#ef4444" font-size="8.8" font-weight="800">Room 27°C</text>
+          <text x="160" y="54" text-anchor="middle" fill="#d97706" font-size="9" font-weight="800">Brick Wall (30 cm)</text>
+          <text id="ebb-w-t0top" x="280" y="54" text-anchor="middle" fill="#0284c7" font-size="8.8" font-weight="800">Out 0°C</text>
+
+          <!-- منحنی زنده پروفیل دما 27 -> 20 -> 5 -> T0 -->
+          <polyline id="ebb-w-tline" points="22,82 56,82 106,92 214,115 264,122 298,122" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linejoin="round" />
+          <circle id="ebb-w-n1" cx="56" cy="82" r="3.2" fill="#ef4444" />
+          <circle id="ebb-w-n2" cx="106" cy="92" r="3.4" fill="#d97706" />
+          <circle id="ebb-w-n3" cx="214" cy="115" r="3.4" fill="#0284c7" />
+          <circle id="ebb-w-n4" cx="264" cy="122" r="3.2" fill="#0284c7" />
+
+          <!-- برچسب دماها کنار سطوح -->
+          <text x="102" y="106" text-anchor="end" fill="currentColor" font-size="8.5" font-weight="700">20°C</text>
+          <text x="218" y="108" text-anchor="start" fill="currentColor" font-size="8.5" font-weight="700">5°C</text>
+
+          <!-- فلش انتقال حرارت Q̇ -->
+          <line x1="72" y1="168" x2="248" y2="168" stroke="#ef4444" stroke-width="2.4" marker-end="url(#ebb-arr-q)" />
+          <circle id="ebb-w-qpkt" cx="130" cy="168" r="3.5" fill="#ef4444" />
+          <text id="ebb-w-qlbl" x="160" y="159" text-anchor="middle" fill="#ef4444" font-size="9.5" font-weight="800">Q̇ = 1035 W</text>
+
+          <!-- جعبه خط‌چین متحرک مرز سیستم (CV Boundary) -->
+          <rect id="ebb-cv-box" x="104" y="32" width="112" height="158" rx="6" fill="none" stroke="#0284c7" stroke-width="2.6" stroke-dasharray="7 4" />
+          <text id="ebb-cv-tag" x="160" y="21" text-anchor="middle" fill="#0284c7" font-size="9.5" font-weight="800">CV Boundary: 293 K → 278 K</text>
+
+          <!-- نقاط عبور اگزرژی روی مرز چپ و راست -->
+          <circle id="ebb-cv-dot-in" cx="104" cy="168" r="4" fill="#0284c7" stroke="#ffffff" stroke-width="1.2" />
+          <circle id="ebb-cv-dot-out" cx="216" cy="168" r="4" fill="#059669" stroke="#ffffff" stroke-width="1.2" />
+
+          <!-- کادر خلاصه عبور از مرز در پایین -->
+          <rect x="18" y="196" width="284" height="28" rx="7" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.16" />
+          <text id="ebb-w-xin" x="68" y="214" text-anchor="middle" fill="#0284c7" font-size="9.2" font-weight="800">Ẋ_in: 70.6 W</text>
+          <text id="ebb-w-xdest" x="160" y="214" text-anchor="middle" fill="#d97706" font-size="9.2" font-weight="800">Ẋ_dest: 52.0 W</text>
+          <text id="ebb-w-xout" x="252" y="214" text-anchor="middle" fill="#059669" font-size="9.2" font-weight="800">Ẋ_out: 18.6 W</text>
+        </g>
+
+        <!-- لایه ۲: توربین بخار جریان پایا (IAPWS-IF97) -->
+        <g id="ebb-scene-steam" style="display:none">
+          <!-- لوله ورودی بخار داغ (State 1) -->
+          <rect x="16" y="76" width="76" height="36" rx="3" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+          <line x1="28" y1="94" x2="82" y2="94" stroke="#ef4444" stroke-width="2.4" marker-end="url(#ebb-arr-q)" />
+          <circle id="ebb-t-pkt1" cx="46" cy="94" r="3.4" fill="#ef4444" />
+
+          <!-- بدنه واگرای توربین -->
+          <path d="M 92 66 L 210 40 L 210 156 L 92 122 Z" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.74" stroke-width="3" stroke-linejoin="round" />
+
+          <!-- روتور و پره‌های توربین -->
+          <g id="ebb-t-rotor" transform="translate(152, 98)">
+            <circle cx="0" cy="0" r="22" fill="#0284c7" fill-opacity="0.14" stroke="#0284c7" stroke-width="1.8" />
+            <line x1="-18" y1="0" x2="18" y2="0" stroke="currentColor" stroke-opacity="0.75" stroke-width="2.4" />
+            <line x1="0" y1="-18" x2="0" y2="18" stroke="currentColor" stroke-opacity="0.75" stroke-width="2.4" />
+            <line x1="-13" y1="-13" x2="13" y2="13" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.8" />
+            <line x1="-13" y1="13" x2="13" y2="-13" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.8" />
+          </g>
+
+          <!-- شفت خروجی کار به سمت راست -->
+          <rect x="210" y="93" width="66" height="10" rx="3" fill="#64748b" stroke="currentColor" stroke-opacity="0.5" />
+          <line x1="232" y1="74" x2="292" y2="74" stroke="#059669" stroke-width="3" marker-end="url(#ebb-arr-em)" />
+          <text id="ebb-t-wout" x="262" y="64" text-anchor="middle" fill="#059669" font-size="9.5" font-weight="800">Ẇ_out = 4610 kW</text>
+          <text id="ebb-t-xdlbl" x="262" y="122" text-anchor="middle" fill="#ef4444" font-size="8.8" font-weight="800">Ẋ_dest = 461 kW</text>
+
+          <!-- لوله خروجی بخار رو به پایین (State 2) -->
+          <rect x="174" y="148" width="36" height="54" rx="3" fill="#0284c7" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+          <line x1="192" y1="154" x2="192" y2="194" stroke="#0284c7" stroke-width="2.4" marker-end="url(#ebb-arr-bl)" />
+          <circle id="ebb-t-pkt2" cx="192" cy="172" r="3.4" fill="#0284c7" />
+
+          <!-- کارت برچسب حالت ۱ (بالا چپ) -->
+          <rect x="14" y="16" width="118" height="44" rx="7" fill="currentColor" fill-opacity="0.04" stroke="#ef4444" stroke-opacity="0.45" />
+          <text id="ebb-t-s1a" x="73" y="33" text-anchor="middle" fill="currentColor" font-size="8.8" font-weight="800">1: 3000 kPa, 450°C</text>
+          <text id="ebb-t-s1b" x="73" y="49" text-anchor="middle" fill="#ef4444" font-size="9.2" font-weight="800">ψ₁ = 1236.7 kJ/kg</text>
+
+          <!-- کارت برچسب حالت ۲ (پایین راست) -->
+          <rect x="216" y="144" width="96" height="62" rx="7" fill="currentColor" fill-opacity="0.04" stroke="#0284c7" stroke-opacity="0.45" />
+          <text id="ebb-t-s2a" x="264" y="162" text-anchor="middle" fill="currentColor" font-size="8.5" font-weight="800">2: 200 kPa, 150°C</text>
+          <text id="ebb-t-s2b" x="264" y="178" text-anchor="middle" fill="#0284c7" font-size="9" font-weight="800">ψ₂ = 602.6 kJ/kg</text>
+          <text id="ebb-t-s2c" x="264" y="195" text-anchor="middle" fill="#d97706" font-size="8.2" font-weight="700">Superheated</text>
+
+          <!-- باکس حالت مرده (پایین چپ) -->
+          <rect x="14" y="176" width="144" height="40" rx="7" fill="#0284c7" fill-opacity="0.08" stroke="#0284c7" stroke-opacity="0.35" />
+          <text x="86" y="193" text-anchor="middle" fill="#0284c7" font-size="8.6" font-weight="800">Dead State 0 (IAPWS-IF97)</text>
+          <text x="86" y="208" text-anchor="middle" fill="currentColor" fill-opacity="0.75" font-size="8.3" font-weight="700">100 kPa, 25°C → ψ₀ = 0</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- پنل ۲: نمودار میله‌ای تراز دیوار یا آبشار بخار + T-s و عقربه η_II -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="ebb-chart-title">تراز نرخ اگزرژی در مرز انتخابی</span>
+        <span dir="ltr" id="ebb-chart-tag" style="color:#d97706">Ẋ_dest = 52.0 W</span>
+      </div>
+      <svg id="ebb-chart-svg" viewBox="0 0 330 230" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار میله‌ای تخریب اگزرژی دیواره و آبشار اگزرژی توربین بخار">
+        <!-- لایه A: نمودار میله‌ای دیواره آجری مثال ۸-۷ -->
+        <g id="ebb-chart-wall">
+          <text id="ebb-wb-eq" x="168" y="20" text-anchor="middle" fill="currentColor" font-size="9.8" font-weight="800">Ẋ_in (70.6) − Ẋ_out (18.6) = Ẋ_dest,CV (52.0 W)</text>
+          <g stroke="currentColor" stroke-opacity="0.1" stroke-width="1">
+            <line x1="40" y1="44" x2="306" y2="44" />
+            <line x1="40" y1="90" x2="306" y2="90" />
+            <line x1="40" y1="136" x2="306" y2="136" />
+          </g>
+          <line x1="40" y1="34" x2="40" y2="182" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+          <line x1="40" y1="182" x2="308" y2="182" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+          <text x="34" y="185" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">0</text>
+          <text id="ebb-wb-ymax" x="34" y="48" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9">100</text>
+
+          <!-- ۴ ستون: X_in, X_out, X_dest (wall), X_dest (layers) -->
+          <rect id="ebb-wb-1" x="56" y="70" width="44" height="112" rx="4" fill="#0284c7" fill-opacity="0.88" />
+          <rect id="ebb-wb-2" x="118" y="152" width="44" height="30" rx="4" fill="#059669" fill-opacity="0.88" />
+          <rect id="ebb-wb-3" x="180" y="98" width="44" height="84" rx="4" fill="#d97706" fill-opacity="0.9" />
+          <rect id="ebb-wb-4" x="242" y="116" width="44" height="66" rx="4" fill="#ef4444" fill-opacity="0.22" stroke="#ef4444" stroke-dasharray="4 3" stroke-width="1.6" />
+
+          <text id="ebb-wb-v1" x="78" y="63" text-anchor="middle" fill="#0284c7" font-size="9.8" font-weight="800">70.6 W</text>
+          <text id="ebb-wb-v2" x="140" y="145" text-anchor="middle" fill="#059669" font-size="9.8" font-weight="800">18.6 W</text>
+          <text id="ebb-wb-v3" x="202" y="91" text-anchor="middle" fill="#d97706" font-size="9.8" font-weight="800">52.0 W</text>
+          <text id="ebb-wb-v4" x="264" y="109" text-anchor="middle" fill="#ef4444" font-size="9.8" font-weight="800">41.1 W</text>
+
+          <text x="78" y="198" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="700">Ẋ_in</text>
+          <text x="140" y="198" text-anchor="middle" fill="currentColor" font-size="9.5" font-weight="700">Ẋ_out</text>
+          <text x="202" y="198" text-anchor="middle" fill="currentColor" font-size="9.2" font-weight="700">Ẋ_dest</text>
+          <text x="202" y="211" text-anchor="middle" fill="currentColor" fill-opacity="0.7" font-size="8.2">(wall)</text>
+          <text x="264" y="198" text-anchor="middle" fill="currentColor" font-size="9.2" font-weight="700">Ẋ_dest</text>
+          <text id="ebb-wb-l4sub" x="264" y="211" text-anchor="middle" fill="#ef4444" font-size="8.2" font-weight="700">(outside CV)</text>
+        </g>
+
+        <!-- لایه B: آبشار اگزرژی جریان بخار + گیج η_II + مینی نمودار T-s واقعی -->
+        <g id="ebb-chart-steam" style="display:none">
+          <!-- محورهای آبشار سمت چپ -->
+          <line x1="36" y1="28" x2="36" y2="188" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+          <line x1="36" y1="188" x2="206" y2="188" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.8" />
+          <text x="30" y="191" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="8.5">0</text>
+          <text id="ebb-st-ymax" x="30" y="42" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="8.5">9894</text>
+
+          <!-- ستون ۱: اگزرژی ورودی جریان m_dot * psi_1 -->
+          <rect id="ebb-st-b1" x="48" y="38" width="46" height="150" rx="4" fill="#0284c7" fill-opacity="0.2" stroke="#0284c7" stroke-width="1.5" />
+          <text id="ebb-st-b1v" x="71" y="116" text-anchor="middle" fill="currentColor" font-size="9" font-weight="800">9894</text>
+          <text x="71" y="29" text-anchor="middle" fill="#0284c7" font-size="9.2" font-weight="800">ṁψ₁</text>
+          <text x="71" y="202" text-anchor="middle" fill="currentColor" font-size="8.8" font-weight="700">Inlet</text>
+
+          <!-- ستون ۲: تفکیک خروجی (m_dot*psi_2 + X_dest + W_out) -->
+          <rect id="ebb-st-psi2" x="114" y="115" width="46" height="73" rx="3" fill="#0284c7" fill-opacity="0.86" />
+          <rect id="ebb-st-xd" x="114" y="108" width="46" height="7" rx="2" fill="#ef4444" fill-opacity="0.9" />
+          <rect id="ebb-st-wu" x="114" y="38" width="46" height="70" rx="3" fill="#059669" fill-opacity="0.9" />
+
+          <text id="ebb-st-tpsi2" x="137" y="155" text-anchor="middle" fill="#ffffff" font-size="8.6" font-weight="800">ṁψ₂</text>
+          <text id="ebb-st-twu" x="137" y="76" text-anchor="middle" fill="#ffffff" font-size="8.6" font-weight="800">Ẇ_out</text>
+          <text x="137" y="202" text-anchor="middle" fill="currentColor" font-size="8.8" font-weight="700">Balance</text>
+
+          <!-- براکت W_rev = W_out + X_dest -->
+          <path id="ebb-st-br" d="M 164 38 L 171 38 L 171 115 L 164 115" fill="none" stroke="#d97706" stroke-width="1.8" />
+          <text id="ebb-st-brlbl" x="175" y="79" fill="#d97706" font-size="8.6" font-weight="800">Ẇ_rev</text>
+
+          <!-- راهنمای پایین -->
+          <g transform="translate(36, 220)" font-size="8.2" font-weight="700">
+            <rect x="0" y="-7" width="7" height="7" rx="1" fill="#059669" />
+            <text x="10" y="0" fill="currentColor">Ẇ_out</text>
+            <rect x="52" y="-7" width="7" height="7" rx="1" fill="#ef4444" />
+            <text x="62" y="0" fill="currentColor">Ẋ_dest</text>
+            <rect x="108" y="-7" width="7" height="7" rx="1" fill="#0284c7" />
+            <text x="118" y="0" fill="currentColor">ṁψ₂</text>
+          </g>
+
+          <!-- گیج بازده قانون دوم η_II در بالا-راست -->
+          <g transform="translate(274, 56)">
+            <circle cx="0" cy="0" r="34" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.16" stroke-width="1.4" />
+            <path d="M -18.4 18.4 A 26 26 0 1 1 18.4 18.4" fill="none" stroke="currentColor" stroke-opacity="0.18" stroke-width="4.8" stroke-linecap="round" />
+            <path id="ebb-g-arc" d="M -18.4 18.4 A 26 26 0 1 1 18.4 18.4" fill="none" stroke="#059669" stroke-width="4.8" stroke-linecap="round" stroke-dasharray="110 130" />
+            <circle cx="0" cy="0" r="3" fill="currentColor" />
+            <line id="ebb-g-needle" x1="0" y1="0" x2="10" y2="-16" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" />
+            <text id="ebb-g-val" x="0" y="28" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">90.9%</text>
+            <text x="0" y="46" text-anchor="middle" fill="currentColor" font-size="8.6" font-weight="700">η_II = Ẇ_out / Ẇ_rev</text>
+          </g>
+
+          <!-- مینی نمودار T-s واقعی آب با گنبد اشباع IAPWS-IF97 -->
+          <g id="ebb-ts-mini">
+            <rect x="220" y="116" width="102" height="86" rx="6" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.18" />
+            <path id="ebb-ts-dome" d="" fill="#0284c7" fill-opacity="0.1" stroke="#0284c7" stroke-opacity="0.55" stroke-width="1.4" />
+            <line id="ebb-ts-isen" x1="292" y1="140" x2="292" y2="180" stroke="#059669" stroke-dasharray="3 2" stroke-width="1.5" />
+            <line id="ebb-ts-act" x1="292" y1="140" x2="298" y2="176" stroke="#ef4444" stroke-width="2" />
+            <circle id="ebb-ts-p0" cx="228" cy="192" r="2.6" fill="#0284c7" />
+            <circle id="ebb-ts-p1" cx="292" cy="140" r="3.2" fill="#ef4444" />
+            <circle id="ebb-ts-p2s" cx="292" cy="180" r="2.6" fill="#059669" />
+            <circle id="ebb-ts-p2" cx="298" cy="176" r="3.2" fill="#0284c7" />
+            <text id="ebb-ts-l1" x="285" y="136" text-anchor="end" fill="#ef4444" font-size="8" font-weight="800">1</text>
+            <text id="ebb-ts-l2" x="303" y="180" text-anchor="start" fill="#0284c7" font-size="8" font-weight="800">2</text>
+            <text x="271" y="216" text-anchor="middle" fill="currentColor" fill-opacity="0.72" font-size="8.4" font-weight="700">T-s Dome (s_gen)</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="ebb-m1-lbl">اگزرژی ورودی به مرز <span dir="ltr">(Ẋ_in)</span></span>
+      <span class="jh-metric__val" id="ebb-m1-val">70.6 W</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="ebb-m2-lbl">اگزرژی خروجی از مرز <span dir="ltr">(Ẋ_out)</span></span>
+      <span class="jh-metric__val" id="ebb-m2-val">18.6 W</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="ebb-m3-lbl">تولید آنتروپی در مرز <span dir="ltr">(Ṡ_gen)</span></span>
+      <span class="jh-metric__val" id="ebb-m3-val">0.1906 W/K</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="ebb-m4-lbl">انهدام اگزرژی در مرز <span dir="ltr">(Ẋ_dest)</span></span>
+      <span class="jh-metric__val" id="ebb-m4-val">52.0 W</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="ebb-explain">
+    بارگذاری شبیه‌سازی زنده...
+  </div>
+</div>
+
+<script>
+import { createAnimController, createViewport, setDialNeedle } from '../../lib/liveSimKit';
+import { getWaterDome, waterPH, waterPS, waterPT } from '../../lib/thermoProps';
+
+(() => {
+  const root = document.getElementById('exergy-boundary-lab');
+  if (!root) return;
+
+  type Mode = 'wall-ex87' | 'steam-flow';
+  type BoundMode = 'wall' | 'extended';
+
+  let mode: Mode = 'wall-ex87';
+  let bound: BoundMode = 'wall';
+  let boundAnim = 0; // 0 = tight wall, 1 = extended
+  let qDot = 1035;
+  let t0C = 0;
+
+  let p1 = 3000;
+  let t1 = 450;
+  let p2 = 200;
+  let etaT = 88;
+  let mDot = 8;
+
+  let isFlowPlaying = false;
+  let flowPhase = 0;
+  let rotorAngle = 0;
+
+  const wallCtrls = root.querySelector<HTMLElement>('#ebb-wall-ctrls')!;
+  const steamCtrls = root.querySelector<HTMLElement>('#ebb-steam-ctrls')!;
+  const qdotEl = root.querySelector<HTMLInputElement>('#ebb-qdot')!;
+  const t0cEl = root.querySelector<HTMLInputElement>('#ebb-t0c')!;
+  const p1El = root.querySelector<HTMLInputElement>('#ebb-p1')!;
+  const t1El = root.querySelector<HTMLInputElement>('#ebb-t1')!;
+  const p2El = root.querySelector<HTMLInputElement>('#ebb-p2')!;
+  const etatEl = root.querySelector<HTMLInputElement>('#ebb-etat')!;
+
+  const qdotLbl = root.querySelector('#ebb-qdot-lbl')!;
+  const t0cLbl = root.querySelector('#ebb-t0c-lbl')!;
+  const p1Lbl = root.querySelector('#ebb-p1-lbl')!;
+  const t1Lbl = root.querySelector('#ebb-t1-lbl')!;
+  const p2Lbl = root.querySelector('#ebb-p2-lbl')!;
+  const etatLbl = root.querySelector('#ebb-etat-lbl')!;
+
+  const playBtn = root.querySelector<HTMLButtonElement>('#ebb-play')!;
+  const resetBtn = root.querySelector<HTMLButtonElement>('#ebb-reset')!;
+  const flowNote = root.querySelector('#ebb-flow-note')!;
+
+  const sysTitle = root.querySelector('#ebb-sys-title')!;
+  const sysTag = root.querySelector<HTMLElement>('#ebb-sys-tag')!;
+  const chartTitle = root.querySelector('#ebb-chart-title')!;
+  const chartTag = root.querySelector<HTMLElement>('#ebb-chart-tag')!;
+
+  const sceneWall = root.querySelector<SVGGElement>('#ebb-scene-wall')!;
+  const sceneSteam = root.querySelector<SVGGElement>('#ebb-scene-steam')!;
+  const chartWall = root.querySelector<SVGGElement>('#ebb-chart-wall')!;
+  const chartSteam = root.querySelector<SVGGElement>('#ebb-chart-steam')!;
+
+  // Wall SVG elements
+  const wT0Top = root.querySelector('#ebb-w-t0top')!;
+  const wTline = root.querySelector('#ebb-w-tline')!;
+  const wN1 = root.querySelector('#ebb-w-n1')!;
+  const wN2 = root.querySelector('#ebb-w-n2')!;
+  const wN3 = root.querySelector('#ebb-w-n3')!;
+  const wN4 = root.querySelector('#ebb-w-n4')!;
+  const wQpkt = root.querySelector('#ebb-w-qpkt')!;
+  const wQlbl = root.querySelector('#ebb-w-qlbl')!;
+  const cvBox = root.querySelector('#ebb-cv-box')!;
+  const cvTag = root.querySelector('#ebb-cv-tag')!;
+  const cvDotIn = root.querySelector('#ebb-cv-dot-in')!;
+  const cvDotOut = root.querySelector('#ebb-cv-dot-out')!;
+  const wXin = root.querySelector('#ebb-w-xin')!;
+  const wXdest = root.querySelector('#ebb-w-xdest')!;
+  const wXout = root.querySelector('#ebb-w-xout')!;
+
+  const wbEq = root.querySelector('#ebb-wb-eq')!;
+  const wbYmax = root.querySelector('#ebb-wb-ymax')!;
+  const wb1 = root.querySelector<SVGRectElement>('#ebb-wb-1')!;
+  const wb2 = root.querySelector<SVGRectElement>('#ebb-wb-2')!;
+  const wb3 = root.querySelector<SVGRectElement>('#ebb-wb-3')!;
+  const wb4 = root.querySelector<SVGRectElement>('#ebb-wb-4')!;
+  const wbV1 = root.querySelector('#ebb-wb-v1')!;
+  const wbV2 = root.querySelector('#ebb-wb-v2')!;
+  const wbV3 = root.querySelector('#ebb-wb-v3')!;
+  const wbV4 = root.querySelector('#ebb-wb-v4')!;
+  const wbL4Sub = root.querySelector('#ebb-wb-l4sub')!;
+
+  // Steam SVG elements
+  const tPkt1 = root.querySelector('#ebb-t-pkt1')!;
+  const tPkt2 = root.querySelector('#ebb-t-pkt2')!;
+  const tRotor = root.querySelector('#ebb-t-rotor')!;
+  const tWout = root.querySelector('#ebb-t-wout')!;
+  const tXdlbl = root.querySelector('#ebb-t-xdlbl')!;
+  const tS1a = root.querySelector('#ebb-t-s1a')!;
+  const tS1b = root.querySelector('#ebb-t-s1b')!;
+  const tS2a = root.querySelector('#ebb-t-s2a')!;
+  const tS2b = root.querySelector('#ebb-t-s2b')!;
+  const tS2c = root.querySelector('#ebb-t-s2c')!;
+
+  const stYmax = root.querySelector('#ebb-st-ymax')!;
+  const stB1 = root.querySelector<SVGRectElement>('#ebb-st-b1')!;
+  const stB1v = root.querySelector('#ebb-st-b1v')!;
+  const stPsi2 = root.querySelector<SVGRectElement>('#ebb-st-psi2')!;
+  const stXd = root.querySelector<SVGRectElement>('#ebb-st-xd')!;
+  const stWu = root.querySelector<SVGRectElement>('#ebb-st-wu')!;
+  const stTpsi2 = root.querySelector<SVGTextElement>('#ebb-st-tpsi2')!;
+  const stTwu = root.querySelector<SVGTextElement>('#ebb-st-twu')!;
+  const stBr = root.querySelector<SVGPathElement>('#ebb-st-br')!;
+  const stBrlbl = root.querySelector<SVGTextElement>('#ebb-st-brlbl')!;
+  const gArc = root.querySelector('#ebb-g-arc')!;
+  const gNeedle = root.querySelector('#ebb-g-needle')!;
+  const gVal = root.querySelector('#ebb-g-val')!;
+
+  const tsDomeEl = root.querySelector('#ebb-ts-dome')!;
+  const tsIsen = root.querySelector('#ebb-ts-isen')!;
+  const tsAct = root.querySelector('#ebb-ts-act')!;
+  const tsP0 = root.querySelector('#ebb-ts-p0')!;
+  const tsP1 = root.querySelector('#ebb-ts-p1')!;
+  const tsP2s = root.querySelector('#ebb-ts-p2s')!;
+  const tsP2 = root.querySelector('#ebb-ts-p2')!;
+  const tsL1 = root.querySelector('#ebb-ts-l1')!;
+  const tsL2 = root.querySelector('#ebb-ts-l2')!;
+
+  const m1Lbl = root.querySelector('#ebb-m1-lbl')!;
+  const m2Lbl = root.querySelector('#ebb-m2-lbl')!;
+  const m3Lbl = root.querySelector('#ebb-m3-lbl')!;
+  const m4Lbl = root.querySelector('#ebb-m4-lbl')!;
+  const m1Val = root.querySelector('#ebb-m1-val')!;
+  const m2Val = root.querySelector('#ebb-m2-val')!;
+  const m3Val = root.querySelector('#ebb-m3-val')!;
+  const m4Val = root.querySelector('#ebb-m4-val')!;
+  const explainEl = root.querySelector('#ebb-explain')!;
+
+  // Prebuild real IAPWS-IF97 saturation dome on T-s mini chart
+  const tsVp = createViewport(0, 9.6, 0, 650, 224, 317, 196, 124);
+  const domePts = getWaterDome();
+  const domeLeft = domePts.map((d) => [d.sf, d.tC] as const);
+  const domeRight = [...domePts].reverse().map((d) => [d.sg, d.tC] as const);
+  tsDomeEl.setAttribute('d', tsVp.path([...domeLeft, ...domeRight], true));
+
+  // Precompute dead state once via IAPWS-IF97 (P0 = 100 kPa, T0 = 25 °C)
+  const deadState = waterPT(100, 25);
+
+  function setBar(el: SVGRectElement, yBase: number, h: number) {
+    const ch = Math.max(0, h);
+    el.setAttribute('y', (yBase - ch).toFixed(1));
+    el.setAttribute('height', ch.toFixed(1));
+    el.style.display = ch > 0.5 ? '' : 'none';
+  }
+
+  function renderWall() {
+    sceneWall.style.display = '';
+    sceneSteam.style.display = 'none';
+    chartWall.style.display = '';
+    chartSteam.style.display = 'none';
+
+    const T0K = t0C + 273; // Ex 8-7 convention: 0 °C = 273 K, 27 °C = 300 K
+    const TroomK = 300;
+    const TinK = 293;
+    const ToutK = 278;
+
+    qdotLbl.textContent = `${qDot} W`;
+    t0cLbl.textContent = `${t0C} °C (${T0K} K)`;
+    flowNote.innerHTML = `حالت مرده دیوار: <span dir="ltr">T₀ = ${t0C} °C (${T0K} K)</span>`;
+
+    sysTitle.textContent = 'برش دیواره آجری و مرز متحرک سیستم';
+    sysTag.textContent = bound === 'wall' ? 'CV: Wall Only' : 'CV: Extended to T₀';
+    sysTag.style.color = bound === 'wall' ? '#0284c7' : '#d97706';
+    chartTitle.textContent = 'مقایسهٔ اگزرژی عبوری و انهدام در مرز';
+
+    // Exact rates
+    const xInWall = qDot * (1 - T0K / TinK);
+    const xOutWall = qDot * (1 - T0K / ToutK);
+    const sGenWall = qDot * (1 / ToutK - 1 / TinK);
+    const xDestWall = T0K * sGenWall;
+
+    const xInExt = qDot * (1 - T0K / TroomK);
+    const xOutExt = 0;
+    const sGenExt = qDot * (1 / T0K - 1 / TroomK);
+    const xDestExt = T0K * sGenExt;
+    const xDestLayers = Math.max(0, xDestExt - xDestWall);
+
+    const activeXin = bound === 'wall' ? xInWall : xInExt;
+    const activeXout = bound === 'wall' ? xOutWall : xOutExt;
+    const activeSgen = bound === 'wall' ? sGenWall : sGenExt;
+    const activeXdest = bound === 'wall' ? xDestWall : xDestExt;
+
+    // Temperature curve mapping [-20..32 °C] -> [148..74]
+    const yOfT = (tc: number) => 74 + ((32 - tc) / 52) * 74;
+    const y27 = yOfT(27);
+    const y20 = yOfT(20);
+    const y5 = yOfT(5);
+    const y0 = yOfT(t0C);
+
+    wT0Top.textContent = `Out ${t0C}°C`;
+    wTline.setAttribute('points', `22,${y27.toFixed(1)} 56,${y27.toFixed(1)} 106,${y20.toFixed(1)} 214,${y5.toFixed(1)} 264,${y0.toFixed(1)} 298,${y0.toFixed(1)}`);
+    wN1.setAttribute('cy', y27.toFixed(1));
+    wN2.setAttribute('cy', y20.toFixed(1));
+    wN3.setAttribute('cy', y5.toFixed(1));
+    wN4.setAttribute('cy', y0.toFixed(1));
+
+    wQlbl.textContent = `Q̇ = ${qDot} W`;
+    wQpkt.setAttribute('cx', (76 + flowPhase * 168).toFixed(1));
+
+    // Smooth boundary box shift
+    const cvX = 104 - 56 * boundAnim;
+    const cvW = 112 + 112 * boundAnim;
+    cvBox.setAttribute('x', cvX.toFixed(1));
+    cvBox.setAttribute('width', cvW.toFixed(1));
+    cvBox.setAttribute('stroke', bound === 'wall' ? '#0284c7' : '#d97706');
+    cvBox.setAttribute('stroke-dashoffset', (-flowPhase * 22).toFixed(1));
+    cvDotIn.setAttribute('cx', cvX.toFixed(1));
+    cvDotOut.setAttribute('cx', (cvX + cvW).toFixed(1));
+
+    cvTag.textContent =
+      bound === 'wall'
+        ? 'CV Boundary: 293 K → 278 K (Wall Only)'
+        : `CV Boundary: 300 K → ${T0K} K (Extended)`;
+    cvTag.setAttribute('fill', bound === 'wall' ? '#0284c7' : '#d97706');
+
+    wXin.textContent = `Ẋ_in: ${activeXin.toFixed(1)} W`;
+    wXdest.textContent = `Ẋ_dest: ${activeXdest.toFixed(1)} W`;
+    wXout.textContent = `Ẋ_out: ${activeXout.toFixed(1)} W`;
+
+    // Bar chart update
+    const scaleMax = Math.max(80, Math.ceil((Math.max(xInExt, xDestExt) * 1.15) / 20) * 20);
+    wbYmax.textContent = scaleMax.toFixed(0);
+    const baseY = 182;
+    const maxH = 136;
+
+    const h1 = (activeXin / scaleMax) * maxH;
+    const h2 = (activeXout / scaleMax) * maxH;
+    const h3 = (xDestWall / scaleMax) * maxH;
+    const h4 = (xDestLayers / scaleMax) * maxH;
+
+    setBar(wb1, baseY, h1);
+    setBar(wb2, baseY, Math.max(activeXout > 0.2 ? 3 : 0, h2));
+    setBar(wb3, baseY, h3);
+    setBar(wb4, baseY, h4);
+
+    wbV1.setAttribute('y', (baseY - h1 - 6).toFixed(1));
+    wbV1.textContent = `${activeXin.toFixed(1)} W`;
+    wbV2.setAttribute('y', (baseY - Math.max(4, h2) - 6).toFixed(1));
+    wbV2.textContent = `${activeXout.toFixed(1)} W`;
+    wbV3.setAttribute('y', (baseY - h3 - 6).toFixed(1));
+    wbV3.textContent = `${xDestWall.toFixed(1)} W`;
+    wbV4.setAttribute('y', (baseY - h4 - 6).toFixed(1));
+    wbV4.textContent = `${xDestLayers.toFixed(1)} W`;
+
+    if (bound === 'wall') {
+      wb4.setAttribute('fill-opacity', '0.20');
+      wb4.setAttribute('stroke', '#ef4444');
+      wb4.setAttribute('stroke-dasharray', '4 3');
+      wbL4Sub.textContent = '(outside CV)';
+    } else {
+      wb4.setAttribute('fill-opacity', '0.88');
+      wb4.setAttribute('stroke', 'none');
+      wbL4Sub.textContent = '(inside CV!)';
+    }
+
+    wbEq.textContent = `Ẋ_in (${activeXin.toFixed(1)}) − Ẋ_out (${activeXout.toFixed(1)}) = Ẋ_dest,CV (${activeXdest.toFixed(1)} W)`;
+    chartTag.textContent = `Ẋ_dest,CV = ${activeXdest.toFixed(1)} W`;
+    chartTag.style.color = bound === 'wall' ? '#d97706' : '#ef4444';
+
+    // Metrics
+    m1Lbl.innerHTML = 'اگزرژی ورودی به مرز <span dir="ltr">(Ẋ_in)</span>';
+    m2Lbl.innerHTML = 'اگزرژی خروجی از مرز <span dir="ltr">(Ẋ_out)</span>';
+    m3Lbl.innerHTML = 'تولید آنتروپی در مرز <span dir="ltr">(Ṡ_gen)</span>';
+    m4Lbl.innerHTML = 'انهدام اگزرژی در مرز <span dir="ltr">(Ẋ_dest = T₀ Ṡ_gen)</span>';
+
+    m1Val.textContent = `${activeXin.toFixed(1)} W`;
+    m2Val.textContent = `${activeXout.toFixed(1)} W`;
+    m3Val.textContent = `${activeSgen.toFixed(4)} W/K`;
+    m4Val.textContent = `${activeXdest.toFixed(1)} W`;
+
+    if (bound === 'wall') {
+      explainEl.innerHTML = `<strong>حالت الف (فقط خود دیوار):</strong> مرز سیستم دقیقاً روی دو سطح دیوار <span dir="ltr">(20 °C → 5 °C)</span> بسته شده است. تولید آنتروپی فقط ناشی از رسانش داخل آجر است <span dir="ltr">(Ṡ_gen = ${sGenWall.toFixed(4)} W/K)</span> و تخریب اگزرژی برابر <strong><span dir="ltr">Ẋ_dest = ${xDestWall.toFixed(1)} W</span></strong> می‌شود. اما <strong><span dir="ltr">${xDestLayers.toFixed(1)} W</span></strong> دیگر در لایه‌های مرزی هوا بیرون از این مرز در حال تخریب شدن است!`;
+    } else {
+      explainEl.innerHTML = `<strong>حالت ب (مرز گسترش‌یافته تا <span dir="ltr">T₀</span>):</strong> مرز را به هوای اتاق <span dir="ltr">(27 °C = 300 K)</span> و هوای بیرون <span dir="ltr">(${t0C} °C = ${T0K} K)</span> گسترش دادیم؛ پس <span dir="ltr">Ẋ_out = 0</span> و کل تخریب اگزرژی برابر <strong><span dir="ltr">Ẋ_dest,total = ${xDestExt.toFixed(1)} W</span></strong> <span dir="ltr">(Ṡ_gen = ${sGenExt.toFixed(4)} W/K)</span> است که شامل <strong><span dir="ltr">${xDestWall.toFixed(1)} W</span></strong> درون دیوار + <strong><span dir="ltr">${xDestLayers.toFixed(1)} W</span></strong> در لایه‌های مرزی دو طرف است.`;
+    }
+  }
+
+  function renderSteam() {
+    sceneWall.style.display = 'none';
+    sceneSteam.style.display = '';
+    chartWall.style.display = 'none';
+    chartSteam.style.display = '';
+
+    p1Lbl.textContent = `${p1} kPa`;
+    t1Lbl.textContent = `${t1} °C`;
+    p2Lbl.textContent = `${p2} kPa`;
+    etatLbl.textContent = `${etaT}%`;
+    flowNote.innerHTML = `دبی بخار: <span dir="ltr">ṁ = ${mDot} kg/s · P₀ = 100 kPa, T₀ = 25 °C</span>`;
+
+    sysTitle.innerHTML = 'توربین بخار آدیاباتیک <span dir="ltr">(IAPWS-IF97)</span>';
+    sysTag.textContent = `ṁ = ${mDot} kg/s`;
+    sysTag.style.color = '#0284c7';
+    chartTitle.innerHTML = 'آبشار اگزرژی جریان <span dir="ltr">(ψ)</span> و نمودار <span dir="ltr">T-s</span>';
+
+    const st1 = waterPT(p1, t1);
+    const st2s = waterPS(p2, st1.s);
+    const h2 = st1.h - (etaT / 100) * (st1.h - st2s.h);
+    const st2 = waterPH(p2, h2);
+
+    const T0K = deadState.tK;
+    const psi1 = st1.h - deadState.h - T0K * (st1.s - deadState.s);
+    const psi2 = st2.h - deadState.h - T0K * (st2.s - deadState.s);
+
+    const mPsi1 = mDot * psi1;
+    const mPsi2 = mDot * psi2;
+    const wOut = mDot * (st1.h - st2.h);
+    const wRev = mPsi1 - mPsi2;
+    const sGen = mDot * (st2.s - st1.s);
+    const xDest = T0K * sGen;
+    const eta2 = wRev > 0.01 ? (wOut / wRev) * 100 : 100;
+
+    // Schematic update
+    tS1a.textContent = `1: ${(p1 / 1000).toFixed(1)} MPa, ${st1.tC.toFixed(0)}°C`;
+    tS1b.textContent = `ψ₁ = ${psi1.toFixed(1)} kJ/kg`;
+    tS2a.textContent = `2: ${p2} kPa, ${st2.tC.toFixed(1)}°C`;
+    tS2b.textContent = `ψ₂ = ${psi2.toFixed(1)} kJ/kg`;
+    tS2c.textContent = st2.x !== null ? `Wet x₂ = ${(st2.x * 100).toFixed(1)}%` : 'Superheated';
+    tWout.textContent = `Ẇ_out = ${wOut.toFixed(0)} kW`;
+    tXdlbl.textContent = `Ẋ_dest = ${xDest.toFixed(0)} kW`;
+
+    tRotor.setAttribute('transform', `translate(152, 98) rotate(${rotorAngle.toFixed(1)})`);
+    tPkt1.setAttribute('cx', (28 + flowPhase * 54).toFixed(1));
+    tPkt2.setAttribute('cy', (154 + flowPhase * 40).toFixed(1));
+
+    // Waterfall chart (mPsi1 vs mPsi2 + xDest + wOut)
+    const maxVal = Math.max(100, mPsi1, mPsi2 + xDest + wOut);
+    stYmax.textContent = maxVal.toFixed(0);
+    const baseY = 188;
+    const maxH = 150;
+
+    const h1 = (mPsi1 / maxVal) * maxH;
+    const hPsi2 = Math.max(0, (mPsi2 / maxVal) * maxH);
+    const hXd = Math.max(0, (xDest / maxVal) * maxH);
+    const hWu = Math.max(0, (wOut / maxVal) * maxH);
+
+    setBar(stB1, baseY, h1);
+    stB1v.setAttribute('y', (baseY - h1 / 2 + 3).toFixed(1));
+    stB1v.textContent = mPsi1.toFixed(0);
+
+    setBar(stPsi2, baseY, hPsi2);
+    setBar(stXd, baseY - hPsi2, hXd);
+    setBar(stWu, baseY - hPsi2 - hXd, hWu);
+
+    stTpsi2.style.display = hPsi2 >= 15 ? '' : 'none';
+    stTpsi2.setAttribute('y', (baseY - hPsi2 / 2 + 3).toFixed(1));
+    stTpsi2.textContent = `ψ₂ ${mPsi2.toFixed(0)}`;
+
+    stTwu.style.display = hWu >= 15 ? '' : 'none';
+    stTwu.setAttribute('y', (baseY - hPsi2 - hXd - hWu / 2 + 3).toFixed(1));
+    stTwu.textContent = `Ẇ ${wOut.toFixed(0)}`;
+
+    const yWrevTop = baseY - hPsi2 - hXd - hWu;
+    const yWrevBot = baseY - hPsi2;
+    if (yWrevBot - yWrevTop > 10) {
+      stBr.style.display = '';
+      stBrlbl.style.display = '';
+      stBr.setAttribute('d', `M 164 ${yWrevTop.toFixed(1)} L 171 ${yWrevTop.toFixed(1)} L 171 ${yWrevBot.toFixed(1)} L 164 ${yWrevBot.toFixed(1)}`);
+      stBrlbl.setAttribute('y', ((yWrevTop + yWrevBot) / 2 + 3).toFixed(1));
+      stBrlbl.textContent = `Ẇ_rev`;
+    } else {
+      stBr.style.display = 'none';
+      stBrlbl.style.display = 'none';
+    }
+
+    // Gauge η_II
+    const arcLen = 122.5; // 2 * pi * 26 * (270/360)
+    const ratio = Math.max(0, Math.min(1, eta2 / 100));
+    const gCol = eta2 >= 88 ? '#059669' : eta2 >= 72 ? '#d97706' : '#ef4444';
+    gArc.setAttribute('stroke', gCol);
+    gArc.setAttribute('stroke-dasharray', `${(ratio * arcLen).toFixed(1)} 130`);
+    setDialNeedle(gNeedle, eta2, 0, 100, 19);
+    gVal.textContent = `${eta2.toFixed(1)}%`;
+    gVal.setAttribute('fill', gCol);
+    chartTag.textContent = `η_II = ${eta2.toFixed(1)}%`;
+    chartTag.style.color = gCol;
+
+    // Mini T-s points
+    const x0 = tsVp.x(deadState.s);
+    const y0 = tsVp.y(deadState.tC);
+    const x1 = tsVp.x(st1.s);
+    const y1 = tsVp.y(st1.tC);
+    const x2s = tsVp.x(st2s.s);
+    const y2s = tsVp.y(st2s.tC);
+    const x2 = tsVp.x(st2.s);
+    const y2 = tsVp.y(st2.tC);
+
+    tsP0.setAttribute('cx', x0.toFixed(1));
+    tsP0.setAttribute('cy', y0.toFixed(1));
+    tsP1.setAttribute('cx', x1.toFixed(1));
+    tsP1.setAttribute('cy', y1.toFixed(1));
+    tsP2s.setAttribute('cx', x2s.toFixed(1));
+    tsP2s.setAttribute('cy', y2s.toFixed(1));
+    tsP2.setAttribute('cx', x2.toFixed(1));
+    tsP2.setAttribute('cy', y2.toFixed(1));
+    tsIsen.setAttribute('x1', x1.toFixed(1));
+    tsIsen.setAttribute('y1', y1.toFixed(1));
+    tsIsen.setAttribute('x2', x2s.toFixed(1));
+    tsIsen.setAttribute('y2', y2s.toFixed(1));
+    tsAct.setAttribute('x1', x1.toFixed(1));
+    tsAct.setAttribute('y1', y1.toFixed(1));
+    tsAct.setAttribute('x2', x2.toFixed(1));
+    tsAct.setAttribute('y2', y2.toFixed(1));
+
+    tsL1.setAttribute('x', (x1 - 5).toFixed(1));
+    tsL1.setAttribute('y', (y1 - 3).toFixed(1));
+    if (x2 > 300) {
+      tsL2.setAttribute('text-anchor', 'end');
+      tsL2.setAttribute('x', (x2 - 5).toFixed(1));
+    } else {
+      tsL2.setAttribute('text-anchor', 'start');
+      tsL2.setAttribute('x', (x2 + 5).toFixed(1));
+    }
+    tsL2.setAttribute('y', (y2 + 4).toFixed(1));
+
+    // Metrics
+    m1Lbl.innerHTML = 'اگزرژی جریان ورودی <span dir="ltr">(ṁψ₁ | ψ₁)</span>';
+    m2Lbl.innerHTML = 'اگزرژی خروجی بخار <span dir="ltr">(ṁψ₂ | ψ₂)</span>';
+    m3Lbl.innerHTML = 'توان واقعی و برگشت‌پذیر <span dir="ltr">(Ẇ_out | Ẇ_rev)</span>';
+    m4Lbl.innerHTML = 'تخریب و بازده قانون دوم <span dir="ltr">(Ẋ_dest | η_II)</span>';
+
+    m1Val.textContent = `${mPsi1.toFixed(0)} kW (${psi1.toFixed(1)} kJ/kg)`;
+    m2Val.textContent = `${mPsi2.toFixed(0)} kW (${psi2.toFixed(1)} kJ/kg)`;
+    m3Val.textContent = `${wOut.toFixed(0)} | ${wRev.toFixed(0)} kW`;
+    m4Val.textContent = `${xDest.toFixed(0)} kW | ${eta2.toFixed(1)}%`;
+
+    explainEl.innerHTML = `با خواص دقیق <span dir="ltr">IAPWS-IF97</span> نسبت به حالت مردهٔ <span dir="ltr">(100 kPa, 25 °C)</span>: اگزرژی ویژهٔ بخار ورودی <strong><span dir="ltr">ψ₁ = ${psi1.toFixed(1)} kJ/kg</span></strong> و خروجی <strong><span dir="ltr">ψ₂ = ${psi2.toFixed(1)} kJ/kg</span></strong> است. حداکثر توان قابل استحصال در این افت اگزرژی <strong><span dir="ltr">Ẇ_rev = ṁ(ψ₁ - ψ₂) = ${wRev.toFixed(0)} kW</span></strong> است که با بازده ایزنتروپیک <span dir="ltr">η_T = ${etaT}%</span>، توان واقعی <strong><span dir="ltr">Ẇ_out = ${wOut.toFixed(0)} kW</span></strong> تولید شده و <strong><span dir="ltr">Ẋ_dest = T₀ Ṡ_gen = ${xDest.toFixed(0)} kW</span></strong> <span dir="ltr">(η_II = ${eta2.toFixed(1)}%)</span> منهدم می‌گردد.`;
+  }
+
+  function render() {
+    if (mode === 'wall-ex87') renderWall();
+    else renderSteam();
+  }
+
+  const anim = createAnimController(root, (dt) => {
+    let needsMore = false;
+    const target = bound === 'wall' ? 0 : 1;
+    if (Math.abs(boundAnim - target) > 0.005) {
+      const dir = target > boundAnim ? 1 : -1;
+      boundAnim += dir * dt * 2.5;
+      if ((dir > 0 && boundAnim >= target) || (dir < 0 && boundAnim <= target)) {
+        boundAnim = target;
+      } else {
+        needsMore = true;
+      }
+    } else {
+      boundAnim = target;
+    }
+
+    if (isFlowPlaying) {
+      flowPhase = (flowPhase + dt * 0.65) % 1;
+      rotorAngle = (rotorAngle + dt * 150) % 360;
+      needsMore = true;
+    }
+
+    render();
+    if (!needsMore) {
+      return false;
+    }
+    return true;
+  });
+
+  // Mode buttons
+  root.querySelectorAll<HTMLButtonElement>('#ebb-modes button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      mode = (btn.getAttribute('data-mode') || 'wall-ex87') as Mode;
+      root.querySelectorAll('#ebb-modes button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      wallCtrls.style.display = mode === 'wall-ex87' ? '' : 'none';
+      steamCtrls.style.display = mode === 'steam-flow' ? '' : 'none';
+      render();
+    });
+  });
+
+  // Wall boundary toggle
+  root.querySelectorAll<HTMLButtonElement>('#ebb-boundary-btns button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      bound = (btn.getAttribute('data-bound') || 'wall') as BoundMode;
+      root.querySelectorAll('#ebb-boundary-btns button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      anim.start();
+      render();
+    });
+  });
+
+  // Steam presets
+  root.querySelectorAll<HTMLButtonElement>('#ebb-steam-presets button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const p = btn.getAttribute('data-preset') || 'ex811';
+      root.querySelectorAll('#ebb-steam-presets button').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      if (p === 'ex811') {
+        mDot = 8;
+        p1 = 3000;
+        t1 = 450;
+        p2 = 200;
+        etaT = 88;
+      } else if (p === 'vac') {
+        mDot = 8;
+        p1 = 3000;
+        t1 = 450;
+        p2 = 20;
+        etaT = 88;
+      } else {
+        mDot = 1;
+      }
+      p1El.value = String(p1);
+      t1El.value = String(t1);
+      p2El.value = String(p2);
+      etatEl.value = String(etaT);
+      render();
+    });
+  });
+
+  qdotEl.addEventListener('input', () => {
+    qDot = parseFloat(qdotEl.value);
+    render();
+  });
+  t0cEl.addEventListener('input', () => {
+    t0C = parseFloat(t0cEl.value);
+    render();
+  });
+  p1El.addEventListener('input', () => {
+    p1 = parseFloat(p1El.value);
+    render();
+  });
+  t1El.addEventListener('input', () => {
+    t1 = parseFloat(t1El.value);
+    render();
+  });
+  p2El.addEventListener('input', () => {
+    p2 = parseFloat(p2El.value);
+    render();
+  });
+  etatEl.addEventListener('input', () => {
+    etaT = parseFloat(etatEl.value);
+    render();
+  });
+
+  playBtn.addEventListener('click', () => {
+    isFlowPlaying = !isFlowPlaying;
+    if (isFlowPlaying) {
+      playBtn.textContent = '⏸ توقف جریان';
+      anim.start();
+    } else {
+      playBtn.textContent = '▶ پخش جریان زنده';
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    isFlowPlaying = false;
+    playBtn.textContent = '▶ پخش جریان زنده';
+    flowPhase = 0;
+    if (mode === 'wall-ex87') {
+      qDot = 1035;
+      t0C = 0;
+      bound = 'wall';
+      boundAnim = 0;
+      qdotEl.value = '1035';
+      t0cEl.value = '0';
+      root.querySelectorAll('#ebb-boundary-btns button').forEach((b) => {
+        b.classList.toggle('is-active', b.getAttribute('data-bound') === 'wall');
+      });
+    } else {
+      mDot = 8;
+      p1 = 3000;
+      t1 = 450;
+      p2 = 200;
+      etaT = 88;
+      p1El.value = '3000';
+      t1El.value = '450';
+      p2El.value = '200';
+      etatEl.value = '88';
+      root.querySelectorAll('#ebb-steam-presets button').forEach((b) => {
+        b.classList.toggle('is-active', b.getAttribute('data-preset') === 'ex811');
+      });
+    }
+    render();
+  });
+
+  render();
+})();
+</script>

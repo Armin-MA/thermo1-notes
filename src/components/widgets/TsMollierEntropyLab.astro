@@ -1,0 +1,809 @@
+---
+// آزمایشگر زنده نمودارهای واقعی T-s و مولیر h-s آب (iapws-if97) و اصل افزایش آنتروپی (فصل ۷ - بخش ۱)
+---
+
+<div class="jh-widget not-content" id="ts-mollier-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ نمودارهای واقعی <span dir="ltr">T-s</span> و مولیر (<span dir="ltr">h-s</span>) آب و اصل افزایش آنتروپی</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده · IAPWS-IF97</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    رسم گنبد اشباع واقعی آب، خطوط هم‌فشار و سطح <span dir="ltr">(q_rev = ∫ T ds)</span> و تحلیل مثال ۷-۲ <span dir="ltr">(S_gen = ΔS_sys + ΔS_surr ≥ 0)</span>
+  </div>
+
+  <div class="jh-widget__btns" id="tml-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="diagrams">۱) نمودار واقعی <span dir="ltr">T-s</span> و مولیر (<span dir="ltr">h-s</span>) آب</button>
+    <button type="button" class="jh-widget__btn" data-mode="entropy-gen">۲) مثال ۷-۲: اصل افزایش آنتروپی (<span dir="ltr">S_gen</span>)</button>
+  </div>
+
+  <!-- کنترل‌های حالت ۱: نمودارها -->
+  <div id="tml-diag-ctrls">
+    <div class="jh-widget__btns" style="margin-bottom:0.45rem" id="tml-plot-types">
+      <button type="button" class="jh-widget__btn is-active" data-plot="ts">نمودار <span dir="ltr">T-s</span> (دما–آنتروپی)</button>
+      <button type="button" class="jh-widget__btn" data-plot="hs">نمودار مولیر <span dir="ltr">(h-s)</span></button>
+    </div>
+    <div class="jh-widget__btns" style="margin-bottom:0.45rem" id="tml-pressures">
+      <button type="button" class="jh-widget__btn" data-p="100">هم‌فشار <span dir="ltr">100 kPa</span></button>
+      <button type="button" class="jh-widget__btn is-active" data-p="1000">هم‌فشار <span dir="ltr">1 MPa</span></button>
+      <button type="button" class="jh-widget__btn" data-p="5000">هم‌فشار <span dir="ltr">5 MPa</span></button>
+    </div>
+    <div class="jh-widget__btns" style="margin-bottom:0.55rem" id="tml-procs">
+      <button type="button" class="jh-widget__btn is-active" data-proc="isobar">گرمایش هم‌فشار (<span dir="ltr">P = const</span>: مایع ← دوفازی ← فوق‌گرم)</button>
+      <button type="button" class="jh-widget__btn" data-proc="isothermal">تبخیر هم‌دما درون گنبد <span dir="ltr">(T = T_sat)</span></button>
+      <button type="button" class="jh-widget__btn" data-proc="isentropic">انبساط ایزنتروپیک مثال ۷-۴ <span dir="ltr">(5 MPa, 450°C → 1.4 MPa)</span></button>
+    </div>
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="tml-d-play">▶ پخش تحول</button>
+      <button type="button" class="jh-widget__btn" id="tml-d-reset">↺ از ابتدا</button>
+      <label class="jh-widget__ctrl" style="flex:1;min-width:170px">
+        <span>پیشرفت تحول (<span dir="ltr">t</span>): <strong id="tml-d-t-lbl" dir="ltr">65%</strong></span>
+        <input id="tml-d-t" type="range" min="0" max="100" step="1" value="65" />
+      </label>
+    </div>
+  </div>
+
+  <!-- کنترل‌های حالت ۲: مثال ۷-۲ تولید آنتروپی -->
+  <div id="tml-sgen-ctrls" style="display:none">
+    <div class="jh-widget__btns" id="tml-sgen-presets">
+      <button type="button" class="jh-widget__btn is-active" data-tl="500">مثال ۷-۲ (الف): چاه <span dir="ltr">500 K (S_gen = 1.50)</span></button>
+      <button type="button" class="jh-widget__btn" data-tl="750">مثال ۷-۲ (ب): چاه <span dir="ltr">750 K (S_gen = 0.17)</span></button>
+    </div>
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>دمای چشمه گرم (<span dir="ltr">T_H</span>): <strong id="tml-sg-th-lbl" dir="ltr">800 K</strong></span>
+        <input id="tml-sg-th" type="range" min="600" max="1200" step="20" value="800" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>دمای چاه سرد (<span dir="ltr">T_L</span>): <strong id="tml-sg-tl-lbl" dir="ltr">500 K</strong></span>
+        <input id="tml-sg-tl" type="range" min="300" max="790" step="10" value="500" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>گرمای منتقل‌شده (<span dir="ltr">Q</span>): <strong id="tml-sg-q-lbl" dir="ltr">2000 kJ</strong></span>
+        <input id="tml-sg-q" type="range" min="500" max="4000" step="100" value="2000" />
+      </label>
+    </div>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱ -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="tml-p1-title">نمودار واقعی <span dir="ltr">T-s</span> آب (<span dir="ltr">IAPWS-IF97</span>)</span>
+        <span dir="ltr" id="tml-p1-tag">P = 1000 kPa</span>
+      </div>
+
+      <!-- SVG نمودار T-s / h-s -->
+      <svg id="tml-diag-svg" viewBox="0 0 360 245" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار واقعی T-s و h-s آب">
+        <g id="tml-grid" stroke="currentColor" stroke-opacity="0.11" stroke-width="1"></g>
+        <line x1="48" y1="16" x2="48" y2="210" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="48" y1="210" x2="344" y2="210" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text id="tml-yaxis-lbl" x="10" y="24" fill="currentColor" font-size="11" font-weight="800">T (K)</text>
+        <text x="340" y="232" text-anchor="end" fill="currentColor" font-size="11" font-weight="800">s (kJ/kg·K)</text>
+        <g id="tml-yticks" fill="currentColor" fill-opacity="0.65" font-size="9.5" text-anchor="end"></g>
+        <g id="tml-xticks" fill="currentColor" fill-opacity="0.65" font-size="9.5" text-anchor="middle"></g>
+
+        <!-- گنبد اشباع واقعی آب -->
+        <path id="tml-dome-fill" d="" fill="#38bdf8" fill-opacity="0.09" />
+        <path id="tml-dome-line" d="" fill="none" stroke="currentColor" stroke-opacity="0.68" stroke-width="2.2" />
+        <circle id="tml-crit-dot" cx="180" cy="70" r="3.8" fill="#ef4444" />
+        <text id="tml-crit-lbl" x="180" y="61" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="800">CP</text>
+
+        <!-- خطوط فشار ثابت شبح -->
+        <g id="tml-ghost-isobars" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="1.3" stroke-dasharray="3 3"></g>
+
+        <!-- ناحیه هاشورخورده q_rev = ∫ T ds -->
+        <path id="tml-area-fill" d="" fill="#d97706" fill-opacity="0.24" />
+        <text id="tml-area-lbl" x="180" y="196" text-anchor="middle" fill="#d97706" font-size="10" font-weight="800"></text>
+
+        <!-- خط هم‌فشار فعال و مسیر تحول -->
+        <path id="tml-active-isobar" d="" fill="none" stroke="#0284c7" stroke-opacity="0.45" stroke-width="2" />
+        <path id="tml-proc-path" d="" fill="none" stroke="#d97706" stroke-width="3.2" stroke-linecap="round" />
+
+        <!-- خط هم‌حجم مقایسه شیب در T-s -->
+        <path id="tml-isochor-stub" d="" fill="none" stroke="#059669" stroke-width="1.8" stroke-dasharray="4 3" style="display:none" />
+
+        <!-- نقطه شروع و نقطه زنده -->
+        <circle id="tml-pt-start" cx="100" cy="150" r="4" fill="#059669" />
+        <circle id="tml-pt-cur" cx="180" cy="120" r="6.5" fill="#d97706" stroke="#ffffff" stroke-width="2" />
+      </svg>
+
+      <!-- SVG حالت ۲: جریان حرارت بین دو مخزن -->
+      <svg id="tml-sg-flow-svg" viewBox="0 0 300 245" style="width:100%;height:auto;display:none;direction:ltr" aria-label="انتقال حرارت برگشت‌ناپذیر بین دو مخزن دما">
+        <defs>
+          <marker id="tml-arr-q" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M 1 1.5 L 8.5 5 L 1 8.5 z" fill="#ef4444" />
+          </marker>
+        </defs>
+        <rect x="44" y="16" width="212" height="52" rx="10" fill="#ef4444" fill-opacity="0.16" stroke="#ef4444" stroke-width="2.2" />
+        <text id="tml-sg-th-txt" x="150" y="39" text-anchor="middle" fill="#ef4444" font-size="12.5" font-weight="800">Source: T_H = 800 K</text>
+        <text id="tml-sg-dsh-txt" x="150" y="57" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">ΔS_source = -2.50 kJ/K</text>
+
+        <line id="tml-sg-qline" x1="150" y1="72" x2="150" y2="162" stroke="#ef4444" stroke-width="8" stroke-dasharray="8 6" marker-end="url(#tml-arr-q)" />
+        <rect x="166" y="100" width="122" height="42" rx="8" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.22" />
+        <text id="tml-sg-qtxt" x="227" y="118" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="800">Q = 2000 kJ</text>
+        <text id="tml-sg-dttxt" x="227" y="134" text-anchor="middle" fill="#d97706" font-size="10" font-weight="800">ΔT = 300 K</text>
+
+        <rect x="44" y="170" width="212" height="52" rx="10" fill="#0284c7" fill-opacity="0.16" stroke="#0284c7" stroke-width="2.2" />
+        <text id="tml-sg-tl-txt" x="150" y="193" text-anchor="middle" fill="#0284c7" font-size="12.5" font-weight="800">Sink: T_L = 500 K</text>
+        <text id="tml-sg-dsl-txt" x="150" y="211" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="700">ΔS_sink = +4.00 kJ/K</text>
+      </svg>
+    </div>
+
+    <!-- پنل ۲ -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="tml-p2-title">وضعیت فاز آب و خواص لحظه‌ای</span>
+        <span dir="ltr" id="tml-p2-tag">Phase</span>
+      </div>
+
+      <!-- SVG وضعیت محفظه آب -->
+      <svg id="tml-phase-svg" viewBox="0 0 280 245" style="width:100%;height:auto;display:none;direction:ltr" aria-label="وضعیت فاز بخار و مایع و میله خواص ترمودینامیکی">
+        <!-- محفظه سیال -->
+        <rect x="26" y="24" width="110" height="124" rx="8" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.65" stroke-width="2.5" />
+        <rect id="tml-vess-vap" x="28" y="26" width="106" height="120" rx="6" fill="#38bdf8" fill-opacity="0.15" />
+        <rect id="tml-vess-liq" x="28" y="90" width="106" height="56" rx="4" fill="#0284c7" fill-opacity="0.52" />
+        <g id="tml-vess-bubbles"></g>
+        <text id="tml-vess-lbl" x="81" y="166" text-anchor="middle" fill="currentColor" font-size="10.5" font-weight="800">x = 0.50</text>
+
+        <!-- دماسنج -->
+        <g transform="translate(172, 26)">
+          <rect x="-7" y="4" width="14" height="104" rx="7" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+          <circle id="tml-bulb" cx="0" cy="116" r="10" fill="#ef4444" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5" />
+          <rect id="tml-merc" x="-3.5" y="40" width="7" height="70" rx="3" fill="#ef4444" />
+          <text id="tml-tlbl" x="0" y="140" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="800">180 °C</text>
+        </g>
+
+        <!-- میله‌های h و s و q_rev -->
+        <text x="20" y="190" fill="currentColor" font-size="10" font-weight="700">h (kJ/kg)</text>
+        <rect x="86" y="180" width="174" height="12" rx="4" fill="currentColor" fill-opacity="0.1" />
+        <rect id="tml-bar-h" x="86" y="180" width="90" height="12" rx="4" fill="#0284c7" />
+        <text id="tml-val-h" x="260" y="176" text-anchor="end" fill="#0284c7" font-size="9.5" font-weight="800">2000</text>
+
+        <text x="20" y="214" fill="currentColor" font-size="10" font-weight="700">s (kJ/kg·K)</text>
+        <rect x="86" y="204" width="174" height="12" rx="4" fill="currentColor" fill-opacity="0.1" />
+        <rect id="tml-bar-s" x="86" y="204" width="90" height="12" rx="4" fill="#059669" />
+        <text id="tml-val-s" x="260" y="200" text-anchor="end" fill="#059669" font-size="9.5" font-weight="800">5.00</text>
+
+        <text id="tml-qbar-title" x="20" y="236" fill="currentColor" font-size="10" font-weight="700">q_rev = ∫Tds</text>
+        <rect x="86" y="226" width="174" height="12" rx="4" fill="currentColor" fill-opacity="0.1" />
+        <rect id="tml-bar-q" x="86" y="226" width="90" height="12" rx="4" fill="#d97706" />
+        <text id="tml-val-q" x="260" y="222" text-anchor="end" fill="#d97706" font-size="9.5" font-weight="800">1500</text>
+      </svg>
+
+      <!-- SVG حالت ۲: میله‌های آنتروپی و نمودار S_gen -->
+      <svg id="tml-sg-bars-svg" viewBox="0 0 300 245" style="width:100%;height:auto;display:none;direction:ltr" aria-label="تراز آنتروپی چشمه، چاه و آنتروپی تولیدی S_gen">
+        <!-- محور مبنا برای میله‌ها -->
+        <line x1="20" y1="108" x2="284" y2="108" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" />
+        <text x="16" y="112" text-anchor="end" fill="currentColor" fill-opacity="0.65" font-size="9.5">0</text>
+
+        <rect id="tml-sg-bar-src" x="36" y="108" width="50" height="36" rx="4" fill="#ef4444" fill-opacity="0.86" />
+        <text id="tml-sg-val-src" x="61" y="158" text-anchor="middle" fill="#ef4444" font-size="10.5" font-weight="800">-2.50</text>
+        <text x="61" y="19" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">ΔS_source</text>
+
+        <rect id="tml-sg-bar-snk" x="120" y="52" width="50" height="56" rx="4" fill="#0284c7" fill-opacity="0.86" />
+        <text id="tml-sg-val-snk" x="145" y="45" text-anchor="middle" fill="#0284c7" font-size="10.5" font-weight="800">+4.00</text>
+        <text x="145" y="19" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">ΔS_sink</text>
+
+        <rect id="tml-sg-bar-gen" x="204" y="84" width="54" height="24" rx="4" fill="#d97706" fill-opacity="0.9" />
+        <text id="tml-sg-val-gen" x="231" y="77" text-anchor="middle" fill="#d97706" font-size="10.5" font-weight="800">+1.50</text>
+        <text x="231" y="19" text-anchor="middle" fill="currentColor" font-size="10" font-weight="700">S_gen ≥ 0</text>
+
+        <!-- مینی نمودار S_gen بر حسب T_L -->
+        <text x="26" y="182" fill="currentColor" fill-opacity="0.7" font-size="9.5" font-weight="700">S_gen(T_L) drops to 0 as T_L → T_H:</text>
+        <line x1="26" y1="228" x2="280" y2="228" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.4" />
+        <line x1="26" y1="186" x2="26" y2="228" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.4" />
+        <path id="tml-sg-curve" d="" fill="none" stroke="#d97706" stroke-width="2.4" />
+        <circle id="tml-sg-dot" cx="130" cy="200" r="5" fill="#d97706" stroke="#ffffff" stroke-width="1.5" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="tml-m1-lbl">دما (<span dir="ltr">T</span>)</span>
+      <span class="jh-metric__val" id="tml-m1-val">179.9 °C</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="tml-m2-lbl">آنتروپی ویژه (<span dir="ltr">s</span>)</span>
+      <span class="jh-metric__val" id="tml-m2-val">4.50 kJ/kg·K</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="tml-m3-lbl">آنتالپی (<span dir="ltr">h</span>)</span>
+      <span class="jh-metric__val" id="tml-m3-val">1920 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="tml-m4-lbl">گرمای برگشت‌پذیر / کار (<span dir="ltr">q_rev</span>)</span>
+      <span class="jh-metric__val" id="tml-m4-val">1752 kJ/kg</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="tml-explain">
+    روی نمودار واقعی <span dir="ltr">T-s</span> آب، در فشار <span dir="ltr">1 MPa</span> خط هم‌فشار درون گنبد اشباع دقیقاً افقی است <span dir="ltr">(T_sat = 179.9 °C)</span> و سطح زیر منحنی برابر گرمای برگشت‌پذیر <span dir="ltr">(q_rev = ∫ T ds = Δh)</span> است.
+  </div>
+</div>
+
+<script>
+  import { createViewport, tempToColor, setThermometer, createAnimController } from '../../lib/liveSimKit';
+  import { getWaterDome, waterSatByP, waterPT, waterPS } from '../../lib/thermoProps';
+
+  (() => {
+    const root = document.getElementById('ts-mollier-lab');
+    if (!root) return;
+
+    type MainMode = 'diagrams' | 'entropy-gen';
+    type PlotType = 'ts' | 'hs';
+    type ProcType = 'isobar' | 'isothermal' | 'isentropic';
+
+    let mode: MainMode = 'diagrams';
+    let plotType: PlotType = 'ts';
+    let pKpa = 1000;
+    let procType: ProcType = 'isobar';
+    let dProg = 0.65;
+
+    let sgTH = 800;
+    let sgTL = 500;
+    let sgQ = 2000;
+    let flowDash = 0;
+
+    interface ThermoPt {
+      s: number;
+      tK: number;
+      tC: number;
+      h: number;
+      x: number | null;
+      phase: string;
+    }
+
+    const dome = getWaterDome();
+
+    // کش کردن نقاط ایزوبار برای کارایی بالا
+    const isobarCache = new Map<number, ThermoPt[]>();
+    function getIsobarPts(p: number): ThermoPt[] {
+      const cached = isobarCache.get(p);
+      if (cached) return cached;
+      const sat = waterSatByP(p);
+      const pts: ThermoPt[] = [];
+
+      // مایع متراکم: از 35 درجه تا نزدیک Tsat
+      const tStart = 35;
+      const nLiq = 8;
+      for (let i = 0; i < nLiq; i++) {
+        const t = tStart + (i / nLiq) * (sat.tC - 1.2 - tStart);
+        const st = waterPT(p, t);
+        pts.push({ s: st.s, tK: st.tK, tC: st.tC, h: st.h, x: null, phase: 'مایع متراکم' });
+      }
+      pts.push({ s: sat.sf, tK: sat.tK, tC: sat.tC, h: sat.hf, x: 0, phase: 'مایع اشباع' });
+
+      // مخلوط دوفازی
+      const nMix = 10;
+      for (let i = 1; i < nMix; i++) {
+        const x = i / nMix;
+        pts.push({
+          s: sat.sf + x * (sat.sg - sat.sf),
+          tK: sat.tK,
+          tC: sat.tC,
+          h: sat.hf + x * (sat.hg - sat.hf),
+          x,
+          phase: 'مخلوط اشباع',
+        });
+      }
+      pts.push({ s: sat.sg, tK: sat.tK, tC: sat.tC, h: sat.hg, x: 1, phase: 'بخار اشباع' });
+
+      // بخار فوق گرم تا 550 درجه
+      const tEnd = 550;
+      const nSup = 16;
+      for (let i = 1; i <= nSup; i++) {
+        const t = sat.tC + 2 + ((i / nSup) * (tEnd - sat.tC - 2));
+        const st = waterPT(p, t);
+        pts.push({ s: st.s, tK: st.tK, tC: st.tC, h: st.h, x: null, phase: 'بخار فوق‌گرم' });
+      }
+
+      isobarCache.set(p, pts);
+      return pts;
+    }
+
+    function getProcessPts(): ThermoPt[] {
+      if (procType === 'isobar') return getIsobarPts(pKpa);
+      if (procType === 'isothermal') {
+        const sat = waterSatByP(pKpa);
+        const pts: ThermoPt[] = [];
+        for (let i = 0; i <= 20; i++) {
+          const x = i / 20;
+          pts.push({
+            s: sat.sf + x * (sat.sg - sat.sf),
+            tK: sat.tK,
+            tC: sat.tC,
+            h: sat.hf + x * (sat.hg - sat.hf),
+            x,
+            phase: x === 0 ? 'مایع اشباع' : x === 1 ? 'بخار اشباع' : 'مخلوط اشباع',
+          });
+        }
+        return pts;
+      }
+      // انبساط ایزنتروپیک مثال ۷-۴: 5 MPa, 450 C -> P_exit (اگر 5MPa فعال است، مقصد 1.4 MPa)
+      const pExit = pKpa >= 5000 ? 1400 : pKpa;
+      const st1 = waterPT(5000, 450);
+      const pts: ThermoPt[] = [];
+      for (let i = 0; i <= 18; i++) {
+        const u = i / 18;
+        const pCur = 5000 - u * (5000 - pExit);
+        const st = waterPS(pCur, st1.s);
+        pts.push({ s: st.s, tK: st.tK, tC: st.tC, h: st.h, x: st.x, phase: st.phase });
+      }
+      return pts;
+    }
+
+    function interpPts(pts: ThermoPt[], u: number): ThermoPt {
+      const idxF = Math.max(0, Math.min(pts.length - 1, u * (pts.length - 1)));
+      const i0 = Math.floor(idxF);
+      const i1 = Math.min(pts.length - 1, i0 + 1);
+      const f = idxF - i0;
+      const a = pts[i0];
+      const b = pts[i1];
+      return {
+        s: a.s + f * (b.s - a.s),
+        tK: a.tK + f * (b.tK - a.tK),
+        tC: a.tC + f * (b.tC - a.tC),
+        h: a.h + f * (b.h - a.h),
+        x: a.x !== null && b.x !== null ? a.x + f * (b.x - a.x) : a.x,
+        phase: f < 0.5 ? a.phase : b.phase,
+      };
+    }
+
+    // المان‌ها
+    const diagCtrls = root.querySelector<HTMLElement>('#tml-diag-ctrls')!;
+    const sgenCtrls = root.querySelector<HTMLElement>('#tml-sgen-ctrls')!;
+    const dPlayBtn = root.querySelector<HTMLButtonElement>('#tml-d-play')!;
+    const dResetBtn = root.querySelector<HTMLButtonElement>('#tml-d-reset')!;
+    const dTSlider = root.querySelector<HTMLInputElement>('#tml-d-t')!;
+    const dTLbl = root.querySelector<HTMLElement>('#tml-d-t-lbl')!;
+
+    const sgThSlider = root.querySelector<HTMLInputElement>('#tml-sg-th')!;
+    const sgTlSlider = root.querySelector<HTMLInputElement>('#tml-sg-tl')!;
+    const sgQSlider = root.querySelector<HTMLInputElement>('#tml-sg-q')!;
+    const sgThLbl = root.querySelector<HTMLElement>('#tml-sg-th-lbl')!;
+    const sgTlLbl = root.querySelector<HTMLElement>('#tml-sg-tl-lbl')!;
+    const sgQLbl = root.querySelector<HTMLElement>('#tml-sg-q-lbl')!;
+
+    const p1Title = root.querySelector<HTMLElement>('#tml-p1-title')!;
+    const p1Tag = root.querySelector<HTMLElement>('#tml-p1-tag')!;
+    const p2Title = root.querySelector<HTMLElement>('#tml-p2-title')!;
+    const p2Tag = root.querySelector<HTMLElement>('#tml-p2-tag')!;
+
+    const diagSvg = root.querySelector<SVGSVGElement>('#tml-diag-svg')!;
+    const sgFlowSvg = root.querySelector<SVGSVGElement>('#tml-sg-flow-svg')!;
+    const phaseSvg = root.querySelector<SVGSVGElement>('#tml-phase-svg')!;
+    const sgBarsSvg = root.querySelector<SVGSVGElement>('#tml-sg-bars-svg')!;
+
+    const gridGrp = root.querySelector<SVGGElement>('#tml-grid')!;
+    const yAxisLbl = root.querySelector<SVGTextElement>('#tml-yaxis-lbl')!;
+    const yTicksGrp = root.querySelector<SVGGElement>('#tml-yticks')!;
+    const xTicksGrp = root.querySelector<SVGGElement>('#tml-xticks')!;
+    const domeFill = root.querySelector<SVGPathElement>('#tml-dome-fill')!;
+    const domeLine = root.querySelector<SVGPathElement>('#tml-dome-line')!;
+    const critDot = root.querySelector<SVGCircleElement>('#tml-crit-dot')!;
+    const critLbl = root.querySelector<SVGTextElement>('#tml-crit-lbl')!;
+    const ghostIso = root.querySelector<SVGGElement>('#tml-ghost-isobars')!;
+    const areaFill = root.querySelector<SVGPathElement>('#tml-area-fill')!;
+    const areaLbl = root.querySelector<SVGTextElement>('#tml-area-lbl')!;
+    const activeIsobar = root.querySelector<SVGPathElement>('#tml-active-isobar')!;
+    const procPath = root.querySelector<SVGPathElement>('#tml-proc-path')!;
+    const isochorStub = root.querySelector<SVGPathElement>('#tml-isochor-stub')!;
+    const ptStart = root.querySelector<SVGCircleElement>('#tml-pt-start')!;
+    const ptCur = root.querySelector<SVGCircleElement>('#tml-pt-cur')!;
+
+    const vessVap = root.querySelector<SVGRectElement>('#tml-vess-vap')!;
+    const vessLiq = root.querySelector<SVGRectElement>('#tml-vess-liq')!;
+    const vessLbl = root.querySelector<SVGTextElement>('#tml-vess-lbl')!;
+    const mercEl = root.querySelector<SVGRectElement>('#tml-merc')!;
+    const bulbEl = root.querySelector<SVGCircleElement>('#tml-bulb')!;
+    const tLblEl = root.querySelector<SVGTextElement>('#tml-tlbl')!;
+    const barH = root.querySelector<SVGRectElement>('#tml-bar-h')!;
+    const valH = root.querySelector<SVGTextElement>('#tml-val-h')!;
+    const barS = root.querySelector<SVGRectElement>('#tml-bar-s')!;
+    const valS = root.querySelector<SVGTextElement>('#tml-val-s')!;
+    const qbarTitle = root.querySelector<SVGTextElement>('#tml-qbar-title')!;
+    const barQ = root.querySelector<SVGRectElement>('#tml-bar-q')!;
+    const valQ = root.querySelector<SVGTextElement>('#tml-val-q')!;
+
+    const sgThTxt = root.querySelector<SVGTextElement>('#tml-sg-th-txt')!;
+    const sgDshTxt = root.querySelector<SVGTextElement>('#tml-sg-dsh-txt')!;
+    const sgQline = root.querySelector<SVGLineElement>('#tml-sg-qline')!;
+    const sgQtxt = root.querySelector<SVGTextElement>('#tml-sg-qtxt')!;
+    const sgDttxt = root.querySelector<SVGTextElement>('#tml-sg-dttxt')!;
+    const sgTlTxt = root.querySelector<SVGTextElement>('#tml-sg-tl-txt')!;
+    const sgDslTxt = root.querySelector<SVGTextElement>('#tml-sg-dsl-txt')!;
+    const sgBarSrc = root.querySelector<SVGRectElement>('#tml-sg-bar-src')!;
+    const sgValSrc = root.querySelector<SVGTextElement>('#tml-sg-val-src')!;
+    const sgBarSnk = root.querySelector<SVGRectElement>('#tml-sg-bar-snk')!;
+    const sgValSnk = root.querySelector<SVGTextElement>('#tml-sg-val-snk')!;
+    const sgBarGen = root.querySelector<SVGRectElement>('#tml-sg-bar-gen')!;
+    const sgValGen = root.querySelector<SVGTextElement>('#tml-sg-val-gen')!;
+    const sgCurve = root.querySelector<SVGPathElement>('#tml-sg-curve')!;
+    const sgDot = root.querySelector<SVGCircleElement>('#tml-sg-dot')!;
+
+    const m1Lbl = root.querySelector<HTMLElement>('#tml-m1-lbl')!;
+    const m2Lbl = root.querySelector<HTMLElement>('#tml-m2-lbl')!;
+    const m3Lbl = root.querySelector<HTMLElement>('#tml-m3-lbl')!;
+    const m4Lbl = root.querySelector<HTMLElement>('#tml-m4-lbl')!;
+    const m1Val = root.querySelector<HTMLElement>('#tml-m1-val')!;
+    const m2Val = root.querySelector<HTMLElement>('#tml-m2-val')!;
+    const m3Val = root.querySelector<HTMLElement>('#tml-m3-val')!;
+    const m4Val = root.querySelector<HTMLElement>('#tml-m4-val')!;
+    const explainEl = root.querySelector<HTMLElement>('#tml-explain')!;
+
+    function renderDiagrams() {
+      dTLbl.textContent = `${Math.round(dProg * 100)}%`;
+      dTSlider.value = String(Math.round(dProg * 100));
+
+      const isTS = plotType === 'ts';
+      const yMax = isTS ? 920 : 3750;
+      const vp = createViewport(0, 9.5, 0, yMax, 48, 342, 210, 18);
+
+      p1Title.innerHTML = isTS
+        ? 'نمودار واقعی <span dir="ltr">T-s</span> آب (<span dir="ltr">IAPWS-IF97</span>)'
+        : 'نمودار مولیر واقعی <span dir="ltr">(h-s)</span> آب (<span dir="ltr">IAPWS-IF97</span>)';
+      p2Title.innerHTML = 'وضعیت فاز آب و خواص لحظه‌ای';
+
+      const yVal = (pt: { tK: number; h: number }) => (isTS ? pt.tK : pt.h);
+      yAxisLbl.textContent = isTS ? 'T (K)' : 'h (kJ/kg)';
+
+      // شبکه‌بندی و برچسب محورها
+      const yTickVals = isTS ? [0, 300, 600, 900] : [0, 1000, 2000, 3000];
+      const xTickVals = [0, 2, 4, 6, 8];
+      let gridHtml = '';
+      let ytHtml = '';
+      let xtHtml = '';
+      for (const yv of yTickVals) {
+        const py = vp.y(yv);
+        if (yv > 0) gridHtml += `<line x1="48" y1="${py.toFixed(1)}" x2="342" y2="${py.toFixed(1)}" />`;
+        ytHtml += `<text x="42" y="${(py + 3.5).toFixed(1)}">${yv}</text>`;
+      }
+      for (const xv of xTickVals) {
+        const px = vp.x(xv);
+        if (xv > 0) gridHtml += `<line x1="${px.toFixed(1)}" y1="18" x2="${px.toFixed(1)}" y2="210" />`;
+        xtHtml += `<text x="${px.toFixed(1)}" y="222">${xv}</text>`;
+      }
+      gridGrp.innerHTML = gridHtml;
+      yTicksGrp.innerHTML = ytHtml;
+      xTicksGrp.innerHTML = xtHtml;
+
+      // گنبد اشباع واقعی
+      const domePts: Array<[number, number]> = [];
+      for (const pt of dome) {
+        domePts.push([pt.sf, isTS ? pt.tK : pt.hf]);
+      }
+      for (let i = dome.length - 1; i >= 0; i--) {
+        const pt = dome[i];
+        domePts.push([pt.sg, isTS ? pt.tK : pt.hg]);
+      }
+      const domeD = vp.path(domePts, true);
+      domeFill.setAttribute('d', domeD);
+      domeLine.setAttribute('d', vp.path(domePts, false));
+
+      const crit = dome[dome.length - 1];
+      const critS = (crit.sf + crit.sg) / 2;
+      const critY = isTS ? crit.tK : (crit.hf + crit.hg) / 2;
+      critDot.setAttribute('cx', vp.x(critS).toFixed(1));
+      critDot.setAttribute('cy', vp.y(critY).toFixed(1));
+      critLbl.setAttribute('x', vp.x(critS).toFixed(1));
+      critLbl.setAttribute('y', (vp.y(critY) - 8).toFixed(1));
+
+      // خطوط هم‌فشار شبح
+      let ghostHtml = '';
+      for (const p of [100, 1000, 5000]) {
+        const iso = getIsobarPts(p);
+        const pathPts: Array<[number, number]> = iso.map((pt) => [pt.s, yVal(pt)]);
+        ghostHtml += `<path d="${vp.path(pathPts)}" />`;
+      }
+      ghostIso.innerHTML = ghostHtml;
+
+      // خط هم‌فشار فعال و مسیر فرآیند
+      const actIso = getIsobarPts(pKpa);
+      activeIsobar.setAttribute('d', vp.path(actIso.map((pt) => [pt.s, yVal(pt)])));
+
+      const procPts = getProcessPts();
+      const maxIdx = Math.max(1, Math.round(dProg * (procPts.length - 1)));
+      const subPts = procPts.slice(0, maxIdx + 1);
+      const curPt = interpPts(procPts, dProg);
+      const startPt = procPts[0];
+
+      const traceCoords: Array<[number, number]> = subPts.map((pt) => [pt.s, yVal(pt)]);
+      traceCoords[traceCoords.length - 1] = [curPt.s, yVal(curPt)];
+      procPath.setAttribute('d', vp.path(traceCoords));
+
+      // مساحت زیر منحنی T-s یا تغییر h در مولیر
+      if (isTS && procType !== 'isentropic' && traceCoords.length >= 2) {
+        const areaD = `${vp.path(traceCoords)} L ${vp.x(curPt.s).toFixed(1)} ${vp.y(0).toFixed(1)} L ${vp.x(startPt.s).toFixed(1)} ${vp.y(0).toFixed(1)} Z`;
+        areaFill.setAttribute('d', areaD);
+        const qRev = curPt.h - startPt.h;
+        areaLbl.textContent = qRev > 20 ? `q_rev = ∫Tds = ${qRev.toFixed(0)} kJ/kg` : '';
+        areaLbl.setAttribute('x', vp.x((startPt.s + curPt.s) / 2).toFixed(1));
+      } else {
+        areaFill.setAttribute('d', '');
+        areaLbl.textContent = '';
+      }
+
+      // نمایش شیب پرشیب‌تر هم‌حجم (v=const) نسبت به هم‌فشار (P=const) در T-s
+      if (isTS && curPt.x === null && curPt.s > 6.0 && procType !== 'isentropic') {
+        isochorStub.style.display = '';
+        const slopeV = curPt.tK / 1.5; // تقریبی بخار: cv ~ 1.5
+        const dsStub = 0.55;
+        const pA: [number, number] = [Math.max(0.5, curPt.s - dsStub), Math.max(250, curPt.tK - slopeV * dsStub)];
+        const pB: [number, number] = [Math.min(9.2, curPt.s + dsStub), Math.min(900, curPt.tK + slopeV * dsStub)];
+        isochorStub.setAttribute('d', vp.path([pA, [curPt.s, curPt.tK], pB]));
+      } else {
+        isochorStub.style.display = 'none';
+      }
+
+      ptStart.setAttribute('cx', vp.x(startPt.s).toFixed(1));
+      ptStart.setAttribute('cy', vp.y(yVal(startPt)).toFixed(1));
+      ptCur.setAttribute('cx', vp.x(curPt.s).toFixed(1));
+      ptCur.setAttribute('cy', vp.y(yVal(curPt)).toFixed(1));
+
+      const pTagStr = procType === 'isentropic'
+        ? `5 MPa → ${pKpa >= 5000 ? '1.4 MPa' : pKpa >= 1000 ? `${pKpa / 1000} MPa` : `${pKpa} kPa`}`
+        : `P = ${pKpa >= 1000 ? `${pKpa / 1000} MPa` : `${pKpa} kPa`}`;
+      p1Tag.textContent = pTagStr;
+      p2Tag.textContent = curPt.phase;
+
+      // محفظه فاز آب در پنل ۲
+      const col = tempToColor(curPt.tK);
+      let liqFrac = 0;
+      if (curPt.x !== null) {
+        liqFrac = Math.max(0, Math.min(1, 1 - curPt.x));
+        vessLbl.textContent = `x = ${(curPt.x * 100).toFixed(1)}%`;
+      } else if (curPt.phase === 'مایع متراکم') {
+        liqFrac = 0.92;
+        vessLbl.textContent = 'Compressed Liquid';
+      } else {
+        liqFrac = 0;
+        vessLbl.textContent = 'Superheated Vapor';
+      }
+      const liqH = liqFrac * 116;
+      vessLiq.setAttribute('y', (144 - liqH).toFixed(1));
+      vessLiq.setAttribute('height', liqH.toFixed(1));
+      vessVap.setAttribute('fill', col);
+      vessVap.setAttribute('fill-opacity', curPt.x === null && liqFrac === 0 ? '0.28' : '0.12');
+
+      setThermometer(mercEl, curPt.tK, 273, 850, 108, 96);
+      mercEl.setAttribute('fill', col);
+      bulbEl.setAttribute('fill', col);
+      tLblEl.setAttribute('fill', col);
+      tLblEl.textContent = `${curPt.tC.toFixed(1)} °C`;
+
+      barH.setAttribute('width', (174 * Math.min(1, curPt.h / 3650)).toFixed(1));
+      valH.textContent = `${curPt.h.toFixed(1)} kJ/kg`;
+
+      barS.setAttribute('width', (174 * Math.min(1, curPt.s / 9.2)).toFixed(1));
+      valS.textContent = `${curPt.s.toFixed(3)} kJ/kg·K`;
+
+      const qOrW = procType === 'isentropic' ? startPt.h - curPt.h : curPt.h - startPt.h;
+      qbarTitle.textContent = procType === 'isentropic' ? 'w_s = Δh' : 'q_rev = ∫Tds';
+      barQ.setAttribute('width', (174 * Math.min(1, Math.abs(qOrW) / 3400)).toFixed(1));
+      valQ.textContent = `${qOrW.toFixed(1)} kJ/kg`;
+
+      // معیارها
+      m1Lbl.innerHTML = 'دما (<span dir="ltr">T</span>)';
+      m2Lbl.innerHTML = 'آنتروپی ویژه (<span dir="ltr">s</span>)';
+      m3Lbl.innerHTML = 'آنتالپی (<span dir="ltr">h</span>)';
+      m4Lbl.innerHTML = procType === 'isentropic'
+        ? 'کار توربین ایزنتروپیک <span dir="ltr">(w_s = h₁ - h₂)</span>'
+        : 'گرمای برگشت‌پذیر <span dir="ltr">(q_rev = ∫ T ds)</span>';
+
+      m1Val.textContent = `${curPt.tC.toFixed(1)} °C (${curPt.tK.toFixed(1)} K)`;
+      m2Val.textContent = `${curPt.s.toFixed(4)} kJ/kg·K`;
+      m3Val.textContent = `${curPt.h.toFixed(1)} kJ/kg`;
+      m4Val.textContent = `${qOrW.toFixed(1)} kJ/kg`;
+
+      if (procType === 'isentropic') {
+        explainEl.innerHTML = `در <strong>انبساط ایزنتروپیک</strong> مثال ۷-۴ (<span dir="ltr">s = ${startPt.s.toFixed(3)} kJ/kg·K</span> ثابت)، مسیر روی نمودار <span dir="ltr">T-s</span> و مولیر <span dir="ltr">h-s</span> دقیقاً عمودی است <span dir="ltr">(q_rev = 0)</span> و افت عمودی آنتالپی مستقیماً برابر کار بیشینه توربین <strong><span dir="ltr">w_s = ${qOrW.toFixed(1)} kJ/kg</span></strong> است.`;
+      } else {
+        explainEl.innerHTML = `با داده‌های واقعی <strong><span dir="ltr">IAPWS-IF97</span></strong>، خط فشار ثابت <span dir="ltr">${pTagStr}</span> درون گنبد اشباع افقی (در <span dir="ltr">T-s</span>) و خط راست با شیب <span dir="ltr">T_sat</span> (در مولیر <span dir="ltr">h-s</span>) است. مساحت نارنجی زیر منحنی <span dir="ltr">T-s</span> دقیقاً برابر گرمای ورودی برگشت‌پذیر <strong><span dir="ltr">q_rev = ∫ T ds = ${qOrW.toFixed(1)} kJ/kg</span></strong> است.`;
+      }
+    }
+
+    function renderSgen() {
+      if (sgTL >= sgTH) {
+        sgTL = sgTH - 10;
+        sgTlSlider.value = String(sgTL);
+      }
+      sgTlSlider.max = String(sgTH - 10);
+      sgThLbl.textContent = `${sgTH.toFixed(0)} K`;
+      sgTlLbl.textContent = `${sgTL.toFixed(0)} K`;
+      sgQLbl.textContent = `${sgQ.toFixed(0)} kJ`;
+
+      const dsSrc = -sgQ / sgTH;
+      const dsSnk = sgQ / sgTL;
+      const sGen = dsSrc + dsSnk;
+
+      p1Title.innerHTML = 'جریان حرارت بین دو مخزن دما';
+      p1Tag.textContent = `ΔT = ${(sgTH - sgTL).toFixed(0)} K`;
+      p2Title.innerHTML = 'تراز آنتروپی و اصل افزایش آنتروپی';
+      p2Tag.textContent = `S_gen = +${sGen.toFixed(2)} kJ/K`;
+
+      sgThTxt.textContent = `Source: T_H = ${sgTH} K`;
+      sgDshTxt.textContent = `ΔS_source = ${dsSrc.toFixed(2)} kJ/K`;
+      sgTlTxt.textContent = `Sink: T_L = ${sgTL} K`;
+      sgDslTxt.textContent = `ΔS_sink = +${dsSnk.toFixed(2)} kJ/K`;
+      sgQtxt.textContent = `Q = ${sgQ} kJ`;
+      sgDttxt.textContent = `ΔT = ${sgTH - sgTL} K`;
+      sgQline.setAttribute('stroke-width', (3 + 8 * (sgQ / 4000)).toFixed(1));
+
+      // میله‌های ΔS
+      const maxS = Math.max(4, sgQ / 300);
+      const pxPerS = 74 / maxS;
+      const zeroY = 108;
+
+      const hSrc = Math.min(62, Math.abs(dsSrc) * pxPerS);
+      sgBarSrc.setAttribute('y', String(zeroY));
+      sgBarSrc.setAttribute('height', Math.max(2, hSrc).toFixed(1));
+      sgValSrc.setAttribute('y', (zeroY + hSrc + 13).toFixed(1));
+      sgValSrc.textContent = dsSrc.toFixed(2);
+
+      const hSnk = Math.min(78, dsSnk * pxPerS);
+      sgBarSnk.setAttribute('y', (zeroY - hSnk).toFixed(1));
+      sgBarSnk.setAttribute('height', Math.max(2, hSnk).toFixed(1));
+      sgValSnk.setAttribute('y', Math.max(30, zeroY - hSnk - 6).toFixed(1));
+      sgValSnk.textContent = `+${dsSnk.toFixed(2)}`;
+
+      const hGen = Math.min(78, sGen * pxPerS);
+      sgBarGen.setAttribute('y', (zeroY - hGen).toFixed(1));
+      sgBarGen.setAttribute('height', Math.max(2, hGen).toFixed(1));
+      sgValGen.setAttribute('y', Math.max(30, zeroY - hGen - 6).toFixed(1));
+      sgValGen.textContent = `+${sGen.toFixed(2)}`;
+
+      // مینی نمودار S_gen(T_L)
+      const sMaxCurve = sgQ * (1 / 300 - 1 / sgTH);
+      const cvp = createViewport(300, sgTH, 0, Math.max(0.5, sMaxCurve * 1.1), 26, 280, 228, 186);
+      const cPts: Array<[number, number]> = [];
+      for (let i = 0; i <= 40; i++) {
+        const t = 300 + (i / 40) * (sgTH - 300);
+        cPts.push([t, sgQ * (1 / t - 1 / sgTH)]);
+      }
+      sgCurve.setAttribute('d', cvp.path(cPts));
+      sgDot.setAttribute('cx', cvp.x(sgTL).toFixed(1));
+      sgDot.setAttribute('cy', cvp.y(sGen).toFixed(1));
+
+      m1Lbl.innerHTML = 'تغییر آنتروپی چشمه (<span dir="ltr">ΔS_source</span>)';
+      m2Lbl.innerHTML = 'تغییر آنتروپی چاه (<span dir="ltr">ΔS_sink</span>)';
+      m3Lbl.innerHTML = 'آنتروپی تولیدی <span dir="ltr">(S_gen = ΔS_total)</span>';
+      m4Lbl.innerHTML = 'اختلاف دما <span dir="ltr">(ΔT = T_H - T_L)</span>';
+
+      m1Val.textContent = `${dsSrc.toFixed(2)} kJ/K`;
+      m2Val.textContent = `+${dsSnk.toFixed(2)} kJ/K`;
+      m3Val.textContent = `+${sGen.toFixed(2)} kJ/K (≥ 0)`;
+      m4Val.textContent = `${(sgTH - sgTL).toFixed(0)} K`;
+
+      explainEl.innerHTML = `در انتقال گرمای <span dir="ltr">${sgQ} kJ</span> از چشمه <span dir="ltr">${sgTH} K</span> به چاه <span dir="ltr">${sgTL} K</span>، چشمه <span dir="ltr">${dsSrc.toFixed(2)} kJ/K</span> از دست می‌دهد اما چاه <strong><span dir="ltr">+${dsSnk.toFixed(2)} kJ/K</span></strong> به‌دست می‌آورد؛ در نتیجه آنتروپی کل جهان به اندازهٔ <strong><span dir="ltr">S_gen = +${sGen.toFixed(2)} kJ/K</span></strong> افزایش می‌یابد. هرچه <span dir="ltr">T_L</span> به <span dir="ltr">T_H</span> نزدیک‌تر شود، <span dir="ltr">S_gen</span> به صفر میل می‌کند.`;
+    }
+
+    function renderAll() {
+      if (mode === 'diagrams') renderDiagrams();
+      else renderSgen();
+    }
+
+    const anim = createAnimController(root, (dt) => {
+      if (mode === 'diagrams') {
+        dProg += dt * 0.16;
+        if (dProg >= 1) {
+          dProg = 1;
+          renderDiagrams();
+          dPlayBtn.textContent = '▶ پخش تحول';
+          return false;
+        }
+        renderDiagrams();
+      } else {
+        flowDash = (flowDash + dt * 28) % 28;
+        sgQline.setAttribute('stroke-dashoffset', (-flowDash).toFixed(1));
+      }
+    });
+
+    root.querySelectorAll('#tml-modes button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#tml-modes button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        mode = (btn.getAttribute('data-mode') as MainMode) || 'diagrams';
+
+        diagCtrls.style.display = mode === 'diagrams' ? '' : 'none';
+        sgenCtrls.style.display = mode === 'entropy-gen' ? '' : 'none';
+
+        diagSvg.style.display = mode === 'diagrams' ? 'block' : 'none';
+        phaseSvg.style.display = mode === 'diagrams' ? 'block' : 'none';
+        sgFlowSvg.style.display = mode === 'entropy-gen' ? 'block' : 'none';
+        sgBarsSvg.style.display = mode === 'entropy-gen' ? 'block' : 'none';
+
+        if (mode === 'entropy-gen') {
+          anim.start();
+        } else {
+          anim.stop();
+          dPlayBtn.textContent = '▶ پخش تحول';
+        }
+        renderAll();
+      });
+    });
+
+    root.querySelectorAll('#tml-plot-types button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#tml-plot-types button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        plotType = (btn.getAttribute('data-plot') as PlotType) || 'ts';
+        renderDiagrams();
+      });
+    });
+
+    root.querySelectorAll('#tml-pressures button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#tml-pressures button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        pKpa = parseFloat(btn.getAttribute('data-p') || '1000');
+        renderDiagrams();
+      });
+    });
+
+    root.querySelectorAll('#tml-procs button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#tml-procs button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        procType = (btn.getAttribute('data-proc') as ProcType) || 'isobar';
+        renderDiagrams();
+      });
+    });
+
+    dPlayBtn.addEventListener('click', () => {
+      if (anim.isPlaying()) {
+        anim.stop();
+        dPlayBtn.textContent = '▶ پخش تحول';
+      } else {
+        if (dProg >= 0.99) dProg = 0;
+        anim.start();
+        dPlayBtn.textContent = '⏸ توقف';
+      }
+    });
+
+    dResetBtn.addEventListener('click', () => {
+      anim.stop();
+      dPlayBtn.textContent = '▶ پخش تحول';
+      dProg = 0;
+      renderDiagrams();
+    });
+
+    dTSlider.addEventListener('input', () => {
+      anim.stop();
+      dPlayBtn.textContent = '▶ پخش تحول';
+      dProg = parseFloat(dTSlider.value) / 100;
+      renderDiagrams();
+    });
+
+    root.querySelectorAll('#tml-sgen-presets button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#tml-sgen-presets button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        sgTH = 800;
+        sgQ = 2000;
+        sgTL = parseFloat(btn.getAttribute('data-tl') || '500');
+        sgThSlider.value = '800';
+        sgTlSlider.value = String(sgTL);
+        sgQSlider.value = '2000';
+        renderSgen();
+      });
+    });
+
+    sgThSlider.addEventListener('input', () => {
+      sgTH = parseFloat(sgThSlider.value);
+      renderSgen();
+    });
+    sgTlSlider.addEventListener('input', () => {
+      sgTL = parseFloat(sgTlSlider.value);
+      renderSgen();
+    });
+    sgQSlider.addEventListener('input', () => {
+      sgQ = parseFloat(sgQSlider.value);
+      renderSgen();
+    });
+
+    // مقداردهی اولیه نمایش پنل ۲
+    phaseSvg.style.display = 'block';
+    renderAll();
+  })();
+</script>

@@ -1,0 +1,682 @@
+---
+// آزمایشگر زنده مقایسه کار پمپ مایع و کمپرسور بخار (مثال ۷-۹) و تراکم دومرحله‌ای با خنک‌کن میانی (فصل ۷ - بخش ۲)
+---
+
+<div class="jh-widget not-content" id="pump-comp-lab">
+  <div class="jh-widget__head">
+    <span class="jh-widget__title">آزمایشگر زندهٔ کار جریان پایا <span dir="ltr">(-∫ v dP)</span>: پمپ vs کمپرسور و خنک‌کن میانی</span>
+    <span class="jh-widget__badge">شبیه‌سازی زنده · IAPWS-IF97</span>
+  </div>
+  <div class="jh-widget__sub" style="margin-bottom:0.65rem">
+    مقایسهٔ سطح سمت چپ نمودار <span dir="ltr">P-v</span> در مثال ۷-۹ <span dir="ltr">(0.94 vs 519 kJ/kg)</span> و حداقل‌سازی کار کمپرسور با <span dir="ltr">(P_x = √(P₁·P₂))</span>
+  </div>
+
+  <div class="jh-widget__btns" id="pcl2-modes">
+    <button type="button" class="jh-widget__btn is-active" data-mode="pump-vs-comp">۱) مثال ۷-۹: پمپ مایع در برابر کمپرسور بخار</button>
+    <button type="button" class="jh-widget__btn" data-mode="intercooling">۲) تراکم دومرحله‌ای با خنک‌کن میانی (اسلاید ۴۹)</button>
+  </div>
+
+  <!-- کنترل‌های حالت ۱ -->
+  <div id="pcl2-pvc-ctrls">
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>فشار خروجی هدف (<span dir="ltr">P₂</span> از <span dir="ltr">P₁ = 100 kPa</span>): <strong id="pcl2-p2-lbl" dir="ltr">1000 kPa (1.00 MPa)</strong></span>
+        <input id="pcl2-p2" type="range" min="300" max="2000" step="50" value="1000" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>پیشرفت تراکم (<span dir="ltr">P₁ → P₂</span>): <strong id="pcl2-sweep-lbl" dir="ltr">100%</strong></span>
+        <input id="pcl2-sweep" type="range" min="5" max="100" step="1" value="100" />
+      </label>
+    </div>
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="pcl2-play">▶ پخش مقایسهٔ تراکم</button>
+      <button type="button" class="jh-widget__btn" id="pcl2-ex79">🎯 تنظیم دقیق مثال ۷-۹ (<span dir="ltr">1 MPa</span>)</button>
+    </div>
+  </div>
+
+  <!-- کنترل‌های حالت ۲: خنک‌کن میانی -->
+  <div id="pcl2-ic-ctrls" style="display:none">
+    <div class="jh-widget__grid">
+      <label class="jh-widget__ctrl">
+        <span>فشار نهایی (<span dir="ltr">P₂</span> از <span dir="ltr">100 kPa</span>): <strong id="pcl2-ic-p2-lbl" dir="ltr">900 kPa</strong></span>
+        <input id="pcl2-ic-p2" type="range" min="400" max="1600" step="50" value="900" />
+      </label>
+      <label class="jh-widget__ctrl">
+        <span>فشار میانی خنک‌کن (<span dir="ltr">P_x</span>): <strong id="pcl2-ic-px-lbl" dir="ltr">300 kPa</strong></span>
+        <input id="pcl2-ic-px" type="range" min="120" max="860" step="10" value="300" />
+      </label>
+    </div>
+    <div class="jh-widget__toolbar">
+      <button type="button" class="jh-widget__btn jh-widget__btn--primary" id="pcl2-ic-opt">🎯 تنظیم روی فشار بهینه <span dir="ltr">P_x = √(P₁·P₂)</span></button>
+    </div>
+  </div>
+
+  <div class="jh-widget__split">
+    <!-- پنل ۱: نمودار P-v و سطح سمت چپ -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="pcl2-p1-title">نمودار <span dir="ltr">P-v</span>: سطح سمت چپ <span dir="ltr">(-∫ v dP)</span></span>
+        <span dir="ltr" id="pcl2-p1-tag">Ratio = 552×</span>
+      </div>
+
+      <!-- SVG حالت ۱: پمپ در برابر کمپرسور روی P-v -->
+      <svg id="pcl2-pvc-svg" viewBox="0 0 350 242" style="width:100%;height:auto;display:block;direction:ltr" aria-label="نمودار P-v مقایسه کار پمپ مایع و کمپرسور بخار">
+        <g id="pcl2-pvc-grid" stroke="currentColor" stroke-opacity="0.11" stroke-width="1"></g>
+        <line x1="52" y1="16" x2="52" y2="208" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="52" y1="208" x2="334" y2="208" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text x="12" y="24" fill="currentColor" font-size="10.5" font-weight="800">P (kPa)</text>
+        <text x="332" y="229" text-anchor="end" fill="currentColor" font-size="10.5" font-weight="800">v (m³/kg)</text>
+        <g id="pcl2-pvc-yticks" fill="currentColor" fill-opacity="0.65" font-size="9" text-anchor="end"></g>
+        <g id="pcl2-pvc-xticks" fill="currentColor" fill-opacity="0.65" font-size="9" text-anchor="middle"></g>
+
+        <!-- سطح سمت چپ کمپرسور بخار -->
+        <path id="pcl2-comp-area" d="" fill="#0284c7" fill-opacity="0.22" />
+        <path id="pcl2-comp-curve" d="" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round" />
+
+        <!-- نوار بسیار باریک پمپ مایع کنار محور عمودی -->
+        <rect id="pcl2-pump-sliver" x="52" y="100" width="3.2" height="98" fill="#059669" fill-opacity="0.9" />
+        <line id="pcl2-pump-line" x1="53" y1="198" x2="53" y2="100" stroke="#059669" stroke-width="3" />
+
+        <!-- خطوط فشار P1 و P2 -->
+        <line id="pcl2-p1-line" x1="52" y1="198" x2="310" y2="198" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3" />
+        <line id="pcl2-p2-line" x1="52" y1="100" x2="310" y2="100" stroke="#d97706" stroke-opacity="0.55" stroke-dasharray="4 3" />
+
+        <!-- نقاط حالت -->
+        <circle id="pcl2-c-pt1" cx="300" cy="198" r="4" fill="#0284c7" />
+        <circle id="pcl2-c-pt2" cx="100" cy="100" r="5" fill="#d97706" stroke="#ffffff" stroke-width="1.5" />
+        <circle id="pcl2-p-pt2" cx="53" cy="100" r="4.5" fill="#059669" stroke="#ffffff" stroke-width="1.5" />
+
+        <!-- برچسب‌های کال‌آوت -->
+        <rect x="64" y="22" width="136" height="32" rx="6" fill="#059669" fill-opacity="0.12" stroke="#059669" stroke-opacity="0.45" />
+        <text id="pcl2-pump-badge" x="132" y="42" text-anchor="middle" fill="#059669" font-size="9.5" font-weight="800">Pump sliver: 0.94 kJ/kg</text>
+        <path d="M 64 38 L 56 60" fill="none" stroke="#059669" stroke-width="1.5" />
+
+        <text id="pcl2-comp-badge" x="196" y="150" text-anchor="middle" fill="#0284c7" font-size="11" font-weight="800">w_comp = 518.6 kJ/kg</text>
+      </svg>
+
+      <!-- SVG حالت ۲: نمودار P-v خنک‌کن میانی -->
+      <svg id="pcl2-ic-pv-svg" viewBox="0 0 350 242" style="width:100%;height:auto;display:none;direction:ltr" aria-label="نمودار P-v تراکم دومرحله‌ای با خنک‌کن میانی و سطح کار صرفه‌جویی شده">
+        <g id="pcl2-ic-grid" stroke="currentColor" stroke-opacity="0.11" stroke-width="1"></g>
+        <line x1="52" y1="16" x2="52" y2="208" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="52" y1="208" x2="334" y2="208" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text x="12" y="24" fill="currentColor" font-size="10.5" font-weight="800">P (kPa)</text>
+        <text x="332" y="229" text-anchor="end" fill="currentColor" font-size="10.5" font-weight="800">v (m³/kg)</text>
+        <g id="pcl2-ic-yticks" fill="currentColor" fill-opacity="0.65" font-size="9" text-anchor="end"></g>
+        <g id="pcl2-ic-xticks" fill="currentColor" fill-opacity="0.65" font-size="9" text-anchor="middle"></g>
+
+        <!-- سطح کار صرفه‌جویی‌شده -->
+        <path id="pcl2-ic-saved-area" d="" fill="#059669" fill-opacity="0.26" />
+        <!-- منحنی همدما (حد ایده‌آل) -->
+        <path id="pcl2-ic-iso" d="" fill="none" stroke="#059669" stroke-width="1.8" stroke-dasharray="4 3" />
+        <!-- منحنی ۱-مرحله‌ای ایزنتروپیک -->
+        <path id="pcl2-ic-1st" d="" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-dasharray="5 3" />
+        <!-- مسیر ۲-مرحله‌ای با خنک‌کن میانی -->
+        <path id="pcl2-ic-2st" d="" fill="none" stroke="#0284c7" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+
+        <!-- خط فشار میانی Px -->
+        <line id="pcl2-ic-pxline" x1="52" y1="140" x2="320" y2="140" stroke="#d97706" stroke-dasharray="3 3" stroke-width="1.2" />
+        <text id="pcl2-ic-pxtag" x="326" y="136" text-anchor="end" fill="#d97706" font-size="9.5" font-weight="800">P_x</text>
+
+        <circle id="pcl2-ic-pt1" cx="290" cy="194" r="4" fill="#059669" />
+        <circle id="pcl2-ic-ptx" cx="190" cy="140" r="4" fill="#d97706" />
+        <circle id="pcl2-ic-ptxp" cx="150" cy="140" r="4" fill="#059669" />
+        <circle id="pcl2-ic-pt2" cx="110" cy="70" r="4.5" fill="#0284c7" />
+
+        <text id="pcl2-ic-saved-lbl" x="215" y="64" text-anchor="middle" fill="#059669" font-size="10" font-weight="800">Work Saved</text>
+        <text x="194" y="24" text-anchor="middle" fill="currentColor" fill-opacity="0.72" font-size="9">Red: 1-stage | Blue: 2-stage | Green dash: Isothermal</text>
+      </svg>
+    </div>
+
+    <!-- پنل ۲ -->
+    <div class="jh-widget__pane">
+      <div class="jh-widget__pane-title">
+        <span id="pcl2-p2-title">مقایسهٔ مقیاس کار پمپ و کمپرسور</span>
+        <span dir="ltr" id="pcl2-p2-tag">v_g / v_f = 1624×</span>
+      </div>
+
+      <!-- SVG حالت ۱: میله‌های نسبت کار پمپ vs کمپرسور -->
+      <svg id="pcl2-ratio-svg" viewBox="0 0 300 242" style="width:100%;height:auto;display:block;direction:ltr" aria-label="میله مقایسه کار پمپ مایع و کمپرسور بخار">
+        <text x="20" y="24" fill="currentColor" font-size="10.5" font-weight="800">True Linear Scale (kJ/kg):</text>
+
+        <!-- میله پمپ در مقیاس واقعی -->
+        <text x="20" y="48" fill="#059669" font-size="10" font-weight="700">Liquid Pump (v_f = 0.00104 m³/kg):</text>
+        <rect x="20" y="54" width="260" height="22" rx="5" fill="currentColor" fill-opacity="0.08" />
+        <rect id="pcl2-bar-pump" x="20" y="54" width="2" height="22" rx="2" fill="#059669" />
+        <text id="pcl2-bar-pump-txt" x="30" y="69" fill="#059669" font-size="10" font-weight="800">0.94 kJ/kg (tiny sliver!)</text>
+
+        <!-- میله کمپرسور در مقیاس واقعی -->
+        <text x="20" y="96" fill="#0284c7" font-size="10" font-weight="700">Vapor Compressor (v_g = 1.694 m³/kg):</text>
+        <rect x="20" y="102" width="260" height="22" rx="5" fill="currentColor" fill-opacity="0.08" />
+        <rect id="pcl2-bar-comp" x="20" y="102" width="190" height="22" rx="5" fill="#0284c7" />
+        <text id="pcl2-bar-comp-txt" x="274" y="117" text-anchor="end" fill="currentColor" font-size="10" font-weight="800">518.6 kJ/kg</text>
+
+        <!-- باکس مقایسه نسبت -->
+        <rect x="20" y="140" width="260" height="44" rx="8" fill="#d97706" fill-opacity="0.1" stroke="#d97706" stroke-opacity="0.4" />
+        <text id="pcl2-ratio-big" x="150" y="160" text-anchor="middle" fill="#d97706" font-size="12.5" font-weight="800">w_comp / w_pump = 552 ×</text>
+        <text x="150" y="176" text-anchor="middle" fill="currentColor" fill-opacity="0.75" font-size="9.5" font-weight="700">Why Rankine steam plants beat gas turbines in BWR!</text>
+
+        <!-- نسبت کار برگشتی -->
+        <text x="20" y="204" fill="currentColor" font-size="9.5" font-weight="700">Typical Back-Work Ratio (w_pump / w_turbine):</text>
+        <rect x="20" y="210" width="260" height="16" rx="4" fill="#059669" fill-opacity="0.14" stroke="#059669" stroke-opacity="0.4" />
+        <rect id="pcl2-bwr-bar" x="20" y="210" width="3" height="16" rx="3" fill="#059669" />
+        <text id="pcl2-bwr-txt" x="150" y="222" text-anchor="middle" fill="#059669" font-size="9.5" font-weight="800">Rankine BWR ≈ 0.1% (vs Brayton Gas ≈ 40–60%)</text>
+      </svg>
+
+      <!-- SVG حالت ۲: منحنی بهینه‌سازی P_x -->
+      <svg id="pcl2-ic-opt-svg" viewBox="0 0 300 242" style="width:100%;height:auto;display:none;direction:ltr" aria-label="منحنی کل کار مصرفی بر حسب فشار میانی P_x و نقطه بهینه">
+        <g stroke="currentColor" stroke-opacity="0.11" stroke-width="1">
+          <line x1="46" y1="44" x2="280" y2="44" />
+          <line x1="46" y1="88" x2="280" y2="88" />
+          <line x1="46" y1="132" x2="280" y2="132" />
+        </g>
+        <line x1="46" y1="18" x2="46" y2="176" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <line x1="46" y1="176" x2="284" y2="176" stroke="currentColor" stroke-opacity="0.65" stroke-width="2" />
+        <text x="10" y="22" fill="currentColor" font-size="10" font-weight="800">w (kJ/kg)</text>
+        <text x="280" y="191" text-anchor="end" fill="currentColor" font-size="10" font-weight="800">P_x (kPa)</text>
+
+        <!-- خطوط مرجع 1-مرحله‌ای و همدما -->
+        <line id="pcl2-opt-1st" x1="46" y1="36" x2="280" y2="36" stroke="#ef4444" stroke-dasharray="4 3" stroke-width="1.6" />
+        <line id="pcl2-opt-iso" x1="46" y1="146" x2="280" y2="146" stroke="#059669" stroke-dasharray="4 3" stroke-width="1.6" />
+        <text id="pcl2-opt-1st-lbl" x="278" y="32" text-anchor="end" fill="#ef4444" font-size="8.5" font-weight="700">1-stage</text>
+        <text id="pcl2-opt-iso-lbl" x="278" y="142" text-anchor="end" fill="#059669" font-size="8.5" font-weight="700">Isothermal</text>
+
+        <!-- منحنی مجموع کار دومرحله‌ای -->
+        <path id="pcl2-opt-curve" d="" fill="none" stroke="#0284c7" stroke-width="2.8" />
+        <circle id="pcl2-opt-min" cx="150" cy="96" r="4.5" fill="#059669" />
+        <circle id="pcl2-opt-cur" cx="150" cy="96" r="5.5" fill="#d97706" stroke="#ffffff" stroke-width="1.5" />
+
+        <!-- میله مقایسه کار مرحله ۱ و مرحله ۲ -->
+        <text x="20" y="206" fill="currentColor" font-size="9.5" font-weight="700">Stage 1 vs Stage 2 Work:</text>
+        <rect x="20" y="212" width="124" height="14" rx="3" fill="currentColor" fill-opacity="0.08" />
+        <rect id="pcl2-st1-bar" x="20" y="212" width="60" height="14" rx="3" fill="#0284c7" />
+        <text id="pcl2-st1-txt" x="82" y="236" text-anchor="middle" fill="#0284c7" font-size="9" font-weight="800">w₁</text>
+
+        <rect x="156" y="212" width="124" height="14" rx="3" fill="currentColor" fill-opacity="0.08" />
+        <rect id="pcl2-st2-bar" x="156" y="212" width="60" height="14" rx="3" fill="#d97706" />
+        <text id="pcl2-st2-txt" x="218" y="236" text-anchor="middle" fill="#d97706" font-size="9" font-weight="800">w₂</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="jh-widget__metrics">
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="pcl2-m1-lbl">کار پمپ مایع (<span dir="ltr">w_pump</span>)</span>
+      <span class="jh-metric__val" id="pcl2-m1-val">0.94 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="pcl2-m2-lbl">کار کمپرسور بخار (<span dir="ltr">w_comp</span>)</span>
+      <span class="jh-metric__val" id="pcl2-m2-val">518.6 kJ/kg</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="pcl2-m3-lbl">نسبت کار کمپرسور به پمپ</span>
+      <span class="jh-metric__val" id="pcl2-m3-val">552×</span>
+    </div>
+    <div class="jh-metric">
+      <span class="jh-metric__label" id="pcl2-m4-lbl">دمای خروجی کمپرسور (<span dir="ltr">T₂s</span>)</span>
+      <span class="jh-metric__val" id="pcl2-m4-val">366.7 °C</span>
+    </div>
+  </div>
+
+  <div class="jh-widget__explain" id="pcl2-explain">
+    در فشار <span dir="ltr">100 kPa → 1 MPa</span>، کار پمپ مایع اشباع تنها <strong><span dir="ltr">0.94 kJ/kg</span></strong> است، اما کار کمپرسور بخار اشباع به <strong><span dir="ltr">518.6 kJ/kg</span></strong> (بیش از ۵۵۰ برابر) می‌رسد؛ چون <span dir="ltr">w_rev = ∫ v dP</span> مستقیماً متناسب با حجم مخصوص <span dir="ltr">v</span> است!
+  </div>
+</div>
+
+<script>
+  import { createViewport, createAnimController } from '../../lib/liveSimKit';
+  import { waterSatByP, waterPS, IDEAL_GASES } from '../../lib/thermoProps';
+
+  (() => {
+    const root = document.getElementById('pump-comp-lab');
+    if (!root) return;
+
+    type LabMode = 'pump-vs-comp' | 'intercooling';
+    let mode: LabMode = 'pump-vs-comp';
+
+    // حالت ۱: پمپ vs کمپرسور
+    let p2Target = 1000;
+    let sweep = 1.0;
+
+    // حالت ۲: خنک‌کن میانی (هوا)
+    const air = IDEAL_GASES.air;
+    const T1 = 300;
+    const P1 = 100;
+    let icP2 = 900;
+    let icPx = 300;
+
+    // پیش‌محاسبه نقاط ایزنتروپیک بخار از 100 kPa تا 2000 kPa (IAPWS-IF97)
+    const sat1 = waterSatByP(100);
+    interface VaporSpinePt { pKpa: number; v: number; h: number; tC: number; }
+    const vaporSpine: VaporSpinePt[] = [];
+    for (let p = 100; p <= 2000; p += 50) {
+      if (p === 100) {
+        vaporSpine.push({ pKpa: sat1.pKpa, v: sat1.vg, h: sat1.hg, tC: sat1.tC });
+      } else {
+        const st = waterPS(p, sat1.sg);
+        vaporSpine.push({ pKpa: st.pKpa, v: st.v, h: st.h, tC: st.tC });
+      }
+    }
+
+    function getVaporAtP(pKpa: number): VaporSpinePt {
+      if (pKpa <= 100) return vaporSpine[0];
+      const st = waterPS(pKpa, sat1.sg);
+      return { pKpa: st.pKpa, v: st.v, h: st.h, tC: st.tC };
+    }
+
+    // المان‌ها
+    const pvcCtrls = root.querySelector<HTMLElement>('#pcl2-pvc-ctrls')!;
+    const icCtrls = root.querySelector<HTMLElement>('#pcl2-ic-ctrls')!;
+    const p2Slider = root.querySelector<HTMLInputElement>('#pcl2-p2')!;
+    const p2Lbl = root.querySelector<HTMLElement>('#pcl2-p2-lbl')!;
+    const sweepSlider = root.querySelector<HTMLInputElement>('#pcl2-sweep')!;
+    const sweepLbl = root.querySelector<HTMLElement>('#pcl2-sweep-lbl')!;
+    const playBtn = root.querySelector<HTMLButtonElement>('#pcl2-play')!;
+    const ex79Btn = root.querySelector<HTMLButtonElement>('#pcl2-ex79')!;
+
+    const icP2Slider = root.querySelector<HTMLInputElement>('#pcl2-ic-p2')!;
+    const icPxSlider = root.querySelector<HTMLInputElement>('#pcl2-ic-px')!;
+    const icP2Lbl = root.querySelector<HTMLElement>('#pcl2-ic-p2-lbl')!;
+    const icPxLbl = root.querySelector<HTMLElement>('#pcl2-ic-px-lbl')!;
+    const icOptBtn = root.querySelector<HTMLButtonElement>('#pcl2-ic-opt')!;
+
+    const p1Title = root.querySelector<HTMLElement>('#pcl2-p1-title')!;
+    const p1Tag = root.querySelector<HTMLElement>('#pcl2-p1-tag')!;
+    const p2Title = root.querySelector<HTMLElement>('#pcl2-p2-title')!;
+    const p2Tag = root.querySelector<HTMLElement>('#pcl2-p2-tag')!;
+
+    const pvcSvg = root.querySelector<SVGSVGElement>('#pcl2-pvc-svg')!;
+    const ratioSvg = root.querySelector<SVGSVGElement>('#pcl2-ratio-svg')!;
+    const icPvSvg = root.querySelector<SVGSVGElement>('#pcl2-ic-pv-svg')!;
+    const icOptSvg = root.querySelector<SVGSVGElement>('#pcl2-ic-opt-svg')!;
+
+    const pvcGrid = root.querySelector<SVGGElement>('#pcl2-pvc-grid')!;
+    const pvcYticks = root.querySelector<SVGGElement>('#pcl2-pvc-yticks')!;
+    const pvcXticks = root.querySelector<SVGGElement>('#pcl2-pvc-xticks')!;
+    const compArea = root.querySelector<SVGPathElement>('#pcl2-comp-area')!;
+    const compCurve = root.querySelector<SVGPathElement>('#pcl2-comp-curve')!;
+    const pumpSliver = root.querySelector<SVGRectElement>('#pcl2-pump-sliver')!;
+    const pumpLine = root.querySelector<SVGLineElement>('#pcl2-pump-line')!;
+    const p1Line = root.querySelector<SVGLineElement>('#pcl2-p1-line')!;
+    const p2Line = root.querySelector<SVGLineElement>('#pcl2-p2-line')!;
+    const cPt1 = root.querySelector<SVGCircleElement>('#pcl2-c-pt1')!;
+    const cPt2 = root.querySelector<SVGCircleElement>('#pcl2-c-pt2')!;
+    const pPt2 = root.querySelector<SVGCircleElement>('#pcl2-p-pt2')!;
+    const pumpBadge = root.querySelector<SVGTextElement>('#pcl2-pump-badge')!;
+    const compBadge = root.querySelector<SVGTextElement>('#pcl2-comp-badge')!;
+
+    const barPump = root.querySelector<SVGRectElement>('#pcl2-bar-pump')!;
+    const barPumpTxt = root.querySelector<SVGTextElement>('#pcl2-bar-pump-txt')!;
+    const barComp = root.querySelector<SVGRectElement>('#pcl2-bar-comp')!;
+    const barCompTxt = root.querySelector<SVGTextElement>('#pcl2-bar-comp-txt')!;
+    const ratioBig = root.querySelector<SVGTextElement>('#pcl2-ratio-big')!;
+    const bwrBar = root.querySelector<SVGRectElement>('#pcl2-bwr-bar')!;
+
+    const icGrid = root.querySelector<SVGGElement>('#pcl2-ic-grid')!;
+    const icYticks = root.querySelector<SVGGElement>('#pcl2-ic-yticks')!;
+    const icXticks = root.querySelector<SVGGElement>('#pcl2-ic-xticks')!;
+    const icSavedArea = root.querySelector<SVGPathElement>('#pcl2-ic-saved-area')!;
+    const icIsoPath = root.querySelector<SVGPathElement>('#pcl2-ic-iso')!;
+    const ic1stPath = root.querySelector<SVGPathElement>('#pcl2-ic-1st')!;
+    const ic2stPath = root.querySelector<SVGPathElement>('#pcl2-ic-2st')!;
+    const icPxLine = root.querySelector<SVGLineElement>('#pcl2-ic-pxline')!;
+    const icPxTag = root.querySelector<SVGTextElement>('#pcl2-ic-pxtag')!;
+    const icPt1 = root.querySelector<SVGCircleElement>('#pcl2-ic-pt1')!;
+    const icPtx = root.querySelector<SVGCircleElement>('#pcl2-ic-ptx')!;
+    const icPtxp = root.querySelector<SVGCircleElement>('#pcl2-ic-ptxp')!;
+    const icPt2 = root.querySelector<SVGCircleElement>('#pcl2-ic-pt2')!;
+    const icSavedLbl = root.querySelector<SVGTextElement>('#pcl2-ic-saved-lbl')!;
+
+    const opt1st = root.querySelector<SVGLineElement>('#pcl2-opt-1st')!;
+    const optIso = root.querySelector<SVGLineElement>('#pcl2-opt-iso')!;
+    const opt1stLbl = root.querySelector<SVGTextElement>('#pcl2-opt-1st-lbl')!;
+    const optIsoLbl = root.querySelector<SVGTextElement>('#pcl2-opt-iso-lbl')!;
+    const optCurve = root.querySelector<SVGPathElement>('#pcl2-opt-curve')!;
+    const optMin = root.querySelector<SVGCircleElement>('#pcl2-opt-min')!;
+    const optCur = root.querySelector<SVGCircleElement>('#pcl2-opt-cur')!;
+    const st1Bar = root.querySelector<SVGRectElement>('#pcl2-st1-bar')!;
+    const st1Txt = root.querySelector<SVGTextElement>('#pcl2-st1-txt')!;
+    const st2Bar = root.querySelector<SVGRectElement>('#pcl2-st2-bar')!;
+    const st2Txt = root.querySelector<SVGTextElement>('#pcl2-st2-txt')!;
+
+    const m1Lbl = root.querySelector<HTMLElement>('#pcl2-m1-lbl')!;
+    const m2Lbl = root.querySelector<HTMLElement>('#pcl2-m2-lbl')!;
+    const m3Lbl = root.querySelector<HTMLElement>('#pcl2-m3-lbl')!;
+    const m4Lbl = root.querySelector<HTMLElement>('#pcl2-m4-lbl')!;
+    const m1Val = root.querySelector<HTMLElement>('#pcl2-m1-val')!;
+    const m2Val = root.querySelector<HTMLElement>('#pcl2-m2-val')!;
+    const m3Val = root.querySelector<HTMLElement>('#pcl2-m3-val')!;
+    const m4Val = root.querySelector<HTMLElement>('#pcl2-m4-val')!;
+    const explainEl = root.querySelector<HTMLElement>('#pcl2-explain')!;
+
+    function renderPumpVsComp() {
+      p2Lbl.textContent = `${p2Target.toFixed(0)} kPa (${(p2Target / 1000).toFixed(2)} MPa)`;
+      sweepLbl.textContent = `${Math.round(sweep * 100)}%`;
+      sweepSlider.value = String(Math.round(sweep * 100));
+
+      const pCur = 100 + sweep * (p2Target - 100);
+      const vp = createViewport(0, 1.85, 0, 2200, 52, 332, 208, 18);
+
+      // شبکه
+      let gHtml = '';
+      let ytHtml = '';
+      let xtHtml = '';
+      for (const pyVal of [500, 1000, 1500, 2000]) {
+        const y = vp.y(pyVal);
+        gHtml += `<line x1="52" y1="${y.toFixed(1)}" x2="332" y2="${y.toFixed(1)}" />`;
+        ytHtml += `<text x="46" y="${(y + 3).toFixed(1)}">${pyVal}</text>`;
+      }
+      for (const vxVal of [0.5, 1.0, 1.5]) {
+        const x = vp.x(vxVal);
+        gHtml += `<line x1="${x.toFixed(1)}" y1="18" x2="${x.toFixed(1)}" y2="208" />`;
+        xtHtml += `<text x="${x.toFixed(1)}" y="220">${vxVal.toFixed(1)}</text>`;
+      }
+      pvcGrid.innerHTML = gHtml;
+      pvcYticks.innerHTML = ytHtml;
+      pvcXticks.innerHTML = xtHtml;
+
+      // استخراج منحنی کمپرسور تا pCur
+      const pts: VaporSpinePt[] = [];
+      for (const sp of vaporSpine) {
+        if (sp.pKpa <= pCur) pts.push(sp);
+      }
+      const endVapor = getVaporAtP(pCur);
+      if (pts[pts.length - 1]?.pKpa !== endVapor.pKpa) pts.push(endVapor);
+
+      const curveCoords: Array<[number, number]> = pts.map((pt) => [pt.v, pt.pKpa]);
+      compCurve.setAttribute('d', vp.path(curveCoords));
+
+      // سطح سمت چپ منحنی (-∫ v dP) تا محور v=0
+      const areaCoords: Array<[number, number]> = [[0, 100], ...curveCoords, [0, pCur]];
+      compArea.setAttribute('d', vp.path(areaCoords, true));
+
+      const yP1 = vp.y(100);
+      const yP2 = vp.y(pCur);
+      p1Line.setAttribute('y1', yP1.toFixed(1));
+      p1Line.setAttribute('y2', yP1.toFixed(1));
+      p2Line.setAttribute('y1', yP2.toFixed(1));
+      p2Line.setAttribute('y2', yP2.toFixed(1));
+
+      pumpSliver.setAttribute('y', yP2.toFixed(1));
+      pumpSliver.setAttribute('height', Math.max(1, yP1 - yP2).toFixed(1));
+      pumpLine.setAttribute('y1', yP1.toFixed(1));
+      pumpLine.setAttribute('y2', yP2.toFixed(1));
+
+      cPt1.setAttribute('cx', vp.x(sat1.vg).toFixed(1));
+      cPt1.setAttribute('cy', yP1.toFixed(1));
+      cPt2.setAttribute('cx', vp.x(endVapor.v).toFixed(1));
+      cPt2.setAttribute('cy', yP2.toFixed(1));
+      pPt2.setAttribute('cy', yP2.toFixed(1));
+
+      const wPump = sat1.vf * (pCur - 100);
+      const wComp = endVapor.h - sat1.hg;
+      const ratio = wPump > 0.001 ? wComp / wPump : 552;
+
+      p1Title.innerHTML = 'نمودار <span dir="ltr">P-v</span>: سطح سمت چپ <span dir="ltr">(-∫ v dP)</span>';
+      p1Tag.textContent = `Ratio = ${ratio.toFixed(0)}×`;
+      p2Title.innerHTML = 'مقایسهٔ مقیاس کار پمپ و کمپرسور';
+      p2Tag.textContent = `v_g / v_f = ${(sat1.vg / sat1.vf).toFixed(0)}×`;
+
+      pumpBadge.textContent = `Pump sliver: ${wPump.toFixed(2)} kJ/kg`;
+      compBadge.textContent = `w_comp = ${wComp.toFixed(1)} kJ/kg`;
+      compBadge.setAttribute('x', vp.x(Math.min(1.15, endVapor.v * 0.72 + 0.15)).toFixed(1));
+      compBadge.setAttribute('y', ((yP1 + yP2) / 2 + 4).toFixed(1));
+
+      // میله‌های پنل ۲
+      const maxWBar = 720;
+      const wPumpPx = Math.max(2, (wPump / maxWBar) * 260);
+      const wCompPx = Math.min(260, (wComp / maxWBar) * 260);
+      barPump.setAttribute('width', wPumpPx.toFixed(1));
+      barPumpTxt.textContent = `${wPump.toFixed(2)} kJ/kg (tiny sliver!)`;
+      barComp.setAttribute('width', wCompPx.toFixed(1));
+      barCompTxt.textContent = `${wComp.toFixed(1)} kJ/kg`;
+      ratioBig.textContent = `w_comp / w_pump = ${ratio.toFixed(0)} ×`;
+      bwrBar.setAttribute('width', '3');
+
+      m1Lbl.innerHTML = 'کار پمپ مایع <span dir="ltr">(w_pump = v_f ΔP)</span>';
+      m2Lbl.innerHTML = 'کار کمپرسور بخار <span dir="ltr">(w_comp = Δh_s)</span>';
+      m3Lbl.innerHTML = 'نسبت کار کمپرسور به پمپ';
+      m4Lbl.innerHTML = 'دمای خروجی کمپرسور (<span dir="ltr">T₂s</span>)';
+
+      m1Val.textContent = `${wPump.toFixed(2)} kJ/kg`;
+      m2Val.textContent = `${wComp.toFixed(1)} kJ/kg`;
+      m3Val.textContent = `${ratio.toFixed(0)}×`;
+      m4Val.textContent = `${endVapor.tC.toFixed(1)} °C`;
+
+      explainEl.innerHTML = `بین فشار <span dir="ltr">100 kPa</span> و <span dir="ltr">${pCur.toFixed(0)} kPa</span>، چون حجم مخصوص بخار اشباع (<span dir="ltr">1.694 m³/kg</span>) حدود <strong>۱۶۲۴ برابر</strong> مایع اشباع (<span dir="ltr">0.00104 m³/kg</span>) است، مساحت سمت چپ نمودار <span dir="ltr">P-v</span> برای کمپرسور <strong><span dir="ltr">${ratio.toFixed(0)}</span> برابر</strong> پمپ است (<span dir="ltr">${wComp.toFixed(1)}</span> در برابر <span dir="ltr">${wPump.toFixed(2)} kJ/kg</span>).`;
+    }
+
+    function workIsenStage(pA: number, pB: number): number {
+      const exp = (air.k - 1) / air.k;
+      return ((air.k * air.R * T1) / (air.k - 1)) * (Math.pow(pB / pA, exp) - 1);
+    }
+
+    function renderIntercooling() {
+      icPxSlider.max = String(icP2 - 40);
+      if (icPx >= icP2 - 30) {
+        icPx = icP2 - 40;
+        icPxSlider.value = String(icPx);
+      }
+      if (icPx <= P1 + 20) {
+        icPx = P1 + 20;
+        icPxSlider.value = String(icPx);
+      }
+      icP2Lbl.textContent = `${icP2.toFixed(0)} kPa`;
+      icPxLbl.textContent = `${icPx.toFixed(0)} kPa`;
+
+      const v1 = (air.R * T1) / P1; // 0.861 m3/kg
+      const pOpt = Math.sqrt(P1 * icP2);
+
+      const w1Stage = workIsenStage(P1, icP2);
+      const wIso = air.R * T1 * Math.log(icP2 / P1);
+      const wSt1 = workIsenStage(P1, icPx);
+      const wSt2 = workIsenStage(icPx, icP2);
+      const w2Stage = wSt1 + wSt2;
+      const wMin = workIsenStage(P1, pOpt) * 2;
+      const wSaved = w1Stage - w2Stage;
+
+      p1Title.innerHTML = 'نمودار <span dir="ltr">P-v</span> تراکم دومرحله‌ای با خنک‌کن میانی';
+      p1Tag.textContent = `Saved = ${wSaved.toFixed(1)} kJ/kg`;
+      p2Title.innerHTML = 'تغییر کل کار مصرفی بر حسب <span dir="ltr">P_x</span>';
+      p2Tag.textContent = `P_x,opt = ${pOpt.toFixed(1)} kPa`;
+
+      const vp = createViewport(0, 0.95, 0, icP2 * 1.12, 52, 332, 208, 18);
+
+      let gHtml = '';
+      let ytHtml = '';
+      let xtHtml = '';
+      const pStep = icP2 > 1000 ? 400 : 300;
+      for (let pv = pStep; pv <= icP2; pv += pStep) {
+        const y = vp.y(pv);
+        gHtml += `<line x1="52" y1="${y.toFixed(1)}" x2="332" y2="${y.toFixed(1)}" />`;
+        ytHtml += `<text x="46" y="${(y + 3).toFixed(1)}">${pv}</text>`;
+      }
+      for (const vx of [0.2, 0.4, 0.6, 0.8]) {
+        const x = vp.x(vx);
+        gHtml += `<line x1="${x.toFixed(1)}" y1="18" x2="${x.toFixed(1)}" y2="208" />`;
+        xtHtml += `<text x="${x.toFixed(1)}" y="220">${vx.toFixed(1)}</text>`;
+      }
+      icGrid.innerHTML = gHtml;
+      icYticks.innerHTML = ytHtml;
+      icXticks.innerHTML = xtHtml;
+
+      // منحنی‌ها
+      const isoPts: Array<[number, number]> = [];
+      const st1FullPts: Array<[number, number]> = [];
+      const st1SubPts: Array<[number, number]> = [];
+      const st1UpperPts: Array<[number, number]> = [];
+      const st2SubPts: Array<[number, number]> = [];
+
+      const vx = v1 * Math.pow(P1 / icPx, 1 / air.k);
+      const vxp = (air.R * T1) / icPx;
+
+      for (let i = 0; i <= 30; i++) {
+        const p = P1 + (i / 30) * (icP2 - P1);
+        isoPts.push([(air.R * T1) / p, p]);
+        st1FullPts.push([v1 * Math.pow(P1 / p, 1 / air.k), p]);
+      }
+      for (let i = 0; i <= 16; i++) {
+        const p = P1 + (i / 16) * (icPx - P1);
+        st1SubPts.push([v1 * Math.pow(P1 / p, 1 / air.k), p]);
+      }
+      for (let i = 0; i <= 18; i++) {
+        const p = icPx + (i / 18) * (icP2 - icPx);
+        st1UpperPts.push([v1 * Math.pow(P1 / p, 1 / air.k), p]);
+        st2SubPts.push([vxp * Math.pow(icPx / p, 1 / air.k), p]);
+      }
+
+      icIsoPath.setAttribute('d', vp.path(isoPts));
+      ic1stPath.setAttribute('d', vp.path(st1FullPts));
+      ic2stPath.setAttribute('d', vp.path([...st1SubPts, ...st2SubPts]));
+
+      // ناحیه کار صرفه‌جویی‌شده بین st1Upper و st2Sub
+      const savedPoly: Array<[number, number]> = [...st1UpperPts, ...[...st2SubPts].reverse()];
+      icSavedArea.setAttribute('d', vp.path(savedPoly, true));
+
+      const yPx = vp.y(icPx);
+      icPxLine.setAttribute('y1', yPx.toFixed(1));
+      icPxLine.setAttribute('y2', yPx.toFixed(1));
+      icPxTag.setAttribute('y', (yPx - 4).toFixed(1));
+      icPxTag.textContent = `P_x=${icPx}`;
+
+      icPt1.setAttribute('cx', vp.x(v1).toFixed(1));
+      icPt1.setAttribute('cy', vp.y(P1).toFixed(1));
+      icPtx.setAttribute('cx', vp.x(vx).toFixed(1));
+      icPtx.setAttribute('cy', yPx.toFixed(1));
+      icPtxp.setAttribute('cx', vp.x(vxp).toFixed(1));
+      icPtxp.setAttribute('cy', yPx.toFixed(1));
+
+      const v2Final = vxp * Math.pow(icPx / icP2, 1 / air.k);
+      icPt2.setAttribute('cx', vp.x(v2Final).toFixed(1));
+      icPt2.setAttribute('cy', vp.y(icP2).toFixed(1));
+
+      icSavedLbl.textContent = `Saved = ${wSaved.toFixed(1)} kJ/kg`;
+
+      // نمودار بهینه‌سازی P_x در پنل ۲
+      const ovp = createViewport(P1, icP2, wIso * 0.9, w1Stage * 1.06, 46, 280, 176, 20);
+      const oPts: Array<[number, number]> = [];
+      for (let i = 0; i <= 40; i++) {
+        const px = P1 + (i / 40) * (icP2 - P1);
+        oPts.push([px, workIsenStage(P1, px) + workIsenStage(px, icP2)]);
+      }
+      optCurve.setAttribute('d', ovp.path(oPts));
+
+      const y1st = ovp.y(w1Stage);
+      const yIso = ovp.y(wIso);
+      opt1st.setAttribute('y1', y1st.toFixed(1));
+      opt1st.setAttribute('y2', y1st.toFixed(1));
+      opt1stLbl.setAttribute('y', (y1st - 4).toFixed(1));
+      opt1stLbl.textContent = `1-stage (${w1Stage.toFixed(0)})`;
+
+      optIso.setAttribute('y1', yIso.toFixed(1));
+      optIso.setAttribute('y2', yIso.toFixed(1));
+      optIsoLbl.setAttribute('y', (yIso - 4).toFixed(1));
+      optIsoLbl.textContent = `Isothermal (${wIso.toFixed(0)})`;
+
+      optMin.setAttribute('cx', ovp.x(pOpt).toFixed(1));
+      optMin.setAttribute('cy', ovp.y(wMin).toFixed(1));
+      optCur.setAttribute('cx', ovp.x(icPx).toFixed(1));
+      optCur.setAttribute('cy', ovp.y(w2Stage).toFixed(1));
+
+      const maxSt = Math.max(wSt1, wSt2, 1);
+      st1Bar.setAttribute('width', (124 * (wSt1 / maxSt)).toFixed(1));
+      st2Bar.setAttribute('width', (124 * (wSt2 / maxSt)).toFixed(1));
+      st1Txt.textContent = `w₁ = ${wSt1.toFixed(1)} kJ/kg`;
+      st2Txt.textContent = `w₂ = ${wSt2.toFixed(1)} kJ/kg`;
+
+      m1Lbl.innerHTML = 'کار ۱-مرحله‌ای <span dir="ltr">(w_1stage)</span>';
+      m2Lbl.innerHTML = 'کار ۲-مرحله‌ای فعلی <span dir="ltr">(w₁ + w₂)</span>';
+      m3Lbl.innerHTML = 'کار صرفه‌جویی‌شده <span dir="ltr">(w_saved)</span>';
+      m4Lbl.innerHTML = 'فشار میانی بهینه <span dir="ltr">(√(P₁·P₂))</span>';
+
+      m1Val.textContent = `${w1Stage.toFixed(1)} kJ/kg`;
+      m2Val.textContent = `${w2Stage.toFixed(1)} kJ/kg`;
+      m3Val.textContent = `${wSaved.toFixed(1)} kJ/kg (${((wSaved / w1Stage) * 100).toFixed(1)}%)`;
+      m4Val.textContent = `${pOpt.toFixed(1)} kPa`;
+
+      const isOpt = Math.abs(icPx - pOpt) <= 2;
+      explainEl.innerHTML = isOpt
+        ? `<strong>نقطهٔ بهینهٔ <span dir="ltr">P_x = √(P₁·P₂) = ${pOpt.toFixed(1)} kPa</span>:</strong> نسبت فشار دو مرحله با هم برابر <span dir="ltr">(${(icPx / P1).toFixed(2)} = ${(icP2 / icPx).toFixed(2)})</span> و کار هر دو مرحله دقیقاً مساوی <span dir="ltr">(w₁ = w₂ = ${wSt1.toFixed(1)} kJ/kg)</span> است؛ در این فشار کار کل به کمترین مقدار ممکن <span dir="ltr">(${wMin.toFixed(1)} kJ/kg)</span> می‌رسد!`
+        : `با خنک‌کردن هوا در فشار میانی <span dir="ltr">P_x = ${icPx} kPa</span> تا دمای <span dir="ltr">300 K</span>، حجم مخصوص کاهش یافته و <strong><span dir="ltr">${wSaved.toFixed(1)} kJ/kg</span></strong> در کار تراکم صرفه‌جویی می‌شود (مساحت سبز روی <span dir="ltr">P-v</span>). برای رسیدن به کمترین کار کل، دکمهٔ فشار بهینه (<span dir="ltr">${pOpt.toFixed(1)} kPa</span>) را بزنید.`;
+    }
+
+    function renderAll() {
+      if (mode === 'pump-vs-comp') renderPumpVsComp();
+      else renderIntercooling();
+    }
+
+    const anim = createAnimController(root, (dt) => {
+      if (mode !== 'pump-vs-comp') return false;
+      sweep += dt * 0.25;
+      if (sweep >= 1) {
+        sweep = 1;
+        renderPumpVsComp();
+        playBtn.textContent = '▶ پخش مقایسهٔ تراکم';
+        return false;
+      }
+      renderPumpVsComp();
+    });
+
+    root.querySelectorAll('#pcl2-modes button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('#pcl2-modes button').forEach((b) => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        mode = (btn.getAttribute('data-mode') as LabMode) || 'pump-vs-comp';
+        anim.stop();
+        playBtn.textContent = '▶ پخش مقایسهٔ تراکم';
+
+        pvcCtrls.style.display = mode === 'pump-vs-comp' ? '' : 'none';
+        icCtrls.style.display = mode === 'intercooling' ? '' : 'none';
+        pvcSvg.style.display = mode === 'pump-vs-comp' ? 'block' : 'none';
+        ratioSvg.style.display = mode === 'pump-vs-comp' ? 'block' : 'none';
+        icPvSvg.style.display = mode === 'intercooling' ? 'block' : 'none';
+        icOptSvg.style.display = mode === 'intercooling' ? 'block' : 'none';
+        renderAll();
+      });
+    });
+
+    p2Slider.addEventListener('input', () => {
+      p2Target = parseFloat(p2Slider.value);
+      renderPumpVsComp();
+    });
+    sweepSlider.addEventListener('input', () => {
+      anim.stop();
+      playBtn.textContent = '▶ پخش مقایسهٔ تراکم';
+      sweep = parseFloat(sweepSlider.value) / 100;
+      renderPumpVsComp();
+    });
+    playBtn.addEventListener('click', () => {
+      if (anim.isPlaying()) {
+        anim.stop();
+        playBtn.textContent = '▶ پخش مقایسهٔ تراکم';
+      } else {
+        if (sweep >= 0.99) sweep = 0.05;
+        anim.start();
+        playBtn.textContent = '⏸ توقف';
+      }
+    });
+    ex79Btn.addEventListener('click', () => {
+      anim.stop();
+      playBtn.textContent = '▶ پخش مقایسهٔ تراکم';
+      p2Target = 1000;
+      sweep = 1.0;
+      p2Slider.value = '1000';
+      renderPumpVsComp();
+    });
+
+    icP2Slider.addEventListener('input', () => {
+      icP2 = parseFloat(icP2Slider.value);
+      renderIntercooling();
+    });
+    icPxSlider.addEventListener('input', () => {
+      icPx = parseFloat(icPxSlider.value);
+      renderIntercooling();
+    });
+    icOptBtn.addEventListener('click', () => {
+      icPx = Math.round(Math.sqrt(P1 * icP2) / 5) * 5;
+      icPxSlider.value = String(icPx);
+      renderIntercooling();
+    });
+
+    renderAll();
+  })();
+</script>

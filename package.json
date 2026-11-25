@@ -12,6 +12,7 @@
     "@astrojs/starlight": "^0.37.7",
     "@fontsource-variable/vazirmatn": "^5.3.0",
     "astro": "^5.18.2",
+    "iapws-if97": "^2.8.0",
     "katex": "^0.16.21",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
