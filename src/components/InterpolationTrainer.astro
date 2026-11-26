@@ -1,0 +1,1465 @@
+---
+// تمرینگر تعاملی جداول سنجل (A-4 / A-5 / A-6) و درونیابی امتحانی با ماشین‌حساب
+---
+
+<section
+  class="jh-widget jh-trainer not-content"
+  id="interpolation-trainer-widget"
+  data-interpolation-trainer
+  aria-label="تمرین تعاملی درونیابی و تشخیص ناحیه جداول سنجل"
+>
+  <div class="jh-widget__head jh-trainer__head">
+    <div class="jh-trainer__heading">
+      <div class="jh-widget__title">تمرین تعاملی جداول سنجل و درونیابی امتحان</div>
+      <div class="jh-widget__sub">
+        فقط برش دو سطر یا شبکهٔ ۲×۲ مجاور نمایش داده می‌شود — مانند سر جلسهٔ امتحان با ماشین‌حساب حل کنید
+      </div>
+    </div>
+    <div class="jh-trainer__status-pills">
+      <span class="jh-widget__badge" data-table-badge dir="ltr">Table A-4</span>
+      <span class="jh-trainer__streak" aria-live="polite">
+        امتیاز پیاپی: <strong data-streak-val dir="ltr">0</strong>
+      </span>
+    </div>
+  </div>
+
+  <div class="jh-trainer__toolbar">
+    <div class="jh-widget__btns jh-trainer__modes" role="tablist" aria-label="انتخاب حالت تمرین">
+      <button
+        type="button"
+        class="jh-widget__btn is-active"
+        data-mode="region"
+        role="tab"
+        aria-selected="true"
+      >
+        ۱. تشخیص ناحیه
+      </button>
+      <button
+        type="button"
+        class="jh-widget__btn"
+        data-mode="linear1d"
+        role="tab"
+        aria-selected="false"
+      >
+        ۲. درونیابی ۱بعدی
+      </button>
+      <button
+        type="button"
+        class="jh-widget__btn"
+        data-mode="inverse"
+        role="tab"
+        aria-selected="false"
+      >
+        ۳. درونیابی معکوس
+      </button>
+      <button
+        type="button"
+        class="jh-widget__btn"
+        data-mode="double2d"
+        role="tab"
+        aria-selected="false"
+      >
+        ۴. درونیابی دوبعدی (<span dir="ltr">A-6</span>)
+      </button>
+    </div>
+
+    <button type="button" class="jh-widget__btn jh-trainer__new-btn" data-new-problem>
+      سوال جدید ↻
+    </button>
+  </div>
+
+  <div class="jh-widget__split jh-trainer__split">
+    <div class="jh-widget__pane jh-trainer__question-pane">
+      <div class="jh-widget__pane-title">
+        <span>صورت سوال و برش جدول مرجع</span>
+        <span class="jh-trainer__mode-tag" data-mode-tag>تشخیص ناحیه فازی</span>
+      </div>
+
+      <p class="jh-trainer__prompt" data-prompt></p>
+
+      <div class="jh-trainer__slice-box">
+        <div class="jh-trainer__slice-head">
+          <span class="jh-trainer__slice-title" data-table-title></span>
+          <span class="jh-trainer__slice-note">فقط سطرهای همسایه</span>
+        </div>
+        <div
+          class="jh-trainer__table-wrap"
+          dir="ltr"
+          tabindex="0"
+          role="region"
+          aria-label="برش جدول سنجل (دارای اسکرول افقی)"
+        >
+          <table class="jh-trainer__table" data-slice-table></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="jh-widget__pane jh-trainer__answer-pane">
+      <div class="jh-widget__pane-title">
+        <span>پاسخ‌نامهٔ ماشین‌حساب</span>
+        <span class="jh-trainer__tol-pill" data-tol-pill>تشخیص از کران‌های جدول</span>
+      </div>
+
+      <form class="jh-trainer__form" data-trainer-form novalidate>
+        <div
+          class="jh-trainer__phase-group"
+          data-region-group
+          role="radiogroup"
+          aria-label="انتخاب ناحیه فازی سیستم"
+        >
+          <div class="jh-trainer__field-label">ناحیه فازی سیستم را انتخاب کنید:</div>
+          <div class="jh-trainer__phase-grid">
+            <button
+              type="button"
+              class="jh-trainer__phase-btn"
+              data-phase="compressed"
+              role="radio"
+              aria-checked="false"
+            >
+              <span class="jh-trainer__phase-title">مایع متراکم</span>
+              <span class="jh-trainer__phase-en" dir="ltr">Compressed Liquid</span>
+            </button>
+            <button
+              type="button"
+              class="jh-trainer__phase-btn"
+              data-phase="saturated"
+              role="radio"
+              aria-checked="false"
+            >
+              <span class="jh-trainer__phase-title">مخلوط اشباع</span>
+              <span class="jh-trainer__phase-en" dir="ltr">Saturated Mixture</span>
+            </button>
+            <button
+              type="button"
+              class="jh-trainer__phase-btn"
+              data-phase="superheated"
+              role="radio"
+              aria-checked="false"
+            >
+              <span class="jh-trainer__phase-title">بخار فوق‌گرم</span>
+              <span class="jh-trainer__phase-en" dir="ltr">Superheated Vapor</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="jh-trainer__numeric-group" data-numeric-group hidden>
+          <label class="jh-trainer__field">
+            <span class="jh-trainer__field-head">
+              <span class="jh-trainer__field-label" data-r-label>نسبت درونیابی r (اختیاری)</span>
+              <span class="jh-trainer__unit-badge">بین ۰ و ۱</span>
+            </span>
+            <input
+              type="text"
+              class="jh-trainer__input"
+              dir="ltr"
+              inputmode="decimal"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="مثلاً 0.40 یا ۰/۴"
+              data-input-r
+            />
+          </label>
+
+          <label class="jh-trainer__field">
+            <span class="jh-trainer__field-head">
+              <span class="jh-trainer__field-label" data-val-label>مقدار نهایی *</span>
+              <span class="jh-trainer__unit-badge" dir="ltr" data-val-unit>kJ/kg</span>
+            </span>
+            <input
+              type="text"
+              class="jh-trainer__input"
+              dir="ltr"
+              inputmode="decimal"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="عدد نهایی با ماشین‌حساب..."
+              data-input-val
+            />
+          </label>
+        </div>
+
+        <div class="jh-trainer__actions">
+          <button
+            type="submit"
+            class="jh-widget__btn jh-widget__btn--primary jh-trainer__check-btn"
+            data-check-btn
+          >
+            بررسی پاسخ
+          </button>
+          <button
+            type="button"
+            class="jh-widget__btn jh-trainer__sol-btn"
+            data-toggle-solution
+            aria-expanded="false"
+          >
+            نمایش راه‌حل گام‌به‌گام
+          </button>
+        </div>
+      </form>
+
+      <div class="jh-trainer__feedback" data-feedback role="status" aria-live="polite" hidden></div>
+    </div>
+  </div>
+
+  <div class="jh-trainer__solution" data-solution hidden>
+    <div class="jh-trainer__solution-head">
+      <strong>راه‌حل گام‌به‌گام امتحانی</strong>
+      <span class="jh-trainer__solution-summary" data-solution-answer></span>
+    </div>
+    <ol class="jh-trainer__steps" data-solution-steps></ol>
+  </div>
+</section>
+
+<script>
+  import {
+    generateTrainerProblem,
+    evaluateTrainerSubmission,
+    type TrainerMode,
+    type TrainerProblem,
+    type TrainerFeedback,
+    type TrapType,
+    type WaterPhaseKey,
+  } from '../lib/interpolationTrainer.ts';
+
+  type ParseResult =
+    | { kind: 'empty' }
+    | { kind: 'invalid' }
+    | { kind: 'ok'; value: number };
+
+  interface DiagnosticMeta {
+    tone: 'ok' | 'trap' | 'err';
+    title: string;
+    hintFa?: string;
+  }
+
+  interface ExplanationStep {
+    label: string;
+    detail?: string;
+    formula?: string;
+  }
+
+  const MODE_TAG_FA: Record<TrainerMode, string> = {
+    region: 'تشخیص ناحیه فازی',
+    linear1d: 'درونیابی خطی ۱بعدی',
+    inverse: 'درونیابی معکوس',
+    double2d: 'درونیابی دوبعدی (جدول A-6)',
+  };
+
+  const PHASE_TITLE_FA: Record<WaterPhaseKey, string> = {
+    compressed: 'مایع متراکم (زیرسرد)',
+    saturated: 'مخلوط اشباع (دوفازی)',
+    superheated: 'بخار فوق‌گرم (سوپرهیت)',
+  };
+
+  function normalizeLocalizedDigits(raw: string): string {
+    return raw
+      .replace(/[\s\u00a0\u200c]+/g, '')
+      .replace(/[۰-۹]/g, (ch) => String(ch.charCodeAt(0) - 0x06f0))
+      .replace(/[٠-٩]/g, (ch) => String(ch.charCodeAt(0) - 0x0660))
+      .replace(/[٫/]/g, '.')
+      .replace(/\u066c/g, '')
+      .replace(/[−–—]/g, '-');
+  }
+
+  function parseLocalizedNumber(raw: string): ParseResult {
+    const trimmed = raw.replace(/[\s\u00a0\u200c]+/g, '');
+    if (!trimmed) return { kind: 'empty' };
+
+    const normalized = normalizeLocalizedDigits(trimmed);
+    if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(normalized)) {
+      return { kind: 'invalid' };
+    }
+
+    const num = Number(normalized);
+    if (!Number.isFinite(num)) return { kind: 'invalid' };
+    return { kind: 'ok', value: num };
+  }
+
+  function fmtNum(n: number, maxDecimals = 5): string {
+    if (!Number.isFinite(n)) return '—';
+    const decimals = Math.abs(n) > 0 && Math.abs(n) < 0.05 ? 6 : maxDecimals;
+    const rounded = Number(n.toFixed(decimals));
+    return Object.is(rounded, -0) ? '0' : String(rounded);
+  }
+
+  function appendSubscriptText(parent: HTMLElement, text: string): void {
+    const tokenRe = /([A-Za-z]+)_(sat|f|g|A|B|T|P)|\b(A-[456])\b/g;
+    let lastIdx = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = tokenRe.exec(text)) !== null) {
+      if (match.index > lastIdx) {
+        parent.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+      }
+      if (match[1] && match[2]) {
+        const span = document.createElement('span');
+        span.dir = 'ltr';
+        span.className = 'jh-trainer__math-tok';
+        span.appendChild(document.createTextNode(match[1]));
+        const sub = document.createElement('sub');
+        sub.textContent = match[2];
+        span.appendChild(sub);
+        parent.appendChild(span);
+      } else if (match[3]) {
+        const span = document.createElement('span');
+        span.dir = 'ltr';
+        span.className = 'jh-trainer__math-tok';
+        span.textContent = match[3];
+        parent.appendChild(span);
+      }
+      lastIdx = tokenRe.lastIndex;
+    }
+
+    if (lastIdx < text.length) {
+      parent.appendChild(document.createTextNode(text.slice(lastIdx)));
+    }
+  }
+
+  function getDiagnosticMeta(
+    problem: TrainerProblem,
+    feedback: TrainerFeedback
+  ): DiagnosticMeta {
+    if (feedback.correct) {
+      return {
+        tone: 'ok',
+        title: '✅ پاسخ صحیح و دقیق',
+        hintFa:
+          problem.mode === 'region'
+            ? 'منطق تشخیص ناحیه فازی شما با الگوریتم جدول سنجل هماهنگ است.'
+            : 'تطابق کامل با تلرانس ماشین‌حساب امتحانی (±۰.۶٪ یا ±۲×۱۰⁻⁵).',
+      };
+    }
+
+    const trap: TrapType | null = feedback.trapDetected;
+    switch (trap) {
+      case 'swapped_r':
+        return {
+          tone: 'trap',
+          title: '⚠ تلهٔ امتحانی: برعکس کردن نسبت درونیابی (1 − r)',
+          hintFa:
+            problem.mode === 'double2d'
+              ? 'هر دو نسبت r_T = (T − T₁)/(T₂ − T₁) و r_P = (P − P₁)/(P₂ − P₁) را از سرِ پایین‌تر بازه حساب کنید.'
+              : 'مطمئن شوید صورت کسر فاصله تا سطر اول است (x − x₁) و در پایان به y₁ جمع می‌شود، نه برعکس.',
+        };
+      case 'out_of_range_r':
+      case 'wrong_r':
+        return {
+          tone: 'err',
+          title: '✖ خطا در نسبت میانی درونیابی (r)',
+          hintFa:
+            problem.mode === 'double2d'
+              ? 'نسبت r درونیابی دوبعدی باید بین ۰ و ۱ باشد و با r_T = (T − T₁)/(T₂ − T₁) یا r_P = (P − P₁)/(P₂ − P₁) هم‌خوانی داشته باشد.'
+              : 'نسبت r باید بین ۰ و ۱ باشد؛ حاصل تقسیم (x − x₁) بر (x₂ − x₁) را دوباره حساب کنید.',
+        };
+      case 'out_of_bracket':
+        return {
+          tone: 'trap',
+          title: '⚠ کنترل منطقی سریع: عدد نهایی خارج از بازه جدول!',
+          hintFa:
+            problem.mode === 'double2d'
+              ? 'در درونیابی دوبعدی جدول A-6، جواب نهایی باید بین کمینه و بیشینهٔ چهار گوشه باشد.'
+              : 'جواب درونیابی همیشه باید اکیداً بین مقادیر دو سطر مجاور قرار بگیرد.',
+        };
+      case 'calculation_error':
+        return {
+          tone: 'err',
+          title: '✖ اختلاف عددی خارج از خطای مجاز ماشین‌حساب',
+          hintFa:
+            problem.mode === 'double2d'
+              ? 'ابتدا y_A و y_B را در دو فشار مجاور با r_T حساب کنید و سپس با r_P بین آن‌ها درونیابی کنید.'
+              : 'حاصل y₁ + r × (y₂ − y₁) را بدون گرد کردنِ زودهنگامِ بیش‌ازحد مرور کنید.',
+        };
+      case 'inverted_p_sat_rule':
+        return {
+          tone: 'trap',
+          title: '⚠ تلهٔ امتحانی: جابه‌جایی شرط مایع متراکم و بخار فوق‌گرم',
+          hintFa:
+            'فشار بالاتر یا دمای پایین‌تر از حالت اشباع ⇒ مایع متراکم؛ دمای بالاتر یا فشار پایین‌تر از حالت اشباع ⇒ بخار فوق‌گرم.',
+        };
+      case 'phase_mismatch':
+        return {
+          tone: 'err',
+          title: '✖ ناهماهنگی با کران‌های جدول اشباع',
+          hintFa:
+            'برای خاصیت داده‌شده، مقایسه y < y_f (متراکم)، y_f ≤ y ≤ y_g (مخلوط اشباع) و y > y_g (فوق‌گرم) را چک کنید.',
+        };
+      case 'missing_input':
+      case 'invalid_input':
+      default:
+        return {
+          tone: 'err',
+          title: '⚠ ورودی ناقص یا نامعتبر',
+        };
+    }
+  }
+
+  function buildExplanationSteps(problem: TrainerProblem): {
+    summary: string;
+    steps: ExplanationStep[];
+  } {
+    if (problem.mode === 'region') {
+      const region = problem.expectedRegion!;
+      const regionLabel = PHASE_TITLE_FA[region];
+
+      if (problem.givenInputs?.propSymbol === 'P_sat(T)') {
+        const pKpa = problem.givenInputs.pKpa!;
+        const tC = problem.givenInputs.tC!;
+        const tSat = Number(problem.tableSlice.rows[0].cells[1]);
+        const cmp = region === 'compressed' ? '<' : '>';
+        const cmpText =
+          region === 'compressed'
+            ? 'دمای سیستم کمتر از دمای اشباع است؛ بنابراین سیال زیر نقطهٔ جوش و در ناحیهٔ مایع متراکم قرار دارد.'
+            : 'دمای سیستم بیشتر از دمای اشباع است؛ بنابراین سیال بالاتر از نقطهٔ جوش و در ناحیهٔ بخار فوق‌گرم قرار دارد.';
+
+        return {
+          summary: regionLabel,
+          steps: [
+            {
+              label: '۱. خواندن دمای اشباع از جدول A-5:',
+              detail: 'در فشار داده‌شده، دمای اشباع مرجع را از جدول می‌خوانیم:',
+              formula: `P = ${pKpa} kPa  ⇒  T_sat = ${tSat} °C`,
+            },
+            {
+              label: '۲. مقایسهٔ دمای سیستم با دمای اشباع:',
+              detail: cmpText,
+              formula: `T = ${tC} °C  ${cmp}  T_sat = ${tSat} °C`,
+            },
+            {
+              label: '۳. نتیجه‌گیری نهایی:',
+              detail: `وضعیت فازی سیستم «${regionLabel}» است.`,
+            },
+          ],
+        };
+      }
+
+      const rowCells = problem.tableSlice.rows[0].cells;
+      const yf = Number(rowCells[2]);
+      const yg = Number(rowCells[3]);
+      const propSym = problem.givenInputs?.propSymbol ?? 'y';
+      const propVal = problem.givenInputs?.propValue ?? 0;
+      const propUnit = problem.givenInputs?.propUnit ?? '';
+
+      let compareDetail = '';
+      let compareFormula = '';
+      if (region === 'compressed') {
+        compareDetail = 'مقدار خاصیت سیستم کمتر از کران مایع اشباع است؛ بنابراین سیال در ناحیهٔ مایع متراکم است.';
+        compareFormula = `${propSym} = ${propVal} ${propUnit}  <  ${propSym}_f = ${yf} ${propUnit}`;
+      } else if (region === 'superheated') {
+        compareDetail = 'مقدار خاصیت سیستم بیشتر از کران بخار اشباع است؛ بنابراین سیال در ناحیهٔ بخار فوق‌گرم است.';
+        compareFormula = `${propSym} = ${propVal} ${propUnit}  >  ${propSym}_g = ${yg} ${propUnit}`;
+      } else {
+        const span = yg - yf;
+        const qualityNote =
+          Math.abs(span) > 1e-12
+            ? ` (کیفیت بخار: x = ${fmtNum((propVal - yf) / span, 3)})`
+            : '';
+        compareDetail = `مقدار خاصیت بین کران‌های اشباع قرار دارد؛ بنابراین سیستم مخلوط دوفازی اشباع است${qualityNote}.`;
+        compareFormula = `${propSym}_f = ${yf}  ≤  ${propSym} = ${propVal}  ≤  ${propSym}_g = ${yg} (${propUnit})`;
+      }
+
+      return {
+        summary: regionLabel,
+        steps: [
+          {
+            label: `۱. استخراج کران‌های اشباع از جدول ${problem.tableSlice.tableId}:`,
+            formula: `${propSym}_f = ${yf} ${propUnit}   |   ${propSym}_g = ${yg} ${propUnit}`,
+          },
+          {
+            label: '۲. مقایسهٔ خاصیت داده‌شده با بازهٔ اشباع:',
+            detail: compareDetail,
+            formula: compareFormula,
+          },
+          {
+            label: '۳. نتیجه‌گیری نهایی:',
+            detail: `وضعیت فازی سیستم «${regionLabel}» است.`,
+          },
+        ],
+      };
+    }
+
+    if (problem.mode === 'linear1d') {
+      const x1 = problem.x1!;
+      const x = problem.x!;
+      const x2 = problem.x2!;
+      const y1 = problem.y1!;
+      const y2 = problem.y2!;
+      const r = problem.r!;
+      const expected = problem.expectedVal!;
+      const inSym = problem.inputSymbol ?? 'x';
+      const inUnit = problem.inputUnit ?? '';
+      const pSym = problem.propSymbol ?? 'y';
+      const pUnit = problem.propUnit ?? '';
+      const rStr = fmtNum(r, 4);
+      const ansStr = fmtNum(expected, 5);
+
+      return {
+        summary: `${ansStr} ${pUnit}`,
+        steps: [
+          {
+            label: '۱. تشخیص کران‌های دو سطر مجاور:',
+            formula: `${inSym}₁ = ${x1} ${inUnit} → y₁ = ${y1}   |   ${inSym}₂ = ${x2} ${inUnit} → y₂ = ${y2}`,
+          },
+          {
+            label: '۲. محاسبهٔ نسبت درونیابی (r):',
+            formula: `r = (${x} − ${x1}) / (${x2} − ${x1}) = ${fmtNum(x - x1)} / ${fmtNum(x2 - x1)} = ${rStr}`,
+          },
+          {
+            label: `۳. محاسبهٔ مقدار ${pSym}:`,
+            formula: `${pSym} = ${y1} + ${rStr} × (${y2} − ${y1}) = ${y1} + ${rStr} × (${fmtNum(y2 - y1, 5)}) = ${ansStr} ${pUnit}`,
+          },
+        ],
+      };
+    }
+
+    if (problem.mode === 'inverse') {
+      const t1 = problem.x1!;
+      const t2 = problem.x2!;
+      const y1 = problem.y1!;
+      const y2 = problem.y2!;
+      const yTarget = problem.x!;
+      const r = problem.r!;
+      const expectedT = problem.expectedVal!;
+      const inSym = problem.inputSymbol ?? 'y';
+      const inUnit = problem.inputUnit ?? '';
+      const rStr = fmtNum(r, 4);
+      const tStr = fmtNum(expectedT, 3);
+
+      return {
+        summary: `${tStr} °C`,
+        steps: [
+          {
+            label: '۱. تعیین بازهٔ یکنوا روی ستون معلوم:',
+            formula: `${inSym} = ${yTarget} ${inUnit} ∈ [${y1}, ${y2}]   (T₁ = ${t1} °C,  T₂ = ${t2} °C)`,
+          },
+          {
+            label: '۲. محاسبهٔ نسبت معکوس (r):',
+            formula: `r = (${yTarget} − ${y1}) / (${y2} − ${y1}) = ${fmtNum(yTarget - y1, 5)} / ${fmtNum(y2 - y1, 5)} = ${rStr}`,
+          },
+          {
+            label: '۳. محاسبهٔ دمای مجهول (T):',
+            formula: `T = ${t1} + ${rStr} × (${t2} − ${t1}) = ${t1} + ${rStr} × (${fmtNum(t2 - t1)}) = ${tStr} °C`,
+          },
+        ],
+      };
+    }
+
+    // double2d
+    const p1 = problem.p1!;
+    const p = problem.p!;
+    const p2 = problem.p2!;
+    const t1 = problem.t1!;
+    const t = problem.t!;
+    const t2 = problem.t2!;
+    const rT = problem.rT!;
+    const rP = problem.rP!;
+    const corners = problem.corners!;
+    const q11 = corners[0][0];
+    const q12 = corners[0][1];
+    const q21 = corners[1][0];
+    const q22 = corners[1][1];
+    const yA = q11 + rT * (q12 - q11);
+    const yB = q21 + rT * (q22 - q21);
+    const expected = problem.expectedVal!;
+    const pSym = problem.propSymbol ?? 'y';
+    const pUnit = problem.propUnit ?? '';
+    const rTStr = fmtNum(rT, 4);
+    const rPStr = fmtNum(rP, 4);
+    const yAStr = fmtNum(yA, 5);
+    const yBStr = fmtNum(yB, 5);
+    const ansStr = fmtNum(expected, 5);
+
+    return {
+      summary: `${ansStr} ${pUnit}`,
+      steps: [
+        {
+          label: '۱. محاسبهٔ نسبت دما (r_T) و نسبت فشار (r_P):',
+          formula: `r_T = (${t} − ${t1}) / (${t2} − ${t1}) = ${rTStr}   |   r_P = (${p} − ${p1}) / (${p2} − ${p1}) = ${rPStr}`,
+        },
+        {
+          label: `۲. درونیابی روی دما در فشار P₁ = ${p1} kPa (مقدار y_A):`,
+          formula: `y_A = ${q11} + ${rTStr} × (${q12} − ${q11}) = ${yAStr} ${pUnit}`,
+        },
+        {
+          label: `۳. درونیابی روی دما در فشار P₂ = ${p2} kPa (مقدار y_B):`,
+          formula: `y_B = ${q21} + ${rTStr} × (${q22} − ${q21}) = ${yBStr} ${pUnit}`,
+        },
+        {
+          label: '۴. درونیابی نهایی روی فشار بین y_A و y_B:',
+          formula: `${pSym} = ${yAStr} + ${rPStr} × (${yBStr} − ${yAStr}) = ${ansStr} ${pUnit}`,
+        },
+      ],
+    };
+  }
+
+  function mountTrainer(root: HTMLElement): void {
+    const tableBadge = root.querySelector<HTMLElement>('[data-table-badge]')!;
+    const streakVal = root.querySelector<HTMLElement>('[data-streak-val]')!;
+    const modeTag = root.querySelector<HTMLElement>('[data-mode-tag]')!;
+    const promptEl = root.querySelector<HTMLElement>('[data-prompt]')!;
+    const tableTitleEl = root.querySelector<HTMLElement>('[data-table-title]')!;
+    const sliceTable = root.querySelector<HTMLTableElement>('[data-slice-table]')!;
+    const tolPill = root.querySelector<HTMLElement>('[data-tol-pill]')!;
+
+    const regionGroup = root.querySelector<HTMLElement>('[data-region-group]')!;
+    const numericGroup = root.querySelector<HTMLElement>('[data-numeric-group]')!;
+    const rLabel = root.querySelector<HTMLElement>('[data-r-label]')!;
+    const valLabel = root.querySelector<HTMLElement>('[data-val-label]')!;
+    const valUnit = root.querySelector<HTMLElement>('[data-val-unit]')!;
+    const inputR = root.querySelector<HTMLInputElement>('[data-input-r]')!;
+    const inputVal = root.querySelector<HTMLInputElement>('[data-input-val]')!;
+
+    const form = root.querySelector<HTMLFormElement>('[data-trainer-form]')!;
+    const newBtn = root.querySelector<HTMLButtonElement>('[data-new-problem]')!;
+    const solToggleBtn = root.querySelector<HTMLButtonElement>('[data-toggle-solution]')!;
+    const feedbackBox = root.querySelector<HTMLElement>('[data-feedback]')!;
+    const solutionBox = root.querySelector<HTMLElement>('[data-solution]')!;
+    const solutionAnswerEl = root.querySelector<HTMLElement>('[data-solution-answer]')!;
+    const solutionStepsEl = root.querySelector<HTMLOListElement>('[data-solution-steps]')!;
+
+    const modeBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-mode]'));
+    const phaseBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-phase]'));
+
+    let currentMode: TrainerMode = 'region';
+    let problem: TrainerProblem = generateTrainerProblem(currentMode);
+    let selectedPhase: WaterPhaseKey | undefined;
+    let streak = 0;
+    let problemScored = false;
+    let peekedBeforeSolve = false;
+    let solutionOpen = false;
+
+    function updateStreakDisplay(): void {
+      streakVal.textContent = String(streak);
+    }
+
+    function clearFeedback(): void {
+      feedbackBox.hidden = true;
+      feedbackBox.className = 'jh-trainer__feedback';
+      feedbackBox.replaceChildren();
+    }
+
+    function renderFeedback(
+      title: string,
+      message: string,
+      tone: 'ok' | 'trap' | 'err',
+      hintFa?: string
+    ): void {
+      feedbackBox.hidden = false;
+      feedbackBox.className = `jh-trainer__feedback jh-trainer__feedback--${tone}`;
+      feedbackBox.replaceChildren();
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'jh-trainer__feedback-title';
+      titleEl.textContent = title;
+      feedbackBox.appendChild(titleEl);
+
+      const msgEl = document.createElement('p');
+      msgEl.className = 'jh-trainer__feedback-msg';
+      appendSubscriptText(msgEl, message);
+      feedbackBox.appendChild(msgEl);
+
+      if (hintFa) {
+        const hintEl = document.createElement('p');
+        hintEl.className = 'jh-trainer__feedback-hint';
+        appendSubscriptText(hintEl, hintFa);
+        feedbackBox.appendChild(hintEl);
+      }
+    }
+
+    function setSolutionVisibility(open: boolean): void {
+      solutionOpen = open;
+      solutionBox.hidden = !open;
+      solToggleBtn.setAttribute('aria-expanded', String(open));
+      solToggleBtn.textContent = open
+        ? 'بستن راه‌حل گام‌به‌گام'
+        : 'نمایش راه‌حل گام‌به‌گام';
+    }
+
+    function renderSolutionContent(): void {
+      const { summary, steps } = buildExplanationSteps(problem);
+      solutionAnswerEl.replaceChildren();
+      solutionAnswerEl.appendChild(document.createTextNode('پاسخ دقیق: '));
+      const strong = document.createElement('strong');
+      strong.dir = 'ltr';
+      strong.textContent = summary;
+      solutionAnswerEl.appendChild(strong);
+
+      solutionStepsEl.replaceChildren();
+      for (const step of steps) {
+        const li = document.createElement('li');
+        li.className = 'jh-trainer__step-item';
+        const lbl = document.createElement('strong');
+        lbl.className = 'jh-trainer__step-label';
+        appendSubscriptText(lbl, step.label);
+        li.appendChild(lbl);
+
+        if (step.detail) {
+          li.appendChild(document.createTextNode(' '));
+          const detail = document.createElement('span');
+          detail.className = 'jh-trainer__step-detail';
+          appendSubscriptText(detail, step.detail);
+          li.appendChild(detail);
+        }
+
+        if (step.formula) {
+          const mathBox = document.createElement('div');
+          mathBox.className = 'jh-trainer__step-math';
+          mathBox.dir = 'ltr';
+          appendSubscriptText(mathBox, step.formula);
+          li.appendChild(mathBox);
+        }
+
+        solutionStepsEl.appendChild(li);
+      }
+    }
+
+    function renderTableSlice(): void {
+      sliceTable.replaceChildren();
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+
+      for (const header of problem.tableSlice.headers) {
+        const th = document.createElement('th');
+        th.scope = 'col';
+        appendSubscriptText(th, header);
+        headRow.appendChild(th);
+      }
+      thead.appendChild(headRow);
+      sliceTable.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      for (const row of problem.tableSlice.rows) {
+        const tr = document.createElement('tr');
+        if (row.highlight) {
+          tr.className = 'jh-trainer__row--target';
+        }
+        row.cells.forEach((cell) => {
+          const td = document.createElement('td');
+          const cellStr = String(cell);
+          if (cellStr === '?') {
+            td.className = 'jh-trainer__cell--unknown';
+            td.textContent = '?';
+          } else if (cellStr === 'y_A' || cellStr === 'y_B') {
+            td.className = 'jh-trainer__cell--mid';
+            appendSubscriptText(td, cellStr);
+          } else {
+            appendSubscriptText(td, cellStr);
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      }
+      sliceTable.appendChild(tbody);
+    }
+
+    function renderProblem(): void {
+      tableBadge.textContent = `Table ${problem.tableSlice.tableId}`;
+      modeTag.textContent = MODE_TAG_FA[problem.mode];
+
+      promptEl.replaceChildren();
+      appendSubscriptText(promptEl, problem.promptFa);
+
+      tableTitleEl.replaceChildren();
+      appendSubscriptText(tableTitleEl, problem.tableSlice.titleFa);
+
+      renderTableSlice();
+      renderSolutionContent();
+
+      const isRegion = problem.mode === 'region';
+      regionGroup.hidden = !isRegion;
+      numericGroup.hidden = isRegion;
+      tolPill.textContent = isRegion
+        ? 'تشخیص از کران‌های اشباع'
+        : 'تلرانس مجاز: ±۰.۶٪ (یا ±۲×۱۰⁻⁵)';
+
+      selectedPhase = undefined;
+      phaseBtns.forEach((btn) => {
+        btn.classList.remove('is-selected');
+        btn.setAttribute('aria-checked', 'false');
+      });
+
+      inputR.value = '';
+      inputVal.value = '';
+      inputR.classList.remove('is-invalid');
+      inputVal.classList.remove('is-invalid');
+
+      if (!isRegion) {
+        rLabel.replaceChildren();
+        appendSubscriptText(
+          rLabel,
+          problem.mode === 'double2d'
+            ? 'نسبت میانی r_T یا r_P (اختیاری)'
+            : 'نسبت درونیابی r (اختیاری)'
+        );
+
+        const targetSym = problem.propSymbol ?? 'y';
+        const targetUnit = problem.propUnit ?? '';
+        valLabel.replaceChildren();
+        appendSubscriptText(
+          valLabel,
+          problem.mode === 'inverse'
+            ? 'دمای مجهول T (الزامی)'
+            : `مقدار نهایی ${targetSym} (الزامی)`
+        );
+        valUnit.textContent = targetUnit || '—';
+      }
+
+      problemScored = false;
+      peekedBeforeSolve = false;
+      clearFeedback();
+      setSolutionVisibility(false);
+    }
+
+    function loadNewProblem(mode: TrainerMode): void {
+      currentMode = mode;
+      modeBtns.forEach((btn) => {
+        const active = btn.dataset.mode === mode;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-selected', String(active));
+      });
+      problem = generateTrainerProblem(currentMode);
+      renderProblem();
+    }
+
+    modeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const nextMode = btn.dataset.mode as TrainerMode | undefined;
+        if (!nextMode || nextMode === currentMode) return;
+        loadNewProblem(nextMode);
+      });
+    });
+
+    newBtn.addEventListener('click', () => {
+      loadNewProblem(currentMode);
+    });
+
+    phaseBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const phase = btn.dataset.phase as WaterPhaseKey | undefined;
+        if (!phase) return;
+        selectedPhase = phase;
+        phaseBtns.forEach((b) => {
+          const isMatch = b.dataset.phase === phase;
+          b.classList.toggle('is-selected', isMatch);
+          b.setAttribute('aria-checked', String(isMatch));
+        });
+        if (!feedbackBox.hidden && feedbackBox.classList.contains('jh-trainer__feedback--err')) {
+          clearFeedback();
+        }
+      });
+    });
+
+    inputR.addEventListener('input', () => {
+      inputR.classList.remove('is-invalid');
+    });
+
+    inputVal.addEventListener('input', () => {
+      inputVal.classList.remove('is-invalid');
+    });
+
+    solToggleBtn.addEventListener('click', () => {
+      const nextOpen = !solutionOpen;
+      if (nextOpen && !problemScored) {
+        peekedBeforeSolve = true;
+      }
+      setSolutionVisibility(nextOpen);
+    });
+
+    function applySuccessFeedback(
+      feedback: TrainerFeedback,
+      meta: DiagnosticMeta
+    ): void {
+      if (!problemScored && !peekedBeforeSolve) {
+        streak += 1;
+        problemScored = true;
+        updateStreakDisplay();
+      }
+      const extraHint =
+        peekedBeforeSolve && !problemScored
+          ? 'راه‌حل پیش از پاسخ‌دهی دیده شده بود؛ برای افزایش امتیاز پیاپی، «سوال جدید ↻» بزنید.'
+          : meta.hintFa;
+      renderFeedback(meta.title, feedback.messageFa, meta.tone, extraHint);
+      setSolutionVisibility(true);
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      if (problem.mode === 'region') {
+        const feedback = evaluateTrainerSubmission(problem, { phase: selectedPhase });
+        if (feedback.trapDetected === 'missing_input') {
+          renderFeedback('⚠ ورودی انتخاب نشده است', feedback.messageFa, 'err');
+          return;
+        }
+        const meta = getDiagnosticMeta(problem, feedback);
+        if (feedback.correct) {
+          applySuccessFeedback(feedback, meta);
+        } else {
+          streak = 0;
+          updateStreakDisplay();
+          renderFeedback(meta.title, feedback.messageFa, meta.tone, meta.hintFa);
+        }
+        return;
+      }
+
+      const rParsed = parseLocalizedNumber(inputR.value);
+      if (rParsed.kind === 'invalid') {
+        inputR.classList.add('is-invalid');
+        inputR.focus();
+        renderFeedback(
+          '⚠ فرمت عددی نسبت r نامعتبر است',
+          'فقط از ارقام ۰-۹ (یا 0-9) و نقطه (.) یا ممیز (٫ یا /) استفاده کنید و از ویرگول (،) پرهیز نمایید.',
+          'err'
+        );
+        return;
+      }
+
+      const valParsed = parseLocalizedNumber(inputVal.value);
+      if (valParsed.kind === 'empty') {
+        inputVal.classList.add('is-invalid');
+        inputVal.focus();
+        renderFeedback(
+          '⚠ مقدار نهایی وارد نشده است',
+          'لطفاً مقدار نهایی محاسبه‌شده با ماشین‌حساب را وارد کنید (فیلد نسبت r اختیاری است).',
+          'err'
+        );
+        return;
+      }
+
+      if (valParsed.kind === 'invalid') {
+        inputVal.classList.add('is-invalid');
+        inputVal.focus();
+        renderFeedback(
+          '⚠ فرمت عددی پاسخ نهایی نامعتبر است',
+          'ورودی باید یک عدد معتبر باشد؛ می‌توانید از اعداد فارسی یا انگلیسی با نقطه (.) یا ممیز (٫ یا /) استفاده کنید.',
+          'err'
+        );
+        return;
+      }
+
+      const feedback = evaluateTrainerSubmission(problem, {
+        ...(rParsed.kind === 'ok' ? { r: rParsed.value } : {}),
+        value: valParsed.value,
+      });
+
+      const meta = getDiagnosticMeta(problem, feedback);
+      if (feedback.correct) {
+        applySuccessFeedback(feedback, meta);
+      } else {
+        if (
+          feedback.trapDetected !== 'missing_input' &&
+          feedback.trapDetected !== 'invalid_input'
+        ) {
+          streak = 0;
+          updateStreakDisplay();
+        }
+        if (feedback.rOk === false) {
+          inputR.classList.add('is-invalid');
+        }
+        if (feedback.valueOk === false) {
+          inputVal.classList.add('is-invalid');
+        }
+        renderFeedback(meta.title, feedback.messageFa, meta.tone, meta.hintFa);
+      }
+    });
+
+    updateStreakDisplay();
+    renderProblem();
+  }
+
+  function initInterpolationTrainers(): void {
+    const widgets = document.querySelectorAll<HTMLElement>('[data-interpolation-trainer]');
+    widgets.forEach((widget) => {
+      if (widget.dataset.trainerBound === '1') return;
+      widget.dataset.trainerBound = '1';
+      mountTrainer(widget);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initInterpolationTrainers);
+  } else {
+    initInterpolationTrainers();
+  }
+  document.addEventListener('astro:page-load', initInterpolationTrainers);
+</script>
+
+<style>
+  .jh-trainer :global([hidden]) {
+    display: none !important;
+  }
+
+  .jh-trainer__head {
+    align-items: flex-start;
+    gap: 0.65rem;
+  }
+
+  .jh-trainer__heading {
+    flex: 1 1 280px;
+  }
+
+  .jh-trainer__status-pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .jh-trainer__streak {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.16rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(2, 132, 199, 0.32);
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .jh-trainer__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .jh-trainer__modes {
+    margin-bottom: 0;
+  }
+
+  .jh-trainer__new-btn {
+    border-color: rgba(2, 132, 199, 0.38);
+    color: var(--sl-color-accent-high);
+    background: var(--sl-color-accent-low);
+    font-weight: 700;
+  }
+
+  .jh-trainer__new-btn:hover {
+    border-color: var(--sl-color-accent);
+  }
+
+  .jh-trainer__split {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 0.8rem;
+  }
+
+  @media (max-width: 54rem) {
+    .jh-trainer__split {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .jh-trainer__mode-tag,
+  .jh-trainer__tol-pill {
+    font-size: 0.73rem;
+    font-weight: 700;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg-sidebar);
+    color: var(--sl-color-gray-2);
+  }
+
+  .jh-trainer__prompt {
+    margin: 0.2rem 0 0.55rem;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--sl-color-gray-1);
+    font-weight: 500;
+  }
+
+  .jh-trainer :global(.jh-trainer__math-tok) {
+    display: inline-block;
+    unicode-bidi: isolate;
+    font-weight: 600;
+  }
+
+  .jh-trainer__slice-box {
+    margin-top: auto;
+    padding: 0.6rem;
+    border-radius: 10px;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg-sidebar);
+  }
+
+  .jh-trainer__slice-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .jh-trainer__slice-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--sl-color-white);
+  }
+
+  .jh-trainer__slice-note {
+    font-size: 0.72rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .jh-trainer__table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    border-radius: 8px;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-black);
+  }
+
+  .jh-trainer__table {
+    width: 100%;
+    min-width: max-content;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  .jh-trainer :global(.jh-trainer__table th),
+  .jh-trainer :global(.jh-trainer__table td) {
+    padding: 0.45rem 0.65rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    border-right: 1px solid var(--sl-color-gray-5);
+    white-space: nowrap;
+    color: var(--sl-color-gray-1);
+  }
+
+  .jh-trainer :global(.jh-trainer__table th:last-child),
+  .jh-trainer :global(.jh-trainer__table td:last-child) {
+    border-right: none;
+  }
+
+  .jh-trainer :global(.jh-trainer__table tr:last-child td) {
+    border-bottom: none;
+  }
+
+  .jh-trainer :global(.jh-trainer__table thead th) {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+    font-weight: 700;
+  }
+
+  .jh-trainer :global(.jh-trainer__row--target td) {
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+    font-weight: 700;
+  }
+
+  .jh-trainer :global(.jh-trainer__cell--unknown) {
+    font-weight: 800;
+    color: #b45309 !important;
+    background: rgba(245, 158, 11, 0.14) !important;
+  }
+
+  :global(:root[data-theme='dark']) .jh-trainer :global(.jh-trainer__cell--unknown) {
+    color: #fcd34d !important;
+    background: rgba(251, 191, 36, 0.16) !important;
+  }
+
+  .jh-trainer :global(.jh-trainer__cell--mid) {
+    font-weight: 700;
+    color: var(--sl-color-accent-high) !important;
+  }
+
+  .jh-trainer__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .jh-trainer__phase-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .jh-trainer__phase-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+
+  .jh-trainer__phase-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.55rem 0.78rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg-sidebar);
+    color: var(--sl-color-gray-1);
+    font-family: inherit;
+    cursor: pointer;
+    text-align: start;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
+  }
+
+  .jh-trainer__phase-btn:hover {
+    border-color: var(--sl-color-accent);
+  }
+
+  .jh-trainer__phase-btn.is-selected {
+    border-color: var(--sl-color-accent);
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+  }
+
+  .jh-trainer__phase-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .jh-trainer__phase-en {
+    font-size: 0.74rem;
+    color: var(--sl-color-gray-3);
+    font-weight: 600;
+  }
+
+  .jh-trainer__phase-btn.is-selected .jh-trainer__phase-en {
+    color: var(--sl-color-accent-high);
+  }
+
+  .jh-trainer__numeric-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .jh-trainer__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .jh-trainer__field-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+
+  .jh-trainer__field-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--sl-color-gray-1);
+  }
+
+  .jh-trainer__unit-badge {
+    font-size: 0.73rem;
+    font-weight: 700;
+    padding: 0.08rem 0.48rem;
+    border-radius: 999px;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg-sidebar);
+    color: var(--sl-color-accent);
+  }
+
+  .jh-trainer__input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.52rem 0.75rem;
+    border-radius: 9px;
+    border: 1.5px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg-sidebar);
+    color: var(--sl-color-white);
+    font-family: var(--sl-font-mono);
+    font-size: 0.92rem;
+    text-align: left;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .jh-trainer__input:focus {
+    outline: none;
+    border-color: var(--sl-color-accent);
+    box-shadow: 0 0 0 3px var(--jh-card-glow);
+  }
+
+  .jh-trainer__input.is-invalid {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.14);
+  }
+
+  :global(:root[data-theme='dark']) .jh-trainer__input.is-invalid {
+    border-color: #f87171;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.16);
+  }
+
+  .jh-trainer__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.15rem;
+  }
+
+  .jh-trainer__check-btn,
+  .jh-trainer__sol-btn {
+    flex: 1 1 140px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.48rem 0.85rem;
+    border-radius: 10px;
+    font-size: 0.83rem;
+  }
+
+  .jh-trainer__feedback {
+    margin-top: 0.25rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 10px;
+    border: 1px solid var(--sl-color-gray-5);
+    border-inline-start-width: 4px;
+    font-size: 0.84rem;
+    line-height: 1.65;
+  }
+
+  .jh-trainer__feedback--ok {
+    border-color: rgba(5, 150, 105, 0.36);
+    border-inline-start-color: #059669;
+    background: rgba(5, 150, 105, 0.08);
+    color: var(--sl-color-gray-1);
+  }
+
+  :global(:root[data-theme='dark']) .jh-trainer__feedback--ok {
+    border-color: rgba(52, 211, 153, 0.36);
+    border-inline-start-color: #34d399;
+    background: rgba(52, 211, 153, 0.1);
+  }
+
+  .jh-trainer__feedback--trap {
+    border-color: rgba(217, 119, 6, 0.4);
+    border-inline-start-color: #d97706;
+    background: rgba(217, 119, 6, 0.09);
+    color: var(--sl-color-gray-1);
+  }
+
+  :global(:root[data-theme='dark']) .jh-trainer__feedback--trap {
+    border-color: rgba(251, 191, 36, 0.38);
+    border-inline-start-color: #fbbf24;
+    background: rgba(251, 191, 36, 0.1);
+  }
+
+  .jh-trainer__feedback--err {
+    border-color: rgba(220, 38, 38, 0.38);
+    border-inline-start-color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
+    color: var(--sl-color-gray-1);
+  }
+
+  :global(:root[data-theme='dark']) .jh-trainer__feedback--err {
+    border-color: rgba(248, 113, 113, 0.38);
+    border-inline-start-color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+  }
+
+  .jh-trainer :global(.jh-trainer__feedback-title) {
+    font-weight: 800;
+    margin-bottom: 0.2rem;
+    color: var(--sl-color-white);
+  }
+
+  .jh-trainer :global(.jh-trainer__feedback-msg) {
+    margin: 0;
+  }
+
+  .jh-trainer :global(.jh-trainer__feedback-hint) {
+    margin: 0.32rem 0 0;
+    font-size: 0.8rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .jh-trainer__solution {
+    margin-top: 0.8rem;
+    padding: 0.8rem 0.95rem;
+    border-radius: 12px;
+    border: 1px solid var(--sl-color-gray-5);
+    border-inline-start: 4px solid #059669;
+    background: var(--sl-color-black);
+  }
+
+  :global(:root[data-theme='dark']) .jh-trainer__solution {
+    border-inline-start-color: #34d399;
+  }
+
+  .jh-trainer__solution-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    padding-bottom: 0.45rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--sl-color-gray-5);
+    font-size: 0.86rem;
+    color: var(--sl-color-white);
+  }
+
+  .jh-trainer__solution-summary {
+    font-size: 0.82rem;
+    color: #047857;
+  }
+
+  :global(:root[data-theme='dark']) .jh-trainer__solution-summary {
+    color: #6ee7b7;
+  }
+
+  .jh-trainer__steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.42rem;
+    font-size: 0.84rem;
+    line-height: 1.7;
+    color: var(--sl-color-gray-1);
+  }
+
+  .jh-trainer :global(.jh-trainer__step-label) {
+    color: var(--sl-color-accent-high);
+  }
+
+  .jh-trainer :global(.jh-trainer__step-detail) {
+    color: var(--sl-color-gray-1);
+  }
+
+  .jh-trainer :global(.jh-trainer__step-math) {
+    margin-top: 0.25rem;
+    padding: 0.32rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid var(--jh-eq-border);
+    background: var(--jh-eq-bg);
+    font-family: var(--sl-font-mono);
+    font-size: 0.81rem;
+    color: var(--sl-color-white);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .jh-trainer :where(button, input):focus-visible {
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (pointer: coarse), (hover: none) {
+    .jh-trainer__phase-btn,
+    .jh-trainer__input,
+    .jh-trainer__check-btn,
+    .jh-trainer__sol-btn,
+    .jh-trainer__new-btn {
+      min-height: 44px;
+    }
+  }
+</style>
