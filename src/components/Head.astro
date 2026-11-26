@@ -25,6 +25,7 @@ import Default from '@astrojs/starlight/components/Head.astro';
   })();
   (() => {
     const cache = new Map();
+    const inflight = new Map();
     let popover = null;
     let hideTimer = null;
     let showTimer = null;
@@ -32,6 +33,14 @@ import Default from '@astrojs/starlight/components/Head.astro';
 
     const isTouchLike = () =>
       window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
 
     function isElementVisibleInViewport(el) {
       const r = el.getBoundingClientRect();
@@ -55,6 +64,7 @@ import Default from '@astrojs/starlight/components/Head.astro';
       clearTimeout(hideTimer);
       if (popover) {
         popover.classList.remove('is-visible');
+        popover.style.visibility = '';
         activeLink = null;
       }
     }
@@ -71,48 +81,115 @@ import Default from '@astrojs/starlight/components/Head.astro';
       const rect = anchorEl.getBoundingClientRect();
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const width = Math.min(440, vw - 24);
-      let left = Math.min(Math.max(12, rect.left), vw - width - 12);
+      const boxRect = box.getBoundingClientRect();
+      const width = boxRect.width || Math.min(460, vw - 24);
+      const height = boxRect.height || 260;
+
+      let left = rect.right - width;
+      left = Math.min(Math.max(12, left), vw - width - 12);
+
       let top = rect.bottom + 8;
-      if (top + 250 > vh && rect.top > 250) {
-        top = Math.max(12, rect.top - 230);
+      if (top + height > vh - 12 && rect.top - 8 - height >= 12) {
+        top = rect.top - height - 8;
+      } else if (top + height > vh - 12) {
+        top = Math.max(12, vh - height - 12);
       }
+
       box.style.left = `${left}px`;
       box.style.top = `${top}px`;
     }
 
-    async function loadPreview(href) {
+    async function fetchParsedDoc(pageKey) {
+      if (cache.has(pageKey)) return cache.get(pageKey);
+      if (inflight.has(pageKey)) return inflight.get(pageKey);
+
+      const req = (async () => {
+        try {
+          const res = await fetch(pageKey);
+          if (!res.ok) return null;
+          const text = await res.text();
+          const parsed = new DOMParser().parseFromString(text, 'text/html');
+          cache.set(pageKey, parsed);
+          return parsed;
+        } catch (_) {
+          return null;
+        } finally {
+          inflight.delete(pageKey);
+        }
+      })();
+
+      inflight.set(pageKey, req);
+      return req;
+    }
+
+    function buildExercisePreview(target, href, showActions) {
+      const num = target.querySelector('.jh-prob-num')?.textContent?.trim() || '';
+      const title = target.querySelector('.jh-prob-title')?.textContent?.trim() || 'مسئله تمرینی';
+      const tables = target.querySelector('.jh-badge--table')?.textContent?.trim() || '';
+      const rawStatement = target.querySelector('.jh-prob-statement');
+      if (!rawStatement) return null;
+
+      const statementClone = rawStatement.cloneNode(true);
+      statementClone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+      statementClone.querySelectorAll('img').forEach((img) => {
+        img.setAttribute('loading', 'eager');
+      });
+
+      const tableBadgeHtml = tables
+        ? `<span class="jh-popover-table" dir="ltr">${escapeHtml(tables)}</span>`
+        : '';
+      const hintHtml = showActions
+        ? ''
+        : '<div class="jh-popover-prob__hint">برای رفتن به سوال و حل تشریحی کلیک کنید ↗</div>';
+
+      return {
+        badge: num ? `📝 پیش‌نمایش تمرین ${escapeHtml(num)}` : '📝 پیش‌نمایش تمرین',
+        metaHtml: tableBadgeHtml,
+        html: `
+          <div class="jh-popover-prob">
+            <h4 class="jh-popover-prob__title">${escapeHtml(title)}</h4>
+            <div class="jh-popover-prob__body sl-markdown-content">${statementClone.innerHTML}</div>
+            ${hintHtml}
+          </div>
+        `,
+        actionLabel: 'باز کردن سوال و حل ↗',
+        href,
+      };
+    }
+
+    async function loadPreview(href, showActions) {
       const url = new URL(href, window.location.href);
       if (url.origin !== window.location.origin) return null;
 
-      // پیش‌نمایش معادله در همین صفحه (فقط وقتی خودش در قاب دید فعلی نباشد)
+      // پیش‌نمایش معادله یا مسئله در همین صفحه (فقط وقتی خودش در قاب دید فعلی نباشد)
       if (url.pathname === window.location.pathname && url.hash) {
         const target = document.getElementById(url.hash.slice(1));
         if (!target || isElementVisibleInViewport(target)) return null;
+        if (target.classList.contains('jh-prob-card')) {
+          return buildExercisePreview(target, url.href, showActions);
+        }
         return {
           badge: target.classList.contains('eq-card') ? '📐 پیش‌نمایش معادله' : '📌 پیش‌نمایش بخش',
+          metaHtml: '',
           html: target.outerHTML,
           actionLabel: 'پرش به معادله ↓',
           href: url.href,
         };
       }
 
-      // پیش‌نمایش از صفحه دیگر (مفهوم یا معادله در فصل دیگر)
-      const pageKey = url.pathname;
-      let doc = cache.get(pageKey);
-      if (!doc) {
-        const res = await fetch(pageKey);
-        if (!res.ok) return null;
-        const text = await res.text();
-        doc = new DOMParser().parseFromString(text, 'text/html');
-        cache.set(pageKey, doc);
-      }
+      // پیش‌نمایش از صفحه دیگر (تمرین، مفهوم یا معادله در فصل دیگر)
+      const doc = await fetchParsedDoc(url.pathname);
+      if (!doc) return null;
 
       if (url.hash) {
         const target = doc.getElementById(url.hash.slice(1));
         if (target) {
+          if (target.classList.contains('jh-prob-card')) {
+            return buildExercisePreview(target, url.href, showActions);
+          }
           return {
             badge: '📐 پیش‌نمایش (از صفحه دیگر)',
+            metaHtml: '',
             html: target.outerHTML,
             actionLabel: 'باز کردن در صفحه ↗',
             href: url.href,
@@ -124,7 +201,8 @@ import Default from '@astrojs/starlight/components/Head.astro';
       const firstPara = doc.querySelector('.sl-markdown-content > p')?.innerHTML || '';
       if (!firstPara) return null;
       return {
-        badge: `🔗 ${title}`,
+        badge: `🔗 ${escapeHtml(title)}`,
+        metaHtml: '',
         html: `<p style="margin:0">${firstPara}</p>`,
         actionLabel: 'باز کردن صفحه ↗',
         href: url.href,
@@ -135,7 +213,7 @@ import Default from '@astrojs/starlight/components/Head.astro';
       clearTimeout(hideTimer);
       activeLink = anchorEl;
       try {
-        const preview = await loadPreview(href);
+        const preview = await loadPreview(href, showActions);
         if (!preview || activeLink !== anchorEl) return;
         const box = ensurePopover();
         const actionsHtml = showActions
@@ -144,22 +222,24 @@ import Default from '@astrojs/starlight/components/Head.astro';
                <button type="button" class="jh-popover-close" aria-label="بستن پیش‌نمایش">بستن ×</button>
              </div>`
           : '';
-        box.innerHTML = `<div class="jh-popover-head"><span class="jh-popover-badge">${preview.badge}</span></div>${preview.html}${actionsHtml}`;
+        box.innerHTML = `<div class="jh-popover-head"><span class="jh-popover-badge">${preview.badge}</span>${preview.metaHtml || ''}</div>${preview.html}${actionsHtml}`;
         const closeBtn = box.querySelector('.jh-popover-close');
         if (closeBtn) closeBtn.addEventListener('click', hidePopover);
         const goBtn = box.querySelector('.jh-popover-go');
         if (goBtn) goBtn.addEventListener('click', hidePopover);
-        positionPopover(anchorEl);
+        box.style.visibility = 'hidden';
         box.classList.add('is-visible');
+        positionPopover(anchorEl);
+        box.style.visibility = '';
       } catch (_) {}
     }
 
     function bindHoverPopovers() {
       const touchMode = isTouchLike();
-      // فقط ارجاع‌های درون متن اصلی (پاراگراف‌ها، تله‌ها و حل مسائل)؛
+      // فقط ارجاع‌های درون متن اصلی (پاراگراف‌ها، تله‌ها، حل مسائل و کارت‌های شب امتحان)؛
       // منوها، فهرست‌ها، کارت‌های نقشه راه، آکاردئون پیش‌نیازها و خود شماره معادله شلوغ نمی‌شوند
       const links = document.querySelectorAll(
-        '.sl-markdown-content > p a[href], .sl-markdown-content .jh-trap a[href], .sl-markdown-content .jh-prob-solution__body p a[href]'
+        '.sl-markdown-content > p a[href], .sl-markdown-content .jh-trap a[href], .sl-markdown-content .jh-prob-solution__body p a[href], .jh-exam-pane__body a[href]'
       );
       links.forEach((link) => {
         if (link.dataset.jhBound) return;
@@ -172,14 +252,20 @@ import Default from '@astrojs/starlight/components/Head.astro';
         link.dataset.jhBound = '1';
         link.dataset.popover = '1';
 
-        // دسکتاپ: تاخیر آرام ۳۴۰ میلی‌ثانیه‌ای برای جلوگیری از شلوغی هنگام حرکت عادی ماوس
+        // دسکتاپ: پیش‌بارگذاری سبک در پس‌زمینه و نمایش بعد از ۲۴۰ میلی‌ثانیه بدون پرش ناگهانی
         link.addEventListener('mouseenter', () => {
           if (isTouchLike()) return;
           clearTimeout(showTimer);
           clearTimeout(hideTimer);
+          try {
+            const url = new URL(href, window.location.href);
+            if (url.origin === window.location.origin && url.pathname !== window.location.pathname) {
+              fetchParsedDoc(url.pathname);
+            }
+          } catch (_) {}
           showTimer = setTimeout(() => {
             showPopoverFor(link, href, false);
-          }, 340);
+          }, 240);
         });
         link.addEventListener('mouseleave', scheduleHide);
 

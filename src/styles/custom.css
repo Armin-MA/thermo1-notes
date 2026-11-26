@@ -482,8 +482,8 @@ header.header {
 #jh-hover-popover {
   position: fixed;
   z-index: 9999;
-  width: min(440px, calc(100vw - 24px));
-  max-height: 320px;
+  width: min(460px, calc(100vw - 24px));
+  max-height: min(400px, 68vh);
   overflow: auto;
   padding: 0.9rem 1.05rem;
   border-radius: 14px;
@@ -1019,9 +1019,81 @@ mobile-starlight-toc nav {
 /* بهینه‌سازی تعامل لمسی و موبایل (بدون نیاز به Hover) */
 .jh-popover-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.4rem;
+  gap: 0.45rem;
+  margin-bottom: 0.45rem;
+}
+
+.jh-popover-head .jh-popover-badge {
+  margin-bottom: 0;
+}
+
+.jh-popover-table {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.48rem;
+  border-radius: 999px;
+  border: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-bg-sidebar);
+  color: var(--sl-color-gray-2);
+}
+
+.jh-popover-prob__title {
+  margin: 0 0 0.4rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 800;
+  color: var(--sl-color-white);
+  line-height: 1.45;
+}
+
+.jh-popover-prob__body {
+  font-size: 0.87rem;
+  line-height: 1.72;
+  color: var(--sl-color-gray-1);
+}
+
+.jh-popover-prob__body > :first-child {
+  margin-top: 0;
+}
+
+.jh-popover-prob__body > :last-child {
+  margin-bottom: 0;
+}
+
+.jh-popover-prob__body .jh-figure {
+  margin: 0.45rem auto;
+  padding: 0.45rem;
+}
+
+.jh-popover-prob__body .jh-figure__frame img {
+  max-height: 145px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.jh-popover-prob__body table {
+  display: table;
+  width: 100%;
+  font-size: 0.78rem;
+  margin: 0.45rem 0;
+}
+
+.jh-popover-prob__body table th,
+.jh-popover-prob__body table td {
+  min-width: 0;
+  padding: 0.28rem 0.42rem;
+}
+
+.jh-popover-prob__hint {
+  margin-top: 0.55rem;
+  padding-top: 0.42rem;
+  border-top: 1px dashed var(--sl-color-gray-5);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--sl-color-accent-high);
 }
 
 .jh-popover-actions {
