@@ -1,0 +1,251 @@
+---
+title: شب امتحان فصل ۷ — آنتروپی و بازده ایزنتروپیک
+description: برگه مرور سریع فرمول‌ها، تله‌های امتحانی، خلاصه مفهومی و تیپ‌بندی سوالات فصل هفتم ترمودینامیک ۱ (آزمون ۶)
+tags:
+  - شب-امتحان
+  - فصل-۷
+  - آزمون-۶
+sitemap:
+  pageTitle: "شب امتحان: فصل ۷"
+---
+
+import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamDualShell from '../../../components/ExamDualShell.astro';
+
+<TopicDependencyMap
+  prerequisites={[
+    { label: 'شب امتحان فصل ۶', href: '/exam/ch6/', note: 'مقیاس کلوین و سقف چرخه کارنو' },
+    { label: 'شب امتحان فصل ۵', href: '/exam/ch5/', note: 'موازنه انرژی توربین، کمپرسور و شیپوره' },
+  ]}
+  unlocks={[
+    { label: '۷-۱ کلازیوس، آنتروپی و نمودارها', href: '/chapters/ch7-entropy-diagrams/', note: 'درسنامه نامساوی کلازیوس و نمودارهای T-s و h-s' },
+    { label: '۷-۲ روابط Tds و کار پایا', href: '/chapters/ch7-tds-ideal-gas-work/', note: 'درسنامه گیبس، A-17 و کار جریان پایا' },
+    { label: '۷-۳ بازده ایزنتروپیک و تراز آنتروپی', href: '/chapters/ch7-entropy-balance-efficiency/', note: 'درسنامه بازده دستگاه‌ها و مرز گسترش‌یافته' },
+    { label: 'تمارین فصل ۷', href: '/exercises/ch7/', note: '۱۴ مسئله منتخب سنجل ۸' },
+    { label: 'شب امتحان فصل ۸', href: '/exam/ch8/', note: 'پیوند تولید آنتروپی به تخریب اگزرژی' },
+  ]}
+/>
+
+<ExamDualShell
+  chapter={7}
+  title="آنتروپی و بازده ایزنتروپیک"
+  exam={6}
+  weight="۳ نمره"
+  learnTime="۱۵ دقیقه"
+  chapterHref="/chapters/ch7-entropy-diagrams/"
+  exerciseHref="/exercises/ch7/"
+>
+
+<Fragment slot="review">
+
+<div class="jh-formula-grid">
+
+  <div class="jh-formula-card">
+    <h3 class="jh-formula-card__title">کلازیوس، تعریف dS و اصل افزایش آنتروپی</h3>
+    <div class="jh-formula-card__math">
+
+$$
+\oint \frac{\delta Q}{T} \le 0, \qquad S_{\text{gen}} = \Delta S_{\text{sys}} + \Delta S_{\text{surr}} \ge 0
+$$
+
+    </div>
+    <span class="jh-formula-card__unit" dir="ltr">dS = (δQ/T)_int,rev [kJ/K] · Isolated: ΔS ≥ 0</span>
+    <p class="jh-formula-card__note">
+      در سیستم ایزوله $\Delta S_{\text{total}} = S_{\text{gen}}$؛ سطح زیر نمودار $T-s$ فقط برای مسیر <strong>برگشت‌پذیر داخلی</strong> برابر $Q$ است.
+    </p>
+  </div>
+
+  <div class="jh-formula-card">
+    <h3 class="jh-formula-card__title">روابط Tds گیبس و مواد تراکم‌ناپذیر</h3>
+    <div class="jh-formula-card__math">
+
+$$
+T\,ds = du + P\,dv = dh - v\,dP, \qquad \Delta s = c_{\text{avg}} \ln\frac{T_2}{T_1}
+$$
+
+    </div>
+    <span class="jh-formula-card__unit" dir="ltr">Incomp. (v=const): Δs = 0 ⇒ T₂ = T₁</span>
+    <p class="jh-formula-card__note">
+      روابط گیبس بین خواص‌اند، پس در هر فرآیند برگشت‌پذیر و برگشت‌ناپذیر معتبرند؛ روی $T-s$ خط هم‌حجم پرشیب‌تر از هم‌فشار است.
+    </p>
+  </div>
+
+  <div class="jh-formula-card">
+    <h3 class="jh-formula-card__title">تغییر آنتروپی و روابط ایزنتروپیک گاز ایده‌آل</h3>
+    <div class="jh-formula-card__math">
+
+$$
+\Delta s = s_2^\circ - s_1^\circ - R\ln\frac{P_2}{P_1}, \qquad \left(\frac{P_2}{P_1}\right)_s = \frac{P_{r2}}{P_{r1}}
+$$
+
+    </div>
+    <span class="jh-formula-card__unit" dir="ltr">(T₂/T₁)_s = (P₂/P₁)^((k-1)/k) = (v₁/v₂)^(k-1)</span>
+    <p class="jh-formula-card__note">
+      در جدول `A-17` جملهٔ $-R\ln(P_2/P_1)$ فراموش نشود (یا $c_p\ln\frac{T_2}{T_1} - R\ln\frac{P_2}{P_1}$؛ $P_r, v_r$ فقط در <strong>ایزنتروپیک</strong> مجازند).
+    </p>
+  </div>
+
+  <div class="jh-formula-card">
+    <h3 class="jh-formula-card__title">کار جریان پایا برگشت‌پذیر و خنک‌کن میانی</h3>
+    <div class="jh-formula-card__math">
+
+$$
+w_{\text{rev}} = -\int_1^2 v\,dP, \quad w_P = v\Delta P, \quad P_x = \sqrt{P_1 P_2}
+$$
+
+    </div>
+    <span class="jh-formula-card__unit" dir="ltr">1 kPa·m³ = 1 kJ · Isothermal w_c = RT₁ ln(P₂/P₁)</span>
+    <p class="jh-formula-card__note">
+      کار پمپ به‌علت $v_f \ll v_g$ بسیار کمتر از کمپرسور است؛ در تراکم دومرحله‌ای با خنک‌کن میانی فشار بهینه $P_x = \sqrt{P_1 P_2}$ است.
+    </p>
+  </div>
+
+  <div class="jh-formula-card">
+    <h3 class="jh-formula-card__title">بازده ایزنتروپیک توربین، کمپرسور و شیپوره</h3>
+    <div class="jh-formula-card__math">
+
+$$
+\eta_T = \frac{h_1 - h_{2a}}{h_1 - h_{2s}}, \quad \eta_C = \frac{h_{2s} - h_1}{h_{2a} - h_1}, \quad \eta_N = \frac{V_{2a}^2}{V_{2s}^2}
+$$
+
+    </div>
+    <span class="jh-formula-card__unit" dir="ltr">0 ≤ η ≤ 1 · Pump: w_s = vΔP · Nozzle: Δh_a/Δh_s</span>
+    <p class="jh-formula-card__note">
+      همیشه $\eta \le 1$: در تولید کار (توربین/نازل) واقعی در صورت، و در مصرف کار (کمپرسور/پمپ) ایزنتروپیک در صورت قرار می‌گیرد.
+    </p>
+  </div>
+
+  <div class="jh-formula-card">
+    <h3 class="jh-formula-card__title">تراز کامل آنتروپی و مرز گسترش‌یافته</h3>
+    <div class="jh-formula-card__math">
+
+$$
+\sum \frac{\dot{Q}_k}{T_k} + \sum \dot{m}_i s_i - \sum \dot{m}_e s_e + \dot{S}_{\text{gen}} = \frac{dS_{\text{CV}}}{dt}
+$$
+
+    </div>
+    <span class="jh-formula-card__unit" dir="ltr">Closed: ΣQ/T + S_gen = m(s₂-s₁) · S_work = 0</span>
+    <p class="jh-formula-card__note">
+      <strong>کار هیچ آنتروپی منتقل نمی‌کند ($S_{\text{work}}=0$)</strong>؛ با گذاشتن مرز در $T_{\text{surr}}$، تولید آنتروپی لایهٔ مرزی هم لحاظ می‌شود.
+    </p>
+  </div>
+
+</div>
+
+<div class="jh-trap-list">
+  <h3 class="jh-trap-list__title">⚠️ ۴ تلهٔ نمره‌گیر فصل ۷</h3>
+  <ul>
+    <li><strong>ایزنتروپیک $\neq$ برگشت‌پذیر آدیاباتیک و $\Delta S_{\text{sys}} \lt 0$:</strong> فرآیند برگشت‌ناپذیر با دفع گرما هم می‌تواند $\Delta s = 0$ شود؛ کاهش آنتروپی سیستم مجاز است به شرطی که $S_{\text{gen}} \ge 0$ بماند.</li>
+    <li><strong>فراموشی $-R\ln(P_2/P_1)$ و استفادهٔ غیرمجاز از $P_r, v_r$:</strong> مقدار $s^\circ$ در `A-17` فقط تابع دماست و سهم فشار ندارد؛ نسبت‌های $P_r, v_r$ فقط در $\Delta s=0$ مجازند.</li>
+    <li><strong>مخزن صلب دوفازی و دمای کلوین در $\ln$:</strong> در گرمایش هم‌حجم مخزن فشار بالا می‌رود (شرط $v_2=v_1$ است نه فشار ثابت)؛ درون $\ln(T_2/T_1)$ همیشه کلوین بگذارید.</li>
+    <li><strong>ناحیهٔ خروجی $2a$ توربین و $1\;\text{kPa}\cdot\text{m}^3$:</strong> پس از یافتن $h_{2a}$ با $h_{g@P_2}$ بسنجید؛ اگر $h_{2a} \lt h_g$ باشد دما همان $T_{\text{sat}@P_2}$ می‌ماند.</li>
+  </ul>
+</div>
+
+</Fragment>
+
+<Fragment slot="learn">
+
+<div class="jh-crash-summary">
+  <h3 class="jh-crash-summary__title">⚡ فلسفهٔ فیزیکی فصل ۷ در ۹۰ ثانیه</h3>
+  <p>
+    فصل ۷ قانون دوم را از چرخه‌ها به تک‌تک فرآیندها می‌آورد: نامساوی کلازیوس ($\oint \delta Q/T \le 0$) خاصیت <strong>آنتروپی ($s$)</strong> و معیار جهت تحولات یعنی <strong>$S_{\text{gen}} \ge 0$</strong> را تعریف می‌کند. تغییر آنتروپی فقط به ابتدا و انتها وابسته است و از جداول (برای آب و مبرد) یا روابط $Tds$ (برای جامد/مایع و گاز ایده‌آل با `A-17` یا $c_{\text{avg}}$) به‌دست می‌آید. در جریان پایا، $-\int v\,dP$ کار برگشت‌پذیر پمپ و کمپرسور را می‌دهد، <strong>بازده ایزنتروپیک</strong> دستگاه واقعی را با حد $s_2=s_1$ می‌سنجد و در تراز آنتروپی به‌یاد داریم کار بدون انتقال آنتروپی ($S_{\text{work}}=0$) فقط با اصطکاک آنتروپی تولید می‌کند.
+  </p>
+</div>
+
+<article class="jh-archetype-card">
+  <div class="jh-archetype-card__head">
+    <span class="jh-archetype-badge">تیپ ۱</span>
+    <h3>تغییر آنتروپی مادهٔ خالص در مخزن صلب و مایع/جامد</h3>
+  </div>
+  <p class="jh-archetype-cues">
+    <strong>نشانه در صورت سوال:</strong> تبخیر یا سرد شدن آب/مبرد در مخزن صلب، یا افتادن قطعه فلز داغ در آب درون تانک عایق.
+  </p>
+  <p class="jh-archetype-steps">
+    <strong>روش حل ۳ گامی:</strong> ۱) برای مخزن صلب $v_1$ و $s_1$ را یافته و شرط $v_2 = v_1$ را قفل کنید؛ ۲) حالت ۲ را در $v_g = v_1$ یا فشار/دمای داده شده بخوانید؛ ۳) در مایع و جامد از $m c_{\text{avg}} \ln(T_2/T_1)$ با دمای کلوین استفاده کنید.
+  </p>
+  <div class="jh-archetype-example">
+
+**مثال عددی سریع:** مخزن صلب عایق حاوی $3\;\text{kg}$ آب در $200\;\text{kPa}$ و $x_1=0.25$ ($v_1=0.22224$, $s_1=2.9294$) تا تبخیر کامل ($x_2=1$) گرم می‌شود:
+در جدول `A-5` در $v_g = 0.22224$ می‌خوانیم $s_2 = 6.6335 \Rightarrow \Delta S = 3(6.6335 - 2.9294) = 11.1\;\text{kJ/K}$.
+[ادامه در تمرین ۷-۳۰](/thermo1-notes/exercises/ch7/#prob-7-30) · [ادامه در تمرین ۷-۶۰](/thermo1-notes/exercises/ch7/#prob-7-60) · [ادامه در تمرین ۷-۴۱](/thermo1-notes/exercises/ch7/#prob-7-41)
+
+  </div>
+  <p class="jh-archetype-trap">
+    <strong>⚠️ حواستان باشد:</strong> در تمرین ۷-۳۰ فشار مخزن صلب ثابت نمی‌ماند؛ خواندن $s_g$ در $200\;\text{kPa}$ یکی از پرتکرارترین خطاهای امتحان است!
+  </p>
+</article>
+
+<article class="jh-archetype-card">
+  <div class="jh-archetype-card__head">
+    <span class="jh-archetype-badge">تیپ ۲</span>
+    <h3>آنتروپی گاز ایده‌آل (`A-17`) و پمپ برگشت‌پذیر ($v\Delta P$)</h3>
+  </div>
+  <p class="jh-archetype-cues">
+    <strong>نشانه در صورت سوال:</strong> نرخ تغییر آنتروپی هوا در کمپرسور یا توربین، یا بیشینهٔ فشار خروجی پمپ آب با توان معین.
+  </p>
+  <p class="jh-archetype-steps">
+    <strong>روش حل ۳ گامی:</strong> ۱) برای گاز ایده‌آل $s_1^\circ, s_2^\circ$ را در دمای کلوین از `A-17` بخوانید؛ ۲) جملهٔ $-R\ln(P_2/P_1)$ را کم و در $\dot{m}$ ($\text{kg/s}$) ضرب کنید؛ ۳) در پمپ $\dot{W}_{\text{rev,in}} = \dot{m}v(P_2 - P_1)$ بگذارید.
+  </p>
+  <div class="jh-archetype-example">
+
+**مثال عددی سریع:** هوا با دبی $1.6\;\text{kg/min}$ از $100\;\text{kPa}, 290\;\text{K}$ ($s_1^\circ=1.66802$) تا $600\;\text{kPa}, 440\;\text{K}$ ($s_2^\circ=2.0887$) متراکم می‌شود:
+$\Delta \dot{S}_{\text{sys}} = \frac{1.6}{60}[(2.0887 - 1.66802) - 0.287\ln(6)] = -0.00250\;\text{kW/K}$.
+(پمپ آب $16\;\text{kW}$ با $5\;\text{kg/s}$ از $100\;\text{kPa}$: $16 = 5(0.001)(P_2 - 100) \Rightarrow P_2 = 3300\;\text{kPa}$.)
+[ادامه در تمرین ۷-۸۰](/thermo1-notes/exercises/ch7/#prob-7-80) · [ادامه در تمرین ۷-۱۰۶](/thermo1-notes/exercises/ch7/#prob-7-106) · [ادامه در تمرین ۷-۱۰](/thermo1-notes/exercises/ch7/#prob-7-10)
+
+  </div>
+  <p class="jh-archetype-trap">
+    <strong>⚠️ حواستان باشد:</strong> در پمپ فشار اولیه $P_1=100\;\text{kPa}$ را با $\Delta P = 3200$ جمع کنید ($P_2 = 3300$)؛ در دبی هوا تقسیم بر $60$ را فراموش نکنید.
+  </p>
+</article>
+
+<article class="jh-archetype-card">
+  <div class="jh-archetype-card__head">
+    <span class="jh-archetype-badge">تیپ ۳</span>
+    <h3>بازده ایزنتروپیک توربین و کمپرسور</h3>
+  </div>
+  <p class="jh-archetype-cues">
+    <strong>نشانه در صورت سوال:</strong> توربین یا کمپرسور آدیاباتیک با بازده ایزنتروپیک معلوم (یا مجهول) بین $(P_1, T_1)$ و $P_2$.
+  </p>
+  <p class="jh-archetype-steps">
+    <strong>روش حل ۳ گامی:</strong> ۱) حالت ۱ ($h_1, s_1$) را استخراج کنید؛ ۲) حالت ایزنتروپیک $2s$ را با $s_{2s}=s_1$ (در بخار با $x_{2s}$ و در هوا با $P_{r2}=P_{r1}P_2/P_1$) و $h_{2s}$ بیابید؛ ۳) با $\eta_T$ یا $\eta_C$ مقدار $h_{2a}$ را محاسبه کنید.
+  </p>
+  <div class="jh-archetype-example">
+
+**مثال عددی سریع:** توربین بخار $3\;\text{kg/s}$ با $\eta_T=0.90$ از $8\;\text{MPa}, 500^\circ\text{C}$ ($h_1=3399.5, s_1=6.7266$) تا $30\;\text{kPa}$:
+در حالت $2s$ داریم $x_{2s} = 0.8475 \Rightarrow h_{2s} = 2268.3\;\text{kJ/kg}$؛ از $\eta_T = \frac{3399.5 - h_{2a}}{3399.5 - 2268.3} = 0.90 \Rightarrow h_{2a} = 2381.4 \lt h_g(2624.6)$ پس $T_{2a} = 69.1^\circ\text{C}$ و $\dot{W}_a = 3054\;\text{kW}$.
+[ادامه در تمرین ۷-۱۲۰](/thermo1-notes/exercises/ch7/#prob-7-120)
+
+  </div>
+  <p class="jh-archetype-trap">
+    <strong>⚠️ حواستان باشد:</strong> همیشه چک کنید $h_{2a}$ زیر $h_g$ مانده یا به فوق‌گرم رفته است؛ و جای صورت و مخرج را در توربین و کمپرسور عوض نکنید.
+  </p>
+</article>
+
+<article class="jh-archetype-card">
+  <div class="jh-archetype-card__head">
+    <span class="jh-archetype-badge">تیپ ۴</span>
+    <h3>تراز آنتروپی با مرز گسترش‌یافته و جریان ناپایا</h3>
+  </div>
+  <p class="jh-archetype-cues">
+    <strong>نشانه در صورت سوال:</strong> اتصال دو مخزن صلب بخار با فرض ایزنتروپیک بودن جرم باقی‌مانده، یا سرد شدن قطعه داغ در هوای محیط.
+  </p>
+  <p class="jh-archetype-steps">
+    <strong>روش حل ۳ گامی:</strong> ۱) برای مخزن ایزنتروپیک A از $s_{A2}=s_{A1}$ جرم باقی‌مانده $m_{A2}$ را بیابید؛ ۲) از موازنه انرژی کل $(A+B)$ حالت $u_{B2}$ و $s_{B2}$ را بیابید؛ ۳) مرز را تا $T_{\text{surr}}$ گرفته و $S_{\text{gen}} = \Delta S_{\text{sys}} + Q_{\text{out}}/T_{\text{surr}}$ بنویسید.
+  </p>
+  <div class="jh-archetype-example">
+
+**مثال عددی سریع:** اتصال مخزن عایق A ($0.3\;\text{m}^3, 400\;\text{kPa}, x=0.6, m_{A1}=1.080$) و B ($2\;\text{kg}, 200\;\text{kPa}, 250^\circ\text{C}$) با خروج $300\;\text{kJ}$ گرما به $17^\circ\text{C} (290\;\text{K})$ تا $200\;\text{kPa}$:
+در A ایزنتروپیک $T_{A2}=120.2^\circ\text{C}, m_{A2}=0.5709\;\text{kg}$؛ موازنه انرژی می‌دهد $u_{B2}=2433.3 \Rightarrow T_{B2}=116.1^\circ\text{C}, s_{B2}=6.9156$ و $S_{\text{gen}} = 0 + \Delta S_B + 300/290 = 0.498\;\text{kJ/K}$.
+[ادامه در تمرین ۷-۱۹۹](/thermo1-notes/exercises/ch7/#prob-7-199) · [ادامه در تمرین ۷-۱۴۷](/thermo1-notes/exercises/ch7/#prob-7-147) · [ادامه در تمرین ۷-۲۱۵](/thermo1-notes/exercises/ch7/#prob-7-215)
+
+  </div>
+  <p class="jh-archetype-trap">
+    <strong>⚠️ حواستان باشد:</strong> در مخزن A فقط جرم *باقی‌مانده* تحول ایزنتروپیک دارد پس $\Delta S_A$ مربوط به جرم باقی‌مانده در تراز کل روی $(A+B)$ وارد می‌شود نه کل جرم اولیه با ضریب ثابت!
+  </p>
+</article>
+
+</Fragment>
+
+</ExamDualShell>
