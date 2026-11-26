@@ -2631,6 +2631,51 @@ mobile-starlight-toc nav {
   gap: 0.08rem;
 }
 
+/* کادر معرفی تفکیک‌شده برای فراجزوه و مثال‌های تکمیلی (/beyond/) */
+.jh-beyond-intro {
+  margin: 0.9rem 0 1.25rem;
+  padding: 0.95rem 1.15rem;
+  border-radius: 12px;
+  border: 1px solid var(--sl-color-gray-5);
+  border-inline-start: 4px solid var(--sl-color-accent);
+  background: var(--sl-color-bg-sidebar);
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: var(--sl-color-gray-1);
+}
+
+.jh-beyond-intro--supp {
+  border-color: rgba(2, 132, 199, 0.32);
+  border-inline-start-color: #0284c7;
+  background: rgba(2, 132, 199, 0.06);
+}
+
+.jh-beyond-intro--extra {
+  border-color: rgba(124, 58, 237, 0.34);
+  border-inline-start-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.06);
+}
+
+:root[data-theme='dark'] .jh-beyond-intro--supp {
+  border-color: rgba(56, 189, 248, 0.32);
+  border-inline-start-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+:root[data-theme='dark'] .jh-beyond-intro--extra {
+  border-color: rgba(167, 139, 250, 0.36);
+  border-inline-start-color: #a78bfa;
+  background: rgba(167, 139, 250, 0.08);
+}
+
+.jh-beyond-intro p:first-child {
+  margin-top: 0;
+}
+
+.jh-beyond-intro p:last-child {
+  margin-bottom: 0;
+}
+
 @page {
   size: A4 portrait;
   margin: 12mm;
