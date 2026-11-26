@@ -1,6 +1,10 @@
 ---
 import Default from '@astrojs/starlight/components/PageSidebar.astro';
 import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
+
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+const buildStamp = (globalThis as any).__jhBuildStamp ??=
+  (process.env.GITHUB_SHA?.slice(0, 8) || Date.now().toString(36));
 ---
 
 <div class="jh-graph-col-resizer" id="jh-graph-col-resizer" title="بکشید تا عرض حریم گراف کوچک یا بزرگ شود" aria-hidden="true"></div>
@@ -43,10 +47,84 @@ import { PageGraph, PageBacklinks } from 'starlight-site-graph/components';
   <h2 slot="title">{Astro.locals.t('starlight-site-graph.backlinks')}</h2>
 </PageBacklinks>
 
-<script is:inline>
+<script is:inline define:vars={{ buildStamp, baseUrl }}>
 (() => {
   const acc = document.getElementById('jh-graph-accordion');
   if (!acc) return;
+
+  // دور زدن کش ۱۰ دقیقه‌ای GitHub Pages برای sitemap.json پس از هر دیپلوی جدید
+  const graph = acc.querySelector('graph-component');
+  if (graph && graph.getAttribute('data-sitemap') === '{}') {
+    const verUrl = `${baseUrl}/sitegraph/sitemap.json?v=${encodeURIComponent(buildStamp)}`;
+    let freshText = null;
+    let freshMap = null;
+
+    const syncBacklinks = () => {
+      if (!freshMap) return;
+      const container = document.querySelector('.slsg-backlinks');
+      const backlinkPanel = container?.parentElement;
+      const slug = backlinkPanel?.getAttribute('data-slug') ?? '';
+      const entry = freshMap[slug];
+      if (!container || !entry?.backlinks) return;
+      if (container.firstElementChild?.getAttribute('data-jh-fresh') === buildStamp) return;
+      const sortedLinks = [...entry.backlinks].sort((a, b) =>
+        (freshMap[a]?.title || a).localeCompare(freshMap[b]?.title || b),
+      );
+      container.innerHTML = '';
+      for (const link of sortedLinks) {
+        const li = document.createElement('li');
+        li.setAttribute('data-jh-fresh', buildStamp);
+        li.style.setProperty('--depth', '0');
+        const a = document.createElement('a');
+        a.href = '/' + link;
+        a.style.setProperty('--depth', '0');
+        a.target = '_self';
+        a.className = 'slsg-backlink';
+        const span = document.createElement('span');
+        span.style.setProperty('--depth', '0');
+        span.textContent = freshMap[link]?.title || link;
+        a.appendChild(span);
+        li.appendChild(a);
+        container.appendChild(li);
+      }
+    };
+
+    const applyFresh = (text) => {
+      if (!text) return;
+      if (graph.getAttribute('data-sitemap') !== text) {
+        graph.setAttribute('data-sitemap', text);
+      }
+      syncBacklinks();
+    };
+
+    const graphObs = new MutationObserver(() => {
+      if (freshText && graph.getAttribute('data-sitemap') !== freshText) {
+        applyFresh(freshText);
+      }
+    });
+    graphObs.observe(graph, { attributes: true, attributeFilter: ['data-sitemap'] });
+
+    const blContainer = document.querySelector('.slsg-backlinks');
+    if (blContainer) {
+      const blObs = new MutationObserver(() => {
+        if (freshMap && blContainer.firstElementChild?.getAttribute('data-jh-fresh') !== buildStamp) {
+          syncBacklinks();
+        }
+      });
+      blObs.observe(blContainer, { childList: true });
+    }
+
+    fetch(verUrl)
+      .then((res) => (res.ok ? res.text() : null))
+      .then((text) => {
+        if (!text) return;
+        freshText = text;
+        freshMap = JSON.parse(text);
+        applyFresh(text);
+      })
+      .catch(() => {});
+  }
+
   const isMobile = window.matchMedia('(max-width: 71.99rem)').matches;
   const saved = sessionStorage.getItem('jh-graph-open');
   if (saved !== null) {
