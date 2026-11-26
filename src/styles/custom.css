@@ -977,8 +977,8 @@ mobile-starlight-toc nav {
   box-sizing: border-box;
 }
 
-.slsg-graph-accordion__body .slsg-graph-component:not(.slsg-is-fullscreen),
-.slsg-graph-accordion__body .slsg-graph-component:not(.slsg-is-fullscreen) .slsg-graph-container {
+.slsg-graph-accordion__body .slsg-graph-component,
+.slsg-graph-accordion__body .slsg-graph-container:not(.slsg-is-fullscreen) {
   width: 100%;
   max-width: 100%;
   margin-top: 0.5rem;
@@ -1300,9 +1300,30 @@ mobile-starlight-toc nav {
   color: var(--sl-color-accent);
 }
 
-.slsg-graph-accordion__body .slsg-graph-component:not(.slsg-is-fullscreen),
-.slsg-graph-accordion__body .slsg-graph-component:not(.slsg-is-fullscreen) .slsg-graph-container {
+.slsg-graph-accordion__body .slsg-graph-component,
+.slsg-graph-accordion__body .slsg-graph-container:not(.slsg-is-fullscreen) {
   height: var(--jh-graph-h) !important;
+}
+
+.slsg-graph-accordion__body .slsg-graph-container.slsg-is-fullscreen {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 94vw !important;
+  max-width: none !important;
+  height: 90vh !important;
+  margin: 0 !important;
+  z-index: 1000 !important;
+}
+
+.slsg-graph-accordion__body .slsg-graph-container.slsg-is-fullscreen canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+body[data-graph-blur='true'] .jh-graph-col-resizer {
+  display: none !important;
 }
 
 .jh-graph-col-resizer {
