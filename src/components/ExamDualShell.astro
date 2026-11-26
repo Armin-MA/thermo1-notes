@@ -1,0 +1,417 @@
+---
+interface Props {
+  chapter: number;
+  title: string;
+  exam: number;
+  weight: string;
+  learnTime?: string;
+  chapterHref: string;
+  exerciseHref: string;
+}
+
+const {
+  chapter,
+  title,
+  exam,
+  weight,
+  learnTime = '۱۵ دقیقه',
+  chapterHref,
+  exerciseHref,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const withBase = (href: string) => {
+  if (!href.startsWith('/')) return href;
+  if (base && (href === base || href.startsWith(base + '/'))) return href;
+  return `${base}${href}`;
+};
+
+const resolvedChapterHref = withBase(chapterHref);
+const resolvedExerciseHref = withBase(exerciseHref);
+const tabReviewId = `jh-exam-tab-review-${chapter}`;
+const tabLearnId = `jh-exam-tab-learn-${chapter}`;
+const paneReviewId = `jh-exam-pane-review-${chapter}`;
+const paneLearnId = `jh-exam-pane-learn-${chapter}`;
+---
+
+<div
+  class="jh-exam-shell not-content"
+  data-exam-shell
+  data-chapter={String(chapter)}
+  data-active-mode="review"
+>
+  <header class="jh-exam-head">
+    <div class="jh-exam-head__info">
+      <span class="jh-exam-pill jh-exam-pill--exam">🎯 آزمون {exam} · {weight}</span>
+      <span class="jh-exam-pill jh-exam-pill--chapter">فصل {chapter}: {title}</span>
+      {learnTime && <span class="jh-exam-pill jh-exam-pill--time">⏱ یادگیری فوری: {learnTime}</span>}
+    </div>
+    <div class="jh-exam-actions">
+      <a class="jh-exam-action-link" href={resolvedChapterHref}>📘 درسنامه کامل</a>
+      <a class="jh-exam-action-link" href={resolvedExerciseHref}>📝 تمارین فصل {chapter}</a>
+      <button type="button" class="jh-exam-print-btn" data-exam-print>🖨️ چاپ تمیز (A4)</button>
+    </div>
+  </header>
+
+  <div class="jh-exam-switch" role="tablist" aria-label="انتخاب حالت مطالعه شب امتحان">
+    <button
+      type="button"
+      id={tabReviewId}
+      class="jh-exam-switch__btn is-active"
+      role="tab"
+      aria-selected="true"
+      aria-controls={paneReviewId}
+      tabindex="0"
+      data-mode="review"
+    >
+      📄 مرور سریع (فرمول‌ها کنار هم + تله‌ها)
+    </button>
+    <button
+      type="button"
+      id={tabLearnId}
+      class="jh-exam-switch__btn"
+      role="tab"
+      aria-selected="false"
+      aria-controls={paneLearnId}
+      tabindex="-1"
+      data-mode="learn"
+    >
+      ⚡ یادگیری فوری از صفر (خلاصه + تیپ‌بندی سوال‌ها)
+    </button>
+  </div>
+
+  <div class="jh-exam-print-wrap" data-exam-print-wrap>
+    <div class="jh-exam-print-banner">
+      <div class="jh-exam-print-banner__title">فصل {chapter}: {title}</div>
+      <div class="jh-exam-print-banner__meta">آزمون {exam} · {weight} · جزوه هوشمند ترمودینامیک ۱</div>
+    </div>
+
+    <section
+      id={paneReviewId}
+      class="jh-exam-pane is-active"
+      role="tabpanel"
+      aria-labelledby={tabReviewId}
+      aria-hidden="false"
+      data-mode="review"
+    >
+      <div class="jh-exam-print-title">مرور سریع و فرمول‌های کلیدی</div>
+      <div class="jh-exam-pane__body sl-markdown-content">
+        <slot name="review" />
+      </div>
+    </section>
+
+    <section
+      id={paneLearnId}
+      class="jh-exam-pane jh-exam-pane--inactive"
+      role="tabpanel"
+      aria-labelledby={tabLearnId}
+      aria-hidden="true"
+      data-mode="learn"
+    >
+      <div class="jh-exam-print-title">خلاصه مفهومی و تیپ‌بندی سوالات امتحانی</div>
+      <div class="jh-exam-pane__body sl-markdown-content">
+        <slot name="learn" />
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  import { computePrintFitPlan } from '../lib/printFit.ts';
+
+  type ExamMode = 'review' | 'learn';
+
+  declare global {
+    interface Window {
+      __jhExamShellGlobalBound?: boolean;
+    }
+  }
+
+  function normalizeMode(value: string | null | undefined): ExamMode | null {
+    if (value === 'review' || value === 'learn') return value;
+    return null;
+  }
+
+  function resolveHashElement(hash: string): HTMLElement | null {
+    if (!hash || !hash.startsWith('#')) return null;
+    const rawId = hash.slice(1);
+    if (!rawId) return null;
+    let target = document.getElementById(rawId);
+    if (!target) {
+      try {
+        const decoded = decodeURIComponent(rawId);
+        if (decoded && decoded !== rawId) {
+          target = document.getElementById(decoded);
+        }
+      } catch (_) {}
+    }
+    return target;
+  }
+
+  function setShellMode(
+    shell: HTMLElement,
+    mode: ExamMode,
+    options: { updateUrl?: boolean; clearModeHash?: boolean } = {}
+  ): void {
+    shell.dataset.activeMode = mode;
+
+    const buttons = shell.querySelectorAll<HTMLButtonElement>('.jh-exam-switch__btn[data-mode]');
+    buttons.forEach((btn) => {
+      const isActive = btn.dataset.mode === mode;
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-selected', String(isActive));
+      btn.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+
+    const panes = shell.querySelectorAll<HTMLElement>('.jh-exam-pane[data-mode]');
+    panes.forEach((pane) => {
+      const isActive = pane.dataset.mode === mode;
+      pane.classList.toggle('is-active', isActive);
+      pane.classList.toggle('jh-exam-pane--inactive', !isActive);
+      pane.setAttribute('aria-hidden', String(!isActive));
+    });
+
+    if (options.updateUrl) {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('mode', mode);
+        if (options.clearModeHash && (url.hash === '#learn' || url.hash === '#review')) {
+          url.hash = '';
+        }
+        window.history.replaceState(window.history.state, '', url.toString());
+      } catch (_) {}
+    }
+  }
+
+  function resolveInitialMode(shell: HTMLElement): { mode: ExamMode; target: HTMLElement | null } {
+    const hash = window.location.hash;
+    if (hash === '#learn') return { mode: 'learn', target: null };
+    if (hash === '#review') return { mode: 'review', target: null };
+
+    if (hash) {
+      const target = resolveHashElement(hash);
+      const ownerPane = target?.closest<HTMLElement>('.jh-exam-pane[data-mode]');
+      if (target && ownerPane && shell.contains(ownerPane)) {
+        const paneMode = normalizeMode(ownerPane.dataset.mode);
+        if (paneMode) {
+          return { mode: paneMode, target };
+        }
+      }
+    }
+
+    const queryMode = normalizeMode(new URLSearchParams(window.location.search).get('mode'));
+    if (queryMode) return { mode: queryMode, target: null };
+
+    return { mode: 'review', target: null };
+  }
+
+  function scrollTargetIntoViewIfNeeded(target: HTMLElement): void {
+    requestAnimationFrame(() => {
+      const rect = target.getBoundingClientRect();
+      if (rect.top < 0 || rect.top > window.innerHeight * 0.78) {
+        target.scrollIntoView({ block: 'start' });
+      }
+    });
+  }
+
+  function handleHashNavigation(hash: string, fromClick: boolean): void {
+    if (!hash || !hash.startsWith('#')) return;
+    const shells = document.querySelectorAll<HTMLElement>('[data-exam-shell]');
+    if (!shells.length) return;
+
+    if (hash === '#learn' || hash === '#review') {
+      const mode: ExamMode = hash === '#learn' ? 'learn' : 'review';
+      shells.forEach((shell) => setShellMode(shell, mode, { updateUrl: true, clearModeHash: false }));
+      return;
+    }
+
+    const target = resolveHashElement(hash);
+    if (!target) return;
+
+    const ownerPane = target.closest<HTMLElement>('.jh-exam-pane[data-mode]');
+    const ownerShell = ownerPane?.closest<HTMLElement>('[data-exam-shell]');
+    const paneMode = normalizeMode(ownerPane?.dataset.mode);
+    if (!ownerPane || !ownerShell || !paneMode) return;
+
+    const wasInactive =
+      ownerPane.classList.contains('jh-exam-pane--inactive') ||
+      ownerShell.dataset.activeMode !== paneMode;
+
+    if (wasInactive) {
+      setShellMode(ownerShell, paneMode, { updateUrl: false });
+      if (fromClick) {
+        window.setTimeout(() => {
+          try {
+            const url = new URL(window.location.href);
+            url.searchParams.set('mode', paneMode);
+            window.history.replaceState(window.history.state, '', url.toString());
+          } catch (_) {}
+          scrollTargetIntoViewIfNeeded(target);
+        }, 0);
+      } else {
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.set('mode', paneMode);
+          window.history.replaceState(window.history.state, '', url.toString());
+        } catch (_) {}
+        scrollTargetIntoViewIfNeeded(target);
+      }
+    }
+  }
+
+  function applyPrintFit(targetShell?: HTMLElement): void {
+    const shells = targetShell
+      ? [targetShell]
+      : Array.from(document.querySelectorAll<HTMLElement>('[data-exam-shell]'));
+
+    shells.forEach((shell) => {
+      const wrap = shell.querySelector<HTMLElement>('[data-exam-print-wrap]');
+      if (!wrap) return;
+
+      const measureHost = document.createElement('div');
+      measureHost.className = 'jh-print-measure not-content';
+      measureHost.setAttribute('aria-hidden', 'true');
+
+      const cloneShell = document.createElement('div');
+      cloneShell.className = 'jh-exam-shell not-content';
+
+      const cloneWrap = wrap.cloneNode(true) as HTMLElement;
+      cloneWrap.style.removeProperty('--jh-print-zoom');
+      cloneWrap.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+
+      cloneShell.appendChild(cloneWrap);
+      measureHost.appendChild(cloneShell);
+      document.body.appendChild(measureHost);
+
+      try {
+        const rawHeight = cloneWrap.getBoundingClientRect().height;
+        const rawPlan = computePrintFitPlan(rawHeight);
+
+        if (rawPlan.dense) {
+          cloneShell.classList.add('jh-print--dense');
+          const denseHeight = cloneWrap.getBoundingClientRect().height;
+          const densePlan = computePrintFitPlan(denseHeight);
+          shell.classList.add('jh-print--dense');
+          shell.style.setProperty('--jh-print-zoom', densePlan.zoom.toFixed(4));
+        } else {
+          shell.classList.remove('jh-print--dense');
+          shell.style.setProperty('--jh-print-zoom', rawPlan.zoom.toFixed(4));
+        }
+      } finally {
+        measureHost.remove();
+      }
+    });
+  }
+
+  function resetPrintFit(): void {
+    const shells = document.querySelectorAll<HTMLElement>('[data-exam-shell]');
+    shells.forEach((shell) => {
+      shell.classList.remove('jh-print--dense');
+      shell.style.removeProperty('--jh-print-zoom');
+    });
+  }
+
+  function bindGlobalExamHandlers(): void {
+    if (window.__jhExamShellGlobalBound) return;
+    window.__jhExamShellGlobalBound = true;
+
+    window.addEventListener('beforeprint', () => {
+      applyPrintFit();
+    });
+
+    window.addEventListener('afterprint', () => {
+      resetPrintFit();
+    });
+
+    window.addEventListener('hashchange', () => {
+      handleHashNavigation(window.location.hash, false);
+    });
+
+    document.addEventListener(
+      'click',
+      (event) => {
+        const targetEl = event.target instanceof Element ? event.target : null;
+        const link = targetEl?.closest<HTMLAnchorElement>('a[href*="#"]');
+        if (!link) return;
+
+        const rawHref = link.getAttribute('href') || '';
+        if (!rawHref.includes('#')) return;
+
+        try {
+          const url = new URL(link.href, window.location.href);
+          if (url.origin !== window.location.origin) return;
+          if (url.pathname !== window.location.pathname || !url.hash) return;
+
+          if (url.hash === '#learn' || url.hash === '#review') {
+            event.preventDefault();
+          }
+          handleHashNavigation(url.hash, true);
+        } catch (_) {}
+      },
+      true
+    );
+  }
+
+  function initExamShells(): void {
+    bindGlobalExamHandlers();
+
+    const shells = document.querySelectorAll<HTMLElement>('[data-exam-shell]');
+    shells.forEach((shell) => {
+      const initial = resolveInitialMode(shell);
+      setShellMode(shell, initial.mode, { updateUrl: false });
+      if (initial.target) {
+        scrollTargetIntoViewIfNeeded(initial.target);
+      }
+
+      if (shell.dataset.examBound === '1') return;
+      shell.dataset.examBound = '1';
+
+      const tabButtons = Array.from(
+        shell.querySelectorAll<HTMLButtonElement>('.jh-exam-switch__btn[data-mode]')
+      );
+
+      tabButtons.forEach((btn, idx) => {
+        btn.addEventListener('click', () => {
+          const nextMode = normalizeMode(btn.dataset.mode);
+          if (!nextMode) return;
+          setShellMode(shell, nextMode, { updateUrl: true, clearModeHash: true });
+        });
+
+        btn.addEventListener('keydown', (event) => {
+          if (tabButtons.length < 2) return;
+          let targetIdx: number | null = null;
+          if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            targetIdx = (idx + 1) % tabButtons.length;
+          } else if (event.key === 'Home') {
+            targetIdx = 0;
+          } else if (event.key === 'End') {
+            targetIdx = tabButtons.length - 1;
+          }
+          if (targetIdx === null) return;
+          event.preventDefault();
+          const targetBtn = tabButtons[targetIdx];
+          const nextMode = normalizeMode(targetBtn.dataset.mode);
+          if (nextMode) {
+            setShellMode(shell, nextMode, { updateUrl: true, clearModeHash: true });
+          }
+          targetBtn.focus();
+        });
+      });
+
+      const printBtn = shell.querySelector<HTMLButtonElement>('[data-exam-print]');
+      if (printBtn) {
+        printBtn.addEventListener('click', () => {
+          applyPrintFit(shell);
+          window.print();
+        });
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExamShells);
+  } else {
+    initExamShells();
+  }
+  document.addEventListener('astro:page-load', initExamShells);
+</script>

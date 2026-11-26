@@ -1,0 +1,40 @@
+---
+interface Props {
+  chapter: number;
+  exam: number;
+  label?: string;
+}
+
+const { chapter, exam, label } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const withBase = (href: string) => {
+  if (!href.startsWith('/')) return href;
+  if (base && (href === base || href.startsWith(base + '/'))) return href;
+  return `${base}${href}`;
+};
+
+const reviewHref = withBase(`/exam/ch${chapter}/?mode=review`);
+const learnHref = withBase(`/exam/ch${chapter}/?mode=learn`);
+---
+
+<div
+  class="jh-exam-banner not-content"
+  role="region"
+  aria-label={`دسترسی سریع شب امتحان فصل ${chapter}`}
+>
+  <div class="jh-exam-banner__meta">
+    <span class="jh-exam-banner__badge">🌙 شب امتحان</span>
+    <span class="jh-exam-banner__info">
+      فصل {chapter} · آزمون {exam}
+      {label && <span class="jh-exam-banner__label"> — {label}</span>}
+    </span>
+  </div>
+  <div class="jh-exam-banner__actions">
+    <a class="jh-exam-banner__link jh-exam-banner__link--review" href={reviewHref}>
+      📄 مرور سریع و فرمول‌ها
+    </a>
+    <a class="jh-exam-banner__link jh-exam-banner__link--learn" href={learnHref}>
+      ⚡ یادگیری فوری فصل {chapter}
+    </a>
+  </div>
+</div>
