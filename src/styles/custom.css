@@ -1930,11 +1930,11 @@ mobile-starlight-toc nav {
   margin: 1rem 0;
 }
 
-/* شبکه و کارت‌های فرمول‌های کنار هم (مرور سریع) */
+/* چیدمان ردیفی کارت‌های فرمول (مرور سریع) */
 .jh-formula-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: 1fr;
+  gap: 0.78rem;
   margin: 0.85rem 0 1.25rem;
   align-items: stretch;
 }
@@ -2240,6 +2240,14 @@ mobile-starlight-toc nav {
   .jh-formula-grid,
   .jh-exam-hub-grid {
     grid-template-columns: 1fr;
+  }
+
+  .jh-formula-card__math {
+    padding: 0.4rem 0.45rem;
+  }
+
+  .jh-formula-card__math .katex-display {
+    font-size: 0.84em;
   }
 }
 
