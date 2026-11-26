@@ -259,48 +259,56 @@ const paneLearnId = `jh-exam-pane-learn-${chapter}`;
     }
   }
 
+  let isApplyingPrintFit = false;
+
   function applyPrintFit(targetShell?: HTMLElement): void {
-    const shells = targetShell
-      ? [targetShell]
-      : Array.from(document.querySelectorAll<HTMLElement>('[data-exam-shell]'));
+    if (isApplyingPrintFit) return;
+    isApplyingPrintFit = true;
+    try {
+      const shells = targetShell
+        ? [targetShell]
+        : Array.from(document.querySelectorAll<HTMLElement>('[data-exam-shell]'));
 
-    shells.forEach((shell) => {
-      const wrap = shell.querySelector<HTMLElement>('[data-exam-print-wrap]');
-      if (!wrap) return;
+      shells.forEach((shell) => {
+        const wrap = shell.querySelector<HTMLElement>('[data-exam-print-wrap]');
+        if (!wrap) return;
 
-      const measureHost = document.createElement('div');
-      measureHost.className = 'jh-print-measure not-content';
-      measureHost.setAttribute('aria-hidden', 'true');
+        const measureHost = document.createElement('div');
+        measureHost.className = 'jh-print-measure not-content';
+        measureHost.setAttribute('aria-hidden', 'true');
 
-      const cloneShell = document.createElement('div');
-      cloneShell.className = 'jh-exam-shell not-content';
+        const cloneShell = document.createElement('div');
+        cloneShell.className = 'jh-exam-shell not-content';
 
-      const cloneWrap = wrap.cloneNode(true) as HTMLElement;
-      cloneWrap.style.removeProperty('--jh-print-zoom');
-      cloneWrap.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+        const cloneWrap = wrap.cloneNode(true) as HTMLElement;
+        cloneWrap.style.removeProperty('--jh-print-zoom');
+        cloneWrap.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
 
-      cloneShell.appendChild(cloneWrap);
-      measureHost.appendChild(cloneShell);
-      document.body.appendChild(measureHost);
+        cloneShell.appendChild(cloneWrap);
+        measureHost.appendChild(cloneShell);
+        document.body.appendChild(measureHost);
 
-      try {
-        const rawHeight = cloneWrap.getBoundingClientRect().height;
-        const rawPlan = computePrintFitPlan(rawHeight);
+        try {
+          const rawHeight = cloneWrap.getBoundingClientRect().height;
+          const rawPlan = computePrintFitPlan(rawHeight);
 
-        if (rawPlan.dense) {
-          cloneShell.classList.add('jh-print--dense');
-          const denseHeight = cloneWrap.getBoundingClientRect().height;
-          const densePlan = computePrintFitPlan(denseHeight);
-          shell.classList.add('jh-print--dense');
-          shell.style.setProperty('--jh-print-zoom', densePlan.zoom.toFixed(4));
-        } else {
-          shell.classList.remove('jh-print--dense');
-          shell.style.setProperty('--jh-print-zoom', rawPlan.zoom.toFixed(4));
+          if (rawPlan.dense) {
+            cloneShell.classList.add('jh-print--dense');
+            const denseHeight = cloneWrap.getBoundingClientRect().height;
+            const densePlan = computePrintFitPlan(denseHeight);
+            shell.classList.add('jh-print--dense');
+            shell.style.setProperty('--jh-print-zoom', densePlan.zoom.toFixed(4));
+          } else {
+            shell.classList.remove('jh-print--dense');
+            shell.style.setProperty('--jh-print-zoom', rawPlan.zoom.toFixed(4));
+          }
+        } finally {
+          measureHost.remove();
         }
-      } finally {
-        measureHost.remove();
-      }
-    });
+      });
+    } finally {
+      isApplyingPrintFit = false;
+    }
   }
 
   function resetPrintFit(): void {
@@ -330,6 +338,16 @@ const paneLearnId = `jh-exam-pane-learn-${chapter}`;
     document.addEventListener(
       'click',
       (event) => {
+        if (
+          event.defaultPrevented ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey ||
+          event.button !== 0
+        ) {
+          return;
+        }
         const targetEl = event.target instanceof Element ? event.target : null;
         const link = targetEl?.closest<HTMLAnchorElement>('a[href*="#"]');
         if (!link) return;
@@ -401,7 +419,6 @@ const paneLearnId = `jh-exam-pane-learn-${chapter}`;
       const printBtn = shell.querySelector<HTMLButtonElement>('[data-exam-print]');
       if (printBtn) {
         printBtn.addEventListener('click', () => {
-          applyPrintFit(shell);
           window.print();
         });
       }

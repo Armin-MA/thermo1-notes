@@ -72,6 +72,11 @@ header.header {
   backdrop-filter: blur(12px);
 }
 
+.main-pane,
+.sl-markdown-content {
+  min-width: 0;
+}
+
 /* جلوگیری از برعکس شدن فرمول‌های ریاضی در متن فارسی RTL */
 .katex,
 .katex-display {
@@ -80,9 +85,19 @@ header.header {
 }
 
 .katex-display {
+  max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0.35rem 0;
+}
+
+.jh-inline-eq,
+.jh-exam-pane__body :not(.katex-display) > .katex {
+  display: inline-block;
+  max-width: 100%;
+  direction: ltr;
+  unicode-bidi: isolate;
+  vertical-align: baseline;
 }
 
 /* جعبه‌های فرمول شماره‌گذاری‌شده (الهام از MyST) */
@@ -599,6 +614,68 @@ mobile-starlight-toc nav {
   font-size: 0.84rem;
   color: var(--sl-color-gray-3);
   margin: 0;
+}
+
+/* صفحه ۴۰۴ اختصاصی فارسی */
+.jh-404-wrap {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 56rem;
+  margin: 1rem auto;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-bg-sidebar);
+  text-align: center;
+}
+
+.jh-404-code {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--sl-color-accent);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.jh-404-title {
+  margin: 0 0 0.65rem;
+  font-size: 1.35rem;
+  color: var(--sl-color-white);
+}
+
+.jh-404-desc {
+  margin: 0 auto 1.25rem;
+  max-width: 36rem;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--sl-color-gray-2);
+}
+
+.jh-404-desc > p {
+  margin: 0;
+}
+
+.jh-404-grid {
+  text-align: right;
+  margin: 1.25rem 0 0;
+}
+
+.jh-404-card {
+  display: block;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (max-width: 40rem) {
+  .jh-404-wrap {
+    margin: 0.5rem auto;
+    padding: 0.9rem;
+  }
+
+  .jh-404-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 
@@ -1441,6 +1518,7 @@ mobile-starlight-toc nav {
 }
 
 .jh-widget__pane {
+  min-width: 0;
   background: var(--sl-color-black);
   border: 1px solid var(--sl-color-gray-5);
   border-radius: 12px;
@@ -1862,6 +1940,7 @@ mobile-starlight-toc nav {
 }
 
 .jh-formula-card {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
@@ -2094,6 +2173,22 @@ mobile-starlight-toc nav {
   margin-bottom: 0;
 }
 
+.jh-formula-card__note > p,
+.jh-crash-summary p,
+.jh-archetype-cues > p,
+.jh-archetype-steps > p,
+.jh-archetype-trap > p {
+  margin: 0;
+}
+
+.jh-formula-card__note > p + p,
+.jh-crash-summary p + p,
+.jh-archetype-cues > p + p,
+.jh-archetype-steps > p + p,
+.jh-archetype-trap > p + p {
+  margin-top: 0.25rem;
+}
+
 /* کارت‌های صفحه مرکزی شب امتحان (/exam/) */
 .jh-exam-hub-grid {
   display: grid;
@@ -2112,6 +2207,10 @@ mobile-starlight-toc nav {
   border: 1px solid var(--sl-color-gray-5);
   background: var(--sl-color-bg-sidebar);
   box-shadow: 0 4px 16px -10px var(--jh-card-glow);
+}
+
+.jh-exam-hub-card p {
+  margin: 0;
 }
 
 .jh-exam-hub-card__head {
@@ -2354,6 +2453,22 @@ mobile-starlight-toc nav {
 .jh-print-measure .jh-archetype-trap {
   padding: 0.26rem 0.48rem;
   border-radius: 5px;
+}
+
+.jh-print-measure .jh-formula-card__note > p,
+.jh-print-measure .jh-crash-summary p,
+.jh-print-measure .jh-archetype-cues > p,
+.jh-print-measure .jh-archetype-steps > p,
+.jh-print-measure .jh-archetype-trap > p {
+  margin: 0;
+}
+
+.jh-print-measure .jh-formula-card__note > p + p,
+.jh-print-measure .jh-crash-summary p + p,
+.jh-print-measure .jh-archetype-cues > p + p,
+.jh-print-measure .jh-archetype-steps > p + p,
+.jh-print-measure .jh-archetype-trap > p + p {
+  margin-top: 0.18rem;
 }
 
 .jh-print-measure .jh-exam-print-wrap table {
@@ -2686,8 +2801,8 @@ mobile-starlight-toc nav {
     margin: 0.35rem 0;
     padding: 0.38rem 0.62rem;
     border-radius: 6px;
-    border: 1px solid #d97706;
-    border-inline-start: 3.5px solid #b45309;
+    border: 1px solid #d97706 !important;
+    border-inline-start: 3.5px solid #b45309 !important;
     background: #fffbeb !important;
     font-size: 8.5pt;
     line-height: 1.4;
@@ -2739,7 +2854,7 @@ mobile-starlight-toc nav {
   .jh-archetype-badge {
     background: #e0f2fe !important;
     color: #0c4a6e !important;
-    border-color: #7dd3fc;
+    border-color: #7dd3fc !important;
   }
 
   .jh-archetype-cues,
@@ -2755,17 +2870,33 @@ mobile-starlight-toc nav {
   .jh-archetype-example {
     padding: 0.26rem 0.48rem;
     border-radius: 5px;
-    border: 1px solid #cbd5e1;
-    border-inline-start: 3px solid #047857;
+    border: 1px solid #cbd5e1 !important;
+    border-inline-start: 3px solid #047857 !important;
     background: #f8fafc !important;
   }
 
   .jh-archetype-trap {
     padding: 0.26rem 0.48rem;
     border-radius: 5px;
-    border: 1px solid #d97706;
-    border-inline-start: 3px solid #b45309;
+    border: 1px solid #d97706 !important;
+    border-inline-start: 3px solid #b45309 !important;
     background: #fffbeb !important;
+  }
+
+  .jh-formula-card__note > p,
+  .jh-crash-summary p,
+  .jh-archetype-cues > p,
+  .jh-archetype-steps > p,
+  .jh-archetype-trap > p {
+    margin: 0;
+  }
+
+  .jh-formula-card__note > p + p,
+  .jh-crash-summary p + p,
+  .jh-archetype-cues > p + p,
+  .jh-archetype-steps > p + p,
+  .jh-archetype-trap > p + p {
+    margin-top: 0.18rem;
   }
 
   .jh-exam-print-wrap table {

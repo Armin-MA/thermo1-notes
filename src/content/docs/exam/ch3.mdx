@@ -49,9 +49,9 @@ $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">y ∈ &#123;v, u, h, s&#125; · y_fg = y_g - y_f</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       کیفیت $x \in [0, 1]$ تنها در ناحیهٔ دوفازی تعریف می‌شود و <strong>کسر جرمی</strong> بخار است، نه کسر حجمی!
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -59,14 +59,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-P > P_{\text{sat}@T} \;\lor\; T < T_{\text{sat}@P} \Rightarrow \text{Comp.}, \qquad y > y_g \Rightarrow \text{Sup.}
+\begin{gathered}
+P > P_{\text{sat}@T} \;\lor\; T < T_{\text{sat}@P} \Rightarrow \text{Comp.} \\
+y_f \le y \le y_g \Rightarrow \text{Sat.}, \qquad y > y_g \Rightarrow \text{Sup.}
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">H₂O: A-4..A-7 · R-134a: A-11..A-13</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       برای $y < y_f$ یا نبود جدول `A-7` (و کل `R-134a`): تقریب مایع اشباع در همان دما $v \approx v_{f@T}$ و $u \approx u_{f@T}$.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -79,9 +82,9 @@ $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">2D (A-6): 2× T-interp + 1× P-interp</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       در درونیابی معکوس، خاصیت معلوم ($h$ یا $v$) در نقش $x$ و مجهول ($T$ یا $P$) در نقش $y$ قرار می‌گیرد.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -89,14 +92,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-Pv = RT, \qquad PV = mRT, \qquad R = \frac{R_u}{M}, \qquad \frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2}
+\begin{gathered}
+Pv = RT, \qquad PV = mRT \\
+R = \frac{R_u}{M}, \qquad \frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2}
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">R_u = 8.31447 kJ/kmol·K · T [K]</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       گازهای واقعی در چگالی کم ($P_R \ll 1$ یا $T_R > 2$) با تقریب عالی از معادلهٔ گاز ایده‌آل پیروی می‌کنند.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -104,14 +110,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-Z = \frac{Pv}{RT} = \frac{v_{\text{actual}}}{v_{\text{ideal}}}, \qquad P_R = \frac{P}{P_{\text{cr}}}, \quad T_R = \frac{T}{T_{\text{cr}}}, \quad v_R = \frac{v}{R T_{\text{cr}} / P_{\text{cr}}}
+\begin{gathered}
+Z = \frac{Pv}{RT} = \frac{v_{\text{actual}}}{v_{\text{ideal}}} \\
+P_R = \frac{P}{P_{\text{cr}}}, \quad T_R = \frac{T}{T_{\text{cr}}}, \quad v_R = \frac{v}{R T_{\text{cr}} / P_{\text{cr}}}
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">Table A-1 &amp; Fig. A-15</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       وقتی $v$ داده شود ولی $P$ یا $T$ مجهول باشد، از خطوط $v_R$ در `A-15` استفاده کنید (هرگز بر $v_{\text{cr}}$ تقسیم نکنید).
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -119,14 +128,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-\left(P + \frac{a}{v^2}\right)(v - b) = RT, \qquad a = \frac{27 R^2 T_{\text{cr}}^2}{64 P_{\text{cr}}}, \quad b = \frac{R T_{\text{cr}}}{8 P_{\text{cr}}}
+\begin{gathered}
+\left(P + \frac{a}{v^2}\right)(v - b) = RT \\
+a = \frac{27 R^2 T_{\text{cr}}^2}{64 P_{\text{cr}}}, \qquad b = \frac{R T_{\text{cr}}}{8 P_{\text{cr}}}
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">BB: 5 consts (&lt;0.8 ρ_cr) · BWR: 8 (&lt;2.5 ρ_cr)</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       در نقطهٔ بحرانی، همدمای $T_{\text{cr}}$ روی نمودار $P-v$ دارای نقطهٔ عطف افقی است ($v_f = v_g$ و $h_{fg} = 0$).
-    </p>
+    </div>
   </div>
 
 </div>
@@ -147,9 +159,9 @@ $$
 
 <div class="jh-crash-summary">
   <h3 class="jh-crash-summary__title">⚡ فلسفهٔ فیزیکی فصل ۳ در ۹۰ ثانیه</h3>
-  <p>
+  <div>
     برای محاسبهٔ کار و انرژی در فصل‌های بعد، ابتدا باید خواص حالت ($P, T, v, u, h$) را دقیق استخراج کنیم. مواد خالص در نزدیکی گنبد اشباع (آب و مبرد `R-134a`) رفتار غیرخطی دارند؛ بنابراین به کمک نمودارهای $T-v$ و $P-v$ ناحیه (مایع متراکم، مخلوط اشباع یا بخار فوق‌گرم) را تشخیص داده و مقادیر را از جداول سنجل می‌خوانیم (برای تمرین تعاملی به [روش جداول و تمرین درونیابی](/thermo1-notes/tools/steam-tables/#تمرین-تعاملی-درونیابی) بروید). برای گازهای دمای بالا یا فشار پایین، معادلهٔ <strong>گاز ایده‌آل</strong> $Pv = RT$ برقرار است و انحراف گازهای واقعی با <strong>ضریب تراکم‌پذیری $Z$</strong> و اصل حالات متناظر یا معادلات حالت تصحیح می‌شود.
-  </p>
+  </div>
 </div>
 
 <article class="jh-archetype-card">
@@ -157,21 +169,21 @@ $$
     <span class="jh-archetype-badge">تیپ ۱</span>
     <h3>تکمیل جدول خواص و تشخیص ناحیهٔ فازی</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> جدول چهارسطری آب یا مبرد `R-134a` با دو داده در هر سطر و مجهولات دما، فشار، انرژی داخلی یا حجم مخصوص.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) اگر $(T, y)$ یا $(P, y)$ دارید، به جدول اشباع بروید و $y$ را با $y_f$ و $y_g$ بسنجید؛ ۲) اگر $(P, T)$ دارید، $T$ را با $T_{\text{sat}@P}$ مقایسه کنید؛ ۳) سپس مقدار مجهول را از جدول درست یا درونیابی خطی استخراج کنید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
-**مثال عددی سریع:** آب در $P=400\;\text{kPa}$ و $u=1450\;\text{kJ/kg}$: از `A-5` داریم $u_f=604.22 < 1450 < u_g=2553.1$، پس **مخلوط اشباع** با $T = 143.61^\circ\text{C}$ است. مبرد `R-134a` در $T=-4^\circ\text{C}$ و $P=320\;\text{kPa}$: چون $P > P_{\text{sat}}$ است، مایع متراکم بوده و از `A-11` داریم $v \approx v_{f@-4^\circ\text{C}} = 0.000764\;\text{m}^3/\text{kg}$.
+**مثال عددی سریع:** آب در $P=400\;\text{kPa}$ و $u=1450\;\text{kJ/kg}$: از `A-5` داریم $u_f=604.22 < 1450 < u_g=2553.1$، پس **مخلوط اشباع** با $T = 143.61^\circ\text{C}$ است. مبرد `R-134a` در $T=-4^\circ\text{C}$ و $P=320\;\text{kPa}$: چون $P > P_{\text{sat}}$ است، مایع متراکم بوده و از `A-11` داریم $v \approx v_{f@-4^\circ\text{C}} = 0.000764\;\text{m}^3/\text{kg}$.<br />
 [ادامه در تمرین ۳-۲۰](/thermo1-notes/exercises/ch3/#prob-3-20) · [ادامه در تمرین ۳-۲۶](/thermo1-notes/exercises/ch3/#prob-3-26)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> در درونیابی نسبت $r = (x - x_1)/(x_2 - x_1)$ را با ترتیب سطرها چک کنید تا به‌جای $r$ مقدار $1 - r$ حساب نشود.
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -179,23 +191,23 @@ $$
     <span class="jh-archetype-badge">تیپ ۲</span>
     <h3>مخزن صلب دوفازی، کیفیت واقعی و پیستون آزاد</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> تقسیم شدن حجم مخزن بین مایع و بخار با کسر حجمی، یا گرم شدن جرم ثابت مبرد در سیلندر-پیستون وزنه‌دار.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) برای کسر حجمی ابتدا $m_f = V_f/v_f$ و $m_g = V_g/v_g$ را جداگانه بیابید؛ ۲) سپس $x = m_g/(m_f + m_g)$ و چگالی $\rho = 1/v$ را حساب کنید؛ ۳) در پیستون آزاد فشار ثابت می‌ماند و $\Delta V = m(v_2 - v_1)$.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** در مخزن $1.8\;\text{m}^3$ آب در $220^\circ\text{C}$ ($\frac{1}{3}$ حجم مایع و $\frac{2}{3}$ بخار):
 $m_f = \frac{0.6}{0.001190} = 504.2\;\text{kg}$ و $m_g = \frac{1.2}{0.08609} = 13.94\;\text{kg} \Rightarrow x = \frac{13.94}{518.1} = 0.0269$ و $\rho = 287.8\;\text{kg/m}^3$.
-(در سیلندر $100\;\text{g}$ مبرد با فشار ثابت $60\;\text{kPa}$ از $-20^\circ\text{C}$ به $100^\circ\text{C}$: $\Delta V = 0.1(0.50410 - 0.33608) = 0.0168\;\text{m}^3$.)
+(در سیلندر $100\;\text{g}$ مبرد با فشار ثابت $60\;\text{kPa}$ از $-20^\circ\text{C}$ به $100^\circ\text{C}$: $\Delta V = 0.1(0.50410 - 0.33608) = 0.0168\;\text{m}^3$.)<br />
 [ادامه در تمرین ۳-۲۸](/thermo1-notes/exercises/ch3/#prob-3-28) · [ادامه در تمرین ۳-۶۱](/thermo1-notes/exercises/ch3/#prob-3-61)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> کیفیت هیچ‌گاه برابر کسر حجمی $2/3$ نیست؛ چون $v_g \gg v_f$ است، با وجود حجم بیشتر بخار کیفیت جرمی تنها $2.69\%$ می‌شود.
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -203,21 +215,21 @@ $m_f = \frac{0.6}{0.001190} = 504.2\;\text{kg}$ و $m_g = \frac{1.2}{0.08609} = 
     <span class="jh-archetype-badge">تیپ ۳</span>
     <h3>سیلندر-پیستون با استپر و رسم نمودار T-v</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> سرد شدن بخار آب در فشار ثابت تا رسیدن پیستون به استپر و سپس ادامهٔ سرمایش تا فشار پایین‌تر.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) حالت ۱ و حالت تماس با استپر (حالت ۲) را در فشار $P_1$ مشخص کنید؛ ۲) از حالت ۲ تا ۳ حجم مخصوص ثابت ($v_3 = v_2$) است؛ ۳) با $(P_3, v_3)$ کیفیت و $u_3$ را بیابید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
-**مثال عددی سریع:** بخار آب از $200\;\text{kPa}, 300^\circ\text{C}$ ($u_1 = 2808.8\;\text{kJ/kg}$) در فشار ثابت تا بخار اشباع روی استپر ($v_2 = v_{g@200\;\text{kPa}} = 0.8858\;\text{m}^3/\text{kg}$) سرد و سپس هم‌حجم تا $100\;\text{kPa}$ خنک می‌شود: در حالت ۳ چون $v_f < 0.8858 < v_g$ است، $x_3 = 0.5226$ و $u_3 = 1508.6\;\text{kJ/kg}$؛ کاهش انرژی داخلی $\Delta u = u_1 - u_3 = 1300\;\text{kJ/kg}$.
+**مثال عددی سریع:** بخار آب از $200\;\text{kPa}, 300^\circ\text{C}$ ($u_1 = 2808.8\;\text{kJ/kg}$) در فشار ثابت تا بخار اشباع روی استپر ($v_2 = v_{g@200\;\text{kPa}} = 0.8858\;\text{m}^3/\text{kg}$) سرد و سپس هم‌حجم تا $100\;\text{kPa}$ خنک می‌شود: در حالت ۳ چون $v_f < 0.8858 < v_g$ است، $x_3 = 0.5226$ و $u_3 = 1508.6\;\text{kJ/kg}$؛ کاهش انرژی داخلی $\Delta u = u_1 - u_3 = 1300\;\text{kJ/kg}$.<br />
 [ادامه در تمرین ۳-۴۳](/thermo1-notes/exercises/ch3/#prob-3-43)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> پس از نشستن پیستون روی استپر، فشار دیگر ثابت نیست و مسیر روی نمودار $T-v$ با خط عمودی $v = \text{const}$ به خط اشباع پایین‌تر فرود می‌آید.
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -225,23 +237,23 @@ $m_f = \frac{0.6}{0.001190} = 504.2\;\text{kg}$ و $m_g = \frac{1.2}{0.08609} = 
     <span class="jh-archetype-badge">تیپ ۴</span>
     <h3>مقایسهٔ گاز ایده‌آل، نمودار تراکم‌پذیری Z و جدول</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> محاسبهٔ $v$ در فشار بالا با معادلهٔ گاز ایده‌آل و نمودار `Fig. A-15` و تعیین درصد خطا نسبت به جدول.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) مقادیر $R, T_{\text{cr}}, P_{\text{cr}}$ را از `Table A-1` بردارید؛ ۲) دما را به کلوین برده و $v_{\text{ideal}} = RT/P$ را حساب کنید؛ ۳) از $P_R, T_R$ مقدار $Z$ را از نمودار بخوانید و $v = Z\,v_{\text{ideal}}$ را با $v_{\text{exact}}$ مقایسه کنید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** بخار آب فوق‌گرم در $15\;\text{MPa}$ و $350^\circ\text{C}$ ($623.15\;\text{K}$):
 $v_{\text{ideal}} = \frac{0.4615 \times 623.15}{15{,}000} = 0.01917\;\text{m}^3/\text{kg}$ ($67.0\%$ خطا نسبت به $v_{\text{exact}} = 0.01148$).
-با ضریب $Z = 0.65$ از کلید رسمی: $v = 0.65(0.01917) = 0.01246\;\text{m}^3/\text{kg}$ که خطا را به $8.5\%$ کاهش می‌دهد.
+با ضریب $Z = 0.65$ از کلید رسمی: $v = 0.65(0.01917) = 0.01246\;\text{m}^3/\text{kg}$ که خطا را به $8.5\%$ کاهش می‌دهد.<br />
 [ادامه در تمرین ۳-۸۲](/thermo1-notes/exercises/ch3/#prob-3-82)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> در مخرج درصد خطا همیشه مقدار دقیق جدول ($v_{\text{exact}}$) را بگذارید؛ و در تمرین ۳-۸۲ عدد کلیدی پاسخ‌نامه $0.01246$ و خطای $8.5\%$ است.
-  </p>
+  </div>
 </article>
 
 </Fragment>

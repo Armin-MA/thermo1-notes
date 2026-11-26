@@ -42,14 +42,17 @@ import ExamDualShell from '../../../components/ExamDualShell.astro';
     <div class="jh-formula-card__math">
 
 $$
-W_b = \int_1^2 P\,dV = \frac{P_2 V_2 - P_1 V_1}{1 - n} \;\;(n \neq 1), \qquad W_{b,T=\text{const}} = P_1 V_1 \ln\left(\frac{V_2}{V_1}\right)
+\begin{gathered}
+W_b = \int_1^2 P\,dV = \frac{P_2 V_2 - P_1 V_1}{1 - n} \;\;(n \neq 1) \\
+W_{b,T=\text{const}} = P_1 V_1 \ln\left(\frac{V_2}{V_1}\right)
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">1 kPa·m³ = 1 kJ · MPa × 1000 → kPa</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       هم‌فشار ($n=0$): $P\Delta V$؛ هم‌حجم ($n\to\infty$): $W_b=0$؛ انبساط آزاد به خلأ و غیرشبه‌تعادلی بدون مقاومت: $W_b = 0$.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -57,14 +60,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-P = P_0 + \frac{kx}{A}, \qquad W_b = \frac{P_1 + P_2}{2}(V_2 - V_1), \qquad W_{\text{spring}} = \frac{1}{2}k(x_2^2 - x_1^2)
+\begin{gathered}
+P = P_0 + \frac{kx}{A}, \qquad W_b = \frac{P_1 + P_2}{2}(V_2 - V_1) \\
+W_{\text{spring}} = \frac{1}{2}k(x_2^2 - x_1^2)
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">ΔP_s = k·x/A [kPa with k in kN/m]</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       با فنر خطی مسیر $P-V$ یک خط راست است؛ کل کار مساحت ذوزنقه و سهم فنر مثلث بالایی آن است.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -72,14 +78,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-Q - W = \Delta U + \Delta \text{KE} + \Delta \text{PE}, \qquad Q - W_{\text{other}} = \Delta H \;\;(\text{isobaric})
+\begin{gathered}
+Q - W = \Delta U + \Delta \text{KE} + \Delta \text{PE} \\
+Q - W_{\text{other}} = \Delta H \;\;(\text{isobaric})
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">Cycle: Q_net,in = W_net,out</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       در فرآیند هم‌فشار شبه‌تعادلی، کار مرزی $P\Delta V$ درون $\Delta H = \Delta U + P\Delta V$ جذب شده؛ هرگز دوباره کم نکنید!
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -87,14 +96,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-du = c_v(T)\,dT, \qquad dh = c_p(T)\,dT, \qquad c_p - c_v = R, \qquad k = \frac{c_p}{c_v}
+\begin{gathered}
+du = c_v(T)\,dT, \qquad dh = c_p(T)\,dT \\
+c_p - c_v = R, \qquad k = \frac{c_p}{c_v}
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">Monatomic k=1.667 · Diatomic k≈1.4</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       $c_v = R/(k-1)$ و $c_p = kR/(k-1)$؛ برای گاز ایده‌آل $u$ و $h$ تنها تابع دما هستند.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -102,14 +114,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-\Delta u = u_2 - u_1 \;\;(\text{A-17}), \qquad \Delta u \approx c_{v,\text{avg}}(T_2 - T_1), \qquad \Delta\bar{u} = \int_{T_1}^{T_2}(\bar{c}_p - R_u)\,dT
+\begin{gathered}
+\Delta u = u_2 - u_1 \;\;(\text{A-17}), \qquad \Delta u \approx c_{v,\text{avg}}(T_2 - T_1) \\
+\Delta\bar{u} = \int_{T_1}^{T_2}(\bar{c}_p - R_u)\,dT
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">A-2c gives c̄_p(T) → ÷ M for kJ/kg</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       جدول `A-17` دقیق‌ترین است؛ برای $\Delta u$ در هر فرآیندی از $c_v$ (و برای $\Delta h$ از $c_p$) استفاده کنید.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -117,14 +132,17 @@ $$
     <div class="jh-formula-card__math">
 
 $$
-c_p = c_v = c(T), \qquad \Delta u \approx c_{\text{avg}}(T_2 - T_1), \qquad \Delta h \approx c_{\text{avg}}(T_2 - T_1) + v(P_2 - P_1)
+\begin{gathered}
+c_p = c_v = c(T), \qquad \Delta u \approx c_{\text{avg}}(T_2 - T_1) \\
+\Delta h \approx c_{\text{avg}}(T_2 - T_1) + v(P_2 - P_1)
+\end{gathered}
 $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">Table A-3 · Solid: Δh ≈ Δu</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       در جامدات $v\Delta P$ ناچیز است، ولی در مایعات تحت اختلاف فشار زیاد مثل پمپ همدما، $\Delta h = v\Delta P \neq 0$.
-    </p>
+    </div>
   </div>
 
 </div>
@@ -145,9 +163,9 @@ $$
 
 <div class="jh-crash-summary">
   <h3 class="jh-crash-summary__title">⚡ فلسفهٔ فیزیکی فصل ۴ در ۹۰ ثانیه</h3>
-  <p>
+  <div>
     فصل ۴ دو رکن را به هم متصل می‌کند: محاسبهٔ <strong>کار مرز متحرک</strong> (مساحت زیر منحنی $P-V$) و نوشتن <strong>قانون اول سیستم بسته</strong> ($Q - W = \Delta U$). در مسائل پیستون همیشه با توجه به فنر یا استپر، مسیر $P-V$ را مرحله‌بندی کنید: پیستون آزاد هم‌فشار (مستطیل)، فنر خطی (ذوزنقه) و چسبیده به استپر هم‌حجم ($W_b=0$) است. برای یافتن $\Delta U$ در مواد خالص از جداول فصل ۳، در گاز ایده‌آل از یکی از سه روش (جداول `A-17`، چندجمله‌ای `A-2c` یا $c_{v,\text{avg}}$)، و در جامدات/مایعات از $c\Delta T$ استفاده می‌کنیم.
-  </p>
+  </div>
 </div>
 
 <article class="jh-archetype-card">
@@ -155,23 +173,23 @@ $$
     <span class="jh-archetype-badge">تیپ ۱</span>
     <h3>کار مرزی با فنر خطی، خط مستقیم یا استپر</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> تبخیر یا تراکم تا برخورد به استپر/فنر خطی با ثابت $k$، یا رابطهٔ خطی $P = aV + b$.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) نقاط شکست مسیر را روی $P-V$ مشخص کنید (فشار تا تماس با فنر یا تا رسیدن به استپر ثابت است)؛ ۲) افزایش فشار فنر را از $\Delta P = kx/A$ بیابید؛ ۳) کار کل را از جمع مساحت مستطیل و ذوزنقه محاسبه کنید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** $50\;\text{kg}$ آب در $250\;\text{kPa}, 25^\circ\text{C}$ ($V_1=0.05\;\text{m}^3$) تا $V_2=0.2\;\text{m}^3$ هم‌فشار منبسط شده و سپس فنر $k=100\;\text{kN/m}$ ($A=0.1\;\text{m}^2$) را $0.2\;\text{m}$ می‌فشارد:
 $P_3 = 250 + \frac{100(0.2)}{0.1} = 450\;\text{kPa}$، $T_3 = 147.9^\circ\text{C}$ و $W_b = 250(0.15) + \frac{250+450}{2}(0.02) = 44.5\;\text{kJ}$.
-(در تراکم تا استپر $0.40 v_1$، کار فقط تا حجم استپر انجام می‌شود: $W_{b,\text{in}} = 110.4\;\text{kJ}$.)
+(در تراکم تا استپر $0.40 v_1$، کار فقط تا حجم استپر انجام می‌شود: $W_{b,\text{in}} = 110.4\;\text{kJ}$.)<br />
 [ادامه در تمرین ۴-۲۴](/thermo1-notes/exercises/ch4/#prob-4-24) · [ادامه در تمرین ۴-۶](/thermo1-notes/exercises/ch4/#prob-4-6) · [ادامه در تمرین ۴-۱۰](/thermo1-notes/exercises/ch4/#prob-4-10)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> اگر پیستون قبل از پایان سردشدن به استپر برسد، کار تراکم را فقط روی بازهٔ $(v_1 - v_{\text{stops}})$ حساب کنید نه کل تغییر فشار!
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -179,22 +197,22 @@ $P_3 = 250 + \frac{100(0.2)}{0.1} = 450\;\text{kPa}$، $T_3 = 147.9^\circ\text{C
     <span class="jh-archetype-badge">تیپ ۲</span>
     <h3>تلهٔ فشار ثابت با گرم‌کن برقی و هم‌زن</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> سیلندر-پیستون عایق یا غیرعایق در فشار ثابت دارای المنت الکتریکی یا هم‌زن پره‌ای.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) ترکیب $\Delta U + W_b$ را در فشار ثابت مستقیماً به $\Delta H = m(h_2 - h_1)$ تبدیل کنید؛ ۲) $h_1, h_2$ را از جدول بخوانید؛ ۳) کار الکتریکی را برابر $\mathbf{V}I\Delta t$ قرار دهید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** $5\;\text{L}$ آب مایع اشباع در $175\;\text{kPa}$ ($m = 4.731\;\text{kg}, h_1 = 487.01$) با هم‌زن $400\;\text{kJ}$ و جریان $8\;\text{A}$ در $45\;\text{min}$ به $x_2 = 0.5$ ($h_2 = 1593.6$) می‌رسد:
-$W_{e,\text{in}} = m(h_2 - h_1) - W_{\text{pw,in}} = 4.731(1593.6 - 487.01) - 400 = 4835\;\text{kJ} \Rightarrow \mathbf{V} = \frac{4835 \times 1000}{8 \times 2700} = 224\;\text{V}$.
+$W_{e,\text{in}} = m(h_2 - h_1) - W_{\text{pw,in}} = 4.731(1593.6 - 487.01) - 400 = 4835\;\text{kJ} \Rightarrow \mathbf{V} = \frac{4835 \times 1000}{8 \times 2700} = 224\;\text{V}$.<br />
 [ادامه در تمرین ۴-۳۴](/thermo1-notes/exercises/ch4/#prob-4-34)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> پس از استفاده از $m(h_2 - h_1)$، هرگز کار مرزی $P\Delta V$ را جداگانه وارد معادله نکنید؛ زمان $45\;\text{min}$ را به ثانیه ببرید.
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -202,23 +220,23 @@ $W_{e,\text{in}} = m(h_2 - h_1) - W_{\text{pw,in}} = 4.731(1593.6 - 487.01) - 40
     <span class="jh-archetype-badge">تیپ ۳</span>
     <h3>محاسبهٔ تغییر انرژی داخلی گاز ایده‌آل با ۳ روش</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> یافتن $\Delta u$ یک گاز ایده‌آل بین دو دما با جداول `A-2c` (چندجمله‌ای)، `A-2b` (میانگین) و `A-2a` (دمای اتاق).
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) برای چندجمله‌ای $\bar{c}_v(T) = (a - R_u) + bT + cT^2 + dT^3$ را انتگرال گرفته و بر $M$ تقسیم کنید؛ ۲) برای روش دوم $c_v$ را در $T_{\text{avg}} = (T_1+T_2)/2$ بخوانید؛ ۳) در روش سوم از $c_v$ در $300\;\text{K}$ استفاده کنید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** گرمایش هیدروژن ($M=2.016$) از $200\;\text{K}$ تا $800\;\text{K}$:
 با چندجمله‌ای `A-2c`: $\Delta\bar{u} = 12{,}487\;\text{kJ/kmol} \Rightarrow \Delta u = 6194\;\text{kJ/kg}$؛
-در $T_{\text{avg}} = 500\;\text{K}$ (`A-2b`): $10.389(600) = 6233\;\text{kJ/kg}$؛ در $300\;\text{K}$ (`A-2a`): $10.183(600) = 6110\;\text{kJ/kg}$.
+در $T_{\text{avg}} = 500\;\text{K}$ (`A-2b`): $10.389(600) = 6233\;\text{kJ/kg}$؛ در $300\;\text{K}$ (`A-2a`): $10.183(600) = 6110\;\text{kJ/kg}$.<br />
 [ادامه در تمرین ۴-۵۴](/thermo1-notes/exercises/ch4/#prob-4-54)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> فراموش کردن $-R_u$ در چندجمله‌ای `A-2c` مقدار $\Delta h$ را به جای $\Delta u$ به شما می‌دهد!
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -226,22 +244,22 @@ $W_{e,\text{in}} = m(h_2 - h_1) - W_{\text{pw,in}} = 4.731(1593.6 - 487.01) - 40
     <span class="jh-archetype-badge">تیپ ۴</span>
     <h3>انبساط آزاد به خلأ و گرمایش هوا روی استپر</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> مخزن دوقسمتی عایق با یک بخش خلأ، یا هوا روی تکیه‌گاه تا فشار شناوری و ادامه در فشار ثابت.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) در انبساط آزاد عایق $Q=0, W=0 \Rightarrow u_2 = u_1$ (برای گاز ایده‌آل $T_2=T_1$ و $P_2 = P_1 V_1/V_2$)؛ ۲) در استپر گاز ایده‌آل ابتدا با هم‌حجمی $T_2 = T_1(P_2/P_1)$ دمای بلند شدن را بیابید؛ ۳) کار و گرما را از $Q_{\text{in}} = W_b + m c_v(T_3 - T_1)$ حساب کنید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** انبساط آزاد گاز ایده‌آل از $800\;\text{kPa}, 50^\circ\text{C}$ به حجم دو برابر: $T_2 = 50^\circ\text{C}$ و $P_2 = 400\;\text{kPa}$.
-در گرمایش هوا روی استپر از $100\;\text{kPa}, 296\;\text{K}$ تا فشار شناوری $200\;\text{kPa}$ ($T_2 = 592\;\text{K}$) و سپس هم‌فشار تا $700\;\text{K}$: $W_b = 9.12\;\text{kJ}$ و $Q_{\text{in}} = 94.5\;\text{kJ}$.
+در گرمایش هوا روی استپر از $100\;\text{kPa}, 296\;\text{K}$ تا فشار شناوری $200\;\text{kPa}$ ($T_2 = 592\;\text{K}$) و سپس هم‌فشار تا $700\;\text{K}$: $W_b = 9.12\;\text{kJ}$ و $Q_{\text{in}} = 94.5\;\text{kJ}$.<br />
 [ادامه در تمرین ۴-۶۲](/thermo1-notes/exercises/ch4/#prob-4-62) · [ادامه در تمرین ۴-۷۶](/thermo1-notes/exercises/ch4/#prob-4-76)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> برای انبساط آزاد به خلأ، کار مرزی دقیقاً صفر است؛ هرگز فرمول $P_1 V_1 \ln(V_2/V_1)$ را به‌خاطر همدما بودن گاز ایده‌آل ننویسید!
-  </p>
+  </div>
 </article>
 
 </Fragment>

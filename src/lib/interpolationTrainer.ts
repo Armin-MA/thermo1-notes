@@ -947,6 +947,15 @@ function evaluateDouble2DSubmission(
           expectedVal,
         };
       }
+      if (rVal < 0 || rVal > 1) {
+        return {
+          correct: false,
+          rOk: false,
+          trapDetected: 'out_of_range_r',
+          messageFa: 'نسبت درونیابی r در میانهٔ دو سطر باید بین ۰ و ۱ باشد.',
+          expectedVal,
+        };
+      }
       return {
         correct: false,
         rOk: false,
@@ -971,6 +980,7 @@ function evaluateDouble2DSubmission(
       ) {
         return {
           correct: false,
+          ...(hasR ? { rOk: true } : {}),
           valueOk: false,
           trapDetected: 'swapped_r',
           messageFa:
@@ -985,6 +995,7 @@ function evaluateDouble2DSubmission(
       if (val < minC || val > maxC) {
         return {
           correct: false,
+          ...(hasR ? { rOk: true } : {}),
           valueOk: false,
           trapDetected: 'out_of_bracket',
           messageFa: 'جواب نهایی از محدودهٔ چهار گوشهٔ جدول A-6 خارج شده است.',
@@ -994,6 +1005,7 @@ function evaluateDouble2DSubmission(
 
       return {
         correct: false,
+        ...(hasR ? { rOk: true } : {}),
         valueOk: false,
         trapDetected: 'calculation_error',
         messageFa: 'عدد نهایی خارج از بازهٔ خطای مجاز است؛ مراحل y_A و y_B و درونیابی سوم را چک کنید.',

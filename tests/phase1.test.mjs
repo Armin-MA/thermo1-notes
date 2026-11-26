@@ -276,4 +276,41 @@ test('evaluateTrainerSubmission checks tolerances and detects swapped_r trap', (
   });
   assert.equal(explicitDoubleSwapped.correct, false);
   assert.equal(explicitDoubleSwapped.trapDetected, 'swapped_r');
+
+  const doubleOutOfRangeR = evaluateTrainerSubmission(explicitDouble, { r: -0.1 });
+  assert.equal(doubleOutOfRangeR.correct, false);
+  assert.equal(doubleOutOfRangeR.rOk, false);
+  assert.equal(doubleOutOfRangeR.trapDetected, 'out_of_range_r');
+
+  const doubleOutOfRangeRHigh = evaluateTrainerSubmission(explicitDouble, { r: 1.2 });
+  assert.equal(doubleOutOfRangeRHigh.correct, false);
+  assert.equal(doubleOutOfRangeRHigh.rOk, false);
+  assert.equal(doubleOutOfRangeRHigh.trapDetected, 'out_of_range_r');
+
+  const doubleValidRWrongVal = evaluateTrainerSubmission(explicitDouble, {
+    r: explicitDouble.rT,
+    value: explicitDouble.expectedVal + 50,
+  });
+  assert.equal(doubleValidRWrongVal.correct, false);
+  assert.equal(doubleValidRWrongVal.rOk, true);
+  assert.equal(doubleValidRWrongVal.valueOk, false);
+  assert.equal(doubleValidRWrongVal.trapDetected, 'calculation_error');
+
+  const doubleValidROutOfBracket = evaluateTrainerSubmission(explicitDouble, {
+    r: explicitDouble.rP,
+    value: 3100,
+  });
+  assert.equal(doubleValidROutOfBracket.correct, false);
+  assert.equal(doubleValidROutOfBracket.rOk, true);
+  assert.equal(doubleValidROutOfBracket.valueOk, false);
+  assert.equal(doubleValidROutOfBracket.trapDetected, 'out_of_bracket');
+
+  const doubleValidRSwappedVal = evaluateTrainerSubmission(explicitDouble, {
+    r: explicitDouble.rP,
+    value: explicitSwapT,
+  });
+  assert.equal(doubleValidRSwappedVal.correct, false);
+  assert.equal(doubleValidRSwappedVal.rOk, true);
+  assert.equal(doubleValidRSwappedVal.valueOk, false);
+  assert.equal(doubleValidRSwappedVal.trapDetected, 'swapped_r');
 });

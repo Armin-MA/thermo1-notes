@@ -49,9 +49,9 @@ $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">V̇ = A·V_avg [m³/s] · ṁ [kg/s] · Steady: ṁ₁ = ṁ₂</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       بقای دبی حجمی ($\dot{\mathcal{V}}_1 = \dot{\mathcal{V}}_2$) برای گازها <strong>غلط</strong> است؛ فقط $\dot{m}$ و برای مایعات تراکم‌ناپذیر $\dot{\mathcal{V}}$ پایسته است.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -64,9 +64,9 @@ $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">w_flow = Pv · θ = h + V²/2000 + gz/1000 [kJ/kg]</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       جرم عبوری از مرز کار جریان $Pv$ را حمل می‌کند، پس $u + Pv = h$ جایگزین $u$ می‌شود؛ $\Delta ke$ با $V$ معلوم نگه داشته می‌شود.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -79,9 +79,9 @@ $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">Nozzle: Ẇ=0, Q̇≈0 · Comp: Ẇ_in = ṁΔh + Q̇_out</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       در نازل/دیفیوزر سرعت $\leftrightarrow$ فشار داریم؛ در توربین اگر سرعت‌ها داده شوند $\Delta ke$ را با علامت صحیح حفظ کنید.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -94,9 +94,9 @@ $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">Throttling: μ_JT = (∂T/∂P)_h · Ideal gas: T₂ = T₁</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       گاز ایده‌آل در اختناق همدماست ولی مبرد با $\mu_{\text{JT}} \gt 0$ سرد می‌شود؛ برای $\dot{Q}$ مبدل مرز را دور یک سیال بکشید.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -109,9 +109,9 @@ $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">m_in - m_out = m₂ - m₁ · h_e ≈ (h₁ + h₂)/2</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       جرم عبوری از شیر با <strong>آنتالپی $h$</strong> و جرم ساکن مخزن/سیلندر با <strong>انرژی درونی $u$</strong> می‌آید؛ در پیستون $W_b$ فراموش نشود.
-    </p>
+    </div>
   </div>
 
   <div class="jh-formula-card">
@@ -124,9 +124,9 @@ $$
 
     </div>
     <span class="jh-formula-card__unit" dir="ltr">Rigid (m₁=0): T₂ = k·T_in · Const-P: T₂ = T_in</span>
-    <p class="jh-formula-card__note">
+    <div class="jh-formula-card__note">
       در مخزن صلب ($m_1=0$) کل کار جریان حبس شده و دما را $k$ برابر می‌کند؛ در پیستون هم‌فشار کار جریان پیستون را می‌راند.
-    </p>
+    </div>
   </div>
 
 </div>
@@ -147,9 +147,9 @@ $$
 
 <div class="jh-crash-summary">
   <h3 class="jh-crash-summary__title">⚡ فلسفهٔ فیزیکی فصل ۵ در ۹۰ ثانیه</h3>
-  <p>
+  <div>
     در سیستم باز (حجم کنترل)، جرم از مرز عبور می‌کند و سیال پشت سر برای راندن آن <strong>کار جریان $Pv$</strong> انجام می‌دهد؛ به همین دلیل در مرزها به‌جای $u$ از <strong>آنتالپی $h = u + Pv$</strong> استفاده می‌کنیم. در رژیم <strong>پایا</strong>، جرم و انرژی داخل دستگاه با زمان ثابت‌اند و پنج تجهیز کلاسیک (نازل/دیفیوزر، توربین، کمپرسور/پمپ، شیر اختناق و مبدل/اختلاط) از یک معادلهٔ واحد (`SFEE`) به‌دست می‌آیند. اما در فرآیند <strong>ناپایا</strong> (پر/خالی شدن مخازن و زودپز)، موجودی جرم و انرژی تغییر می‌کند؛ پس معادلهٔ انتگرالی می‌نویسیم که در آن مرزها $h$ و داخل حجم کنترل $u$ دارند.
-  </p>
+  </div>
 </div>
 
 <article class="jh-archetype-card">
@@ -157,23 +157,23 @@ $$
     <span class="jh-archetype-badge">تیپ ۱</span>
     <h3>نازل، دیفیوزر و توربین پایا با Δke و بقای جرم</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> جریان پایای بخار یا `R-134a` در شیپوره با سرعت ورودی، یا توربین با سرعت و مساحت مقطع ورودی.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) خواص $h_1, v_1, h_2, v_2$ را از جدول بخوانید؛ ۲) از `SFEE` مجهول ($V_2$ یا $\dot{W}_{\text{out}}$) را با ضرب/تقسیم $2000$ برای $V^2$ بیابید؛ ۳) نسبت سطح یا $A_1$ را از $\dot{m} = A V / v$ حساب کنید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** در نازل `R-134a` از $700\;\text{kPa}, 120^\circ\text{C}$ ($h_1=358.92, v_1=0.043358$) و $V_1=20\;\text{m/s}$ به $400\;\text{kPa}, 30^\circ\text{C}$ ($h_2=275.09, v_2=0.056796$):
 $V_2 = \sqrt{2000(358.92 - 275.09) + 20^2} = 409.9\;\text{m/s}$ و $A_1/A_2 = \frac{0.043358}{0.056796}\frac{409.9}{20} = 15.65$.
-(در توربین بخار `5-46` با $12\;\text{kg/s}$: $\Delta ke = -1.95\;\text{kJ/kg}$، $\dot{W}_{\text{out}} = 12.1\;\text{MW}$ و $A_1 = 0.0130\;\text{m}^2$.)
+(در توربین بخار `5-46` با $12\;\text{kg/s}$: $\Delta ke = -1.95\;\text{kJ/kg}$، $\dot{W}_{\text{out}} = 12.1\;\text{MW}$ و $A_1 = 0.0130\;\text{m}^2$.)<br />
 [ادامه در تمرین ۵-۳۴](/thermo1-notes/exercises/ch5/#prob-5-34) · [ادامه در تمرین ۵-۴۶](/thermo1-notes/exercises/ch5/#prob-5-46) · [ادامه در تمرین ۵-۷](/thermo1-notes/exercises/ch5/#prob-5-7)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> فراموش کردن ضریب $2000$ در نازل، سرعت خروجی را از $409.9$ به $13\;\text{m/s}$ سقوط می‌دهد! واحد مساحت $A_1$ همیشه $\text{m}^2$ است نه $\text{m}^3$.
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -181,23 +181,23 @@ $V_2 = \sqrt{2000(358.92 - 275.09) + 20^2} = 409.9\;\text{m/s}$ و $A_1/A_2 = \f
     <span class="jh-archetype-badge">تیپ ۲</span>
     <h3>شیر اختناق هم‌آنتالپی و مبدل حرارتی با تغییر مرز</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> افت فشار ناگهانی مبرد در شیر خفگی، یا چگالندهٔ بخار که با آب سرد خنک می‌شود.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) در شیر اختناق $h_2 = h_1$ بگذارید و کیفیت جدید را در $P_2$ بیابید؛ ۲) در مبدل برای دبی مجهول مرز کل دستگاه ($\dot{Q}=0$) را بنویسید؛ ۳) برای $\dot{Q}$ داخلی مرز را دور یک سیال بکشید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** اختناق مایع اشباع `R-134a` از $700\;\text{kPa}$ ($T_1=26.69^\circ\text{C}, h_1=88.82$) تا $160\;\text{kPa}$ ($T_2=-15.60^\circ\text{C}, h_f=31.18, h_{fg}=209.96$):
 $\Delta T = -42.3^\circ\text{C}$، $x_2 = 0.2745$ و $v_2 = 0.0345\;\text{m}^3/\text{kg}$.
-(در چگالنده `5-86`: آب $101\;\text{kg/s}$ با $\Delta T=9^\circ\text{C}$ گرمای $\dot{Q}=3800\;\text{kW}$ می‌گیرد $\Rightarrow \dot{m}_{\text{steam}} = 3800/2382.0 = 1.60\;\text{kg/s}$.)
+(در چگالنده `5-86`: آب $101\;\text{kg/s}$ با $\Delta T=9^\circ\text{C}$ گرمای $\dot{Q}=3800\;\text{kW}$ می‌گیرد $\Rightarrow \dot{m}_{\text{steam}} = 3800/2382.0 = 1.60\;\text{kg/s}$.)<br />
 [ادامه در تمرین ۵-۶۲](/thermo1-notes/exercises/ch5/#prob-5-62) · [ادامه در تمرین ۵-۸۶](/thermo1-notes/exercises/ch5/#prob-5-86)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> در `v_2 = v_f + x_2(v_g - v_f)` جدول `A-12` مقدار $v_g$ را می‌دهد نه $v_{fg}$؛ اگر اشتباهاً `Table A-5` آب را باز کنید کل اعداد غلط می‌شوند.
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -205,22 +205,22 @@ $\Delta T = -42.3^\circ\text{C}$، $x_2 = 0.2745$ و $v_2 = 0.0345\;\text{m}^3/\
     <span class="jh-archetype-badge">تیپ ۳</span>
     <h3>جریان ناپایا: پر شدن مخزن صلب و دیگ زودپز</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> اتصال مخزن صلب خالی به خط لوله، یا خروج بخار اشباع از زودپز طی زمان $\Delta t$.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) حالت‌های ۱ و ۲ را با $v_1, u_1$ و $v_2, u_2$ درون مخزن تعیین کنید؛ ۲) جرم عبوری $m_i$ یا $m_e$ را با $h$ بنویسید؛ ۳) از $Q - W = m_e h_e - m_i h_i + m_2 u_2 - m_1 u_1$ مجهول را بیابید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** زودپز $4\;\text{L}$ در $175\;\text{kPa}$ (نیمی آب و نیمی بخار: $m_1=1.895\;\text{kg}, U_1=926.6\;\text{kJ}$) پس از $1\;\text{h}$ کاملاً به بخار اشباع ($m_2=0.004\;\text{kg}, u_2=2524.5$) می‌رسد:
-$m_e = 1.891\;\text{kg}$ با $h_e = h_g = 2700.2 \Rightarrow Q_{\text{in}} = 1.891(2700.2) + 0.004(2524.5) - 926.6 = 4188\;\text{kJ} \Rightarrow \dot{Q}_{\text{in}} = 1.163\;\text{kW}$.
+$m_e = 1.891\;\text{kg}$ با $h_e = h_g = 2700.2 \Rightarrow Q_{\text{in}} = 1.891(2700.2) + 0.004(2524.5) - 926.6 = 4188\;\text{kJ} \Rightarrow \dot{Q}_{\text{in}} = 1.163\;\text{kW}$.<br />
 [ادامه در تمرین ۵-۱۱۷](/thermo1-notes/exercises/ch5/#prob-5-117)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> در زودپز برای زمان $1\;\text{h}$ باید $Q_{\text{in}}$ را بر $3600\;\text{s}$ تقسیم کنید؛ هرگز معادلهٔ نرخ پایا ($\dot{E}_{\text{in}}=\dot{E}_{\text{out}}$) را اینجا ننویسید!
-  </p>
+  </div>
 </article>
 
 <article class="jh-archetype-card">
@@ -228,22 +228,22 @@ $m_e = 1.891\;\text{kg}$ با $h_e = h_g = 2700.2 \Rightarrow Q_{\text{in}} = 1.
     <span class="jh-archetype-badge">تیپ ۴</span>
     <h3>تخلیهٔ سیلندر-پیستون هم‌فشار یا فنردار با میانگین آنتالپی</h3>
   </div>
-  <p class="jh-archetype-cues">
+  <div class="jh-archetype-cues">
     <strong>نشانه در صورت سوال:</strong> تخلیهٔ گاز یا مبرد از سیلندرِ دارای پیستون متحرک (هم‌فشار یا فنر خطی) در حالت عایق.
-  </p>
-  <p class="jh-archetype-steps">
+  </div>
+  <div class="jh-archetype-steps">
     <strong>روش حل ۳ گامی:</strong> ۱) کار مرزی را از $P\Delta\mathcal{V}$ یا ذوزنقهٔ $\frac{P_1+P_2}{2}(\mathcal{V}_1-\mathcal{V}_2)$ حساب کنید؛ ۲) $m_2 = \mathcal{V}_2/v_2$ و $m_e = m_1 - m_2$ را بنویسید؛ ۳) با $h_e \approx (h_1+h_2)/2$ در فشار نهایی $P_2$ سعی و خطا کنید.
-  </p>
+  </div>
   <div class="jh-archetype-example">
 
 **مثال عددی سریع:** تخلیهٔ آدیاباتیک `R-134a` از $0.8\;\text{m}^3, 1.4\;\text{MPa}, 120^\circ\text{C}$ ($m_1=39.24\;\text{kg}, u_1=323.57, h_1=352.11$) تا $0.7\;\text{MPa}, 0.5\;\text{m}^3$:
-کار ورودی $W_{b,\text{in}} = \frac{1400+700}{2}(0.3) = 315\;\text{kJ}$؛ از $W_{b,\text{in}} - m_e \frac{h_1+h_2}{2} = m_2 u_2 - m_1 u_1$ در فشار $0.7\;\text{MPa}$ با سعی و خطا: $T_2 = 96.2^\circ\text{C}$ و $m_e = 26.8\;\text{kg}$.
+کار ورودی $W_{b,\text{in}} = \frac{1400+700}{2}(0.3) = 315\;\text{kJ}$؛ از $W_{b,\text{in}} - m_e \frac{h_1+h_2}{2} = m_2 u_2 - m_1 u_1$ در فشار $0.7\;\text{MPa}$ با سعی و خطا: $T_2 = 96.2^\circ\text{C}$ و $m_e = 26.8\;\text{kg}$.<br />
 [ادامه در تمرین ۵-۱۳۴](/thermo1-notes/exercises/ch5/#prob-5-134) · [ادامه در تمرین ۵-۱۳۱](/thermo1-notes/exercises/ch5/#prob-5-131)
 
   </div>
-  <p class="jh-archetype-trap">
+  <div class="jh-archetype-trap">
     <strong>⚠️ حواستان باشد:</strong> جدول سعی و خطا باید حتماً در <strong>فشار نهایی $P_2 = 0.7\;\text{MPa}$</strong> خوانده شود نه $P_1$! همچنین در تخلیه پیستون پایین می‌آید پس کار مرزی به سیستم وارد می‌شود.
-  </p>
+  </div>
 </article>
 
 </Fragment>
