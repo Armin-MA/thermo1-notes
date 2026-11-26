@@ -339,7 +339,9 @@
           hintFa:
             problem.mode === 'double2d'
               ? 'هر دو نسبت r_T = (T − T₁)/(T₂ − T₁) و r_P = (P − P₁)/(P₂ − P₁) را از سرِ پایین‌تر بازه حساب کنید.'
-              : 'مطمئن شوید صورت کسر فاصله تا سطر اول است (x − x₁) و در پایان به y₁ جمع می‌شود، نه برعکس.',
+              : problem.mode === 'inverse'
+                ? 'در درونیابی معکوس، صورت کسر فاصله تا سطر اول در خاصیت معلوم است: r = (y − y₁)/(y₂ − y₁) و در پایان به T₁ جمع می‌شود.'
+                : 'مطمئن شوید صورت کسر فاصله تا سطر اول است (x − x₁) و در پایان به y₁ جمع می‌شود، نه برعکس.',
         };
       case 'out_of_range_r':
       case 'wrong_r':
@@ -349,7 +351,9 @@
           hintFa:
             problem.mode === 'double2d'
               ? 'نسبت r درونیابی دوبعدی باید بین ۰ و ۱ باشد و با r_T = (T − T₁)/(T₂ − T₁) یا r_P = (P − P₁)/(P₂ − P₁) هم‌خوانی داشته باشد.'
-              : 'نسبت r باید بین ۰ و ۱ باشد؛ حاصل تقسیم (x − x₁) بر (x₂ − x₁) را دوباره حساب کنید.',
+              : problem.mode === 'inverse'
+                ? 'نسبت r باید بین ۰ و ۱ باشد؛ حاصل تقسیم (y − y₁) بر (y₂ − y₁) را برای خاصیت معلوم دوباره حساب کنید.'
+                : 'نسبت r باید بین ۰ و ۱ باشد؛ حاصل تقسیم (x − x₁) بر (x₂ − x₁) را دوباره حساب کنید.',
         };
       case 'out_of_bracket':
         return {
@@ -367,7 +371,9 @@
           hintFa:
             problem.mode === 'double2d'
               ? 'ابتدا y_A و y_B را در دو فشار مجاور با r_T حساب کنید و سپس با r_P بین آن‌ها درونیابی کنید.'
-              : 'حاصل y₁ + r × (y₂ − y₁) را بدون گرد کردنِ زودهنگامِ بیش‌ازحد مرور کنید.',
+              : problem.mode === 'inverse'
+                ? 'حاصل T₁ + r × (T₂ − T₁) را با نسبت r = (y − y₁)/(y₂ − y₁) بدون گرد کردنِ زودهنگامِ بیش‌ازحد مرور کنید.'
+                : 'حاصل y₁ + r × (y₂ − y₁) را بدون گرد کردنِ زودهنگامِ بیش‌ازحد مرور کنید.',
         };
       case 'inverted_p_sat_rule':
         return {
@@ -1117,21 +1123,29 @@
     background: var(--sl-color-black);
   }
 
-  .jh-trainer__table {
+  .jh-widget.jh-trainer :global(.jh-trainer__table) {
+    display: table;
     width: 100%;
     min-width: max-content;
+    max-width: none;
+    overflow: visible !important;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
     border-collapse: collapse;
     font-size: 0.82rem;
     font-variant-numeric: tabular-nums;
     text-align: center;
   }
 
-  .jh-trainer :global(.jh-trainer__table th),
-  .jh-trainer :global(.jh-trainer__table td) {
+  .jh-widget.jh-trainer :global(.jh-trainer__table th),
+  .jh-widget.jh-trainer :global(.jh-trainer__table td) {
+    min-width: 0;
     padding: 0.45rem 0.65rem;
     border-bottom: 1px solid var(--sl-color-gray-5);
     border-right: 1px solid var(--sl-color-gray-5);
     white-space: nowrap;
+    vertical-align: middle;
     color: var(--sl-color-gray-1);
   }
 
