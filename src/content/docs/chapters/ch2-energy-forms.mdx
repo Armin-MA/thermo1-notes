@@ -13,6 +13,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import MacroMicroEnergyLab from '../../../components/widgets/MacroMicroEnergyLab.astro';
 
 <TopicDependencyMap
@@ -27,6 +28,8 @@ import MacroMicroEnergyLab from '../../../components/widgets/MacroMicroEnergyLab
     { label: 'تمارین فصل ۲', href: '/exercises/ch2/', note: 'مسائل ۲-۲، ۲-۶۹ و ۲-۷۲' },
   ]}
 />
+
+<ExamModeBanner chapter={2} exam={1} />
 
 <div class="sticker-row not-content">
   <span class="sticker-pill sticker-pill--blue">🎯 آزمون ۱ (همراه با فصل ۱: ۲ نمره)</span>

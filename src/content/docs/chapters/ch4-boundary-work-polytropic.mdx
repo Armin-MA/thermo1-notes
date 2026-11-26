@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import PathFunctionCycleLab from '../../../components/widgets/PathFunctionCycleLab.astro';
 import PvDiagramInteractive from '../../../components/widgets/PvDiagramInteractive.astro';
 import PistonSpringStopsSim from '../../../components/widgets/PistonSpringStopsSim.astro';
@@ -29,6 +30,8 @@ import ExampleBox from '../../../components/ExampleBox.astro';
     { label: 'تمارین فصل ۴ سنجل', href: '/exercises/ch4/', note: 'مسائل استپر و فنر مثل ۴-۶، ۴-۱۰، ۴-۲۱، ۴-۲۴ و ۴-۷۶' },
   ]}
 />
+
+<ExamModeBanner chapter={4} exam={3} />
 
 در فصل دوم با انواع کار مکانیکی آشنا شدیم؛ اما در ترمودینامیک، پرکاربردترین نوع کار در موتورهای احتراق داخلی، کمپرسورهای رفت‌وبرگشتی و سیلندر-پیستون‌ها، **کار مرز متحرک (Moving Boundary Work)** است که در اثر انبساط یا تراکم سیال درون مرزهای جابه‌جاشدنی ایجاد می‌شود.
 

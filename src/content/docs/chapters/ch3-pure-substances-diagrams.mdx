@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
 import VaporDomePhaseLab from '../../../components/widgets/VaporDomePhaseLab.astro';
@@ -28,6 +29,8 @@ import VaporDomePhaseLab from '../../../components/widgets/VaporDomePhaseLab.ast
     { label: 'تمارین فصل ۳ سنجل', href: '/exercises/ch3/', note: 'مسائل تغییر فاز و نمودارخوانی مثل ۳-۲، ۳-۶، ۳-۲۸ و ۳-۴۳' },
   ]}
 />
+
+<ExamModeBanner chapter={3} exam={2} />
 
 تا اینجای درس با مفاهیم انرژی، کار و فشار آشنا شدیم؛ اما در مهندسی مکانیک، برای محاسبهٔ کار توربین یا حرارت دیگ بخار، باید رفتار واقعی سیال عامل (مثل آب و مبرد <span dir="ltr">R-134a</span>) را دقیق بشناسیم. نقطهٔ شروع، شناخت **مادهٔ خالص** و **نقشهٔ فازی** آن است.
 

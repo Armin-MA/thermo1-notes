@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import UnsteadyTankExplorer from '../../../components/widgets/UnsteadyTankExplorer.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
@@ -28,6 +29,8 @@ import ExampleBox from '../../../components/ExampleBox.astro';
     { label: 'فصل ۸: اگزرژی جریان ناپایا', href: '/chapters/ch8-exergy-reversible-work/', note: 'محاسبه اگزرژی تلف‌شده در پر کردن مخزن' },
   ]}
 />
+
+<ExamModeBanner chapter={5} exam={4} />
 
 تا اینجا فرض می‌کردیم شرایط درون حجم کنترل با زمان ثابت است ($\frac{dm_{\text{CV}}}{dt}=0$ و $\frac{dE_{\text{CV}}}{dt}=0$). اما بسیاری از فرآیندهای واقعی در بازهٔ زمانی **محدود** رخ می‌دهند و جرم و انرژی داخل سیستم لحظه‌به‌لحظه تغییر می‌کند؛ مثل پر کردن یک کپسول گاز از خط لوله، تخلیهٔ باد تایر، کارکرد دیگ زودپز یا انبساط سیلندرِ دارای شیر تخلیه. به این دسته، **فرآیندهای جریان ناپایا (Unsteady-Flow Processes)** می‌گوییم.
 

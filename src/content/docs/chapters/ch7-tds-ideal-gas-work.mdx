@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
 import PumpVsCompressorWorkLab from '../../../components/widgets/PumpVsCompressorWorkLab.astro';
@@ -28,6 +29,8 @@ import PumpVsCompressorWorkLab from '../../../components/widgets/PumpVsCompresso
     { label: 'تمارین بخش دوم فصل ۷', href: '/exercises/ch7/#prob-7-60', note: 'مسائل ۷-۶۰، ۷-۸۰، ۷-۹۷ و ۷-۱۰۶' },
   ]}
 />
+
+<ExamModeBanner chapter={7} exam={6} />
 
 تا اینجا دیدیم که برای یافتن $\Delta s$ مواد دوفازی و فوق‌گرم (مثل بخار آب و <span dir="ltr">R-134a</span>) مستقیماً سراغ جداول می‌رویم. اما برای **مایعات و جامدات تراکم‌ناپذیر** و **گازهای ایده‌آل**، چگونه تغییر آنتروپی را بر حسب دما، فشار و حجم حساب کنیم؟ پاسخ در دو معادلهٔ شاهکار جوزایا ویلارد گیبس نهفته است.
 

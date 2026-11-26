@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
 import SteadyFlowDevicesLab from '../../../components/widgets/SteadyFlowDevicesLab.astro';
@@ -30,6 +31,8 @@ import SteadyFlowDevicesLab from '../../../components/widgets/SteadyFlowDevicesL
     { label: 'فصل ۷: بازده ایزنتروپیک دستگاه‌های پایا', href: '/chapters/ch7-entropy-balance-efficiency/', note: 'کاربرد قانون دوم در نازل، توربین و کمپرسور' },
   ]}
 />
+
+<ExamModeBanner chapter={5} exam={4} />
 
 تا انتهای فصل ۴ با **سیستم بسته** سروکار داشتیم؛ یعنی جرم داخل مرز حبس بود. اما در دنیای واقعی مهندسی مکانیک — از موتور جت و نیروگاه بخار گرفته تا کمپرسور کولر و سشوار — سیال پیوسته وارد دستگاه می‌شود و از آن خارج می‌گردد. به چنین سیستمی **سیستم باز** یا **حجم کنترل (Control Volume)** و به مرز پیرامون آن **سطح کنترل (Control Surface)** می‌گوییم.
 

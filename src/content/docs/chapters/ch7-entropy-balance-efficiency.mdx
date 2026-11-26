@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import IsentropicEfficiencyLab from '../../../components/widgets/IsentropicEfficiencyLab.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
@@ -28,6 +29,8 @@ import ExampleBox from '../../../components/ExampleBox.astro';
     { label: 'تمارین کامل فصل ۷', href: '/exercises/ch7/', note: 'مسائل ۷-۱۲۰ تا ۷-۲۱۵ با حل رسمی سنجل' },
   ]}
 />
+
+<ExamModeBanner chapter={7} exam={6} />
 
 در دنیای واقعی هیچ توربین، کمپرسور یا شیپوره‌ای بدون اصطکاک و برگشت‌ناپذیری کار نمی‌کند. در این بخش یاد می‌گیریم چگونه انحراف وسایل مهندسی از حالت ایده‌آل ایزنتروپیک را با **بازده ایزنتروپیک** بسنجیم و چگونه **موازنهٔ عمومی آنتروپی** را برای هر سیستم بسته و حجم کنترل (پایا و ناپایا) بنویسیم.
 

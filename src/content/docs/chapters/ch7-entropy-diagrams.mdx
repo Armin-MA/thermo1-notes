@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
 import TsMollierEntropyLab from '../../../components/widgets/TsMollierEntropyLab.astro';
@@ -29,6 +30,8 @@ import TsMollierEntropyLab from '../../../components/widgets/TsMollierEntropyLab
     { label: 'تمارین بخش اول فصل ۷', href: '/exercises/ch7/#prob-7-10', note: 'مسائل ۷-۱۰، ۷-۳۰، ۷-۴۰، ۷-۴۱ و ۷-۶۰' },
   ]}
 />
+
+<ExamModeBanner chapter={7} exam={6} />
 
 در فصل ششم دیدیم که قانون دوم چگونه به ما می‌گوید هیچ موتور گرمایی نمی‌تواند بازدهی بالاتر از بازده کارنو داشته باشد. اما یک مهندس مکانیک تنها با **چرخه‌ها** سر و کار ندارد؛ ما می‌خواهیم تک‌تک **فرآیندها** (مانند انبساط بخار در توربین، اختلاط دو سیال یا سرد شدن یک قطعهٔ داغ) را بررسی کنیم و بفهمیم کدام مسیر ممکن است و چقدر از حالت ایده‌آل فاصله داریم. برای این کار به یک خاصیت ترمودینامیکی جدید نیاز داریم: **آنتروپی (<span dir="ltr">Entropy</span>)**.
 

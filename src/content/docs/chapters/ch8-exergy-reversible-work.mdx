@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import ExergyDeadStateExplorer from '../../../components/widgets/ExergyDeadStateExplorer.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
@@ -27,6 +28,8 @@ import ExampleBox from '../../../components/ExampleBox.astro';
     { label: 'تمارین بخش اول فصل ۸', href: '/exercises/ch8/#prob-8-23', note: 'مسائل ۸-۲۳، ۸-۲۹ و ۸-۳۶' },
   ]}
 />
+
+<ExamModeBanner chapter={8} exam={7} />
 
 قانون اول ترمودینامیک تنها دربارهٔ **کمیت انرژی** صحبت می‌کند و می‌گوید انرژی نه به وجود می‌آید و نه از بین می‌رود. اما در مهندسی می‌دانیم که ۱۰۰ ژول انرژی الکتریکی یا بخار فشارقوی با ۱۰۰ ژول آب ولرم استخر یکسان نیستند! **قانون دوم** به **کیفیت انرژی** و **هدر رفتن فرصت‌های انجام کار** می‌پردازد. معیار سنجش کیفیت و قابلیت کاردهی یک منبع انرژی، **اگزرژی (<span dir="ltr">Exergy</span>)** یا **قابلیت انجام کار (<span dir="ltr">Availability</span>)** است.
 

@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import PhaseCompressibilityExplorer from '../../../components/widgets/PhaseCompressibilityExplorer.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
@@ -28,6 +29,8 @@ import ExampleBox from '../../../components/ExampleBox.astro';
     { label: 'تمارین فصل ۳ سنجل', href: '/exercises/ch3/', note: 'کاربرد مستقیم در مسائل ۳-۸۲ و ۳-۱۲۲ و جدول‌خوانی' },
   ]}
 />
+
+<ExamModeBanner chapter={3} exam={2} />
 
 در بخش قبل دیدیم که برای موادی مثل آب و مبرد <span dir="ltr">R-134a</span>، به دلیل پیچیدگی رفتار تغییر فاز، از جداول ترمودینامیکی استفاده می‌کنیم. اما در مهندسی، همواره با جداول سر و کار نداریم؛ برای گازها در بسیاری از شرایط می‌توان از **معادلات حالت (Equations of State)** استفاده کرد که رابطهٔ تحلیلی بین $P$، $v$ و $T$ را می‌دهند.
 

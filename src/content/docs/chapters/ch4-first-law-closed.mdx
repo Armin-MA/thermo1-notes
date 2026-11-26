@@ -12,6 +12,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import FreeExpansionComparator from '../../../components/widgets/FreeExpansionComparator.astro';
 import CvVsCpFirstLawLab from '../../../components/widgets/CvVsCpFirstLawLab.astro';
 import FigureBox from '../../../components/FigureBox.astro';
@@ -29,6 +30,8 @@ import ExampleBox from '../../../components/ExampleBox.astro';
     { label: 'تمارین فصل ۴ سنجل', href: '/exercises/ch4/', note: 'تمام ۱۳ تمرین قانون اول بسته مثل ۴-۲۹، ۴-۳۴، ۴-۴۱، ۴-۵۴ و ۴-۱۳۱' },
   ]}
 />
+
+<ExamModeBanner chapter={4} exam={3} />
 
 پس از آنکه یاد گرفتیم چگونه کار مرزی را روی نمودار $P-V$ محاسبه کنیم، اکنون تمام انتقال‌های انرژی (گرما، کار الکتریکی، کار محور و کار مرزی) را در یک معادلهٔ جامع به نام **قانون اول ترمودینامیک (پایستگی انرژی)** برای سیستم‌های بسته جمع می‌کنیم.
 

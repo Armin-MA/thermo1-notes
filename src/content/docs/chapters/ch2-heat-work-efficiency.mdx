@@ -13,6 +13,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import BoundaryHeatWorkExplorer from '../../../components/widgets/BoundaryHeatWorkExplorer.astro';
 import MechanicalWorkModesLab from '../../../components/widgets/MechanicalWorkModesLab.astro';
 import FigureBox from '../../../components/FigureBox.astro';
@@ -29,6 +30,8 @@ import ExampleBox from '../../../components/ExampleBox.astro';
     { label: 'تمارین فصل ۲', href: '/exercises/ch2/', note: 'تمام ۱۲ تمرین منتخب فصل ۲' },
   ]}
 />
+
+<ExamModeBanner chapter={2} exam={1} />
 
 <div class="sticker-row not-content">
   <span class="sticker-pill sticker-pill--blue">🎯 آزمون ۱ (همراه با فصل ۱: ۲ نمره)</span>

@@ -13,6 +13,7 @@ sitemap:
 
 import EquationBox from '../../../components/EquationBox.astro';
 import TopicDependencyMap from '../../../components/TopicDependencyMap.astro';
+import ExamModeBanner from '../../../components/ExamModeBanner.astro';
 import FigureBox from '../../../components/FigureBox.astro';
 import ExampleBox from '../../../components/ExampleBox.astro';
 import SystemBoundaryStateLab from '../../../components/widgets/SystemBoundaryStateLab.astro';
@@ -28,6 +29,8 @@ import SystemBoundaryStateLab from '../../../components/widgets/SystemBoundarySt
     { label: 'تمارین فصل ۱', href: '/exercises/ch1/', note: 'مسائل ۱-۱ و ۱-۱۸' },
   ]}
 />
+
+<ExamModeBanner chapter={1} exam={1} />
 
 <div class="sticker-row not-content">
   <span class="sticker-pill sticker-pill--blue">🎯 آزمون ۱ (همراه با فصل ۲: ۲ نمره)</span>
