@@ -1,4 +1,6 @@
 ---
+import PersianText from './PersianText.astro';
+
 interface LinkItem {
   label: string;
   href?: string;
@@ -42,8 +44,12 @@ const withBase = (href?: string) => {
         <ul class="dep-card__list">
           {prerequisites.map((item) => (
             <li>
-              {item.href ? <a href={withBase(item.href)}>{item.label}</a> : <span>{item.label}</span>}
-              {item.note && <span class="dep-card__note"> — {item.note}</span>}
+              {item.href ? (
+                <a href={withBase(item.href)}><PersianText text={item.label} /></a>
+              ) : (
+                <span><PersianText text={item.label} /></span>
+              )}
+              {item.note && <span class="dep-card__note"> — <PersianText text={item.note} /></span>}
             </li>
           ))}
         </ul>
@@ -61,8 +67,12 @@ const withBase = (href?: string) => {
         <ul class="dep-card__list">
           {unlocks.map((item) => (
             <li>
-              {item.href ? <a href={withBase(item.href)}>{item.label}</a> : <span>{item.label}</span>}
-              {item.note && <span class="dep-card__note"> — {item.note}</span>}
+              {item.href ? (
+                <a href={withBase(item.href)}><PersianText text={item.label} /></a>
+              ) : (
+                <span><PersianText text={item.label} /></span>
+              )}
+              {item.note && <span class="dep-card__note"> — <PersianText text={item.note} /></span>}
             </li>
           ))}
         </ul>

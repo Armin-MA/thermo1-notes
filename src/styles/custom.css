@@ -100,6 +100,18 @@ header.header {
   vertical-align: baseline;
 }
 
+/* تثبیت ترتیب راست‌چین اعداد فصلی/شماره‌ای (مثلاً ۷-۶، ۷-۸۰، ج-۱، ۱–۲) */
+.jh-numpair {
+  direction: rtl;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+}
+
+.jh-numpair > bdi {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
 /* جعبه‌های فرمول شماره‌گذاری‌شده (الهام از MyST) */
 .eq-card {
   position: relative;
@@ -145,6 +157,8 @@ header.header {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  direction: rtl;
+  unicode-bidi: isolate;
   padding: 0.25rem 0.65rem;
   border-radius: 999px;
   font-size: 0.85rem;
@@ -710,6 +724,8 @@ mobile-starlight-toc nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  direction: rtl;
+  unicode-bidi: isolate;
   padding: 0.18rem 0.6rem;
   border-radius: 8px;
   background: var(--sl-color-accent-low);

@@ -1,4 +1,7 @@
 ---
+import PersianText from './PersianText.astro';
+import { normalizeExerciseNumber } from '../utils/bidi';
+
 interface Props {
   id: string;
   number: string;
@@ -18,17 +21,19 @@ const {
   tags = [],
   open = false,
 } = Astro.props;
+
+const displayNumber = normalizeExerciseNumber(number);
 ---
 
 <article class="jh-prob-card not-content" id={id}>
   <header class="jh-prob-card__head">
     <div class="jh-prob-card__title-wrap">
-      <span class="jh-prob-num" dir="ltr">{number}</span>
-      <h3 class="jh-prob-title">{title}</h3>
+      <span class="jh-prob-num" dir="rtl"><PersianText text={displayNumber} /></span>
+      <h3 class="jh-prob-title"><PersianText text={title} /></h3>
     </div>
     <div class="jh-prob-badges">
       {tables && <span class="jh-badge jh-badge--table" dir="ltr">{tables}</span>}
-      <span class="jh-badge jh-badge--source">{source}</span>
+      <span class="jh-badge jh-badge--source"><PersianText text={source} /></span>
       {tags.map((tag) => <span class="jh-badge jh-badge--tag">{tag}</span>)}
     </div>
   </header>

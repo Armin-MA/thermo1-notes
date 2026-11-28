@@ -1,0 +1,22 @@
+---
+import { splitPersianPairs } from '../utils/bidi';
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const segments = splitPersianPairs(text);
+---
+
+{
+  segments.map((seg) =>
+    seg.type === 'pair' ? (
+      <span class="jh-numpair" dir="rtl">
+        <bdi>{seg.first}</bdi>{seg.sep}<bdi>{seg.second}</bdi>
+      </span>
+    ) : (
+      seg.text
+    )
+  )
+}

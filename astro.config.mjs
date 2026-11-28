@@ -3,13 +3,14 @@ import starlight from '@astrojs/starlight';
 import starlightSiteGraph from 'starlight-site-graph';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypePersianNumpair from './src/plugins/rehype-persian-numpair.mjs';
 
 export default defineConfig({
   site: 'https://armin-ma.github.io',
   base: '/thermo1-notes',
   markdown: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex],
+    rehypePlugins: [rehypeKatex, rehypePersianNumpair],
   },
   integrations: [
     starlight({

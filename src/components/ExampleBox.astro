@@ -1,4 +1,6 @@
 ---
+import PersianText from './PersianText.astro';
+
 interface Props {
   id: string;
   number: string;
@@ -13,10 +15,10 @@ const { id, number, title, slide = '', open = true } = Astro.props;
 <article class="jh-example-card not-content" id={id}>
   <header class="jh-example-card__head">
     <div class="jh-example-card__title-wrap">
-      <span class="jh-example-badge">{number}</span>
-      <h4 class="jh-example-title">{title}</h4>
+      <span class="jh-example-badge" dir="rtl"><PersianText text={number} /></span>
+      <h4 class="jh-example-title"><PersianText text={title} /></h4>
     </div>
-    {slide && <span class="jh-example-slide">{slide}</span>}
+    {slide && <span class="jh-example-slide"><PersianText text={slide} /></span>}
   </header>
 
   <div class="jh-example-statement sl-markdown-content">

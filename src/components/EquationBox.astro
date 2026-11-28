@@ -1,4 +1,7 @@
 ---
+import PersianText from './PersianText.astro';
+import { toPersianDigits } from '../utils/bidi';
+
 interface Props {
   id: string;
   number: string;
@@ -6,6 +9,7 @@ interface Props {
 }
 
 const { id, number, label } = Astro.props;
+const normalizedNumber = toPersianDigits(number);
 ---
 
 <div class="eq-card not-content" id={id}>
@@ -13,7 +17,7 @@ const { id, number, label } = Astro.props;
     <slot />
   </div>
   <div class="eq-card__meta">
-    <span class="eq-card__num">({number})</span>
-    {label && <span class="eq-card__label">{label}</span>}
+    <span class="eq-card__num" dir="rtl">(<PersianText text={normalizedNumber} />)</span>
+    {label && <span class="eq-card__label"><PersianText text={label} /></span>}
   </div>
 </div>

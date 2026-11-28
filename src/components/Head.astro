@@ -123,7 +123,8 @@ import Default from '@astrojs/starlight/components/Head.astro';
     }
 
     function buildExercisePreview(target, href, showActions) {
-      const num = target.querySelector('.jh-prob-num')?.textContent?.trim() || '';
+      const numEl = target.querySelector('.jh-prob-num');
+      const num = numEl?.textContent?.trim() || '';
       const title = target.querySelector('.jh-prob-title')?.textContent?.trim() || 'مسئله تمرینی';
       const tables = target.querySelector('.jh-badge--table')?.textContent?.trim() || '';
       const rawStatement = target.querySelector('.jh-prob-statement');
@@ -142,8 +143,9 @@ import Default from '@astrojs/starlight/components/Head.astro';
         ? ''
         : '<div class="jh-popover-prob__hint">برای رفتن به سوال و حل تشریحی کلیک کنید ↗</div>';
 
+      const numHtml = numEl ? numEl.innerHTML : escapeHtml(num);
       return {
-        badge: num ? `📝 پیش‌نمایش تمرین ${escapeHtml(num)}` : '📝 پیش‌نمایش تمرین',
+        badge: num ? `📝 پیش‌نمایش تمرین ${numHtml}` : '📝 پیش‌نمایش تمرین',
         metaHtml: tableBadgeHtml,
         html: `
           <div class="jh-popover-prob">
@@ -440,10 +442,84 @@ import Default from '@astrojs/starlight/components/Head.astro';
       );
     }
 
+    const PAIR_RX =
+      /(?<![0-9\u06f0-\u06f9A-Za-z_])((?:[\u06f0-\u06f9]+|(?<![\u0621-\u06cc])ج)([\-–])([\u06f0-\u06f9]+))(?![0-9\u06f0-\u06f9A-Za-z_\-–])/g;
+
+    function wrapPairsInElement(root) {
+      if (!root) return;
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          const p = node.parentElement;
+          if (!p) return NodeFilter.FILTER_REJECT;
+          if (p.closest('.jh-numpair, .katex, code, pre, kbd, script, style, svg, [dir="ltr"]')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          PAIR_RX.lastIndex = 0;
+          return PAIR_RX.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        },
+      });
+      const textNodes = [];
+      let cur;
+      while ((cur = walker.nextNode())) textNodes.push(cur);
+
+      for (const tn of textNodes) {
+        const text = tn.nodeValue || '';
+        PAIR_RX.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let last = 0;
+        let m;
+        while ((m = PAIR_RX.exec(text)) !== null) {
+          if (m.index > last) {
+            frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+          }
+          const full = m[1];
+          const sep = m[2];
+          const idx = full.indexOf(sep);
+          const span = document.createElement('span');
+          span.className = 'jh-numpair';
+          span.dir = 'rtl';
+          const b1 = document.createElement('bdi');
+          b1.textContent = full.slice(0, idx);
+          const b2 = document.createElement('bdi');
+          b2.textContent = full.slice(idx + sep.length);
+          span.appendChild(b1);
+          span.appendChild(document.createTextNode(sep));
+          span.appendChild(b2);
+          frag.appendChild(span);
+          last = PAIR_RX.lastIndex;
+        }
+        if (last < text.length) {
+          frag.appendChild(document.createTextNode(text.slice(last)));
+        }
+        tn.parentNode?.replaceChild(frag, tn);
+      }
+    }
+
+    function normalizeChromePairs() {
+      document
+        .querySelectorAll('main, .sidebar-content, starlight-toc, .pagination-links, .sl-link-card, .jh-widget')
+        .forEach((el) => wrapPairsInElement(el));
+
+      const searchDialog = document.querySelector('site-search dialog');
+      if (searchDialog && !searchDialog.__jhPairObserved) {
+        searchDialog.__jhPairObserved = true;
+        let timer = null;
+        const obs = new MutationObserver(() => {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => {
+            timer = null;
+            wrapPairsInElement(searchDialog);
+          }, 40);
+        });
+        obs.observe(searchDialog, { childList: true, subtree: true });
+      }
+    }
+
     function onReady() {
       bindHoverPopovers();
       bindNavToggle();
       bindSearchShortcuts();
+      normalizeChromePairs();
     }
 
     if (document.readyState === 'loading') {

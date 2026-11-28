@@ -1,4 +1,6 @@
 ---
+import PersianText from './PersianText.astro';
+
 interface Props {
   src: string;
   alt: string;
@@ -23,9 +25,9 @@ const resolvedSrc =
     <img src={resolvedSrc} alt={alt} loading="lazy" decoding="async" />
   </div>
   {(caption || source) && (
-    <figcaption class="jh-figure__cap">
-      {source && <span class="jh-figure__tag">{source}</span>}
-      {caption && <span>{caption}</span>}
+    <figcaption class="jh-figure__cap" dir="rtl">
+      {source && <span class="jh-figure__tag"><PersianText text={source} /></span>}
+      {caption && <span><PersianText text={caption} /></span>}
     </figcaption>
   )}
 </figure>
